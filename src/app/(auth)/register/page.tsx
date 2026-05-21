@@ -83,14 +83,19 @@ export default function RegisterPage() {
       password: form.password,
       options: {
         data: { full_name: form.name, phone: form.phone },
-        emailRedirectTo: `${window.location.origin}/dashboard`,
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
       },
     })
     if (error) {
       toast.error(error.message)
     } else {
-      toast.success('Check your email to verify your account!')
-      router.push('/login')
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        router.push('/dashboard')
+      } else {
+        toast.success('Check your email to verify your account!')
+        router.push('/login')
+      }
     }
     setLoading(false)
   }
@@ -98,7 +103,7 @@ export default function RegisterPage() {
   async function handleGoogleLogin() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/dashboard` },
+      options: { redirectTo: `${window.location.origin}/auth/callback?next=/dashboard` },
     })
     if (error) toast.error(error.message)
   }

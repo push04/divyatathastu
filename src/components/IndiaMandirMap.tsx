@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import indiaMap from '@svg-maps/india'
 import mandirData from '@/data/mandirs.json'
 import routeData from '@/data/pilgrimageroutes.json'
@@ -69,6 +69,14 @@ export default function IndiaMandirMap() {
   const [selectedCircuit, setSelectedCircuit] = useState<Circuit | null>(null)
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set())
   const supabase = createClient()
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return
+      supabase.from('saved_mandirs').select('google_place_id').eq('user_id', user.id)
+        .then(({ data }) => { if (data) setSavedIds(new Set(data.map((r: any) => r.google_place_id))) })
+    })
+  }, [])
 
   const stateTemples = useMemo(() => {
     const map: Record<string, Temple[]> = {}
