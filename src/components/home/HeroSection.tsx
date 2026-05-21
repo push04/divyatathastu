@@ -94,7 +94,7 @@ export default function HeroSection() {
   useEffect(() => { setSnap(getTodaySnap()) }, [])
 
   return (
-    <section className="relative bg-[var(--kutch-white)] overflow-hidden pt-20">
+    <section className="relative bg-[var(--kutch-white)] overflow-hidden">
       {/* Fine dot-grid texture */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -103,7 +103,7 @@ export default function HeroSection() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
         {/* Two-column split */}
-        <div className="grid grid-cols-1 lg:grid-cols-[55fr_45fr] gap-12 lg:gap-6 items-center py-16 lg:py-0 lg:min-h-[calc(100vh-80px)]">
+        <div className="grid grid-cols-1 lg:grid-cols-[55fr_45fr] gap-12 lg:gap-6 items-center pt-12 pb-16 lg:pt-16 lg:pb-20">
 
           {/* ── Left column ── */}
           <motion.div
