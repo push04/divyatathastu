@@ -78,7 +78,7 @@ export function calculateKundli(birth: BirthData): KundliData {
       const ecliptic = Astronomy.Ecliptic(equatorial.vec)
       // Apply ayanamsa (Lahiri ~23.85 degrees for 2025)
       const ayanamsa = 23.85
-      let lon = ((ecliptic.elon - ayanamsa) % 360 + 360) % 360
+      const lon = ((ecliptic.elon - ayanamsa) % 360 + 360) % 360
       if (body === Astronomy.Body.Moon) moonLon = lon
 
       const rashiNum = Math.floor(lon / 30)

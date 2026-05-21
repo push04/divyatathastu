@@ -38,6 +38,7 @@ export function useFamily() {
     }
   }, [])
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { load() }, [load])
 
   async function addMember(member: Omit<FamilyMember, 'id'> & { family_id: string }) {

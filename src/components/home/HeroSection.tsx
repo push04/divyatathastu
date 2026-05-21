@@ -112,17 +112,6 @@ export default function HeroSection() {
             variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
             className="flex flex-col"
           >
-            {/* Editorial annotation */}
-            <motion.div variants={fadeUp} custom={0} className="flex items-center gap-3 mb-8">
-              <div className="w-8 h-px bg-[var(--terracotta)]" style={{ opacity: 0.35 }} />
-              <code
-                className="text-[11px] text-[var(--indigo-deep)] tracking-wide"
-                style={{ fontFamily: "'JetBrains Mono', monospace", opacity: 0.45 }}
-              >
-                const platform = "India's First 360° Holistic Platform"
-              </code>
-            </motion.div>
-
             {/* H1 */}
             <motion.h1
               variants={fadeUp}

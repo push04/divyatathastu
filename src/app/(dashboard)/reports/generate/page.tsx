@@ -3,6 +3,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState, Suspense } from 'react'
+import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -138,7 +139,7 @@ function GenerateReportContent() {
               <div className="flex justify-center mb-3"><span className="material-symbols-outlined text-[32px] text-[var(--indigo-deep)]" style={{ fontVariationSettings: "'FILL' 1" }}>family_restroom</span></div>
               <p className="font-medium text-[var(--indigo-deep)] mb-1">No family members yet</p>
               <p className="text-sm text-[var(--warm-charcoal)]/60 mb-4">Add a family member first to generate reports</p>
-              <a href="/family/add" className="btn-divine px-6 py-2.5 text-sm">Add Member</a>
+              <Link href="/family/add" className="btn-divine px-6 py-2.5 text-sm">Add Member</Link>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

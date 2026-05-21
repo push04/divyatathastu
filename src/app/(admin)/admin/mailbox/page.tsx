@@ -7,6 +7,16 @@ import { toast } from 'sonner'
 interface Thread { id: string; subject: string; status: string; created_at: string; last_message_at: string; profiles: { full_name: string } | null }
 interface Message { id: string; thread_id: string; sender_id: string; content: string; created_at: string }
 
+function FilterBar({ filter, setFilter }: { filter: string; setFilter: (f: string) => void }) {
+  return (
+    <div className="flex gap-1">
+      {['open', 'closed'].map(f => (
+        <button key={f} onClick={() => setFilter(f)} className={`flex-1 py-1.5 rounded-lg text-xs font-medium capitalize transition-all ${filter === f ? 'bg-[var(--indigo-deep)] text-white' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>{f}</button>
+      ))}
+    </div>
+  )
+}
+
 export default function AdminMailboxPage() {
   const supabase = createClient()
   const [threads, setThreads] = useState<Thread[]>([])
@@ -52,19 +62,11 @@ export default function AdminMailboxPage() {
     toast.success('Thread closed')
   }
 
-  const FilterBar = () => (
-    <div className="flex gap-1">
-      {['open', 'closed'].map(f => (
-        <button key={f} onClick={() => setFilter(f)} className={`flex-1 py-1.5 rounded-lg text-xs font-medium capitalize transition-all ${filter === f ? 'bg-[var(--indigo-deep)] text-white' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>{f}</button>
-      ))}
-    </div>
-  )
-
   return (
     <div className="flex h-[calc(100vh-56px)] lg:h-screen">
       {/* Sidebar — desktop */}
       <div className="w-72 flex-shrink-0 border-r border-[var(--warm-sand)] bg-white flex-col hidden lg:flex">
-        <div className="p-3 border-b border-[var(--warm-sand)]"><FilterBar /></div>
+        <div className="p-3 border-b border-[var(--warm-sand)]"><FilterBar filter={filter} setFilter={setFilter} /></div>
         <div className="flex-1 overflow-y-auto">
           {threads.map(t => (
             <button key={t.id} onClick={() => setActive(t)} className={`w-full text-left p-3 border-b border-[var(--warm-sand)]/60 hover:bg-[var(--warm-sand)]/30 transition-colors ${active?.id === t.id ? 'bg-[var(--warm-sand)]/40 border-l-2 border-l-[var(--terracotta)]' : ''}`}>
@@ -80,7 +82,7 @@ export default function AdminMailboxPage() {
       {/* Mobile thread list */}
       {!active && (
         <div className="lg:hidden flex-1 flex flex-col">
-          <div className="p-3 border-b border-[var(--warm-sand)]"><FilterBar /></div>
+          <div className="p-3 border-b border-[var(--warm-sand)]"><FilterBar filter={filter} setFilter={setFilter} /></div>
           <div className="flex-1 overflow-y-auto">
             {threads.map(t => (
               <button key={t.id} onClick={() => setActive(t)} className="w-full text-left p-3 border-b border-[var(--warm-sand)]/60 hover:bg-[var(--warm-sand)]/30 transition-colors">

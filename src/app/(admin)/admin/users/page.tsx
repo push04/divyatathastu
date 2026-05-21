@@ -25,12 +25,18 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
 
-  useEffect(() => { load() }, [])
-
   async function load() {
     const { data } = await supabase.from('profiles').select('id,full_name,phone,role,is_active,created_at').order('created_at', { ascending: false })
     if (data) setUsers(data)
     setLoading(false)
+  }
+
+  useEffect(() => { load() }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  async function toggleActive(userId: string, active: boolean) {
+    const { error } = await supabase.from('profiles').update({ is_active: !active }).eq('id', userId)
+    if (error) toast.error('Failed')
+    else { toast.success(active ? 'Deactivated' : 'Activated'); setUsers(prev => prev.map(u => u.id === userId ? { ...u, is_active: !active } : u)) }
   }
 
   async function changeRole(userId: string, role: string) {
@@ -84,9 +90,10 @@ export default function AdminUsersPage() {
                     <p className="text-[var(--warm-charcoal)]/40 text-xs">{u.phone || '—'}</p>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${u.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>
+                    <button onClick={() => toggleActive(u.id, u.is_active)}
+                      className={`text-xs px-2 py-0.5 rounded-full font-medium transition-colors ${u.is_active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 hover:bg-red-100 hover:text-red-600'}`}>
                       {u.is_active ? 'Active' : 'Inactive'}
-                    </span>
+                    </button>
                   </td>
                   <td className="px-4 py-3">
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${ROLE_COLORS[u.role] || 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>

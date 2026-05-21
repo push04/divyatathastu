@@ -33,13 +33,13 @@ export default function AdminBlogPage() {
   const [creating, setCreating] = useState(false)
   const [form, setForm] = useState({ title: '', slug: '', category: 'Astrology', excerpt: '', content: '', read_time: 5 })
 
-  useEffect(() => { load() }, [])
-
   async function load() {
     const { data } = await supabase.from('blog_posts').select('id,title,slug,category,is_published,created_at').order('created_at', { ascending: false })
     if (data) setPosts(data)
     setLoading(false)
   }
+
+  useEffect(() => { load() }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   function generateSlug(title: string) {
     return title.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim()

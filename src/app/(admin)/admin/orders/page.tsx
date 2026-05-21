@@ -14,13 +14,14 @@ interface Order {
   profiles: { full_name: string } | null
 }
 
-const STATUSES = ['pending', 'paid', 'failed', 'delivered', 'cancelled']
+const STATUSES = ['pending', 'paid', 'processing', 'completed', 'refunded', 'cancelled']
 
 const STATUS_COLORS: Record<string, string> = {
   paid: 'bg-emerald-100 text-emerald-700',
   pending: 'bg-amber-100 text-amber-700',
-  delivered: 'bg-violet-100 text-violet-700',
-  failed: 'bg-red-100 text-red-600',
+  processing: 'bg-blue-100 text-blue-700',
+  completed: 'bg-violet-100 text-violet-700',
+  refunded: 'bg-orange-100 text-orange-700',
   cancelled: 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60',
 }
 
@@ -30,18 +31,25 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
 
-  useEffect(() => { load() }, [])
-
   async function load() {
     const { data } = await supabase.from('orders').select('id,order_number,total,status,payment_method,created_at,profiles(full_name)').order('created_at', { ascending: false })
     if (data) setOrders(data as Order[])
     setLoading(false)
   }
 
+  useEffect(() => { load() }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   async function updateStatus(id: string, status: string) {
     await supabase.from('orders').update({ status: status as any }).eq('id', id)
     setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o))
     toast.success('Status updated')
+  }
+
+  async function deleteOrder(id: string) {
+    if (!confirm('Delete this order?')) return
+    const { error } = await supabase.from('orders').delete().eq('id', id)
+    if (error) toast.error('Delete failed')
+    else { setOrders(prev => prev.filter(o => o.id !== id)); toast.success('Order deleted') }
   }
 
   const filtered = filter === 'all' ? orders : orders.filter(o => o.status === filter)
@@ -88,7 +96,6 @@ export default function AdminOrdersPage() {
                   <td className="px-4 py-3 font-mono font-medium text-[var(--indigo-deep)] text-xs">{o.order_number}</td>
                   <td className="px-4 py-3">
                     <p className="font-medium text-[var(--warm-charcoal)]">{(o.profiles as any)?.full_name || '—'}</p>
-                    <p className="text-xs text-[var(--warm-charcoal)]/40">{(o.profiles as any)?.email}</p>
                   </td>
                   <td className="px-4 py-3 font-bold text-[var(--indigo-deep)]">₹{o.total?.toLocaleString('en-IN')}</td>
                   <td className="px-4 py-3 text-[var(--warm-charcoal)]/40 text-xs">{new Date(o.created_at).toLocaleDateString('en-IN')}</td>
@@ -96,10 +103,15 @@ export default function AdminOrdersPage() {
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${STATUS_COLORS[o.status] || 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>{o.status}</span>
                   </td>
                   <td className="px-4 py-3">
-                    <select value={o.status} onChange={e => updateStatus(o.id, e.target.value)}
-                      className="text-xs border border-[var(--warm-sand)] rounded-lg px-2 py-1 focus:outline-none focus:border-[var(--saffron)] bg-white text-[var(--warm-charcoal)]">
-                      {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
+                    <div className="flex items-center gap-2">
+                      <select value={o.status} onChange={e => updateStatus(o.id, e.target.value)}
+                        className="text-xs border border-[var(--warm-sand)] rounded-lg px-2 py-1 focus:outline-none focus:border-[var(--saffron)] bg-white text-[var(--warm-charcoal)]">
+                        {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                      <button onClick={() => deleteOrder(o.id)} className="text-red-400 hover:text-red-600 transition-colors">
+                        <span className="material-symbols-outlined text-[16px]">delete</span>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

@@ -70,6 +70,7 @@ export default function MandirFinderPage() {
 
   function updateMarkers(data: Mandir[]) {
     if (!mapInstanceRef.current) return
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const L = require('leaflet')
     markersRef.current.forEach(m => m.remove())
     markersRef.current = data.map(m => {

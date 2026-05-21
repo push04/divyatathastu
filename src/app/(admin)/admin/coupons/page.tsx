@@ -19,13 +19,13 @@ export default function AdminCouponsPage() {
   const [creating, setCreating] = useState(false)
   const [form, setForm] = useState({ code: '', discount_type: 'percentage', discount_value: 10, min_order_amount: 0, max_uses: '', expires_at: '' })
 
-  useEffect(() => { load() }, [])
-
   async function load() {
     const { data } = await supabase.from('coupons').select('*').order('created_at', { ascending: false })
     if (data) setCoupons(data)
     setLoading(false)
   }
+
+  useEffect(() => { load() }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function createCoupon() {
     if (!form.code.trim()) { toast.error('Enter coupon code'); return }

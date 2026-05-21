@@ -4,6 +4,7 @@ import crypto from 'crypto'
 
 // Lazy import to avoid crash when credentials not set
 function getRazorpay() {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const Razorpay = require('razorpay')
   return new Razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
   if (action === 'create') {
     const { items, couponCode } = await req.json()
 
-    let subtotal = items.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0)
+    const subtotal = items.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0)
     let discount = 0
 
     // Validate coupon

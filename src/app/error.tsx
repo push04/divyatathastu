@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import Link from 'next/link'
 
 export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
@@ -19,9 +20,9 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
         </p>
         <div className="flex gap-4 justify-center">
           <button onClick={reset} className="btn-divine px-6 py-3">Try Again</button>
-          <a href="/" className="px-6 py-3 rounded-xl border border-[var(--indigo-deep)] text-[var(--indigo-deep)] font-medium hover:bg-[var(--indigo-deep)] hover:text-white transition-colors">
+          <Link href="/" className="px-6 py-3 rounded-xl border border-[var(--indigo-deep)] text-[var(--indigo-deep)] font-medium hover:bg-[var(--indigo-deep)] hover:text-white transition-colors">
             Go Home
-          </a>
+          </Link>
         </div>
       </div>
     </div>
