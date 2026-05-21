@@ -1,0 +1,601 @@
+/* ── Google Fonts must be FIRST before @import "tailwindcss" ── */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Sora:wght@300..800&family=JetBrains+Mono:wght@300..800&display=swap');
+
+@import "tailwindcss";
+
+/* ── Divine Theme Tokens ── */
+:root {
+  --background: #FBFAF7;
+  --background-dark: #18120f;
+  --background-card: #ffffff;
+  --foreground: #2F2A44;
+  --foreground-muted: #7a6f8a;
+
+  --indigo-deep: #2F2A44;
+  --indigo-night: #110A5C;
+  --terracotta: #C67D53;
+  --terracotta-vivid: #E86830;
+  --saffron: #B9986B;
+  --saffron-vivid: #E36414;
+  --plum: #460B2F;
+  --plum-light: #4B3D6B;
+  --kutch-white: #FBFAF7;
+  --warm-sand: #F2E2D9;
+  --warm-charcoal: #3D3450;
+  --outline-variant: #d8c2b8;
+
+  --surface: #FBFAF7;
+  --surface-container: #F2E2D9;
+  --on-surface: #2F2A44;
+  --on-surface-variant: #53443c;
+  --primary: #C67D53;
+  --on-primary: #ffffff;
+  --secondary: #B9986B;
+  --tertiary: #469da3;
+
+  --primary-foreground: #FBFAF7;
+  --secondary-foreground: #FBFAF7;
+  --accent: #B9986B;
+  --muted: #F2E2D9;
+  --muted-foreground: #6B6480;
+  --border: #e0d4c8;
+  --ring: #C67D53;
+  --destructive: #D14343;
+
+  --radius: 0.75rem;
+  --radius-sm: 0.5rem;
+  --radius-lg: 1.25rem;
+}
+
+.dark {
+  --background: #18120f;
+  --background-card: #251e1b;
+  --foreground: #ede0da;
+  --foreground-muted: #d8c2b8;
+  --border: #53443c;
+  --muted: #251e1b;
+  --on-surface: #ede0da;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-indigo-deep: var(--indigo-deep);
+  --color-indigo-night: var(--indigo-night);
+  --color-terracotta: var(--terracotta);
+  --color-terracotta-vivid: var(--terracotta-vivid);
+  --color-saffron: var(--saffron);
+  --color-saffron-vivid: var(--saffron-vivid);
+  --color-plum: var(--plum);
+  --color-plum-light: var(--plum-light);
+  --color-kutch-white: var(--kutch-white);
+  --color-warm-sand: var(--warm-sand);
+  --radius: var(--radius);
+}
+
+* { box-sizing: border-box; border-color: var(--border); }
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ── Typography Utilities ── */
+.font-display    { font-family: 'Playfair Display', serif; }
+.font-sans-body  { font-family: 'DM Sans', sans-serif; }
+.font-label      { font-family: 'Sora', sans-serif; }
+.font-mono-data  { font-family: 'JetBrains Mono', monospace; }
+
+/* ── Gradients ── */
+.gradient-divine  { background: linear-gradient(135deg, var(--indigo-deep) 0%, var(--plum) 50%, var(--indigo-night) 100%); }
+.gradient-saffron { background: linear-gradient(135deg, var(--saffron-vivid) 0%, var(--terracotta) 100%); }
+.gradient-warm    { background: linear-gradient(135deg, var(--warm-sand) 0%, var(--kutch-white) 100%); }
+
+.text-gradient-divine {
+  background: linear-gradient(135deg, var(--saffron) 0%, var(--terracotta-vivid) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.text-gradient-saffron {
+  background: linear-gradient(135deg, var(--saffron-vivid) 0%, var(--saffron) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+/* ── Sacred Patterns ── */
+.bg-sacred-dots {
+  background-image: radial-gradient(circle, var(--terracotta) 1px, transparent 1px);
+  background-size: 24px 24px; opacity: 0.08;
+}
+.bg-sacred-grid {
+  background-image:
+    linear-gradient(var(--indigo-deep) 1px, transparent 1px),
+    linear-gradient(90deg, var(--indigo-deep) 1px, transparent 1px);
+  background-size: 40px 40px; opacity: 0.04;
+}
+
+/* ── Glow ── */
+.glow-saffron { box-shadow: 0 0 30px rgba(183,152,107,0.3), 0 0 60px rgba(183,152,107,0.1); }
+.glow-terracotta { box-shadow: 0 0 20px rgba(198,125,83,0.3); }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--background); }
+::-webkit-scrollbar-thumb { background: var(--terracotta); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--saffron-vivid); }
+
+/* ── Selection ── */
+::selection { background: var(--terracotta); color: var(--kutch-white); }
+
+/* ── Bento Card System ── */
+.bento-card {
+  background: #ffffff;
+  border-radius: 0.75rem;
+  border: 1px solid var(--surface-container);
+  box-shadow: 0 2px 8px rgba(47,42,68,0.04), 0 1px 2px rgba(47,42,68,0.06);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.bento-card:hover {
+  border-color: var(--terracotta);
+  box-shadow: 0 12px 32px -8px rgba(198,125,83,0.18);
+  transform: translateY(-3px);
+}
+
+.glass-panel {
+  background: var(--warm-sand);
+  border: 1px solid rgba(255,255,255,0.5);
+  box-shadow: 0 4px 6px -1px rgba(47,42,68,0.05);
+}
+
+/* ── Card (legacy compat) ── */
+.card-divine {
+  background: var(--background-card, #fff);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 12px rgba(47,42,68,0.07);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.card-divine:hover {
+  box-shadow: 0 8px 32px rgba(47,42,68,0.13);
+  border-color: var(--terracotta);
+  transform: translateY(-2px);
+}
+.card-dark {
+  background: var(--indigo-deep);
+  border: 1px solid var(--plum-light);
+  border-radius: var(--radius);
+  color: var(--kutch-white);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.card-dark:hover {
+  border-color: var(--saffron);
+  box-shadow: 0 8px 24px rgba(185,152,107,0.15);
+  transform: translateY(-3px);
+}
+
+/* ── Buttons ── */
+.btn-divine {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  background: var(--terracotta); color: #ffffff;
+  border-radius: 9999px;
+  font-family: 'Sora', sans-serif; font-weight: 600;
+  font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase;
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  cursor: pointer; border: none;
+}
+.btn-divine:hover {
+  background: var(--terracotta-vivid);
+  box-shadow: 0 6px 24px rgba(198,125,83,0.45);
+  transform: translateY(-2px) scale(1.02);
+}
+.btn-divine:active { transform: translateY(0) scale(0.98); }
+
+.btn-outline-divine {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  background: transparent; color: var(--terracotta);
+  border: 1.5px solid var(--terracotta); border-radius: 9999px;
+  font-family: 'Sora', sans-serif; font-weight: 600;
+  font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;
+  cursor: pointer;
+}
+.btn-outline-divine:hover {
+  background: var(--terracotta); color: #ffffff;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 24px rgba(198,125,83,0.3);
+}
+.btn-outline-divine:active { transform: translateY(0) scale(0.98); }
+
+/* ── Icon Button micro-animation ── */
+.icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 2.5rem; height: 2.5rem; border-radius: 50%;
+  border: 1px solid var(--outline-variant);
+  color: var(--on-surface-variant);
+  transition: background 0.2s, color 0.2s, transform 0.2s cubic-bezier(0.34,1.56,0.64,1), border-color 0.2s;
+  cursor: pointer;
+}
+.icon-btn:hover {
+  background: var(--warm-sand); color: var(--terracotta);
+  border-color: var(--terracotta); transform: scale(1.12) rotate(-5deg);
+}
+
+/* ── Magnetic / Lift links ── */
+.link-lift {
+  position: relative; display: inline-block;
+  transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1);
+}
+.link-lift:hover { transform: translateY(-2px); }
+.link-lift::after {
+  content: ''; position: absolute; bottom: -2px; left: 0; right: 0;
+  height: 1.5px; background: var(--terracotta);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.3s ease;
+}
+.link-lift:hover::after { transform: scaleX(1); }
+
+/* ── Text reveal (clip-path) ── */
+.text-reveal {
+  overflow: hidden;
+  clip-path: inset(0 100% 0 0);
+  animation: text-reveal-in 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+@keyframes text-reveal-in {
+  to { clip-path: inset(0 0% 0 0); }
+}
+
+/* ── Line draw ── */
+.line-draw {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: line-draw-in 1.5s ease forwards;
+}
+@keyframes line-draw-in { to { stroke-dashoffset: 0; } }
+
+/* ── Number ticker ── */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.count-up { animation: count-up 0.5s ease forwards; }
+
+/* ── Shimmer ── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 25%, rgba(183,152,107,0.4) 50%, transparent 75%);
+  background-size: 200% auto;
+  animation: shimmer 2s linear infinite;
+}
+
+/* ── Existing animations ── */
+@keyframes divine-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes float-x {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-8px); }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes spin-reverse {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+@keyframes ping-slow {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes blur-in {
+  from { opacity: 0; filter: blur(8px); }
+  to   { opacity: 1; filter: blur(0); }
+}
+@keyframes draw-line {
+  from { width: 0; }
+  to   { width: 100%; }
+}
+@keyframes dot-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%       { transform: scale(1.4); opacity: 0.5; }
+}
+@keyframes border-spin {
+  to { --border-angle: 360deg; }
+}
+
+.animate-divine-pulse  { animation: divine-pulse 3s ease-in-out infinite; }
+.animate-float         { animation: float 4s ease-in-out infinite; }
+.animate-float-x       { animation: float-x 5s ease-in-out infinite; }
+.animate-spin-slow     { animation: spin-slow 20s linear infinite; }
+.animate-spin-reverse  { animation: spin-reverse 15s linear infinite; }
+.animate-ping-slow     { animation: ping-slow 2.5s ease-out infinite; }
+.animate-slide-up      { animation: slide-up 0.6s cubic-bezier(0.16,1,0.3,1) both; }
+.animate-slide-left    { animation: slide-in-left 0.6s cubic-bezier(0.16,1,0.3,1) both; }
+.animate-slide-right   { animation: slide-in-right 0.6s cubic-bezier(0.16,1,0.3,1) both; }
+.animate-scale-in      { animation: scale-in 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
+.animate-blur-in       { animation: blur-in 0.6s ease both; }
+
+/* ── Delay utilities ── */
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+.delay-600 { animation-delay: 0.6s; }
+
+/* ── Hover scale for icons ── */
+.hover-icon { transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), color 0.2s ease; }
+.hover-icon:hover { transform: scale(1.2) rotate(-8deg); }
+
+/* ── Progress bar animated fill ── */
+@keyframes fill-bar {
+  from { width: 0; }
+  to   { width: var(--fill-pct, 50%); }
+}
+.bar-fill {
+  animation: fill-bar 1s cubic-bezier(0.16,1,0.3,1) both;
+  animation-delay: 0.4s;
+}
+
+/* ── Stagger parent → children ── */
+.stagger-children > * { opacity: 0; animation: slide-up 0.5s cubic-bezier(0.16,1,0.3,1) both; }
+.stagger-children > *:nth-child(1)  { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2)  { animation-delay: 0.10s; }
+.stagger-children > *:nth-child(3)  { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4)  { animation-delay: 0.20s; }
+.stagger-children > *:nth-child(5)  { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6)  { animation-delay: 0.30s; }
+
+/* ── Gradient animated background ── */
+.gradient-animated {
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease infinite;
+}
+
+/* ── Underline draw on hover ── */
+.underline-draw {
+  position: relative; display: inline-block;
+}
+.underline-draw::after {
+  content: ''; position: absolute; bottom: 0; left: 0;
+  height: 1.5px; width: 0; background: currentColor;
+  transition: width 0.35s cubic-bezier(0.16,1,0.3,1);
+}
+.underline-draw:hover::after { width: 100%; }
+
+/* ── Section ── */
+.section-padding    { padding: 5rem 0; }
+.section-padding-sm { padding: 3rem 0; }
+
+/* ── Premium Page Banner ── */
+.page-banner {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--indigo-deep) 0%, var(--plum) 55%, #1a0a2e 100%);
+  padding: 5rem 1.5rem;
+  text-align: center;
+}
+.page-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.055) 1.5px, transparent 1.5px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+.page-banner::after {
+  content: 'ॐ';
+  position: absolute;
+  right: -60px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 320px;
+  line-height: 1;
+  color: rgba(255,255,255,0.025);
+  font-family: serif;
+  pointer-events: none;
+  user-select: none;
+}
+.page-banner-inner { position: relative; z-index: 1; }
+
+/* ── Gradient Icon Containers ── */
+.icon-divine {
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--terracotta) 0%, var(--saffron-vivid) 100%);
+  color: white;
+  border-radius: 0.875rem;
+  box-shadow: 0 4px 14px rgba(198,125,83,0.4);
+  transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.28s;
+  flex-shrink: 0;
+}
+.icon-divine-plum {
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--indigo-deep) 0%, var(--plum-light) 100%);
+  color: white;
+  border-radius: 0.875rem;
+  box-shadow: 0 4px 14px rgba(47,42,68,0.3);
+  transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.28s;
+  flex-shrink: 0;
+}
+.group:hover .icon-divine,
+.group:hover .icon-divine-plum { transform: scale(1.12) rotate(-6deg); box-shadow: 0 8px 24px rgba(198,125,83,0.5); }
+
+/* ── Ornate Section Divider ── */
+.ornate-divider {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin: 0 auto 1.25rem; width: fit-content;
+}
+.ornate-divider::before, .ornate-divider::after {
+  content: ''; width: 48px; height: 1.5px;
+}
+.ornate-divider::before { background: linear-gradient(90deg, transparent, var(--terracotta)); }
+.ornate-divider::after  { background: linear-gradient(90deg, var(--terracotta), transparent); }
+
+/* ── Section Heading with accent underline ── */
+.heading-sacred {
+  position: relative; display: inline-block;
+}
+.heading-sacred::after {
+  content: '';
+  display: block;
+  width: 48px; height: 3px;
+  background: linear-gradient(90deg, var(--terracotta), var(--saffron));
+  border-radius: 2px;
+  margin-top: 0.625rem;
+}
+.heading-sacred-center::after { margin-left: auto; margin-right: auto; }
+
+/* ── Card shine on hover ── */
+.card-divine { overflow: hidden; }
+.card-divine::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+  transition: left 0.5s ease;
+  pointer-events: none;
+}
+.card-divine { position: relative; }
+.card-divine:hover::after { left: 150%; }
+
+/* ── Improved card hover glow ── */
+.card-divine:hover {
+  box-shadow: 0 12px 40px rgba(198,125,83,0.15), 0 4px 8px rgba(47,42,68,0.08);
+  border-color: var(--terracotta);
+  transform: translateY(-3px);
+}
+.bento-card:hover {
+  border-color: var(--terracotta);
+  box-shadow: 0 16px 40px -8px rgba(198,125,83,0.2), 0 4px 8px rgba(47,42,68,0.06);
+  transform: translateY(-4px);
+}
+
+/* ── Dark section with pattern ── */
+.section-dark-pattern {
+  position: relative; overflow: hidden;
+}
+.section-dark-pattern::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.04) 1.5px, transparent 1.5px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+/* ── Badge with gradient border ── */
+.badge-divine {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.375rem 1rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(198,125,83,0.12) 0%, rgba(185,152,107,0.08) 100%);
+  border: 1px solid rgba(198,125,83,0.3);
+  font-family: 'Sora', sans-serif;
+  font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--terracotta);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.badge-divine-dark {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--saffron);
+}
+
+/* ── Animated gradient orb ── */
+@keyframes orb-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50%       { transform: scale(1.15); opacity: 0.6; }
+}
+.orb-divine {
+  border-radius: 9999px;
+  background: radial-gradient(circle, var(--terracotta) 0%, transparent 70%);
+  animation: orb-pulse 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* ── Feature card with left accent bar ── */
+.card-feature {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  border-left: 4px solid var(--terracotta);
+  box-shadow: 0 2px 12px rgba(47,42,68,0.06);
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
+}
+.card-feature:hover {
+  transform: translateX(4px) translateY(-2px);
+  box-shadow: 0 8px 32px rgba(198,125,83,0.12);
+}
+
+/* ── Autofill override — dark glass forms (login/register) ── */
+.gradient-divine input:-webkit-autofill,
+.gradient-divine input:-webkit-autofill:hover,
+.gradient-divine input:-webkit-autofill:focus {
+  -webkit-text-fill-color: rgba(255,255,255,0.9);
+  -webkit-box-shadow: 0 0 0px 1000px rgba(255,255,255,0.08) inset;
+  transition: background-color 5000s ease-in-out 0s;
+  caret-color: white;
+  border-color: rgba(255,255,255,0.2) !important;
+}
+
+/* ── Report Prose ── */
+.report-prose { line-height: 1.8; color: var(--foreground); }
+.report-prose h2 {
+  color: var(--indigo-deep);
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem; font-weight: 700;
+  margin-top: 2rem; margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem; border-bottom: 2px solid var(--terracotta);
+}
+.report-prose h3 {
+  color: var(--plum-light); font-size: 1.1rem; font-weight: 600;
+  margin-top: 1.5rem; margin-bottom: 0.5rem;
+}

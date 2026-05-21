@@ -1,0 +1,13 @@
+{
+  "framework": "nextjs",
+  "buildCommand": "next build",
+  "installCommand": "npm install",
+  "env": {
+    "NEXT_PUBLIC_APP_URL": "https://divyatathastu.com"
+  },
+  "functions": {
+    "src/app/api/noxatra/route.ts": { "maxDuration": 60 },
+    "src/app/api/groq/route.ts": { "maxDuration": 60 },
+    "src/app/api/itinerary/route.ts": { "maxDuration": 60 }
+  }
+}
