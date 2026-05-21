@@ -50,8 +50,8 @@ export default function CheckoutPage() {
 
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        const { data } = await supabase.from('profiles').select('full_name,email,phone').eq('id', user.id).single()
-        setProfile(data)
+        const { data } = await supabase.from('profiles').select('full_name,phone').eq('id', user.id).single()
+        setProfile({ ...data, email: user.email })
       }
     }
     load()

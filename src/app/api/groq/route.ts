@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Groq from 'groq-sdk'
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
+function getGroq() {
+  if (!process.env.GROQ_API_KEY) throw new Error('GROQ_API_KEY not set')
+  return new Groq({ apiKey: process.env.GROQ_API_KEY })
+}
 
 export const maxDuration = 60
 
@@ -15,6 +18,7 @@ Generate deeply personalized, compassionate, and actionable insights. Write in a
 
 ${reportData ? `Report Data: ${JSON.stringify(reportData, null, 2)}` : ''}`
 
+    const groq = getGroq()
     if (!useStream) {
       const completion = await groq.chat.completions.create({
         model: 'llama-3.3-70b-versatile',

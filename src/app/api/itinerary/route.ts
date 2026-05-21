@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Groq from 'groq-sdk'
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
+function getGroq() {
+  if (!process.env.GROQ_API_KEY) throw new Error('GROQ_API_KEY not set')
+  return new Groq({ apiKey: process.env.GROQ_API_KEY })
+}
 
 export const maxDuration = 60
 
@@ -66,6 +69,7 @@ Return a structured JSON itinerary with this exact format:
   "importantNotes": ["string"]
 }`
 
+    const groq = getGroq()
     const completion = await groq.chat.completions.create({
       model: 'llama-3.3-70b-versatile',
       messages: [
