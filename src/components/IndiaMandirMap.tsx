@@ -143,9 +143,9 @@ export default function IndiaMandirMap() {
         </div>
 
         {/* Map */}
-        <div className="flex-1 relative p-4 flex items-center justify-center overflow-hidden">
+        <div className="flex-1 relative p-4 flex items-center justify-center">
           {selectedCircuit && (
-            <div className="absolute top-4 left-4 right-4 z-10 bg-white/95 rounded-xl border border-[var(--warm-sand)] p-3 shadow-md">
+            <div className="absolute top-4 left-4 right-4 z-10 bg-white/95 rounded-xl border border-[var(--warm-sand)] p-3 shadow-md pointer-events-none">
               <p className="text-xs font-bold text-[var(--indigo-deep)]">{selectedCircuit.name}</p>
               <p className="text-xs text-[var(--warm-charcoal)]/60 mt-0.5">{selectedCircuit.significance.slice(0, 120)}...</p>
               <p className="text-xs text-[var(--terracotta)] mt-1 font-medium">{selectedCircuit.total_temples} temples · {selectedCircuit.approx_duration_days} days · {selectedCircuit.difficulty}</p>

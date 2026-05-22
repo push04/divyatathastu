@@ -14,30 +14,34 @@ interface PanchangData {
   date: string
 }
 
-function getTodayPanchang(): PanchangData {
-  const now = new Date()
-  const tithis = ['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Saptami','Ashtami','Navami','Dashami','Ekadashi','Dwadashi','Trayodashi','Chaturdashi','Purnima/Amavasya']
-  const nakshatras = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Moola','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishtha','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati']
-  const yogas = ['Vishkamba','Preeti','Ayushman','Saubhagya','Shobhana','Atiganda','Sukarma','Dhriti','Shoola','Ganda','Vriddhi','Dhruva','Vyaghata','Harshana','Vajra','Siddhi','Vyatipata','Variyana','Parigha','Shiva','Siddha','Sadhya','Shubha','Shukla','Brahma','Indra','Vaidhriti']
-  const karanas = ['Bava','Balava','Kaulava','Taitila','Garija','Vanija','Vishti']
-  const dayOfYear = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000)
-  return {
-    tithi: tithis[dayOfYear % 15],
-    nakshatra: nakshatras[dayOfYear % 27],
-    yoga: yogas[dayOfYear % 27],
-    karana: karanas[dayOfYear % 7],
-    sunrise: '06:12 AM',
-    sunset: '07:28 PM',
-    rahuKaal: '08:00 – 09:30 AM',
-    date: now.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
-  }
-}
-
 const YANTRA_TEX = `url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='12,2 22,20 2,20' fill='none' stroke='white' stroke-width='0.5' stroke-opacity='0.03'/%3E%3Cpolygon points='12,22 2,4 22,4' fill='none' stroke='white' stroke-width='0.5' stroke-opacity='0.03'/%3E%3C/svg%3E")`
 
 export default function PanchangWidget() {
   const [p, setP] = useState<PanchangData | null>(null)
-  useEffect(() => { setP(getTodayPanchang()) }, [])
+
+  useEffect(() => {
+    const today = new Date()
+    const dateStr = today.toISOString().split('T')[0]
+    const dateLabel = today.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
+    fetch(`/api/panchang?lat=28.6139&lng=77.2090&date=${dateStr}`)
+      .then(r => r.json())
+      .then(j => {
+        if (j.success) {
+          setP({
+            tithi: j.data.tithi,
+            nakshatra: j.data.nakshatra,
+            yoga: j.data.yoga,
+            karana: j.data.karana,
+            sunrise: j.data.sunrise,
+            sunset: j.data.sunset,
+            rahuKaal: j.data.rahuKaal,
+            date: dateLabel,
+          })
+        }
+      })
+      .catch(() => {})
+  }, [])
+
   if (!p) return null
 
   const cells = [

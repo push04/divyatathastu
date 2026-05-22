@@ -4,11 +4,20 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
-const STATS = [
-  { num: '10,000+', label: 'Families Guided' },
-  { num: '14', label: 'Report Types' },
-  { num: '98%', label: 'Satisfaction Rate' },
-  { num: '5.0', label: 'Google Rating' },
+const SHLOKAS = [
+  { shloka: 'कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥', meaning: 'केवल कर्म करना तुम्हारा अधिकार है, फल में कभी नहीं। फल की कामना से कर्म न करो, और अकर्म में भी आसक्त न हो।', source: 'भगवद्गीता २.४७' },
+  { shloka: 'असतो मा सद्गमय।\nतमसो मा ज्योतिर्गमय।\nमृत्योर्माऽमृतं गमय॥', meaning: 'असत्य से सत्य की ओर, अन्धकार से प्रकाश की ओर, और मृत्यु से अमरत्व की ओर मुझे ले चलो।', source: 'बृहदारण्यक उपनिषद् १.३.२८' },
+  { shloka: 'वसुधैव कुटुम्बकम्।', meaning: 'यह सम्पूर्ण पृथ्वी ही एक परिवार है।', source: 'महोपनिषद् ६.७२' },
+  { shloka: 'सत्यमेव जयते।', meaning: 'सत्य की ही विजय होती है, असत्य की नहीं।', source: 'मुण्डकोपनिषद् ३.१.६' },
+  { shloka: 'ॐ पूर्णमदः पूर्णमिदं पूर्णात्पूर्णमुदच्यते।\nपूर्णस्य पूर्णमादाय पूर्णमेवावशिष्यते॥', meaning: 'वह परब्रह्म पूर्ण है, यह जगत् भी पूर्ण है। पूर्ण से पूर्ण निकाल लेने पर भी पूर्ण ही शेष रहता है।', source: 'ईशावास्योपनिषद् शान्तिपाठ' },
+  { shloka: 'यदा यदा हि धर्मस्य ग्लानिर्भवति भारत।\nअभ्युत्थानमधर्मस्य तदात्मानं सृजाम्यहम्॥', meaning: 'जब-जब धर्म की हानि होती है और अधर्म बढ़ता है, तब-तब मैं स्वयं को प्रकट करता हूँ।', source: 'भगवद्गीता ४.७' },
+  { shloka: 'सर्वे भवन्तु सुखिनः। सर्वे सन्तु निरामयाः।\nसर्वे भद्राणि पश्यन्तु। मा कश्चिद् दुःखभाग्भवेत्॥', meaning: 'सभी सुखी हों, सभी रोगमुक्त हों, सभी शुभ देखें, कोई भी दुःखी न हो।', source: 'बृहदारण्यक उपनिषद्' },
+  { shloka: 'योगः कर्मसु कौशलम्।', meaning: 'कर्मों में कुशलता ही योग है।', source: 'भगवद्गीता २.५०' },
+  { shloka: 'ॐ तत् सत्।', meaning: 'ॐ — वही परम सत्य है।', source: 'भगवद्गीता १७.२३' },
+  { shloka: 'तत् त्वम् असि।', meaning: 'वह परम ब्रह्म तुम ही हो।', source: 'छांदोग्य उपनिषद् ६.८.७' },
+  { shloka: 'मनः एव मनुष्याणां कारणं बन्धमोक्षयोः।', meaning: 'मन ही मनुष्य के बंधन और मोक्ष का एकमात्र कारण है।', source: 'अमृतबिन्दु उपनिषद् २' },
+  { shloka: 'स्वधर्मे निधनं श्रेयः परधर्मो भयावहः।', meaning: 'अपने धर्म में मरना भी श्रेयस्कर है; दूसरे का धर्म भय उत्पन्न करता है।', source: 'भगवद्गीता ३.३५' },
+  { shloka: 'अहम् ब्रह्मास्मि।', meaning: 'मैं स्वयं ब्रह्म हूँ — यह परम ज्ञान ही मुक्ति का द्वार है।', source: 'बृहदारण्यक उपनिषद् १.४.१०' },
 ]
 
 const fadeUp = {
@@ -20,15 +29,6 @@ const fadeUp = {
 }
 
 interface PanchangSnap { tithi: string; nakshatra: string; yoga: string }
-
-function getTodaySnap(): PanchangSnap {
-  const now = new Date()
-  const day = Math.floor((now.getTime() - new Date(now.getFullYear(), 0, 0).getTime()) / 86400000)
-  const tithis = ['Pratipada','Dwitiya','Tritiya','Chaturthi','Panchami','Shashthi','Saptami','Ashtami','Navami','Dashami','Ekadashi','Dwadashi','Trayodashi','Chaturdashi','Purnima']
-  const nakshatras = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Moola','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishtha','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati']
-  const yogas = ['Vishkamba','Preeti','Ayushman','Saubhagya','Shobhana','Atiganda','Sukarma','Dhriti','Shoola','Ganda','Vriddhi','Dhruva','Vyaghata','Harshana','Vajra','Siddhi','Vyatipata','Variyana','Parigha','Shiva','Siddha','Sadhya','Shubha','Shukla','Brahma','Indra','Vaidhriti']
-  return { tithi: tithis[day % 15], nakshatra: nakshatras[day % 27], yoga: yogas[day % 27] }
-}
 
 function MandalaSVG() {
   const cx = 240, cy = 240, s60 = 0.86603
@@ -93,7 +93,27 @@ function MandalaSVG() {
 
 export default function HeroSection() {
   const [snap, setSnap] = useState<PanchangSnap | null>(null)
-  useEffect(() => { setSnap(getTodaySnap()) }, [])
+  const [shlokaIdx, setShlokaIdx] = useState(0)
+  const [shlokaVisible, setShlokaVisible] = useState(true)
+
+  useEffect(() => {
+    const today = new Date().toISOString().split('T')[0]
+    fetch(`/api/panchang?lat=28.6139&lng=77.2090&date=${today}`)
+      .then(r => r.json())
+      .then(j => { if (j.success) setSnap({ tithi: j.data.tithi, nakshatra: j.data.nakshatra, yoga: j.data.yoga }) })
+      .catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setShlokaVisible(false)
+      setTimeout(() => {
+        setShlokaIdx(i => (i + 1) % SHLOKAS.length)
+        setShlokaVisible(true)
+      }, 400)
+    }, 7000)
+    return () => clearInterval(id)
+  }, [])
 
   return (
     <section className="relative bg-[var(--kutch-white)] overflow-hidden">
@@ -248,32 +268,60 @@ export default function HeroSection() {
           </motion.div>
         </div>
 
-        {/* ── Stat row — full width below columns ── */}
+        {/* ── Shloka carousel — full width below columns ── */}
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.52 }}
-          className="grid grid-cols-2 sm:grid-cols-4 border-t border-[var(--indigo-deep)]/10"
+          className="border-t border-[var(--indigo-deep)]/10 py-8 px-4 sm:px-6 flex flex-col items-center gap-3"
         >
-          {STATS.map(({ num, label }, i) => (
-            <div
-              key={label}
-              className={`py-8 px-4 sm:px-6 ${i > 0 ? 'border-l border-[var(--indigo-deep)]/[0.08]' : ''}`}
+          <div
+            style={{
+              opacity: shlokaVisible ? 1 : 0,
+              transition: 'opacity 0.4s ease',
+              textAlign: 'center',
+              maxWidth: '720px',
+            }}
+          >
+            <p
+              className="text-[15px] sm:text-[17px] leading-relaxed mb-2"
+              style={{ fontFamily: "'Playfair Display', serif", color: 'var(--indigo-deep)', whiteSpace: 'pre-line' }}
             >
-              <div
-                className="text-[32px] sm:text-[38px] font-bold text-[var(--indigo-deep)]"
-                style={{ fontFamily: "'Playfair Display', serif" }}
-              >
-                {num}
-              </div>
-              <div
-                className="text-[10px] uppercase tracking-widest text-[var(--indigo-deep)] mt-1.5"
-                style={{ fontFamily: "'Sora', sans-serif", opacity: 0.36 }}
-              >
-                {label}
-              </div>
-            </div>
-          ))}
+              {SHLOKAS[shlokaIdx].shloka}
+            </p>
+            <p
+              className="text-[13px] leading-relaxed mb-1"
+              style={{ fontFamily: "'DM Sans', sans-serif", color: 'var(--indigo-deep)', opacity: 0.58 }}
+            >
+              {SHLOKAS[shlokaIdx].meaning}
+            </p>
+            <p
+              className="text-[10px] uppercase tracking-widest"
+              style={{ fontFamily: "'Sora', sans-serif", color: 'var(--terracotta)', opacity: 0.75 }}
+            >
+              — {SHLOKAS[shlokaIdx].source}
+            </p>
+          </div>
+          {/* Progress dots */}
+          <div className="flex gap-1.5 mt-1">
+            {SHLOKAS.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => { setShlokaVisible(false); setTimeout(() => { setShlokaIdx(i); setShlokaVisible(true) }, 400) }}
+                aria-label={`Shloka ${i + 1}`}
+                style={{
+                  width: i === shlokaIdx ? '18px' : '6px',
+                  height: '6px',
+                  borderRadius: '3px',
+                  background: i === shlokaIdx ? 'var(--terracotta)' : 'rgba(28,30,74,0.18)',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer',
+                  transition: 'width 0.3s, background 0.3s',
+                }}
+              />
+            ))}
+          </div>
         </motion.div>
       </div>
     </section>

@@ -4,10 +4,10 @@ import { motion } from 'framer-motion'
 import { ShieldCheck, Lock, Star, Globe } from 'lucide-react'
 
 const TRUST_BADGES = [
-  { Icon: ShieldCheck, label: 'ISO Certified', sub: 'Quality Assured' },
-  { Icon: Lock, label: 'Data Secure', sub: 'RLS Protected' },
-  { Icon: Star, label: '5-Star Rated', sub: '10,000+ Reviews' },
-  { Icon: Globe, label: 'NRI Trusted', sub: '50+ Countries' },
+  { Icon: ShieldCheck, label: 'Expert Validated', sub: 'Vedic scholars reviewed' },
+  { Icon: Lock, label: 'Privacy First', sub: 'No data sharing or ads' },
+  { Icon: Star, label: 'Instant Reports', sub: 'Generated on demand' },
+  { Icon: Globe, label: 'NRI Accessible', sub: 'Works worldwide' },
 ]
 
 function WhatsAppIcon() {

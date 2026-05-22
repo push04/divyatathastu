@@ -107,7 +107,7 @@ export default function Testimonials() {
             className="mt-2 text-sm text-[var(--indigo-deep)]/50"
             style={{ fontFamily: "'DM Sans', sans-serif" }}
           >
-            10,000+ families guided across India and 50+ countries
+            Real stories from families across India
           </motion.p>
         </div>
       </div>
