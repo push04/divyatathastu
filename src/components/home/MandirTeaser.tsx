@@ -48,6 +48,10 @@ export default function MandirTeaser() {
       style={{ backgroundImage: CROSS_HATCH }}
     >
       <IndiaWatermark />
+      <div className="ambient-orb animate-drift-3 pointer-events-none"
+        style={{ width: 350, height: 350, top: '10%', left: '-80px', background: 'radial-gradient(circle, rgba(198,125,83,0.07) 0%, transparent 70%)' }} />
+      <div className="ambient-orb animate-drift-1 pointer-events-none"
+        style={{ width: 250, height: 250, bottom: '5%', right: '5%', background: 'radial-gradient(circle, rgba(185,152,107,0.06) 0%, transparent 70%)' }} />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">

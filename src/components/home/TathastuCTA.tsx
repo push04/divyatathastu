@@ -27,41 +27,51 @@ const cx = 210, cy = 210, R = 120, nodeR = 16
 function BundleSVG() {
   return (
     <svg width="420" height="420" viewBox="0 0 420 420" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      {/* radial bg glow */}
       <defs>
         <radialGradient id="cg" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#D4A043" stopOpacity="0.06" />
+          <stop offset="0%" stopColor="#D4A043" stopOpacity="0.08" />
           <stop offset="100%" stopColor="#D4A043" stopOpacity="0" />
         </radialGradient>
       </defs>
+
+      {/* Radial glow */}
       <circle cx={cx} cy={cy} r="200" fill="url(#cg)" />
 
-      {/* spoke lines */}
-      {NODES.map((_, i) => {
-        const a = (i * Math.PI * 2) / 14 - Math.PI / 2
-        const nx = cx + (R + nodeR + 32) * Math.cos(a)
-        const ny = cy + (R + nodeR + 32) * Math.sin(a)
-        return <line key={i} x1={cx} y1={cy} x2={nx} y2={ny} stroke="white" strokeOpacity="0.08" strokeWidth="0.5" />
-      })}
+      {/* Slowly rotating outer ring + spokes */}
+      <g style={{ transformOrigin: `${cx}px ${cy}px`, animation: 'orbit-cw 30s linear infinite' }}>
+        <circle cx={cx} cy={cy} r="190" stroke="white" strokeOpacity="0.05" strokeWidth="0.5" fill="none" strokeDasharray="3 9" />
+        {NODES.map((_, i) => {
+          const a = (i * Math.PI * 2) / 14 - Math.PI / 2
+          const nx = cx + (R + nodeR + 32) * Math.cos(a)
+          const ny = cy + (R + nodeR + 32) * Math.sin(a)
+          return <line key={i} x1={cx} y1={cy} x2={nx} y2={ny} stroke="white" strokeOpacity="0.08" strokeWidth="0.5" />
+        })}
+      </g>
 
-      {/* center circle */}
-      <circle cx={cx} cy={cy} r={R} stroke="#D4A043" strokeOpacity="0.4" strokeWidth="1.5" fill="none" />
+      {/* Center orbit ring — counter-rotating */}
+      <circle cx={cx} cy={cy} r={R} stroke="#D4A043" strokeOpacity="0.4" strokeWidth="1.5" fill="none"
+        style={{ transformOrigin: `${cx}px ${cy}px`, animation: 'orbit-ccw 20s linear infinite' }} />
       <circle cx={cx} cy={cy} r={R - 12} stroke="white" strokeOpacity="0.05" strokeWidth="0.5" fill="none" />
 
-      {/* center text */}
+      {/* Center text — static */}
       <text x={cx} y={cy + 2} textAnchor="middle" dominantBaseline="middle"
         fill="#D4A043" fontSize="48" fontFamily="'Playfair Display', serif" fontWeight="700">14</text>
       <text x={cx} y={cy + 36} textAnchor="middle" dominantBaseline="middle"
         fill="white" fillOpacity="0.5" fontSize="10" fontFamily="'Sora', sans-serif" letterSpacing="2">REPORTS</text>
 
-      {/* nodes */}
+      {/* Pulsing nodes */}
       {NODES.map((n, i) => {
         const a = (i * Math.PI * 2) / 14 - Math.PI / 2
         const nx = cx + (R + nodeR + 32) * Math.cos(a)
         const ny = cy + (R + nodeR + 32) * Math.sin(a)
+        const delay = `${(i * 0.18).toFixed(2)}s`
         return (
           <g key={i}>
-            <circle cx={nx} cy={ny} r={nodeR} stroke="#C67D53" strokeOpacity="0.5" strokeWidth="1" fill="#1C1E4A" />
+            {/* outer ping ring */}
+            <circle cx={nx} cy={ny} r={nodeR + 4} stroke="#C67D53" strokeOpacity="0.2" strokeWidth="0.5" fill="none"
+              style={{ animation: `divine-pulse 3s ease-in-out infinite`, animationDelay: delay }} />
+            <circle cx={nx} cy={ny} r={nodeR} stroke="#C67D53" strokeOpacity="0.5" strokeWidth="1" fill="#1C1E4A"
+              style={{ animation: `node-pulse 3s ease-in-out infinite`, animationDelay: delay }} />
             <text x={nx} y={ny} textAnchor="middle" dominantBaseline="middle"
               fill="white" fillOpacity="0.7" fontSize="9" fontFamily="'JetBrains Mono', monospace">{n.abbr}</text>
           </g>
@@ -73,8 +83,14 @@ function BundleSVG() {
 
 export default function TathastuCTA() {
   return (
-    <section className="section-padding" style={{ background: '#0F1628', backgroundImage: CROSS_HATCH }}>
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+    <section className="section-padding relative overflow-hidden" style={{ background: '#0F1628', backgroundImage: CROSS_HATCH }}>
+      {/* Ambient orbs */}
+      <div className="ambient-orb animate-drift-2 pointer-events-none"
+        style={{ width: 500, height: 500, top: '-100px', right: '-100px', background: 'radial-gradient(circle, rgba(198,125,83,0.07) 0%, transparent 70%)' }} />
+      <div className="ambient-orb animate-drift-3 pointer-events-none"
+        style={{ width: 350, height: 350, bottom: '-80px', left: '-60px', background: 'radial-gradient(circle, rgba(185,152,107,0.05) 0%, transparent 70%)' }} />
+
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-[48fr_52fr] gap-12 items-center">
 
           {/* ── Left ── */}
@@ -152,10 +168,10 @@ export default function TathastuCTA() {
               </svg>
             </div>
 
-            {/* Glass card overlay */}
+            {/* Glass card overlay — floats */}
             <div
-              className="absolute bottom-4 right-4 lg:bottom-8 lg:right-0 rounded-xl p-4 backdrop-blur-sm"
-              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', minWidth: '180px' }}
+              className="absolute bottom-4 right-4 lg:bottom-8 lg:right-0 rounded-xl p-4 backdrop-blur-sm animate-float"
+              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', minWidth: '180px', animationDelay: '1s' }}
             >
               <p className="text-[10px] uppercase tracking-widest mb-1" style={{ fontFamily: "'Sora', sans-serif", color: 'var(--saffron)' }}>
                 Family Account

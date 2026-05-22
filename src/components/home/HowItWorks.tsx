@@ -36,8 +36,14 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="section-padding bg-[var(--indigo-deep)] section-dark-pattern">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="section-padding bg-[var(--indigo-deep)] section-dark-pattern relative overflow-hidden">
+      {/* Ambient orbs */}
+      <div className="ambient-orb animate-drift-1 pointer-events-none"
+        style={{ width: 400, height: 400, top: '-100px', right: '-50px', background: 'radial-gradient(circle, rgba(198,125,83,0.08) 0%, transparent 70%)' }} />
+      <div className="ambient-orb animate-drift-2 pointer-events-none"
+        style={{ width: 300, height: 300, bottom: '-80px', left: '-60px', background: 'radial-gradient(circle, rgba(185,152,107,0.07) 0%, transparent 70%)' }} />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-14">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -89,7 +95,7 @@ export default function HowItWorks() {
                 >
                   {step.num}
                 </div>
-                <div className="icon-divine w-12 h-12 rounded-2xl mb-5 group-hover:scale-110 group-hover:rotate-[-5deg] transition-transform duration-300" style={{ background: 'linear-gradient(135deg, var(--terracotta), var(--saffron-vivid))' }}>
+                <div className="icon-divine w-12 h-12 rounded-2xl mb-5 group-hover:scale-110 group-hover:rotate-[-5deg] transition-transform duration-300 animate-glow" style={{ background: 'linear-gradient(135deg, var(--terracotta), var(--saffron-vivid))', animationDelay: `${i * 0.5}s` }}>
                   <span
                     className="material-symbols-outlined text-[24px] text-white"
                     style={{ fontVariationSettings: "'FILL' 1" }}

@@ -49,7 +49,8 @@ export default function Navbar() {
 
           {/* Logo — Playfair Display branding */}
           <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-            <div className="w-8 h-8 rounded-full gradient-saffron flex items-center justify-center text-white font-bold text-sm shadow-md group-hover:scale-110 transition-transform duration-300">
+            <div className="relative w-8 h-8 rounded-full gradient-saffron flex items-center justify-center text-white font-bold text-sm shadow-md group-hover:scale-110 transition-transform duration-300 animate-glow">
+              <span className="absolute inset-0 rounded-full gradient-saffron opacity-50 animate-ping-slow" />
               ॐ
             </div>
             <span

@@ -197,9 +197,20 @@ body {
   border-radius: 9999px;
   font-family: 'Sora', sans-serif; font-weight: 600;
   font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase;
+  position: relative; overflow: hidden;
   transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
   cursor: pointer; border: none;
 }
+.btn-divine::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -75%;
+  width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.22), transparent);
+  transform: skewX(-20deg);
+  transition: left 0s;
+}
+.btn-divine:hover::after { left: 150%; transition: left 0.55s ease; }
 .btn-divine:hover {
   background: var(--terracotta-vivid);
   box-shadow: 0 6px 24px rgba(198,125,83,0.45);
@@ -349,17 +360,97 @@ body {
   to { --border-angle: 360deg; }
 }
 
+/* ── NEW: Breathe (subtle ambient scale pulse) ── */
+@keyframes breathe {
+  0%, 100% { transform: scale(1);    opacity: 0.4; }
+  50%       { transform: scale(1.1); opacity: 0.7; }
+}
+
+/* ── NEW: Glow-breathe (box-shadow pulse) ── */
+@keyframes glow-breathe {
+  0%, 100% { box-shadow: 0 0 16px rgba(198,125,83,0.12), 0 0 40px rgba(198,125,83,0.04); }
+  50%       { box-shadow: 0 0 32px rgba(198,125,83,0.28), 0 0 80px rgba(198,125,83,0.10); }
+}
+
+/* ── NEW: Shimmer sweep (gradient text animation) ── */
+@keyframes shimmer-sweep {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+/* ── NEW: Particle drift paths ── */
+@keyframes drift-1 {
+  0%, 100% { transform: translate(0,    0)    scale(1);    opacity: 0.35; }
+  33%       { transform: translate(22px, -32px) scale(1.12); opacity: 0.55; }
+  66%       { transform: translate(-14px,-16px) scale(0.9);  opacity: 0.20; }
+}
+@keyframes drift-2 {
+  0%, 100% { transform: translate(0,     0)    scale(1);    opacity: 0.25; }
+  33%       { transform: translate(-28px, 24px) scale(0.88); opacity: 0.45; }
+  66%       { transform: translate(12px, -28px) scale(1.12); opacity: 0.15; }
+}
+@keyframes drift-3 {
+  0%, 100% { transform: translate(0,    0)    scale(1);    opacity: 0.30; }
+  50%       { transform: translate(18px, 28px) scale(1.18); opacity: 0.50; }
+}
+
+/* ── NEW: Rotate-orbit (for SVG ring groups) ── */
+@keyframes orbit-cw  { from { transform: rotate(0deg);   } to { transform: rotate(360deg);  } }
+@keyframes orbit-ccw { from { transform: rotate(0deg);   } to { transform: rotate(-360deg); } }
+
+/* ── NEW: Node pulse (for BundleSVG nodes) ── */
+@keyframes node-pulse {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1;   }
+}
+
+/* ── NEW: Continuous shimmer bar (bottom gradient sweep) ── */
+@keyframes bar-shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(400%);  }
+}
+
 .animate-divine-pulse  { animation: divine-pulse 3s ease-in-out infinite; }
+.animate-breathe       { animation: breathe 5s ease-in-out infinite; }
+.animate-glow          { animation: glow-breathe 3.5s ease-in-out infinite; }
 .animate-float         { animation: float 4s ease-in-out infinite; }
 .animate-float-x       { animation: float-x 5s ease-in-out infinite; }
 .animate-spin-slow     { animation: spin-slow 20s linear infinite; }
 .animate-spin-reverse  { animation: spin-reverse 15s linear infinite; }
 .animate-ping-slow     { animation: ping-slow 2.5s ease-out infinite; }
+.animate-drift-1       { animation: drift-1  9s  ease-in-out infinite; }
+.animate-drift-2       { animation: drift-2  12s ease-in-out infinite 1.5s; }
+.animate-drift-3       { animation: drift-3  14s ease-in-out infinite 3s; }
+.animate-orbit-cw      { animation: orbit-cw  28s linear infinite; transform-origin: center; }
+.animate-orbit-ccw     { animation: orbit-ccw 20s linear infinite; transform-origin: center; }
+.animate-orbit-cw-fast { animation: orbit-cw  12s linear infinite; transform-origin: center; }
 .animate-slide-up      { animation: slide-up 0.6s cubic-bezier(0.16,1,0.3,1) both; }
 .animate-slide-left    { animation: slide-in-left 0.6s cubic-bezier(0.16,1,0.3,1) both; }
 .animate-slide-right   { animation: slide-in-right 0.6s cubic-bezier(0.16,1,0.3,1) both; }
 .animate-scale-in      { animation: scale-in 0.5s cubic-bezier(0.34,1.56,0.64,1) both; }
 .animate-blur-in       { animation: blur-in 0.6s ease both; }
+
+/* ── Shimmer text (flowing gradient on text) ── */
+.shimmer-text {
+  background: linear-gradient(90deg,
+    var(--terracotta) 0%, var(--saffron) 30%,
+    #f5d08a 50%, var(--saffron) 70%,
+    var(--terracotta) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer-sweep 4s linear infinite;
+}
+
+/* ── Ambient particle orbs ── */
+.ambient-orb {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+  filter: blur(40px);
+  will-change: transform, opacity;
+}
 
 /* ── Delay utilities ── */
 .delay-100 { animation-delay: 0.1s; }

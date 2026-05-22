@@ -42,48 +42,50 @@ function MandalaSVG() {
 
   return (
     <svg viewBox="0 0 480 480" xmlns="http://www.w3.org/2000/svg" className="w-full max-w-[480px] select-none" aria-hidden="true">
-      {/* Outer frame */}
-      <circle cx={cx} cy={cy} r="222" fill="none" stroke="#C67D53" strokeWidth="0.6" opacity="0.13" />
-      <circle cx={cx} cy={cy} r="210" fill="none" stroke="#C67D53" strokeWidth="0.4" opacity="0.07" />
-      <circle cx={cx} cy={cy} r="174" fill="none" stroke="#D4A043" strokeWidth="0.4" opacity="0.09" />
+      {/* ── Slowly rotating outer ring group ── */}
+      <g style={{ transformOrigin: '240px 240px', animation: 'orbit-cw 40s linear infinite' }}>
+        <circle cx={cx} cy={cy} r="222" fill="none" stroke="#C67D53" strokeWidth="0.6" opacity="0.13" />
+        <circle cx={cx} cy={cy} r="210" fill="none" stroke="#C67D53" strokeWidth="0.4" opacity="0.07" strokeDasharray="4 8" />
+        {marks.map((m, i) => (
+          <line key={`rm${i}`} x1={m.x1} y1={m.y1} x2={m.x2} y2={m.y2} stroke="#D4A043" strokeWidth="0.8" opacity="0.14" />
+        ))}
+      </g>
 
-      {/* 16-petal outer lotus */}
-      {Array.from({ length: 16 }, (_, i) => (
-        <ellipse key={`op${i}`} cx={cx} cy={75} rx={13} ry={29}
-          fill="#C67D53" fillOpacity="0.055" stroke="#C67D53" strokeWidth="0.5" strokeOpacity="0.11"
-          transform={`rotate(${i * 22.5} ${cx} ${cy})`} />
-      ))}
+      {/* ── Counter-rotating lotus ring ── */}
+      <g style={{ transformOrigin: '240px 240px', animation: 'orbit-ccw 28s linear infinite' }}>
+        <circle cx={cx} cy={cy} r="174" fill="none" stroke="#D4A043" strokeWidth="0.4" opacity="0.09" />
+        {Array.from({ length: 16 }, (_, i) => (
+          <ellipse key={`op${i}`} cx={cx} cy={75} rx={13} ry={29}
+            fill="#C67D53" fillOpacity="0.055" stroke="#C67D53" strokeWidth="0.5" strokeOpacity="0.11"
+            transform={`rotate(${i * 22.5} ${cx} ${cy})`} />
+        ))}
+      </g>
 
-      {/* 8-petal inner lotus */}
-      {Array.from({ length: 8 }, (_, i) => (
-        <ellipse key={`ip${i}`} cx={cx} cy={112} rx={10} ry={20}
-          fill="#D4A043" fillOpacity="0.05" stroke="#D4A043" strokeWidth="0.5" strokeOpacity="0.11"
-          transform={`rotate(${i * 45} ${cx} ${cy})`} />
-      ))}
+      {/* ── Slowly rotating inner lotus ── */}
+      <g style={{ transformOrigin: '240px 240px', animation: 'orbit-cw 18s linear infinite' }}>
+        {Array.from({ length: 8 }, (_, i) => (
+          <ellipse key={`ip${i}`} cx={cx} cy={112} rx={10} ry={20}
+            fill="#D4A043" fillOpacity="0.05" stroke="#D4A043" strokeWidth="0.5" strokeOpacity="0.11"
+            transform={`rotate(${i * 45} ${cx} ${cy})`} />
+        ))}
+      </g>
 
-      {/* Large interlocking triangles (Shiva ↑ / Shakti ↓) */}
+      {/* ── Static triangles (Sri Yantra core — stable) ── */}
       <polygon points={dn(145)} fill="#1C1E4A" fillOpacity="0.04" stroke="#1C1E4A" strokeWidth="0.9" strokeOpacity="0.18" />
       <polygon points={up(145)} fill="#C67D53" fillOpacity="0.03" stroke="#C67D53" strokeWidth="0.9" strokeOpacity="0.18" />
-
-      {/* Medium interlocking triangles */}
       <polygon points={dn(100)} fill="#1C1E4A" fillOpacity="0.04" stroke="#1C1E4A" strokeWidth="0.7" strokeOpacity="0.13" />
       <polygon points={up(100)} fill="#D4A043" fillOpacity="0.03" stroke="#D4A043" strokeWidth="0.7" strokeOpacity="0.13" />
-
-      {/* Small inner triangles */}
       <polygon points={up(58)} fill="#C67D53" fillOpacity="0.045" stroke="#C67D53" strokeWidth="0.65" strokeOpacity="0.22" />
       <polygon points={dn(36)} fill="#1C1E4A" fillOpacity="0.06" stroke="#1C1E4A" strokeWidth="0.65" strokeOpacity="0.22" />
 
-      {/* Inner circles */}
-      <circle cx={cx} cy={cy} r="48" fill="none" stroke="#D4A043" strokeWidth="0.5" opacity="0.17" />
+      {/* ── Breathing inner circles ── */}
+      <circle cx={cx} cy={cy} r="48" fill="none" stroke="#D4A043" strokeWidth="0.5"
+        style={{ animation: 'divine-pulse 4s ease-in-out infinite', opacity: 0.17 }} />
       <circle cx={cx} cy={cy} r="22" fill="none" stroke="#C67D53" strokeWidth="0.65" opacity="0.22" />
 
-      {/* Gate marks */}
-      {marks.map((m, i) => (
-        <line key={`rm${i}`} x1={m.x1} y1={m.y1} x2={m.x2} y2={m.y2} stroke="#D4A043" strokeWidth="0.8" opacity="0.14" />
-      ))}
-
       {/* Bindu */}
-      <circle cx={cx} cy={cy} r="5" fill="#C67D53" opacity="0.45" />
+      <circle cx={cx} cy={cy} r="5" fill="#C67D53"
+        style={{ animation: 'divine-pulse 3s ease-in-out infinite', opacity: 0.45 }} />
       <circle cx={cx} cy={cy} r="2" fill="#D4A043" opacity="0.75" />
     </svg>
   )
@@ -100,6 +102,14 @@ export default function HeroSection() {
         className="absolute inset-0 pointer-events-none"
         style={{ backgroundImage: 'radial-gradient(rgba(198,125,83,0.08) 1px, transparent 1px)', backgroundSize: '32px 32px' }}
       />
+
+      {/* Ambient floating orbs */}
+      <div className="ambient-orb animate-drift-1"
+        style={{ width: 320, height: 320, top: '-80px', right: '10%', background: 'radial-gradient(circle, rgba(198,125,83,0.12) 0%, transparent 70%)' }} />
+      <div className="ambient-orb animate-drift-2"
+        style={{ width: 240, height: 240, bottom: '5%', left: '5%', background: 'radial-gradient(circle, rgba(185,152,107,0.10) 0%, transparent 70%)' }} />
+      <div className="ambient-orb animate-drift-3"
+        style={{ width: 180, height: 180, top: '40%', right: '30%', background: 'radial-gradient(circle, rgba(47,42,68,0.06) 0%, transparent 70%)' }} />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
         {/* Two-column split */}
@@ -121,16 +131,13 @@ export default function HeroSection() {
             >
               Your Existence,
               <br />
-              <span
-                style={{
-                  color: 'var(--terracotta)',
+              <span className="shimmer-text" style={{
                   textDecorationLine: 'underline',
                   textDecorationStyle: 'solid',
                   textDecorationColor: 'rgba(198,125,83,0.38)',
                   textDecorationThickness: '3px',
                   textUnderlineOffset: '8px',
-                }}
-              >
+              }}>
                 Decoded.
               </span>
             </motion.h1>
@@ -203,9 +210,9 @@ export default function HeroSection() {
 
               {/* Floating panchang card — lower-left of illustration */}
               {snap && (
-                <div className="absolute bottom-4 left-0 lg:-left-4 hidden sm:block z-10">
+                <div className="absolute bottom-4 left-0 lg:-left-4 hidden sm:block z-10 animate-float">
                   <div
-                    className="rounded-2xl border border-[var(--warm-sand)] bg-white/85 backdrop-blur-sm shadow-lg p-4"
+                    className="rounded-2xl border border-[var(--warm-sand)] bg-white/85 backdrop-blur-sm shadow-lg p-4 animate-glow"
                     style={{ minWidth: '196px' }}
                   >
                     <p
