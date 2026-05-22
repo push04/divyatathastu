@@ -98,7 +98,7 @@ export default function MandirFinderPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-56px)] lg:h-screen flex-col">
+    <div className="flex h-[calc(100vh-64px)] flex-col">
       {/* Tab bar */}
       <div className="flex border-b border-[var(--warm-sand)] bg-white">
         {([['map', 'map', 'India Map'], ['nearby', 'near_me', 'Near Me']] as const).map(([t, icon, label]) => (

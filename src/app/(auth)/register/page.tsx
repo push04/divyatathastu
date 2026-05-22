@@ -126,26 +126,26 @@ export default function RegisterPage() {
         {/* Desktop: full panel */}
         <div className="hidden lg:flex flex-col h-full p-10">
           {/* Wordmark */}
-          <div className="flex items-center gap-3 mb-auto">
+          <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold" style={{ background: 'var(--terracotta)', fontSize: '14px' }}>ॐ</div>
             <span style={{ fontFamily: "'Playfair Display', serif", color: 'white', fontWeight: 700, fontSize: '18px' }}>DivyaTathastu</span>
           </div>
 
           {/* Center content */}
-          <div className="my-auto">
+          <div className="flex-1 flex flex-col justify-center py-6">
             <p
               className="mb-5"
-              style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: '22px', color: 'rgba(255,255,255,0.8)', maxWidth: '300px', lineHeight: 1.5 }}
+              style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: '21px', color: 'rgba(255,255,255,0.8)', maxWidth: '300px', lineHeight: 1.55 }}
             >
               ॐ तत् सत् — That is Truth. Know thyself fully.
             </p>
-            <div className="mb-8" style={{ height: '1px', width: '60px', background: 'rgba(212,160,67,0.3)' }} />
+            <div className="mb-7" style={{ height: '1px', width: '60px', background: 'rgba(212,160,67,0.3)' }} />
 
             <div className="space-y-1">
               {TRUST.map(({ Icon, text }) => (
                 <div key={text} className="flex items-start gap-3 py-2">
-                  <Icon size={16} color="var(--saffron)" className="flex-shrink-0 mt-0.5" />
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '14px', color: 'rgba(255,255,255,0.65)' }}>{text}</span>
+                  <Icon size={15} color="var(--saffron)" className="flex-shrink-0 mt-0.5" />
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '13px', color: 'rgba(255,255,255,0.65)' }}>{text}</span>
                 </div>
               ))}
             </div>
