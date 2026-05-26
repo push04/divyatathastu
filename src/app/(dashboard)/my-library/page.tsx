@@ -1,99 +1,209 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/client'
 
-const DEMO_PURCHASES = [
-  { id: '1', title: 'Complete Guide to Vedic Astrology', author: 'Dr. Rajesh Sharma', pages: 312, cover_emoji: 'brightness_7', purchased_at: '2025-09-10', progress: 68 },
-  { id: '3', title: 'Vastu Shastra for Modern Homes', author: 'Ar. Priya Vastu', pages: 248, cover_emoji: 'house', purchased_at: '2025-09-22', progress: 24 },
-  { id: '8', title: 'Sanatan Dharma: Festivals & Rituals', author: 'Acharya Deepak Shastri', pages: 88, cover_emoji: 'local_fire_department', purchased_at: '2025-08-15', progress: 100 },
-]
+interface Purchase {
+  id: string
+  download_count: number
+  max_downloads: number
+  purchased_at: string
+  ebooks: {
+    id: string
+    title: string
+    author: string | null
+    description: string | null
+    file_url: string
+    language: string | null
+    tags: string[]
+  } | null
+}
 
-export default function DashboardEbooksPage() {
-  const [active, setActive] = useState(DEMO_PURCHASES[0].id)
-  const reading = DEMO_PURCHASES.find(b => b.id === active)
+const TAG_ICONS: Record<string, string> = {
+  astrology: 'brightness_7', chakra: 'spa', numerology: 'tag',
+  vastu: 'house', mantra: 'mic', ayurveda: 'eco', default: 'menu_book',
+}
+
+function coverIcon(tags: string[]): string {
+  for (const tag of tags) {
+    const key = Object.keys(TAG_ICONS).find(k => tag.toLowerCase().includes(k))
+    if (key) return TAG_ICONS[key]
+  }
+  return TAG_ICONS.default
+}
+
+export default function MyLibraryPage() {
+  const [purchases, setPurchases] = useState<Purchase[]>([])
+  const [active, setActive] = useState<Purchase | null>(null)
+  const [loading, setLoading] = useState(true)
+  const supabase = createClient()
+
+  useEffect(() => {
+    async function load() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      const { data } = await supabase
+        .from('ebook_purchases')
+        .select('id,download_count,max_downloads,purchased_at,ebooks(id,title,author,description,file_url,language,tags)')
+        .eq('user_id', user.id)
+        .order('purchased_at', { ascending: false })
+      const rows = (data || []) as unknown as Purchase[]
+      setPurchases(rows)
+      if (rows.length > 0) setActive(rows[0])
+      setLoading(false)
+    }
+    load()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  async function download(purchase: Purchase) {
+    if (!purchase.ebooks) return
+    if (purchase.download_count >= purchase.max_downloads) {
+      alert(`Download limit reached (${purchase.max_downloads} downloads used). Contact support to increase your limit.`)
+      return
+    }
+    await supabase
+      .from('ebook_purchases')
+      .update({ download_count: purchase.download_count + 1 })
+      .eq('id', purchase.id)
+    setPurchases(prev => prev.map(p => p.id === purchase.id ? { ...p, download_count: p.download_count + 1 } : p))
+    if (active?.id === purchase.id) setActive(a => a ? { ...a, download_count: a.download_count + 1 } : a)
+    window.open(purchase.ebooks.file_url, '_blank')
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-5xl animate-pulse" style={{ fontFamily: "'Playfair Display', serif", color: 'var(--terracotta)' }}>ॐ</div>
+      </div>
+    )
+  }
+
+  if (purchases.length === 0) {
+    return (
+      <div className="p-6 max-w-5xl">
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold text-[var(--indigo-deep)]">My Ebook Library</h1>
+          <Link href="/ebooks" className="btn-divine text-sm">Browse Ebooks</Link>
+        </div>
+        <div className="card-divine p-16 text-center">
+          <span className="material-symbols-outlined text-[64px] text-[var(--warm-sand)] block mb-4" style={{ fontVariationSettings: "'FILL' 1" }}>menu_book</span>
+          <h2 className="text-xl font-semibold text-[var(--indigo-deep)] mb-2">No ebooks yet</h2>
+          <p className="text-sm text-[var(--warm-charcoal)]/60 mb-6">Purchase an ebook from the store to start reading.</p>
+          <Link href="/ebooks" className="btn-divine text-sm">Browse Ebooks</Link>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="p-6 max-w-5xl">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-[var(--indigo-deep)]">My Ebook Library</h1>
-          <p className="text-sm text-[var(--warm-charcoal)]/60">{DEMO_PURCHASES.length} books in your collection</p>
+          <p className="text-sm text-[var(--warm-charcoal)]/60">{purchases.length} book{purchases.length !== 1 ? 's' : ''} purchased</p>
         </div>
-        <Link href="/ebooks" className="btn-divine text-sm">Browse More Ebooks</Link>
+        <Link href="/ebooks" className="btn-divine text-sm">Browse More</Link>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Book list */}
         <div className="lg:col-span-1 space-y-3">
-          {DEMO_PURCHASES.map(book => (
-            <button
-              key={book.id}
-              onClick={() => setActive(book.id)}
-              className={`w-full text-left p-4 rounded-xl border transition-all ${active === book.id ? 'border-[var(--indigo-deep)] bg-[var(--indigo-deep)]/5' : 'border-[var(--warm-sand)] bg-white hover:border-[var(--indigo-deep)]/40'}`}
-            >
-              <div className="flex gap-3 items-start">
-                <div className="w-10 h-12 rounded-lg bg-gradient-to-br from-[var(--saffron)] to-[var(--indigo-deep)] flex items-center justify-center flex-shrink-0"><span className="material-symbols-outlined text-[20px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{book.cover_emoji}</span></div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-sm text-[var(--indigo-deep)] leading-snug line-clamp-2">{book.title}</p>
-                  <p className="text-xs text-[var(--warm-charcoal)]/50 mt-0.5">{book.author}</p>
-                  <div className="mt-2">
-                    <div className="flex justify-between text-xs mb-0.5">
-                      <span className="text-[var(--warm-charcoal)]/50">Progress</span>
-                      <span className={book.progress === 100 ? 'text-emerald-600 font-bold' : 'text-[var(--indigo-deep)] font-bold'}>{book.progress}%</span>
-                    </div>
-                    <div className="bg-[var(--warm-sand)] rounded-full h-1.5">
-                      <div className={`h-full rounded-full ${book.progress === 100 ? 'bg-emerald-500' : 'bg-[var(--terracotta)]'}`} style={{ width: `${book.progress}%` }} />
-                    </div>
+          {purchases.map(p => {
+            const ebook = p.ebooks
+            if (!ebook) return null
+            const tags: string[] = Array.isArray(ebook.tags) ? ebook.tags : []
+            const icon = coverIcon(tags)
+            const downloadsLeft = p.max_downloads - p.download_count
+            return (
+              <button
+                key={p.id}
+                onClick={() => setActive(p)}
+                className={`w-full text-left p-4 rounded-xl border transition-all ${active?.id === p.id ? 'border-[var(--indigo-deep)] bg-[var(--indigo-deep)]/5' : 'border-[var(--warm-sand)] bg-white hover:border-[var(--indigo-deep)]/40'}`}
+              >
+                <div className="flex gap-3 items-start">
+                  <div className="w-10 h-12 rounded-lg bg-gradient-to-br from-[var(--saffron)] to-[var(--indigo-deep)] flex items-center justify-center flex-shrink-0">
+                    <span className="material-symbols-outlined text-[20px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{icon}</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm text-[var(--indigo-deep)] leading-snug line-clamp-2">{ebook.title}</p>
+                    <p className="text-xs text-[var(--warm-charcoal)]/50 mt-0.5">{ebook.author || 'MahaTathastu'}</p>
+                    <p className="text-xs mt-1.5" style={{ color: downloadsLeft === 0 ? 'var(--terracotta)' : 'rgba(28,30,74,0.4)' }}>
+                      {downloadsLeft > 0 ? `${downloadsLeft} download${downloadsLeft !== 1 ? 's' : ''} left` : 'Limit reached'}
+                    </p>
                   </div>
                 </div>
-              </div>
-            </button>
-          ))}
+              </button>
+            )
+          })}
         </div>
 
-        {/* Reader panel */}
-        {reading && (
+        {/* Detail panel */}
+        {active?.ebooks && (
           <div className="lg:col-span-2 card-divine p-6">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-20 rounded-xl bg-gradient-to-br from-[var(--saffron)] to-[var(--indigo-deep)] flex items-center justify-center shadow-lg"><span className="material-symbols-outlined text-[36px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{reading.cover_emoji}</span></div>
-              <div>
-                <h2 className="text-xl font-bold text-[var(--indigo-deep)]">{reading.title}</h2>
-                <p className="text-sm text-[var(--warm-charcoal)]/60">by {reading.author}</p>
-                <p className="text-xs text-[var(--warm-charcoal)]/40 mt-1">Purchased {new Date(reading.purchased_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
-              </div>
-            </div>
+            {(() => {
+              const ebook = active.ebooks!
+              const tags: string[] = Array.isArray(ebook.tags) ? ebook.tags : []
+              const icon = coverIcon(tags)
+              const downloadsLeft = active.max_downloads - active.download_count
+              return (
+                <>
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-16 h-20 rounded-xl bg-gradient-to-br from-[var(--saffron)] to-[var(--indigo-deep)] flex items-center justify-center shadow-lg flex-shrink-0">
+                      <span className="material-symbols-outlined text-[36px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{icon}</span>
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold text-[var(--indigo-deep)]">{ebook.title}</h2>
+                      <p className="text-sm text-[var(--warm-charcoal)]/60">by {ebook.author || 'MahaTathastu'}</p>
+                      {ebook.language && (
+                        <span className="text-xs bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 px-2 py-0.5 rounded-full mt-1 inline-block">{ebook.language}</span>
+                      )}
+                    </div>
+                  </div>
 
-            <div className="grid grid-cols-3 gap-4 mb-6">
-              <div className="text-center p-3 bg-[var(--kutch-white)] rounded-lg">
-                <p className="text-2xl font-bold text-[var(--indigo-deep)]">{reading.pages}</p>
-                <p className="text-xs text-[var(--warm-charcoal)]/50">Total Pages</p>
-              </div>
-              <div className="text-center p-3 bg-[var(--kutch-white)] rounded-lg">
-                <p className="text-2xl font-bold text-[var(--terracotta)]">{Math.round(reading.pages * reading.progress / 100)}</p>
-                <p className="text-xs text-[var(--warm-charcoal)]/50">Pages Read</p>
-              </div>
-              <div className="text-center p-3 bg-[var(--kutch-white)] rounded-lg">
-                <p className="text-2xl font-bold text-emerald-600">{reading.progress}%</p>
-                <p className="text-xs text-[var(--warm-charcoal)]/50">Complete</p>
-              </div>
-            </div>
+                  {ebook.description && (
+                    <p className="text-sm text-[var(--warm-charcoal)]/60 leading-relaxed mb-6">{ebook.description}</p>
+                  )}
 
-            <div className="space-y-3">
-              <button className="btn-divine w-full py-3">
-                <span className="inline-flex items-center gap-2"><span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>menu_book</span>{reading.progress === 100 ? 'Read Again' : reading.progress === 0 ? 'Start Reading' : 'Continue Reading'}</span>
-              </button>
-              <button className="w-full py-3 rounded-xl border border-[var(--warm-sand)] text-sm font-medium text-[var(--indigo-deep)] hover:bg-[var(--kutch-white)] transition-colors inline-flex items-center justify-center gap-2">
-                <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>download</span> Download PDF
-              </button>
-            </div>
+                  <div className="grid grid-cols-3 gap-4 mb-6">
+                    <div className="text-center p-3 bg-[var(--kutch-white)] rounded-lg">
+                      <p className="text-2xl font-bold text-[var(--indigo-deep)]">{active.download_count}</p>
+                      <p className="text-xs text-[var(--warm-charcoal)]/50">Downloads Used</p>
+                    </div>
+                    <div className="text-center p-3 bg-[var(--kutch-white)] rounded-lg">
+                      <p className="text-2xl font-bold text-[var(--terracotta)]">{downloadsLeft}</p>
+                      <p className="text-xs text-[var(--warm-charcoal)]/50">Remaining</p>
+                    </div>
+                    <div className="text-center p-3 bg-[var(--kutch-white)] rounded-lg">
+                      <p className="text-sm font-bold text-[var(--indigo-deep)]">{new Date(active.purchased_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                      <p className="text-xs text-[var(--warm-charcoal)]/50">Purchased</p>
+                    </div>
+                  </div>
 
-            {reading.progress === 100 && (
-              <div className="mt-4 p-3 bg-emerald-50 border border-emerald-200 rounded-lg text-center">
-                <p className="text-emerald-700 font-semibold text-sm inline-flex items-center gap-1"><span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>celebration</span> You've completed this book!</p>
-                <button className="text-xs text-emerald-600 underline mt-1">Download Certificate of Completion</button>
-              </div>
-            )}
+                  {tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {tags.map((tag: string) => (
+                        <span key={tag} className="text-xs bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 px-2 py-0.5 rounded-full capitalize">{tag.replace(/-/g, ' ')}</span>
+                      ))}
+                    </div>
+                  )}
+
+                  <button
+                    onClick={() => download(active)}
+                    disabled={downloadsLeft === 0}
+                    className="btn-divine w-full py-3 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+                  >
+                    <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>download</span>
+                    {downloadsLeft === 0 ? 'Download Limit Reached' : 'Download PDF'}
+                  </button>
+                  {downloadsLeft === 0 && (
+                    <p className="text-xs text-center text-[var(--warm-charcoal)]/40 mt-2">
+                      Contact <a href="mailto:support@mahatathastu.com" className="text-[var(--terracotta)] hover:underline">support@mahatathastu.com</a> to get more downloads.
+                    </p>
+                  )}
+                </>
+              )
+            })()}
           </div>
         )}
       </div>

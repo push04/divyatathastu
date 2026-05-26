@@ -35,7 +35,7 @@ export default function AdminMailboxPage() {
   useEffect(() => { if (active) loadMessages(active.id) }, [active])
 
   async function loadThreads() {
-    const { data } = await supabase.from('mail_threads').select('id,subject,status,created_at,last_message_at').eq('status', filter).order('last_message_at', { ascending: false })
+    const { data } = await supabase.from('mail_threads').select('id,subject,status,created_at,last_message_at,profiles!user_id(full_name)').eq('status', filter).order('last_message_at', { ascending: false })
     if (data) setThreads(data as unknown as Thread[])
   }
 

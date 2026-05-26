@@ -700,6 +700,35 @@ export type Database = {
         }
         Relationships: []
       }
+      ebook_purchases: {
+        Row: {
+          id: string
+          user_id: string | null
+          ebook_id: string | null
+          order_id: string | null
+          download_count: number
+          max_downloads: number
+          purchased_at: string
+        }
+        Insert: {
+          user_id?: string | null
+          ebook_id?: string | null
+          order_id?: string | null
+          download_count?: number
+          max_downloads?: number
+        }
+        Update: {
+          user_id?: string | null
+          ebook_id?: string | null
+          order_id?: string | null
+          download_count?: number
+          max_downloads?: number
+        }
+        Relationships: [
+          { foreignKeyName: 'ebook_purchases_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+          { foreignKeyName: 'ebook_purchases_ebook_id_fkey'; columns: ['ebook_id']; isOneToOne: false; referencedRelation: 'ebooks'; referencedColumns: ['id'] }
+        ]
+      }
       coupons: {
         Row: {
           id: string
