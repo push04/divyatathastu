@@ -23,7 +23,7 @@ export default function AdminOverviewPage() {
         supabase.from('orders').select('total,status').eq('status', 'paid'),
         supabase.from('consultation_bookings').select('*', { count: 'exact', head: true }).eq('status', 'confirmed'),
         supabase.from('mail_threads').select('*', { count: 'exact', head: true }).eq('status', 'open'),
-        supabase.from('events').select('*', { count: 'exact', head: true }).eq('is_published', true),
+        supabase.from('events').select('id', { count: 'exact', head: true }).eq('is_published', true).then(r => r.error ? { count: 0 } : r),
       ])
       const revenue = ordersRes.data?.reduce((sum, o) => sum + (o.total || 0), 0) || 0
       setStats({ users: usersRes.count || 0, reports: reportsRes.count || 0, orders: ordersRes.data?.length || 0, revenue, activeConsultations: consultRes.count || 0, openTickets: mailRes.count || 0, events: eventsRes.count || 0 })
