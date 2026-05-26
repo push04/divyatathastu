@@ -4,28 +4,29 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 
-interface Stats { users: number; reports: number; orders: number; revenue: number; activeConsultations: number; openTickets: number }
+interface Stats { users: number; reports: number; orders: number; revenue: number; activeConsultations: number; openTickets: number; events: number }
 interface RecentActivity { type: 'user' | 'report' | 'order'; label: string; time: string; icon: string }
 
 const STAT_ICONS: Record<string, string> = { group: 'group', description: 'description', package_2: 'package_2', payments: 'payments', handshake: 'handshake', mail: 'mail' }
 
 export default function AdminOverviewPage() {
   const supabase = createClient()
-  const [stats, setStats] = useState<Stats>({ users: 0, reports: 0, orders: 0, revenue: 0, activeConsultations: 0, openTickets: 0 })
+  const [stats, setStats] = useState<Stats>({ users: 0, reports: 0, orders: 0, revenue: 0, activeConsultations: 0, openTickets: 0, events: 0 })
   const [recent, setRecent] = useState<RecentActivity[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function load() {
-      const [usersRes, reportsRes, ordersRes, consultRes, mailRes] = await Promise.all([
+      const [usersRes, reportsRes, ordersRes, consultRes, mailRes, eventsRes] = await Promise.all([
         supabase.from('profiles').select('*', { count: 'exact', head: true }),
         supabase.from('reports').select('*', { count: 'exact', head: true }),
         supabase.from('orders').select('total,status').eq('status', 'paid'),
         supabase.from('consultation_bookings').select('*', { count: 'exact', head: true }).eq('status', 'confirmed'),
         supabase.from('mail_threads').select('*', { count: 'exact', head: true }).eq('status', 'open'),
+        supabase.from('events').select('*', { count: 'exact', head: true }).eq('is_published', true),
       ])
       const revenue = ordersRes.data?.reduce((sum, o) => sum + (o.total || 0), 0) || 0
-      setStats({ users: usersRes.count || 0, reports: reportsRes.count || 0, orders: ordersRes.data?.length || 0, revenue, activeConsultations: consultRes.count || 0, openTickets: mailRes.count || 0 })
+      setStats({ users: usersRes.count || 0, reports: reportsRes.count || 0, orders: ordersRes.data?.length || 0, revenue, activeConsultations: consultRes.count || 0, openTickets: mailRes.count || 0, events: eventsRes.count || 0 })
       const [recentUsers, recentReports, recentOrders] = await Promise.all([
         supabase.from('profiles').select('full_name,created_at').order('created_at', { ascending: false }).limit(3),
         supabase.from('reports').select('report_type,created_at').order('created_at', { ascending: false }).limit(3),
@@ -51,6 +52,7 @@ export default function AdminOverviewPage() {
     { label: 'Revenue (₹)', value: `₹${stats.revenue.toLocaleString('en-IN')}`, icon: 'payments', color: 'bg-[var(--saffron)]', href: '/admin/orders' },
     { label: 'Active Consultations', value: stats.activeConsultations, icon: 'handshake', color: 'bg-teal-600', href: '/admin/consultations' },
     { label: 'Open Tickets', value: stats.openTickets, icon: 'mail', color: stats.openTickets > 0 ? 'bg-[var(--terracotta)]' : 'bg-[var(--warm-charcoal)]/40', href: '/admin/mailbox' },
+    { label: 'Live Events', value: stats.events, icon: 'event_note', color: 'bg-violet-600', href: '/admin/events' },
   ]
 
   return (
@@ -78,6 +80,7 @@ export default function AdminOverviewPage() {
           { href: '/admin/products', label: 'Manage Products', icon: 'shopping_bag' },
           { href: '/admin/coupons', label: 'Create Coupon', icon: 'redeem' },
           { href: '/admin/blog', label: 'Write Blog', icon: 'edit' },
+          { href: '/admin/events', label: 'Manage Events', icon: 'event_note' },
         ].map(l => (
           <Link key={l.href} href={l.href} className="card-divine p-4 hover:shadow-sm transition-all text-center">
             <span className="material-symbols-outlined text-[24px] text-[var(--indigo-deep)] mb-2 block" style={{ fontVariationSettings: "'FILL' 1" }}>{l.icon}</span>

@@ -17,6 +17,7 @@ const navItems = [
   { href: '/mandir-finder', label: 'Mandir Finder', icon: 'temple_hindu' },
   { href: '/pilgrimage', label: 'Pilgrimage', icon: 'travel_explore' },
   { href: '/shop', label: 'Shop', icon: 'storefront' },
+  { href: '/handwritten-report', label: 'Handwritten Report', icon: 'draw' },
   { href: '/orders', label: 'Orders', icon: 'package_2' },
   { href: '/consultations', label: 'Consultations', icon: 'event' },
   { href: '/mailbox', label: 'Mailbox', icon: 'mail' },

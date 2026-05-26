@@ -12,6 +12,8 @@ const PROTECTED_PATHS = [
   '/my-library',
   '/social',
   '/settings',
+  '/handwritten-report',
+  '/shop/checkout',
 ]
 
 export async function middleware(request: NextRequest) {

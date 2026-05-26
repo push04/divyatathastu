@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 interface Product {
   id: string
@@ -67,6 +68,7 @@ function getImageUrl(images: any): string | null {
 
 export default function ShopPage() {
   const supabase = createClient()
+  const router = useRouter()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [category, setCategory] = useState('all')
@@ -76,6 +78,9 @@ export default function ShopPage() {
   const [cartOpen, setCartOpen] = useState(false)
   const [selected, setSelected] = useState<Product | null>(null)
   const [addingId, setAddingId] = useState<string | null>(null)
+  const [user, setUser] = useState<any>(null)
+  const [authModal, setAuthModal] = useState(false)
+  const [pendingProduct, setPendingProduct] = useState<Product | null>(null)
 
   useEffect(() => {
     async function load() {
@@ -85,6 +90,8 @@ export default function ShopPage() {
       if (stored) {
         try { setCart(new Map(JSON.parse(stored))) } catch {}
       }
+      const { data: { user: u } } = await supabase.auth.getUser()
+      setUser(u)
       setLoading(false)
     }
     load()
@@ -96,6 +103,11 @@ export default function ShopPage() {
   }
 
   async function addToCart(p: Product) {
+    if (!user) {
+      setPendingProduct(p)
+      setAuthModal(true)
+      return
+    }
     setAddingId(p.id)
     const m = new Map(cart)
     m.set(p.id, (m.get(p.id) || 0) + 1)
@@ -482,6 +494,46 @@ export default function ShopPage() {
       )}
 
       {/* ── Floating Cart Bar ── */}
+      {/* Auth Modal — shown when unauthenticated user tries to add to cart */}
+      {authModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden">
+            <div className="p-6 text-center" style={{ background: 'linear-gradient(135deg, var(--indigo-deep) 0%, #460B2F 100%)' }}>
+              <div className="text-5xl mb-2" style={{ color: 'rgba(212,160,67,0.3)', fontFamily: "'Playfair Display', serif" }}>ॐ</div>
+              <h2 className="text-xl font-bold text-white" style={{ fontFamily: "'Playfair Display', serif" }}>Sign in to continue</h2>
+              <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                {pendingProduct ? `Add "${pendingProduct.name}" to your cart` : 'Please sign in to shop'}
+              </p>
+            </div>
+            <div className="p-6 space-y-3">
+              <Link
+                href={`/login?redirect=/shop`}
+                className="block w-full text-center py-3 rounded-xl font-semibold text-sm text-white transition-opacity hover:opacity-90"
+                style={{ background: 'var(--terracotta)' }}
+                onClick={() => setAuthModal(false)}
+              >
+                Sign In
+              </Link>
+              <Link
+                href={`/register?redirect=/shop`}
+                className="block w-full text-center py-3 rounded-xl font-semibold text-sm border transition-colors hover:bg-[var(--warm-sand)]/40"
+                style={{ color: 'var(--indigo-deep)', borderColor: 'var(--outline-variant, #D8D0C8)' }}
+                onClick={() => setAuthModal(false)}
+              >
+                Create Free Account
+              </Link>
+              <button
+                onClick={() => { setAuthModal(false); setPendingProduct(null) }}
+                className="block w-full text-center py-2 text-xs font-medium"
+                style={{ color: 'rgba(28,30,74,0.4)' }}
+              >
+                Continue browsing
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {cartCount > 0 && !cartOpen && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 px-4 w-full max-w-sm">
           <button onClick={() => setCartOpen(true)}
