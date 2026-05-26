@@ -2,17 +2,17 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'In the Media | DivyaTathastu — Press & Coverage',
-  description: 'DivyaTathastu featured in leading Indian media outlets — Times of India, NDTV, Hindustan Times and more.',
+  title: 'In the Media | MahaTathastu — Press & Coverage',
+  description: 'MahaTathastu featured in leading Indian media outlets — Times of India, NDTV, Hindustan Times and more.',
 }
 
 const PRESS_FEATURES = [
-  { id: 1, outlet: 'Times of India', logo: 'TOI', date: '2025-08-15', headline: '"DivyaTathastu Is Bringing Ancient Vedic Sciences Into the Digital Age"', excerpt: 'The platform has quietly become one of India\'s most comprehensive spiritual technology platforms, offering AI-powered astrological reports that rival traditional consultations.', category: 'Feature', color: 'bg-red-600' },
-  { id: 2, outlet: 'NDTV', logo: 'NDTV', date: '2025-07-22', headline: 'How This Startup Is Making Astrology Accessible to Millions of Indians', excerpt: 'With over 50,000 reports generated in its first year, DivyaTathastu is proving that spirituality and technology can coexist beautifully.', category: 'Startup', color: 'bg-red-700' },
-  { id: 3, outlet: 'Hindustan Times', logo: 'HT', date: '2025-06-10', headline: 'The AI That Reads Your Kundli: Inside India\'s First 360° Spiritual Platform', excerpt: 'Noxatra, the AI engine powering DivyaTathastu\'s reports, combines 14 different Vedic sciences into a single comprehensive life analysis.', category: 'Technology', color: 'bg-teal-700' },
-  { id: 4, outlet: 'Economic Times', logo: 'ET', date: '2025-05-30', headline: 'Spiritual Tech Is a ₹5,000 Crore Opportunity — And DivyaTathastu Is Chasing It', excerpt: 'As India\'s spiritual economy booms, platforms like DivyaTathastu are finding that combining ancient wisdom with modern UX creates a powerful product.', category: 'Business', color: 'bg-[var(--indigo-deep)]' },
-  { id: 5, outlet: 'The Print', logo: 'TP', date: '2025-04-18', headline: 'Vastu, Numerology and AI: How DivyaTathastu Is Reinventing the Jyotishi', excerpt: 'Traditional astrologers typically offer one service. DivyaTathastu offers fourteen — all powered by AI and delivered instantly.', category: 'Analysis', color: 'bg-[var(--plum)]' },
-  { id: 6, outlet: 'YourStory', logo: 'YS', date: '2025-03-05', headline: 'From Zero to 50K Users: The DivyaTathastu Story', excerpt: 'Founder\'s vision to democratize Vedic knowledge has resonated deeply with India\'s growing wellness-conscious middle class.', category: 'Startup', color: 'bg-emerald-700' },
+  { id: 1, outlet: 'Times of India', logo: 'TOI', date: '2025-08-15', headline: '"MahaTathastu Is Bringing Ancient Vedic Sciences Into the Digital Age"', excerpt: 'The platform has quietly become one of India\'s most comprehensive spiritual technology platforms, offering AI-powered astrological reports that rival traditional consultations.', category: 'Feature', color: 'bg-red-600' },
+  { id: 2, outlet: 'NDTV', logo: 'NDTV', date: '2025-07-22', headline: 'How This Startup Is Making Astrology Accessible to Millions of Indians', excerpt: 'With over 50,000 reports generated in its first year, MahaTathastu is proving that spirituality and technology can coexist beautifully.', category: 'Startup', color: 'bg-red-700' },
+  { id: 3, outlet: 'Hindustan Times', logo: 'HT', date: '2025-06-10', headline: 'The AI That Reads Your Kundli: Inside India\'s First 360° Spiritual Platform', excerpt: 'Noxatra, the AI engine powering MahaTathastu\'s reports, combines 14 different Vedic sciences into a single comprehensive life analysis.', category: 'Technology', color: 'bg-teal-700' },
+  { id: 4, outlet: 'Economic Times', logo: 'ET', date: '2025-05-30', headline: 'Spiritual Tech Is a ₹5,000 Crore Opportunity — And MahaTathastu Is Chasing It', excerpt: 'As India\'s spiritual economy booms, platforms like MahaTathastu are finding that combining ancient wisdom with modern UX creates a powerful product.', category: 'Business', color: 'bg-[var(--indigo-deep)]' },
+  { id: 5, outlet: 'The Print', logo: 'TP', date: '2025-04-18', headline: 'Vastu, Numerology and AI: How MahaTathastu Is Reinventing the Jyotishi', excerpt: 'Traditional astrologers typically offer one service. MahaTathastu offers fourteen — all powered by AI and delivered instantly.', category: 'Analysis', color: 'bg-[var(--plum)]' },
+  { id: 6, outlet: 'YourStory', logo: 'YS', date: '2025-03-05', headline: 'From Zero to 50K Users: The MahaTathastu Story', excerpt: 'Founder\'s vision to democratize Vedic knowledge has resonated deeply with India\'s growing wellness-conscious middle class.', category: 'Startup', color: 'bg-emerald-700' },
 ]
 
 const AWARDS = [
@@ -36,7 +36,7 @@ export default function InMediaPage() {
       <section className="page-banner">
         <div className="page-banner-inner max-w-2xl mx-auto">
           <p className="text-[var(--saffron)] text-xs font-bold tracking-[0.2em] uppercase mb-4" style={{ fontFamily: "'Sora', sans-serif" }}>Press & Media</p>
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>DivyaTathastu in the Media</h1>
+          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>MahaTathastu in the Media</h1>
           <div className="ornate-divider">
             <span className="material-symbols-outlined text-[14px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
           </div>
@@ -107,11 +107,11 @@ export default function InMediaPage() {
         <p className="text-white/70 mb-6 max-w-md mx-auto">Journalists, bloggers and researchers — we'd love to share our story. Download our press kit or reach out directly.</p>
         <div className="flex justify-center gap-4 flex-wrap">
           <button className="btn-divine px-6 py-3 flex items-center gap-2"><span className="material-symbols-outlined text-[18px]">folder_open</span>Download Press Kit</button>
-          <a href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '9858784784'}?text=Hi%2C%20I%20am%20a%20journalist%20interested%20in%20DivyaTathastu`} target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-xl border border-white/20 text-white font-medium hover:bg-white/10 transition-colors flex items-center gap-2">
+          <a href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '9858784784'}?text=Hi%2C%20I%20am%20a%20journalist%20interested%20in%20MahaTathastu`} target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-xl border border-white/20 text-white font-medium hover:bg-white/10 transition-colors flex items-center gap-2">
             <span className="material-symbols-outlined text-[18px]">chat</span>WhatsApp Us
           </a>
         </div>
-        <p className="text-white/40 text-sm mt-4">media@divyatathastu.com · Response within 24 hours</p>
+        <p className="text-white/40 text-sm mt-4">media@mahatathastu.com · Response within 24 hours</p>
       </section>
     </div>
   )

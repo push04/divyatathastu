@@ -3,9 +3,10 @@
 export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils/cn'
+import { createClient } from '@/lib/supabase/client'
 
 const adminNav = [
   { href: '/admin', label: 'Overview', icon: 'bar_chart' },
@@ -26,7 +27,7 @@ function AdminSidebarContent({ onClose }: { onClose?: () => void }) {
     <>
       <div className="px-4 py-5 border-b border-white/10 flex items-center justify-between">
         <div>
-          <div className="text-sm font-bold text-white/80">ॐ DivyaTathastu</div>
+          <div className="text-sm font-bold text-white/80">ॐ MahaTathastu</div>
           <div className="text-xs text-white/40 mt-0.5">Admin Panel</div>
         </div>
         {onClose && (
@@ -72,8 +73,29 @@ function AdminSidebarContent({ onClose }: { onClose?: () => void }) {
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [authorized, setAuthorized] = useState(false)
   const pathname = usePathname()
+  const router = useRouter()
+  const supabase = createClient()
+
   useEffect(() => { setMobileOpen(false) }, [pathname])
+
+  useEffect(() => {
+    async function checkRole() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { router.replace('/login'); return }
+      const { data } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+      if (data?.role !== 'admin') { router.replace('/dashboard'); return }
+      setAuthorized(true)
+    }
+    checkRole()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  if (!authorized) return (
+    <div className="flex items-center justify-center min-h-screen bg-[var(--kutch-white)]">
+      <div className="text-3xl animate-spin" style={{ fontFamily: "'Playfair Display', serif", color: 'var(--terracotta)' }}>ॐ</div>
+    </div>
+  )
 
   return (
     <div className="flex min-h-screen bg-[var(--kutch-white)]">

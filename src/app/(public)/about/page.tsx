@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'About Us | DivyaTathastu',
+  title: 'About Us | MahaTathastu',
   description: "India's First 360° Holistic Life Platform — combining Vedic astrology, numerology, Ayurveda, and spiritual guidance.",
 }
 
@@ -21,7 +21,7 @@ export default function AboutPage() {
         <div className="page-banner-inner max-w-3xl mx-auto">
           <div className="w-20 h-20 rounded-full gradient-saffron flex items-center justify-center text-white text-4xl mx-auto mb-6 shadow-xl shadow-[var(--terracotta)]/30" style={{ fontFamily: 'serif' }}>ॐ</div>
           <p className="text-[var(--saffron)] text-xs font-bold tracking-[0.2em] uppercase mb-4" style={{ fontFamily: "'Sora', sans-serif" }}>Our Story</p>
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>About DivyaTathastu</h1>
+          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>About MahaTathastu</h1>
           <div className="ornate-divider">
             <span className="material-symbols-outlined text-[14px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
           </div>
@@ -90,7 +90,7 @@ export default function AboutPage() {
       {/* CTA */}
       <section className="py-16 px-6 bg-white text-center">
         <h2 className="text-3xl font-bold text-[var(--indigo-deep)] mb-4">Start Your Spiritual Journey</h2>
-        <p className="text-[var(--warm-charcoal)]/60 mb-8 max-w-lg mx-auto">Join 10,000+ families who have discovered their divine path with DivyaTathastu.</p>
+        <p className="text-[var(--warm-charcoal)]/60 mb-8 max-w-lg mx-auto">Join 10,000+ families who have discovered their divine path with MahaTathastu.</p>
         <div className="flex gap-4 justify-center flex-wrap">
           <Link href="/register" className="btn-divine px-8 py-3">Get Started Free</Link>
           <Link href="/reports/generate" className="px-8 py-3 rounded-xl border-2 border-[var(--indigo-deep)] text-[var(--indigo-deep)] font-semibold hover:bg-[var(--indigo-deep)] hover:text-white transition-all">Generate Report</Link>

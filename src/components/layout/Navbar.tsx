@@ -57,7 +57,7 @@ export default function Navbar() {
               className="text-[var(--indigo-deep)] font-bold text-lg leading-none tracking-tight"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              DivyaTathastu
+              MahaTathastu
             </span>
           </Link>
 

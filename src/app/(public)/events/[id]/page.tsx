@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { id } = await params
   const event = FALLBACK_EVENTS[id]
   return {
-    title: event ? `${event.title} | DivyaTathastu Events` : 'Event | DivyaTathastu',
+    title: event ? `${event.title} | MahaTathastu Events` : 'Event | MahaTathastu',
     description: event?.description?.slice(0, 155),
   }
 }
@@ -97,7 +97,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
             </div>
             <div>
               <p className="text-xs text-[var(--warm-charcoal)]/50 mb-1">Hosted by</p>
-              <p className="font-semibold text-sm flex items-center gap-1"><span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>person</span> {event.host || 'DivyaTathastu Team'}</p>
+              <p className="font-semibold text-sm flex items-center gap-1"><span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>person</span> {event.host || 'MahaTathastu Team'}</p>
             </div>
           </div>
 

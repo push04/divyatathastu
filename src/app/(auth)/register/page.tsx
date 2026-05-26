@@ -119,7 +119,7 @@ export default function RegisterPage() {
         {/* Mobile: compact header */}
         <div className="lg:hidden flex items-center gap-3 p-6" style={{ minHeight: '80px' }}>
           <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ background: 'var(--terracotta)' }}>ॐ</div>
-          <span style={{ fontFamily: "'Playfair Display', serif", color: 'white', fontWeight: 700, fontSize: '16px' }}>DivyaTathastu</span>
+          <span style={{ fontFamily: "'Playfair Display', serif", color: 'white', fontWeight: 700, fontSize: '16px' }}>MahaTathastu</span>
           <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '12px', color: 'rgba(255,255,255,0.45)', marginLeft: 'auto' }}>India's holistic platform</span>
         </div>
 
@@ -128,7 +128,7 @@ export default function RegisterPage() {
           {/* Wordmark */}
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold" style={{ background: 'var(--terracotta)', fontSize: '14px' }}>ॐ</div>
-            <span style={{ fontFamily: "'Playfair Display', serif", color: 'white', fontWeight: 700, fontSize: '18px' }}>DivyaTathastu</span>
+            <span style={{ fontFamily: "'Playfair Display', serif", color: 'white', fontWeight: 700, fontSize: '18px' }}>MahaTathastu</span>
           </div>
 
           {/* Center content */}

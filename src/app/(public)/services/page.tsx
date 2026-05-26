@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Our Services | DivyaTathastu — 14 Vedic Reports',
+  title: 'Our Services | MahaTathastu — 14 Vedic Reports',
   description: 'Explore all 14 Noxatra reports: Kundli, Numerology, Chakra, Prakriti, Yantra, Mantra, Vastu, DMIT, and more.',
 }
 

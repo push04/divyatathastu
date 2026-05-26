@@ -8,6 +8,7 @@ interface Profile { id: string; full_name: string; email: string }
 interface FamilyMember { id: string; full_name: string; relation: string; date_of_birth?: string }
 interface Report { id: string; report_type: string; status: string; created_at: string; family_members: { full_name: string } | null }
 interface Notification { id: string; title: string; body: string; type: string; is_read: boolean; created_at: string }
+interface PanchangSnap { tithi: string; nakshatra: string; yoga: string; rahuKaal: string }
 
 const REPORT_ICONS: Record<string, string> = {
   full_tathastu: 'auto_awesome', kundli: 'brightness_7', numerology: 'tag', chakra: 'spa', prakriti: 'eco',
@@ -30,8 +31,17 @@ export default function DashboardPage() {
   const [members, setMembers] = useState<FamilyMember[]>([])
   const [reports, setReports] = useState<Report[]>([])
   const [notifications, setNotifications] = useState<Notification[]>([])
+  const [panchang, setPanchang] = useState<PanchangSnap | null>(null)
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
+
+  useEffect(() => {
+    const today = new Date().toISOString().split('T')[0]
+    fetch(`/api/panchang?lat=28.6139&lng=77.2090&date=${today}`)
+      .then(r => r.json())
+      .then(j => { if (j.success) setPanchang({ tithi: j.data.tithi, nakshatra: j.data.nakshatra, yoga: j.data.yoga, rahuKaal: j.data.rahuKaal }) })
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     async function load() {
@@ -163,20 +173,28 @@ export default function DashboardPage() {
             <span className="material-symbols-outlined text-[var(--saffron)] text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>wb_sunny</span>
             Daily Panchang
           </h3>
-          <div className="space-y-3">
-            {[
-              { label: 'Today', value: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) },
-              { label: 'Tithi', value: 'Shukla Ashtami' },
-              { label: 'Nakshatra', value: 'Rohini' },
-              { label: 'Yoga', value: 'Siddhi' },
-              { label: 'Rahu Kaal', value: '13:30 – 15:00', alert: true },
-            ].map(({ label, value, alert }) => (
-              <div key={label} className="flex justify-between items-center border-b border-[var(--outline-variant)]/20 pb-2 last:border-0 last:pb-0">
-                <span className="text-xs text-[var(--indigo-deep)]/50">{label}</span>
-                <span className={`text-xs font-medium ${alert ? 'text-red-500' : 'text-[var(--indigo-deep)]'}`} style={{ fontFamily: "'JetBrains Mono', monospace" }}>{value}</span>
-              </div>
-            ))}
-          </div>
+          {panchang ? (
+            <div className="space-y-3">
+              {[
+                { label: 'Today', value: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) },
+                { label: 'Tithi', value: panchang.tithi },
+                { label: 'Nakshatra', value: panchang.nakshatra },
+                { label: 'Yoga', value: panchang.yoga },
+                { label: 'Rahu Kaal', value: panchang.rahuKaal, alert: true },
+              ].map(({ label, value, alert }) => (
+                <div key={label} className="flex justify-between items-center border-b border-[var(--outline-variant)]/20 pb-2 last:border-0 last:pb-0">
+                  <span className="text-xs text-[var(--indigo-deep)]/50">{label}</span>
+                  <span className={`text-xs font-medium ${alert ? 'text-red-500' : 'text-[var(--indigo-deep)]'}`} style={{ fontFamily: "'JetBrains Mono', monospace" }}>{value}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="h-4 bg-[var(--warm-sand)] rounded animate-pulse" />
+              ))}
+            </div>
+          )}
           <Link href="/panchang" className="block mt-4 text-center text-xs text-[var(--terracotta)] hover:underline font-semibold" style={{ fontFamily: "'Sora', sans-serif" }}>
             Full Panchang <span className="material-symbols-outlined text-[12px]" style={{ verticalAlign: 'middle' }}>arrow_forward</span>
           </Link>

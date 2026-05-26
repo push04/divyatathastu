@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/dashboard', '/admin', '/api', '/settings', '/mailbox'],
       },
     ],
-    sitemap: `${process.env.NEXT_PUBLIC_APP_URL || 'https://divyatathastu.com'}/sitemap.xml`,
+    sitemap: `${process.env.NEXT_PUBLIC_APP_URL || 'https://mahatathastu.com'}/sitemap.xml`,
   }
 }

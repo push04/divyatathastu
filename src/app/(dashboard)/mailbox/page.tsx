@@ -188,7 +188,7 @@ export default function MailboxPage() {
                 return (
                   <div key={m.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
                     <div className={`max-w-[70%] rounded-2xl px-4 py-3 text-sm ${isOwn ? 'bg-[var(--indigo-deep)] text-white rounded-tr-sm' : 'bg-white border border-[var(--warm-sand)] text-[var(--warm-charcoal)] rounded-tl-sm'}`}>
-                      {!isOwn && <p className="text-xs font-bold mb-1 text-[var(--terracotta)]">DivyaTathastu Support</p>}
+                      {!isOwn && <p className="text-xs font-bold mb-1 text-[var(--terracotta)]">MahaTathastu Support</p>}
                       <p className="leading-relaxed">{m.content}</p>
                       <p className={`text-xs mt-1 ${isOwn ? 'text-white/50' : 'text-[var(--warm-charcoal)]/40'}`}>{new Date(m.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</p>
                     </div>

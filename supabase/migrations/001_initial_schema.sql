@@ -1,5 +1,5 @@
 -- =============================================
--- DIVYATATHASTU — Full Database Schema
+-- MAHATATHASTU — Full Database Schema
 -- =============================================
 
 -- ── PROFILES ──

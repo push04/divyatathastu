@@ -41,12 +41,12 @@ export default function InMediaSection() {
               className="text-sm leading-relaxed mb-8"
               style={{ fontFamily: "'DM Sans', sans-serif", color: 'var(--indigo-deep)', opacity: 0.6 }}
             >
-              DivyaTathastu is independently expert-validated, privacy-first, and built on genuine Vedic scholarship.
+              MahaTathastu is independently expert-validated, privacy-first, and built on genuine Vedic scholarship.
             </p>
 
             {/* WhatsApp CTA */}
             <a
-              href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '9858784784'}?text=Hi%2C%20I%20have%20a%20question%20about%20DivyaTathastu`}
+              href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '9858784784'}?text=Hi%2C%20I%20have%20a%20question%20about%20MahaTathastu`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2.5 text-white font-semibold text-sm px-5 py-3 transition-opacity hover:opacity-90"
@@ -64,7 +64,7 @@ export default function InMediaSection() {
               className="mt-3 text-[13px]"
               style={{ fontFamily: "'DM Sans', sans-serif", color: 'var(--indigo-deep)', opacity: 0.4 }}
             >
-              +91 9858784784 · support@divyatathastu.com
+              +91 9858784784 · support@mahatathastu.com
             </p>
           </motion.div>
 

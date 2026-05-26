@@ -38,9 +38,9 @@ const STATIC_POSTS: Record<string, any> = {
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const post = STATIC_POSTS[params.slug]
-  if (!post) return { title: 'Blog | DivyaTathastu' }
+  if (!post) return { title: 'Blog | MahaTathastu' }
   return {
-    title: `${post.title} | DivyaTathastu Blog`,
+    title: `${post.title} | MahaTathastu Blog`,
     description: post.excerpt || post.title,
   }
 }

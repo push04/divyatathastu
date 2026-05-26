@@ -33,7 +33,7 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2.5 mb-5 group w-fit">
               <div className="w-9 h-9 rounded-full gradient-saffron flex items-center justify-center text-white font-bold shadow-md group-hover:scale-110 transition-transform">ॐ</div>
-              <span className="font-bold text-xl text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>DivyaTathastu</span>
+              <span className="font-bold text-xl text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>MahaTathastu</span>
             </Link>
             <p className="text-[var(--indigo-deep)]/55 text-sm leading-relaxed mb-6 max-w-xs">
               India's first comprehensive holistic life platform combining Vedic astrology, numerology, psychology, Vastu, chakra science, and Ayurveda.
@@ -49,11 +49,11 @@ export default function Footer() {
                 WhatsApp: +91 9858784784
               </a>
               <a
-                href="mailto:support@divyatathastu.com"
+                href="mailto:support@mahatathastu.com"
                 className="flex items-center gap-2 hover:text-[var(--terracotta)] transition-colors"
               >
                 <span className="material-symbols-outlined text-[16px]">mail</span>
-                support@divyatathastu.com
+                support@mahatathastu.com
               </a>
             </div>
           </div>
@@ -85,7 +85,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-14 pt-8 border-t border-[var(--outline-variant)]/30 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-[var(--indigo-deep)]/40 text-sm">© 2025 DivyaTathastu · Sacred Geometry in Digital Form.</p>
+          <p className="text-[var(--indigo-deep)]/40 text-sm">© 2025 MahaTathastu · Sacred Geometry in Digital Form.</p>
           <p className="text-[var(--indigo-deep)]/30 text-sm flex items-center gap-1">Made with <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span> for Indian families worldwide</p>
         </div>
       </div>

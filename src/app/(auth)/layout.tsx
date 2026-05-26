@@ -6,7 +6,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <header className="h-16 border-b border-[var(--warm-sand)] flex items-center px-6">
         <Link href="/" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full gradient-saffron flex items-center justify-center text-white font-bold text-sm">ॐ</div>
-          <span className="font-bold text-[var(--indigo-deep)]">DivyaTathastu</span>
+          <span className="font-bold text-[var(--indigo-deep)]">MahaTathastu</span>
         </Link>
       </header>
       <main className="flex-1">{children}</main>

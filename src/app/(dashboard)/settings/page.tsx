@@ -58,7 +58,7 @@ export default function SettingsPage() {
   async function deleteAccount() {
     const confirmed = prompt('Type "DELETE" to permanently delete your account and all data:')
     if (confirmed !== 'DELETE') return
-    toast.error('Account deletion requires admin — please contact support@divyatathastu.com')
+    toast.error('Account deletion requires admin — please contact support@mahatathastu.com')
   }
 
   if (loading) return <div className="flex items-center justify-center h-64"><div className="text-3xl animate-spin-slow">ॐ</div></div>

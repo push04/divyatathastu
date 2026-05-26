@@ -116,7 +116,7 @@ export default function CheckoutPage() {
         amount: orderData.amount,
         currency: orderData.currency,
         order_id: orderData.order_id,
-        name: 'DivyaTathastu',
+        name: 'MahaTathastu',
         description: `Order for ${items.length} item(s)`,
         prefill: { name: profile?.full_name, email: profile?.email, contact: profile?.phone },
         theme: { color: '#2F2A44' },

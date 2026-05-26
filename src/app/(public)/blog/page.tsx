@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Blog | DivyaTathastu - Vedic Wisdom & Spiritual Guidance',
+  title: 'Blog | MahaTathastu - Vedic Wisdom & Spiritual Guidance',
   description: 'Read articles on Vedic astrology, numerology, yoga, Ayurveda, and spiritual practices.',
 }
 

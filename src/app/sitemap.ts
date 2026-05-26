@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 
-const BASE = process.env.NEXT_PUBLIC_APP_URL || 'https://divyatathastu.com'
+const BASE = process.env.NEXT_PUBLIC_APP_URL || 'https://mahatathastu.com'
 
 const STATIC_ROUTES = [
   { url: '/', priority: 1.0, changeFrequency: 'daily' as const },

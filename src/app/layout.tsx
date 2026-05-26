@@ -10,26 +10,26 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://divyatathastu.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://mahatathastu.com'),
   title: {
-    default: "DivyaTathastu — India's First 360° Holistic Life Report Platform",
-    template: '%s | DivyaTathastu',
+    default: "MahaTathastu — India's First 360° Holistic Life Report Platform",
+    template: '%s | MahaTathastu',
   },
   description: "Get personalized Vedic astrology, numerology, chakra, Vastu, Prakriti, DMIT & psychology reports for your entire family. India's most comprehensive spiritual wellness platform.",
   keywords: ['Vedic astrology', 'Kundli online', 'numerology report', 'chakra analysis', 'Vastu report', 'DMIT test', 'family horoscope', 'mandir near me'],
-  authors: [{ name: 'DivyaTathastu' }],
-  creator: 'DivyaTathastu',
+  authors: [{ name: 'MahaTathastu' }],
+  creator: 'MahaTathastu',
   openGraph: {
     type: 'website',
     locale: 'en_IN',
-    url: 'https://divyatathastu.com',
-    siteName: 'DivyaTathastu',
-    title: 'DivyaTathastu — 360° Holistic Life Report Platform',
+    url: 'https://mahatathastu.com',
+    siteName: 'MahaTathastu',
+    title: 'MahaTathastu — 360° Holistic Life Report Platform',
     description: '14 personalized reports combining Vedic astrology, numerology, chakra, Vastu & Ayurveda for your family.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'DivyaTathastu — 360° Holistic Life Reports',
+    title: 'MahaTathastu — 360° Holistic Life Reports',
     description: '14 personalized holistic life reports for your family.',
   },
   robots: { index: true, follow: true },

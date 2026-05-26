@@ -5,7 +5,7 @@ import { Search } from 'lucide-react'
 import { EbookCard } from './EbookCardClient'
 
 export const metadata: Metadata = {
-  title: 'Ebooks | DivyaTathastu — Vedic Wisdom Library',
+  title: 'Ebooks | MahaTathastu — Vedic Wisdom Library',
   description: 'Download premium ebooks on Vedic astrology, numerology, Vastu, meditation and spiritual sciences.',
 }
 export const revalidate = 3600

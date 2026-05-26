@@ -9,7 +9,7 @@ import TathastuCTA from '@/components/home/TathastuCTA'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: "DivyaTathastu — India's First 360° Holistic Life Report Platform",
+  title: "MahaTathastu — India's First 360° Holistic Life Report Platform",
   description: "14 personalized holistic life reports for your entire family — Vedic astrology, numerology, chakra, Vastu, Prakriti & more. Powered by Noxatra AI.",
 }
 

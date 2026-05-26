@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
     const resend = new Resend(process.env.RESEND_API_KEY)
 
     const result = await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL || 'DivyaTathastu <noreply@divyatathastu.com>',
+      from: process.env.RESEND_FROM_EMAIL || 'MahaTathastu <noreply@mahatathastu.com>',
       to: [to],
       subject,
       html: html || getDefaultEmailTemplate(subject, type),
@@ -45,18 +45,18 @@ function getDefaultEmailTemplate(subject: string, type: string): string {
   <div class="container">
     <div class="header">
       <div style="font-size: 32px; margin-bottom: 8px;">ॐ</div>
-      <h1>DivyaTathastu</h1>
+      <h1>MahaTathastu</h1>
       <p style="color: rgba(255,255,255,0.6); margin: 4px 0 0 0; font-size: 12px;">360° Holistic Life Platform</p>
     </div>
     <div class="body">
       <h2>${subject}</h2>
-      <p>Thank you for being part of the DivyaTathastu family.</p>
+      <p>Thank you for being part of the MahaTathastu family.</p>
       <p>May divine blessings guide your journey. ॐ</p>
-      <p style="margin-top: 24px;"><a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://divyatathastu.com'}/dashboard" class="btn">Go to Dashboard</a></p>
+      <p style="margin-top: 24px;"><a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://mahatathastu.com'}/dashboard" class="btn">Go to Dashboard</a></p>
     </div>
     <div class="footer">
-      <p>DivyaTathastu | India's First 360° Holistic Life Platform</p>
-      <p>WhatsApp: +91 9858784784 | support@divyatathastu.com</p>
+      <p>MahaTathastu | India's First 360° Holistic Life Platform</p>
+      <p>WhatsApp: +91 9858784784 | support@mahatathastu.com</p>
     </div>
   </div>
 </body>
