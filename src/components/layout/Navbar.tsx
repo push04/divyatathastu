@@ -10,6 +10,7 @@ import { createClient } from '@/lib/supabase/client'
 const navLinks = [
   { href: '/services', label: 'Services' },
   { href: '/events', label: 'Events' },
+  { href: '/shop', label: 'Shop' },
   { href: '/ebooks', label: 'Ebooks' },
   { href: '/panchang', label: 'Panchang' },
   { href: '/blog', label: 'Blog' },
@@ -20,6 +21,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [user, setUser] = useState<{ id: string } | null>(null)
+  const [userName, setUserName] = useState<string | null>(null)
   const pathname = usePathname()
   const supabase = createClient()
 
@@ -30,12 +32,46 @@ export default function Navbar() {
   }, [])
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user))
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
-      setUser(session?.user ?? null)
+    async function loadUser() {
+      const { data } = await supabase.auth.getUser()
+      if (data.user) {
+        setUser(data.user)
+        // Fetch name from profiles
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', data.user.id)
+          .single()
+        if (profile?.full_name) {
+          // Show first name only
+          setUserName(profile.full_name.split(' ')[0])
+        } else {
+          setUserName(data.user.email?.split('@')[0] || null)
+        }
+      }
+    }
+    loadUser()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_, session) => {
+      if (session?.user) {
+        setUser(session.user)
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', session.user.id)
+          .single()
+        if (profile?.full_name) {
+          setUserName(profile.full_name.split(' ')[0])
+        } else {
+          setUserName(session.user.email?.split('@')[0] || null)
+        }
+      } else {
+        setUser(null)
+        setUserName(null)
+      }
     })
     return () => subscription.unsubscribe()
-  }, [supabase])
+  }, [supabase]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <nav className={cn(
@@ -47,7 +83,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
         <div className="flex items-center justify-between h-16">
 
-          {/* Logo — Playfair Display branding */}
+          {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 group shrink-0">
             <div className="relative w-8 h-8 rounded-full gradient-saffron flex items-center justify-center text-white font-bold text-sm shadow-md group-hover:scale-110 transition-transform duration-300 animate-glow">
               <span className="absolute inset-0 rounded-full gradient-saffron opacity-50 animate-ping-slow" />
@@ -61,15 +97,14 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Nav — Sora label-caps */}
+          {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-1">
             {navLinks.map(({ href, label }) => (
               <Link
                 key={href}
                 href={href}
                 className={cn(
-                  'px-3.5 py-2 rounded-lg text-xs font-semibold tracking-widest uppercase transition-all duration-200',
-                  'font-label',
+                  'px-3.5 py-2 rounded-lg text-xs font-semibold tracking-widest uppercase transition-all duration-200 font-label',
                   pathname === href || pathname.startsWith(href + '/')
                     ? 'text-[var(--terracotta)] bg-[var(--warm-sand)]'
                     : 'text-[var(--indigo-deep)]/60 hover:text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/60'
@@ -83,12 +118,26 @@ export default function Navbar() {
 
           {/* CTA + Mobile Toggle */}
           <div className="flex items-center gap-3">
-            <div className="hidden lg:flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-2">
               {user ? (
-                <Link href="/dashboard" className="btn-divine text-xs px-5 py-2.5">
-                  My Sanctuary
-                </Link>
+                // Logged-in state: "Hi [Name]" + dashboard link
+                <div className="flex items-center gap-2">
+                  <Link href="/dashboard"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all hover:bg-[var(--warm-sand)]/60"
+                    style={{ color: 'var(--indigo-deep)' }}>
+                    <div className="w-7 h-7 rounded-full gradient-saffron flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                      {userName ? userName[0].toUpperCase() : 'U'}
+                    </div>
+                    <span className="text-sm font-semibold" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                      Hi, {userName || 'Friend'}
+                    </span>
+                  </Link>
+                  <Link href="/dashboard" className="btn-divine text-xs px-4 py-2">
+                    Dashboard
+                  </Link>
+                </div>
               ) : (
+                // Logged-out state
                 <>
                   <Link
                     href="/login"
@@ -130,6 +179,19 @@ export default function Navbar() {
             className="lg:hidden bg-[var(--kutch-white)] border-t border-[var(--outline-variant)]/30"
           >
             <div className="px-6 py-5 space-y-1">
+              {/* Logged-in greeting on mobile */}
+              {user && userName && (
+                <div className="flex items-center gap-2.5 px-4 py-3 mb-2 rounded-xl" style={{ background: 'var(--warm-sand)' }}>
+                  <div className="w-8 h-8 rounded-full gradient-saffron flex items-center justify-center text-white text-sm font-bold">
+                    {userName[0].toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold" style={{ color: 'var(--indigo-deep)', fontFamily: "'DM Sans', sans-serif" }}>Hi, {userName}!</p>
+                    <p className="text-[10px]" style={{ color: 'rgba(61,52,80,0.5)' }}>Welcome back</p>
+                  </div>
+                </div>
+              )}
+
               {navLinks.map(({ href, label }) => (
                 <Link
                   key={href}
@@ -149,7 +211,7 @@ export default function Navbar() {
               <div className="pt-4 border-t border-[var(--outline-variant)]/30 flex flex-col gap-2.5">
                 {user ? (
                   <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="btn-divine text-center">
-                    My Sanctuary
+                    My Dashboard
                   </Link>
                 ) : (
                   <>

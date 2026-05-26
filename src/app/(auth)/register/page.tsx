@@ -81,21 +81,12 @@ export default function RegisterPage() {
     const { error } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
-      options: {
-        data: { full_name: form.name, phone: form.phone },
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
-      },
+      options: { data: { full_name: form.name, phone: form.phone } },
     })
     if (error) {
       toast.error(error.message)
     } else {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        router.push('/dashboard')
-      } else {
-        toast.success('Check your email to verify your account!')
-        router.push('/login')
-      }
+      router.push('/dashboard')
     }
     setLoading(false)
   }
