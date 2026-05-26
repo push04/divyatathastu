@@ -73,6 +73,15 @@ export default function LoginPage() {
     if (error) {
       toast.error(error.message)
     } else {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles').select('role').eq('id', user.id).single()
+        if (profile?.role === 'admin') {
+          router.push('/admin')
+          return
+        }
+      }
       toast.success('Welcome back!')
       router.push('/dashboard')
       router.refresh()
