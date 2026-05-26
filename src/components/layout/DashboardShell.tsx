@@ -6,7 +6,7 @@ import Navbar from './Navbar'
 import Footer from './Footer'
 
 // Pages inside (dashboard) route group that should render with public layout
-const PUBLIC_IN_DASHBOARD = ['/panchang', '/mandir-finder', '/pilgrimage']
+const PUBLIC_IN_DASHBOARD = ['/panchang', '/mandir-finder', '/pilgrimage', '/shop']
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()

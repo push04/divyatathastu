@@ -6,7 +6,6 @@ const PROTECTED_PATHS = [
   '/family',
   '/reports',
   '/ai-guide',
-  '/shop',
   '/orders',
   '/consultations',
   '/mailbox',
