@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { getUserLocation } from '@/lib/utils/getLocation'
 
 interface PanchangData {
   tithi: string
@@ -23,23 +24,25 @@ export default function PanchangWidget() {
     const today = new Date()
     const dateStr = today.toISOString().split('T')[0]
     const dateLabel = today.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
-    fetch(`/api/panchang?lat=28.6139&lng=77.2090&date=${dateStr}`)
-      .then(r => r.json())
-      .then(j => {
-        if (j.success) {
-          setP({
-            tithi: j.data.tithi,
-            nakshatra: j.data.nakshatra,
-            yoga: j.data.yoga,
-            karana: j.data.karana,
-            sunrise: j.data.sunrise,
-            sunset: j.data.sunset,
-            rahuKaal: j.data.rahuKaal,
-            date: dateLabel,
-          })
-        }
-      })
-      .catch(() => {})
+    getUserLocation().then(loc => {
+      fetch(`/api/panchang?lat=${loc.lat}&lng=${loc.lng}&date=${dateStr}`)
+        .then(r => r.json())
+        .then(j => {
+          if (j.success) {
+            setP({
+              tithi: j.data.tithi,
+              nakshatra: j.data.nakshatra,
+              yoga: j.data.yoga,
+              karana: j.data.karana,
+              sunrise: j.data.sunrise,
+              sunset: j.data.sunset,
+              rahuKaal: j.data.rahuKaal,
+              date: dateLabel,
+            })
+          }
+        })
+        .catch(() => {})
+    })
   }, [])
 
   if (!p) return null

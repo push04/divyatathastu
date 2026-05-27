@@ -154,23 +154,12 @@ export async function generateReportData(
   }
 }
 
-function getFallbackKundli(dob: string) {
-  const dayOfYear = Math.floor((new Date(dob).getTime() - new Date(new Date(dob).getFullYear(), 0, 0).getTime()) / 86400000)
-  const RASHIS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces']
-  const NAKS = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta','Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Moola','Purva Ashadha','Uttara Ashadha','Shravana','Dhanishtha','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati']
-  return {
-    ascendant: RASHIS[dayOfYear % 12],
-    ascendantDegree: (dayOfYear * 7.3) % 30,
-    moonSign: RASHIS[(dayOfYear + 3) % 12],
-    sunSign: RASHIS[(dayOfYear + 6) % 12],
-    nakshatra: NAKS[dayOfYear % 27],
-    nakshatraPada: (dayOfYear % 4) + 1,
-    planets: [],
-    houses: Array.from({length: 12}, (_, i) => (i * 30 + dayOfYear) % 360),
-    dashaLord: ['Sun','Moon','Mars','Rahu','Jupiter','Saturn','Mercury','Ketu','Venus'][dayOfYear % 9],
-    currentDasha: ['Sun','Moon','Mars','Rahu','Jupiter','Saturn','Mercury','Ketu','Venus'][dayOfYear % 9],
-    currentAntardasha: ['Moon','Mars','Rahu','Jupiter','Saturn','Mercury','Ketu','Venus','Sun'][dayOfYear % 9],
-  }
+function getFallbackKundli(dob: string): never {
+  throw new Error(
+    `Kundli calculation failed for DOB ${dob}. ` +
+    `Check that astronomy-engine is installed and the birth date/time/place are valid. ` +
+    `Report will be retried.`
+  )
 }
 
 function getAstrologyAnalysis(kundli: ReturnType<typeof getFallbackKundli>) {

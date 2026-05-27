@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 interface Product {
   id: string; name: string; slug: string; description: string | null
   price: number; sale_price: number | null; stock_count: number
-  is_active: boolean; product_type: string | null; created_at: string
+  is_active: boolean; is_featured: boolean; product_type: string | null; created_at: string
   images: any
 }
 
@@ -71,7 +71,7 @@ export default function AdminProductsPage() {
   async function load() {
     const { data, error } = await supabase
       .from('products')
-      .select('id,name,slug,description,price,sale_price,stock_count,is_active,product_type,created_at,images')
+      .select('id,name,slug,description,price,sale_price,stock_count,is_active,is_featured,product_type,created_at,images')
       .order('created_at', { ascending: false })
     if (error) toast.error('Failed to load products')
     else setProducts(data || [])
@@ -171,6 +171,12 @@ export default function AdminProductsPage() {
     toast.success(active ? 'Deactivated' : 'Activated')
   }
 
+  async function toggleFeatured(id: string, featured: boolean) {
+    await supabase.from('products').update({ is_featured: !featured }).eq('id', id)
+    setProducts(p => p.map(x => x.id === id ? { ...x, is_featured: !featured } : x))
+    toast.success(!featured ? 'Marked as Featured (shows on homepage)' : 'Removed from homepage')
+  }
+
   async function deleteProduct(id: string) {
     if (!confirm('Delete this product? This cannot be undone.')) return
     const { error } = await supabase.from('products').delete().eq('id', id)
@@ -268,10 +274,17 @@ export default function AdminProductsPage() {
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <button onClick={() => toggleActive(p.id, p.is_active)}
-                          className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${p.is_active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/50 hover:bg-[var(--warm-sand)]/80'}`}>
-                          {p.is_active ? '● Active' : '○ Inactive'}
-                        </button>
+                        <div className="flex flex-col gap-1">
+                          <button onClick={() => toggleActive(p.id, p.is_active)}
+                            className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${p.is_active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/50 hover:bg-[var(--warm-sand)]/80'}`}>
+                            {p.is_active ? '● Active' : '○ Inactive'}
+                          </button>
+                          <button onClick={() => toggleFeatured(p.id, p.is_featured)}
+                            title="Show this product on the main homepage"
+                            className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${p.is_featured ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/40 hover:bg-amber-50 hover:text-amber-600'}`}>
+                            {p.is_featured ? '★ Featured' : '☆ Feature'}
+                          </button>
+                        </div>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex gap-2">

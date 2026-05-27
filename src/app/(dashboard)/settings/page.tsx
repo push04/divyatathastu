@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { CITIES, getSavedCity, saveCity, type CityCoords } from '@/lib/utils/getLocation'
+import { useBundlePrice } from '@/lib/hooks/useBundlePrice'
 
 interface Profile {
   id: string
@@ -23,6 +25,8 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState({ full_name: '', phone: '' })
   const [passwordForm, setPasswordForm] = useState({ current: '', newPass: '', confirm: '' })
+  const [preferredCity, setPreferredCity] = useState<CityCoords | null>(null)
+  const { price: bundlePrice, sale_price: bundleSalePrice } = useBundlePrice()
 
   useEffect(() => {
     async function load() {
@@ -31,6 +35,7 @@ export default function SettingsPage() {
       setUserEmail(user.email || '')
       const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single()
       if (data) { setProfile(data); setForm({ full_name: data.full_name, phone: data.phone || '' }) }
+      setPreferredCity(getSavedCity())
       setLoading(false)
     }
     load()
@@ -56,9 +61,17 @@ export default function SettingsPage() {
   }
 
   async function deleteAccount() {
-    const confirmed = prompt('Type "DELETE" to permanently delete your account and all data:')
+    const confirmed = prompt('Type DELETE to permanently delete your account and all data. This cannot be undone:')
     if (confirmed !== 'DELETE') return
-    toast.error('Account deletion requires admin — please contact support@mahatathastu.com')
+    const res = await fetch('/api/user/delete-account', { method: 'DELETE' })
+    if (res.ok) {
+      toast.success('Account deleted.')
+      await supabase.auth.signOut()
+      router.push('/')
+    } else {
+      const d = await res.json()
+      toast.error(d.error || 'Deletion failed. Contact support@mahatathastu.com')
+    }
   }
 
   if (loading) return <div className="flex items-center justify-center h-64"><div className="text-3xl animate-spin-slow">ॐ</div></div>
@@ -108,6 +121,47 @@ export default function SettingsPage() {
         </button>
       </div>
 
+      {/* Panchang City */}
+      <div className="card-divine p-6 space-y-4">
+        <div>
+          <h2 className="font-bold text-[var(--indigo-deep)]">Panchang Location</h2>
+          <p className="text-sm text-[var(--warm-charcoal)]/60 mt-0.5">
+            Panchang timings (sunrise, Rahu Kaal etc.) are calculated for your preferred city.
+          </p>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-[var(--indigo-deep)] mb-1.5">Preferred City</label>
+          <select
+            value={preferredCity?.name || ''}
+            onChange={e => {
+              const found = CITIES.find(c => c.name === e.target.value) || null
+              if (found) { saveCity(found); setPreferredCity(found); toast.success(`Location set to ${found.name}`) }
+            }}
+            className="w-full px-3 py-2.5 rounded-lg border border-[var(--warm-sand)] text-sm focus:outline-none focus:border-[var(--saffron)] bg-white text-[var(--warm-charcoal)]"
+          >
+            <option value="">— Use device location —</option>
+            {CITIES.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
+          </select>
+          {preferredCity && (
+            <div className="flex items-center justify-between mt-2">
+              <p className="text-xs text-[var(--warm-charcoal)]/40">
+                Saved: {preferredCity.name} ({preferredCity.lat.toFixed(4)}, {preferredCity.lng.toFixed(4)})
+              </p>
+              <button
+                onClick={() => {
+                  localStorage.removeItem('dt_preferred_city')
+                  setPreferredCity(null)
+                  toast.success('Reset to device location')
+                }}
+                className="text-xs text-[var(--terracotta)] hover:underline"
+              >
+                Reset to GPS
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Password */}
       <div className="card-divine p-6 space-y-4">
         <h2 className="font-bold text-[var(--indigo-deep)]">Change Password</h2>
@@ -137,8 +191,10 @@ export default function SettingsPage() {
               <p className="text-sm text-white/70">14 reports · Lifetime access · All family members</p>
             </div>
             <div className="text-right">
-              <p className="text-xl font-bold">₹2,999</p>
-              <p className="text-xs text-white/50 line-through">₹4,999</p>
+              <p className="text-xl font-bold">₹{(bundlePrice ?? 2999).toLocaleString('en-IN')}</p>
+              {bundleSalePrice !== null && bundleSalePrice !== bundlePrice && (
+                <p className="text-xs text-white/50 line-through">₹{bundleSalePrice.toLocaleString('en-IN')}</p>
+              )}
             </div>
           </div>
           <a href="/shop" className="btn-divine w-full py-2.5 text-sm mt-3 block text-center">Upgrade Now</a>

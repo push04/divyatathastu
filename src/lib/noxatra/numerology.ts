@@ -239,8 +239,11 @@ export function calculateMobileNumber(mobileNumber: string, lifePathNumber: numb
   const compatibility = Math.abs(mobileVibration - lifePathNumber) <= 2 ? 'High' :
     Math.abs(mobileVibration - lifePathNumber) <= 4 ? 'Medium' : 'Low'
 
-  const score = compatibility === 'High' ? 85 + Math.floor(Math.random() * 12) :
-    compatibility === 'Medium' ? 60 + Math.floor(Math.random() * 20) : 30 + Math.floor(Math.random() * 25)
+  // Deterministic seed — same inputs always give same score
+  const seed = (mobileVibration * 7 + lifePathNumber * 13) % 100
+  const score = compatibility === 'High'   ? 80 + (seed % 16) :
+                compatibility === 'Medium' ? 55 + (seed % 20) :
+                                             25 + (seed % 25)
 
   return {
     mobileVibration,

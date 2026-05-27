@@ -20,6 +20,31 @@ const SUGGESTED = [
   'How to perform Rudrabhishek at home?',
 ]
 
+function renderMarkdown(text: string): string {
+  return text
+    // Headings
+    .replace(/^### (.+)$/gm, '<h3 class="font-bold text-[var(--indigo-deep)] text-sm mt-3 mb-1">$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2 class="font-bold text-[var(--indigo-deep)] mt-3 mb-1">$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1 class="font-bold text-[var(--indigo-deep)] text-base mt-3 mb-1">$1</h1>')
+    // Bold and italic
+    .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    // Bullet lists
+    .replace(/^[-•] (.+)$/gm, '<li class="ml-3 flex gap-2"><span class="text-[var(--saffron)] flex-shrink-0 mt-0.5">•</span><span>$1</span></li>')
+    .replace(/^  [-•] (.+)$/gm, '<li class="ml-6 flex gap-2 text-sm opacity-80"><span class="flex-shrink-0">◦</span><span>$1</span></li>')
+    // Numbered lists
+    .replace(/^\d+\. (.+)$/gm, '<li class="ml-3 list-decimal list-inside">$1</li>')
+    // Wrap consecutive <li> items in <ul>
+    .replace(/(<li[^>]*>.*<\/li>(\n|$))+/g, (match) => `<ul class="space-y-0.5 my-1">${match}</ul>`)
+    // Horizontal rule
+    .replace(/^---$/gm, '<hr class="border-[var(--warm-sand)] my-2"/>')
+    // Double newlines → paragraph break
+    .replace(/\n\n/g, '</p><p class="mt-2">')
+    // Single newlines → line break (only between non-HTML lines)
+    .replace(/\n(?!<)/g, '<br/>')
+}
+
 export default function AIGuidePage() {
   const [messages, setMessages] = useState<Message[]>([{
     role: 'assistant',
@@ -65,7 +90,7 @@ export default function AIGuidePage() {
 - Festivals, rituals, puja vidhi
 - Indian pilgrimage and sacred geography
 
-Answer with warmth, wisdom and clarity. Use Sanskrit terms with explanations. Keep responses concise but complete. End with a relevant mantra or blessing when appropriate.`,
+Answer with warmth, wisdom and clarity. Use markdown formatting: **bold** for key terms, ## for section headings, - for bullet points. Use Sanskrit terms with explanations. Keep responses comprehensive but well-structured. End with a relevant mantra or blessing when appropriate.`,
         }),
       })
 
@@ -96,7 +121,7 @@ Answer with warmth, wisdom and clarity. Use Sanskrit terms with explanations. Ke
           } catch {}
         }
       }
-    } catch (err) {
+    } catch {
       toast.error('Failed to get response. Please try again.')
       setMessages(prev => prev.slice(0, -1))
     }
@@ -113,10 +138,10 @@ Answer with warmth, wisdom and clarity. Use Sanskrit terms with explanations. Ke
     <div className="flex flex-col h-[calc(100vh-56px)] lg:h-screen">
       {/* Header */}
       <div className="px-6 py-4 bg-[var(--indigo-deep)] text-white flex items-center gap-3 flex-shrink-0">
-        <div className="w-10 h-10 rounded-full gradient-saffron flex items-center justify-center text-xl"><span className="material-symbols-outlined text-[20px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>smart_toy</span></div>
+        <div className="w-10 h-10 rounded-full gradient-saffron flex items-center justify-center text-xl font-bold">ॐ</div>
         <div>
           <h1 className="font-bold">AI Spiritual Guide</h1>
-          <p className="text-xs text-white/60">Powered by Groq · Llama-3.3-70B · Vedic knowledge</p>
+          <p className="text-xs text-white/60">Vedic Wisdom · Powered by AI</p>
         </div>
         <div className="ml-auto flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -128,11 +153,24 @@ Answer with warmth, wisdom and clarity. Use Sanskrit terms with explanations. Ke
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-[var(--kutch-white)]">
         {messages.map((m, i) => (
           <div key={i} className={`flex gap-3 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm ${m.role === 'assistant' ? 'gradient-saffron text-white' : 'bg-[var(--indigo-deep)] text-white'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold ${m.role === 'assistant' ? 'gradient-saffron text-white' : 'bg-[var(--indigo-deep)] text-white'}`}>
               {m.role === 'assistant' ? 'ॐ' : 'U'}
             </div>
-            <div className={`max-w-[80%] sm:max-w-[65%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${m.role === 'assistant' ? 'bg-white border border-[var(--warm-sand)] text-[var(--warm-charcoal)] rounded-tl-sm' : 'bg-[var(--indigo-deep)] text-white rounded-tr-sm'}`}>
-              {m.content || (streaming && i === messages.length - 1 ? <span className="flex gap-1 py-1"><span className="w-2 h-2 rounded-full bg-[var(--saffron)] animate-bounce" style={{ animationDelay: '0ms' }} /><span className="w-2 h-2 rounded-full bg-[var(--saffron)] animate-bounce" style={{ animationDelay: '150ms' }} /><span className="w-2 h-2 rounded-full bg-[var(--saffron)] animate-bounce" style={{ animationDelay: '300ms' }} /></span> : '')}
+            <div className={`max-w-[82%] sm:max-w-[68%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${m.role === 'assistant' ? 'bg-white border border-[var(--warm-sand)] text-[var(--warm-charcoal)] rounded-tl-sm' : 'bg-[var(--indigo-deep)] text-white rounded-tr-sm'}`}>
+              {m.content === '' && streaming && i === messages.length - 1 ? (
+                <span className="flex gap-1 py-1">
+                  <span className="w-2 h-2 rounded-full bg-[var(--saffron)] animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-2 h-2 rounded-full bg-[var(--saffron)] animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-2 h-2 rounded-full bg-[var(--saffron)] animate-bounce" style={{ animationDelay: '300ms' }} />
+                </span>
+              ) : m.role === 'assistant' ? (
+                <div
+                  className="prose-sm max-w-none leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: '<p>' + renderMarkdown(m.content) + '</p>' }}
+                />
+              ) : (
+                m.content
+              )}
             </div>
           </div>
         ))}

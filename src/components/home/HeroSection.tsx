@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import { getUserLocation } from '@/lib/utils/getLocation'
 
 const SHLOKAS = [
   { shloka: 'कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।\nमा कर्मफलहेतुर्भूर्मा ते सङ्गोऽस्त्वकर्मणि॥', meaning: 'केवल कर्म करना तुम्हारा अधिकार है, फल में कभी नहीं। फल की कामना से कर्म न करो, और अकर्म में भी आसक्त न हो।', source: 'भगवद्गीता २.४७' },
@@ -98,10 +99,12 @@ export default function HeroSection() {
 
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0]
-    fetch(`/api/panchang?lat=28.6139&lng=77.2090&date=${today}`)
-      .then(r => r.json())
-      .then(j => { if (j.success) setSnap({ tithi: j.data.tithi, nakshatra: j.data.nakshatra, yoga: j.data.yoga }) })
-      .catch(() => {})
+    getUserLocation().then(loc => {
+      fetch(`/api/panchang?lat=${loc.lat}&lng=${loc.lng}&date=${today}`)
+        .then(r => r.json())
+        .then(j => { if (j.success) setSnap({ tithi: j.data.tithi, nakshatra: j.data.nakshatra, yoga: j.data.yoga }) })
+        .catch(() => {})
+    })
   }, [])
 
   useEffect(() => {

@@ -35,6 +35,7 @@ export default function AdminBlogPage() {
   const [aiPrompt, setAiPrompt] = useState('')
   const [coverFile, setCoverFile] = useState<File | null>(null)
   const [coverPreview, setCoverPreview] = useState<string | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [form, setForm] = useState({
     title: '', slug: '', category: 'Astrology', excerpt: '', content: '', read_time: 5,
     cover_image_url: '',
@@ -98,23 +99,56 @@ export default function AdminBlogPage() {
     return data.publicUrl
   }
 
-  async function createPost() {
-    if (!form.title || !form.content) { toast.error('Title and content required'); return }
-    setCreating(true)
-    const slug = form.slug || generateSlug(form.title)
-    const { data, error } = await supabase.from('blog_posts').insert({
-      title: form.title, slug, excerpt: form.excerpt, content: form.content,
-      category: form.category, read_time: form.read_time, is_published: false,
-    }).select().single()
-    if (error || !data) { toast.error('Failed: ' + error?.message); setCreating(false); return }
-    const cover_image_url = await uploadCover(data.id)
-    if (cover_image_url) await supabase.from('blog_posts').update({ cover_image_url }).eq('id', data.id)
-    toast.success('Post created (draft)!')
-    await load()
+  function resetForm() {
     setForm({ title: '', slug: '', category: 'Astrology', excerpt: '', content: '', read_time: 5, cover_image_url: '' })
     setCoverFile(null)
     setCoverPreview(null)
     setAiPrompt('')
+    setEditingId(null)
+  }
+
+  async function openEdit(postId: string) {
+    const { data } = await supabase.from('blog_posts').select('*').eq('id', postId).single()
+    if (!data) return
+    setEditingId(postId)
+    setForm({
+      title: data.title,
+      slug: data.slug,
+      category: data.category,
+      excerpt: data.excerpt || '',
+      content: data.content || '',
+      read_time: data.read_time || 5,
+      cover_image_url: data.cover_image_url || '',
+    })
+    setCoverPreview(data.cover_image_url || null)
+    setCoverFile(null)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  async function savePost() {
+    if (!form.title || !form.content) { toast.error('Title and content required'); return }
+    setCreating(true)
+    const slug = form.slug || generateSlug(form.title)
+    const payload = { title: form.title, slug, excerpt: form.excerpt, content: form.content, category: form.category, read_time: form.read_time }
+
+    if (editingId) {
+      const cover_image_url = await uploadCover(editingId)
+      const { error } = await supabase.from('blog_posts').update({
+        ...payload,
+        ...(cover_image_url ? { cover_image_url } : {}),
+      }).eq('id', editingId)
+      if (error) { toast.error('Update failed: ' + error.message); setCreating(false); return }
+      toast.success('Post updated!')
+    } else {
+      const { data, error } = await supabase.from('blog_posts').insert({ ...payload, is_published: false }).select().single()
+      if (error || !data) { toast.error('Failed: ' + error?.message); setCreating(false); return }
+      const cover_image_url = await uploadCover(data.id)
+      if (cover_image_url) await supabase.from('blog_posts').update({ cover_image_url }).eq('id', data.id)
+      toast.success('Post created (draft)!')
+    }
+
+    await load()
+    resetForm()
     setCreating(false)
   }
 
@@ -141,12 +175,20 @@ export default function AdminBlogPage() {
         Blog Posts <span className="text-[var(--warm-charcoal)]/40 font-normal">({posts.length})</span>
       </h1>
 
-      {/* Create form */}
+      {/* Create / Edit form */}
       <div className="card-divine p-5 space-y-4">
-        <h2 className="font-bold text-[var(--indigo-deep)] flex items-center gap-2">
-          <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>add_circle</span>
-          New Post
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="font-bold text-[var(--indigo-deep)] flex items-center gap-2">
+            <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>{editingId ? 'edit' : 'add_circle'}</span>
+            {editingId ? 'Edit Post' : 'New Post'}
+          </h2>
+          {editingId && (
+            <button onClick={resetForm} className="text-xs text-[var(--warm-charcoal)]/50 hover:text-red-500 flex items-center gap-1 transition-colors">
+              <span className="material-symbols-outlined text-[14px]">close</span>
+              Cancel Edit
+            </button>
+          )}
+        </div>
 
         <div className="grid grid-cols-2 gap-4">
           {/* Cover image */}
@@ -218,9 +260,9 @@ export default function AdminBlogPage() {
             <textarea value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))} rows={10} className={`${inputCls} font-mono resize-y`} placeholder="<h2>Section</h2><p>Content...</p>" />
           </div>
         </div>
-        <button onClick={createPost} disabled={creating} className="btn-divine px-6 py-2 text-sm disabled:opacity-50 inline-flex items-center gap-2">
-          <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>{creating ? 'hourglass_empty' : 'publish'}</span>
-          {creating ? 'Creating...' : 'Create Post (Draft)'}
+        <button onClick={savePost} disabled={creating} className="btn-divine px-6 py-2 text-sm disabled:opacity-50 inline-flex items-center gap-2">
+          <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>{creating ? 'hourglass_empty' : editingId ? 'save' : 'publish'}</span>
+          {creating ? (editingId ? 'Saving...' : 'Creating...') : editingId ? 'Save Changes' : 'Create Post (Draft)'}
         </button>
       </div>
 
@@ -260,6 +302,7 @@ export default function AdminBlogPage() {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-3">
+                      <button onClick={() => openEdit(p.id)} className="text-xs text-[var(--saffron)] hover:underline font-medium">Edit</button>
                       <button onClick={() => togglePublish(p.id, p.is_published)} className="text-xs text-[var(--indigo-deep)] hover:underline font-medium">
                         {p.is_published ? 'Unpublish' : 'Publish'}
                       </button>

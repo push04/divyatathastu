@@ -14,6 +14,7 @@ const adminNav = [
   { href: '/admin/reports', label: 'Reports', icon: 'description' },
   { href: '/admin/orders', label: 'Orders', icon: 'package_2' },
   { href: '/admin/products', label: 'Products', icon: 'storefront' },
+  { href: '/admin/ebooks', label: 'Ebooks', icon: 'menu_book' },
   { href: '/admin/consultations', label: 'Consultations', icon: 'event' },
   { href: '/admin/mailbox', label: 'Mailbox', icon: 'mail' },
   { href: '/admin/events', label: 'Events', icon: 'event_note' },

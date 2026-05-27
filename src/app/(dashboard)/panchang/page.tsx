@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { getSavedCity, saveCity } from '@/lib/utils/getLocation'
 
 interface PanchangData {
   tithi: string; tithiNum: number
@@ -84,12 +85,18 @@ function getDaysInMonth(date: Date) {
 export default function PanchangPage() {
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [viewMonth, setViewMonth]       = useState(new Date())
-  const [city, setCity]                 = useState(CITIES[0])
+  const [city, setCity]                 = useState(() => getSavedCity() || CITIES[0])
   const [panchang, setPanchang]         = useState<PanchangData | null>(null)
   const [loading, setLoading]           = useState(false)
   const today = new Date()
 
-  useEffect(() => { fetchPanchang() }, [selectedDate, city])
+  useEffect(() => { fetchPanchang() }, [selectedDate, city]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  function handleCityChange(cityName: string) {
+    const found = CITIES.find(c => c.name === cityName) || CITIES[0]
+    saveCity(found)
+    setCity(found)
+  }
 
   async function fetchPanchang() {
     setLoading(true)
@@ -127,7 +134,7 @@ export default function PanchangPage() {
           </div>
           <select
             value={city.name}
-            onChange={e => setCity(CITIES.find(c => c.name === e.target.value) || CITIES[0])}
+            onChange={e => handleCityChange(e.target.value)}
             style={{
               fontFamily: "'DM Sans', sans-serif", fontSize: 13,
               background: 'rgba(255,255,255,0.1)', color: 'white',

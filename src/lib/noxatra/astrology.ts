@@ -1,5 +1,66 @@
 import Astronomy from 'astronomy-engine'
 
+// ── Ayanamsa & Node helpers ──────────────────────────────────────────────────
+
+/** Dynamic Lahiri (Chitrapaksha) ayanamsa from Julian Date TT.
+ *  Reference: J2000.0 (JD 2451545.0) = 23.85°; rate ~50.3 arcsec/yr */
+function getLahiriAyanamsa(jd: number): number {
+  return 23.85 + (jd - 2451545.0) * (50.3 / 3600) / 365.25
+}
+
+/** Mean ascending lunar node (Rahu) in sidereal longitude.
+ *  IAU formula. Ketu = Rahu + 180°. Rahu is always retrograde. */
+function getMeanLunarNodes(jd: number, ayanamsa: number): { rahuLon: number; ketuLon: number } {
+  const T = (jd - 2451545.0) / 36525
+  const rahuTrop = ((125.0445479 - 1934.1362608 * T) % 360 + 360) % 360
+  const rahuSid  = ((rahuTrop - ayanamsa) % 360 + 360) % 360
+  return { rahuLon: rahuSid, ketuLon: (rahuSid + 180) % 360 }
+}
+
+/** UTC offset in hours for a given timezone + local date/time string.
+ *  Returns positive for zones ahead of UTC (e.g. IST = +5.5). Falls back to IST. */
+function getTimezoneOffsetHours(timezone: string, dateStr: string, timeStr: string): number {
+  try {
+    const [y, mo, d] = dateStr.split('-').map(Number)
+    const [h, m]     = timeStr.split(':').map(Number)
+    const utcDate = new Date(Date.UTC(y, mo - 1, d, h, m))
+    const tzStr   = utcDate.toLocaleString('en-CA', {
+      timeZone: timezone, year: 'numeric', month: '2-digit',
+      day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false,
+    })
+    const [datePart, timePart = '00:00'] = tzStr.replace(', ', ',').split(',')
+    const [ty, tm, td] = datePart.split('-').map(Number)
+    const [th, tmi]    = timePart.trim().split(':').map(Number)
+    const tzDate = new Date(Date.UTC(ty, tm - 1, td, th, tmi))
+    return (tzDate.getTime() - utcDate.getTime()) / 3600000
+  } catch {
+    return 5.5 // fallback to IST
+  }
+}
+
+/** Parse 'HH:MM AM/PM' string to decimal hours */
+function parseTimeStr(t: string): number {
+  const [tm, ap] = t.trim().split(' ')
+  const [h, m]   = tm.split(':').map(Number)
+  let hr = h + m / 60
+  if (ap?.toUpperCase() === 'PM' && h !== 12) hr += 12
+  if (ap?.toUpperCase() === 'AM' && h === 12) hr = m / 60
+  return hr
+}
+
+/** Format decimal hours to 'HH:MM AM/PM' */
+function fmtHours(h: number): string {
+  const t  = ((h % 24) + 24) % 24
+  let hh   = Math.floor(t), mm = Math.round((t - hh) * 60)
+  if (mm >= 60) { mm = 0; hh++ }
+  hh = hh % 24
+  const ap  = hh >= 12 ? 'PM' : 'AM'
+  const h12 = hh === 0 ? 12 : hh > 12 ? hh - 12 : hh
+  return `${h12.toString().padStart(2, '0')}:${mm.toString().padStart(2, '0')} ${ap}`
+}
+
+const RAHU_SEG_IDX = [7, 1, 6, 4, 5, 3, 2] // Sun=8th, Mon=2nd, Tue=7th... (0-based from sunrise)
+
 export interface BirthData {
   date: string       // YYYY-MM-DD
   time: string       // HH:MM
@@ -54,8 +115,9 @@ export function calculateKundli(birth: BirthData): KundliData {
   const [y, m, d] = birth.date.split('-').map(Number)
   const [hr, mn] = birth.time.split(':').map(Number)
 
-  // Convert local time to UT (subtract IST offset 5:30 for India, approximate)
-  const utHour = hr + mn / 60 - 5.5
+  // Convert local time to UT using the birth timezone (not hardcoded IST)
+  const tzOffset = getTimezoneOffsetHours(birth.timezone ?? 'Asia/Kolkata', birth.date, birth.time)
+  const utHour = hr + mn / 60 - tzOffset
   const astroDate = new Astronomy.AstroTime(new Date(Date.UTC(y, m - 1, d, Math.floor(utHour), Math.round((utHour % 1) * 60))))
 
   const observer = new Astronomy.Observer(birth.lat, birth.lng, 0)
@@ -76,8 +138,8 @@ export function calculateKundli(birth: BirthData): KundliData {
     try {
       const equatorial = Astronomy.Equator(body, astroDate, observer, true, true)
       const ecliptic = Astronomy.Ecliptic(equatorial.vec)
-      // Apply ayanamsa (Lahiri ~23.85 degrees for 2025)
-      const ayanamsa = 23.85
+      // Apply dynamic Lahiri ayanamsa (~24.2° for 2026)
+      const ayanamsa = getLahiriAyanamsa(astroDate.tt)
       const lon = ((ecliptic.elon - ayanamsa) % 360 + 360) % 360
       if (body === Astronomy.Body.Moon) moonLon = lon
 
@@ -112,7 +174,7 @@ export function calculateKundli(birth: BirthData): KundliData {
     const ramcRad = ramc * Math.PI / 180
     const oblRad = obliquity * Math.PI / 180
     const ascRad = Math.atan2(Math.cos(ramcRad), -(Math.sin(ramcRad) * Math.cos(oblRad) + Math.tan(latRad) * Math.sin(oblRad)))
-    const ayanamsa = 23.85
+    const ayanamsa = getLahiriAyanamsa(astroDate.tt)
     ascDegree = ((ascRad * 180 / Math.PI + 360 - ayanamsa) % 360 + 360) % 360
   } catch {
     ascDegree = 0
@@ -125,11 +187,9 @@ export function calculateKundli(birth: BirthData): KundliData {
     p.house = ((p.rashiNum - ascRashiNum + 12) % 12) + 1
   })
 
-  // Rahu/Ketu (mean nodes — Rahu opposite Ketu)
-  const moonPlanet = planets.find(p => p.name === 'Moon')
-  if (moonPlanet) {
-    const rahuLon = (moonLon + 180) % 360
-    const ketuLon = moonLon
+  // Rahu/Ketu — mean lunar nodes (IAU formula). NOT Moon±180°, which is wrong.
+  const { rahuLon, ketuLon } = getMeanLunarNodes(astroDate.tt, getLahiriAyanamsa(astroDate.tt))
+  {
     const rahuRashi = Math.floor(rahuLon / 30)
     const ketuRashi = Math.floor(ketuLon / 30)
     planets.push({
@@ -233,7 +293,7 @@ export function getPanchangForDate(date: string, lat: number, lng: number) {
     const moonEcl = Astronomy.Ecliptic(moonEq.vec)
     const sunEq = Astronomy.Equator(Astronomy.Body.Sun, astroDate, observer, true, true)
     const sunEcl = Astronomy.Ecliptic(sunEq.vec)
-    const ayanamsa = 23.85
+    const ayanamsa = getLahiriAyanamsa(astroDate.tt)
     moonLon = ((moonEcl.elon - ayanamsa + 360) % 360)
     sunLon = ((sunEcl.elon - ayanamsa + 360) % 360)
   } catch {}
@@ -250,6 +310,16 @@ export function getPanchangForDate(date: string, lat: number, lng: number) {
   const KARANAS = ['Bava','Balava','Kaulava','Taitila','Garija','Vanija','Vishti','Shakuni','Chatushpada','Naga','Kimstughna']
   const karanaNum = Math.floor(((moonLon - sunLon + 360) % 360) / 6) % 11
 
+  // Dynamic Rahu Kaal, Abhijit Muhurat, Brahma Muhurta from actual sunrise/sunset
+  const dow    = new Date(date).getDay()
+  const srH    = parseTimeStr(sunrise)
+  const ssH    = parseTimeStr(sunset)
+  const dayDur = ssH - srH
+  const seg    = dayDur / 8
+  const rahuStart = srH + RAHU_SEG_IDX[dow] * seg
+  const noon      = (srH + ssH) / 2
+  const mDur      = dayDur / 30  // half of 1/15th of day for Abhijit
+
   return {
     date,
     tithi: TITHIS[tithiNum % 15],
@@ -262,9 +332,9 @@ export function getPanchangForDate(date: string, lat: number, lng: number) {
     sunset,
     moonSign: RASHIS[Math.floor(moonLon / 30)],
     sunSign: RASHIS[Math.floor(sunLon / 30)],
-    rahuKaal: getRahuKaal(new Date(date).getDay()),
-    abhijitMuhurat: '11:48 AM - 12:36 PM',
-    brahmaHour: '04:30 AM - 06:00 AM',
+    rahuKaal:       `${fmtHours(rahuStart)} – ${fmtHours(rahuStart + seg)}`,
+    abhijitMuhurat: `${fmtHours(noon - mDur)} – ${fmtHours(noon + mDur)}`,
+    brahmaHour:     `${fmtHours(srH - 1.6)} – ${fmtHours(srH - 0.8)}`,
   }
 }
 
@@ -272,9 +342,4 @@ function formatTime(date: Date): string {
   return date.toLocaleTimeString('en-IN', {
     hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'Asia/Kolkata'
   })
-}
-
-function getRahuKaal(day: number): string {
-  const slots = ['09:00-10:30','07:30-09:00','12:00-13:30','10:30-12:00','07:30-09:00','10:30-12:00','15:00-16:30']
-  return slots[day] || '08:00-09:30'
 }

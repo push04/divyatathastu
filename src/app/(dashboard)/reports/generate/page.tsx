@@ -21,20 +21,18 @@ interface FamilyMember {
 }
 
 const REPORT_TYPES = [
-  { id: 'full_tathastu', label: 'Full Tathastu', icon: 'auto_awesome', desc: 'All 14 reports combined — complete life blueprint', price: 2999, badge: 'BEST VALUE' },
-  { id: 'kundli', label: 'Kundli / Horoscope', icon: 'brightness_7', desc: 'Birth chart, planets, dashas, predictions', price: 499 },
+  { id: 'full_tathastu', label: 'Full Tathastu', icon: 'auto_awesome', desc: 'All 12 reports combined — complete life blueprint', price: 2999, badge: 'BEST VALUE' },
+  { id: 'astrology', label: 'Kundli / Horoscope', icon: 'brightness_7', desc: 'Birth chart, planets, dashas, predictions', price: 499 },
   { id: 'numerology', label: 'Numerology', icon: 'tag', desc: 'Life path, destiny, lucky numbers & mobile compatibility', price: 299 },
-  { id: 'chakra', label: 'Chakra Analysis', icon: 'local_florist', desc: 'All 7 chakras — balance, mantras, crystals', price: 299 },
+  { id: 'shakti_chakra', label: 'Chakra Analysis', icon: 'local_florist', desc: 'All 7 chakras — balance, mantras, crystals', price: 299 },
   { id: 'prakriti', label: 'Prakriti (Ayurveda)', icon: 'eco', desc: 'Vata-Pitta-Kapha constitution + diet & herbs', price: 299 },
   { id: 'yantra_colour', label: 'Yantra & Colour', icon: 'palette', desc: 'Personal yantra, power colors, gemstone', price: 299 },
-  { id: 'mantra', label: 'Mantra Science', icon: 'temple_hindu', desc: 'Personal beej mantra, likhit japa guidance', price: 299 },
-  { id: 'annual_prediction', label: 'Annual Prediction', icon: 'calendar_today', desc: 'Month-by-month forecast for current year', price: 499 },
-  { id: 'vastu', label: 'Vastu Report', icon: 'house', desc: 'Home/office direction analysis & remedies', price: 399 },
+  { id: 'mantra_chanting', label: 'Mantra Science', icon: 'temple_hindu', desc: 'Personal beej mantra, likhit japa guidance', price: 299 },
+  { id: 'astro_vastu', label: 'Vastu Report', icon: 'house', desc: 'Home/office direction analysis & remedies', price: 399 },
   { id: 'child_development', label: 'Child Development', icon: 'child_care', desc: 'Learning style, talents, education guidance', price: 399 },
   { id: 'dmit', label: 'DMIT (Brain Mapping)', icon: 'psychology', desc: 'Multiple intelligence profile, career fit', price: 499 },
-  { id: 'colour_therapy', label: 'Colour Therapy', icon: 'palette', desc: 'Healing colors for health, wealth & love', price: 299 },
+  { id: 'colour_therapy', label: 'Colour Therapy', icon: 'colorize', desc: 'Healing colors for health, wealth & love', price: 299 },
   { id: 'psychology', label: 'Vedic Psychology', icon: 'self_improvement', desc: 'Moon sign personality, EQ, shadow work', price: 399 },
-  { id: 'remedies', label: 'Remedies Summary', icon: 'medication', desc: 'Planetary gemstones, mantras, fasting days', price: 299 },
 ]
 
 const STEPS = ['Select Member', 'Choose Report', 'Additional Info', 'Generate']
@@ -48,7 +46,7 @@ function GenerateReportContent() {
   const [members, setMembers] = useState<FamilyMember[]>([])
   const [selectedMember, setSelectedMember] = useState<string>(searchParams.get('member') || '')
   const [selectedReport, setSelectedReport] = useState<string>('')
-  const [vastuData, setVastuData] = useState({ houseDirection: '', plotShape: 'rectangular', floors: '1' })
+  const [vastuData, setVastuData] = useState({ homeDirection: '', sleepDirection: 'south' })
   const [generating, setGenerating] = useState(false)
   const [progress, setProgress] = useState(0)
 
@@ -63,41 +61,48 @@ function GenerateReportContent() {
     }
     load()
     if (searchParams.get('member')) setStep(1)
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleGenerate() {
     if (!selectedMember || !selectedReport) { toast.error('Select member and report type'); return }
     setGenerating(true)
     setProgress(10)
 
-    const member = members.find(m => m.id === selectedMember)
-    if (!member) { toast.error('Member not found'); setGenerating(false); return }
-
-    const tick = setInterval(() => setProgress(p => Math.min(p + 8, 85)), 1200)
+    const tick = setInterval(() => setProgress(p => Math.min(p + 6, 88)), 1500)
 
     try {
       const res = await fetch('/api/noxatra', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        redirect: 'error',
         body: JSON.stringify({
-          memberId: selectedMember,
-          reportType: selectedReport,
-          vastu: selectedReport === 'vastu' ? vastuData : undefined,
+          family_member_id: selectedMember,
+          report_types: [selectedReport],
+          vastu: selectedReport === 'astro_vastu' ? vastuData : undefined,
         }),
       })
 
       clearInterval(tick)
       setProgress(95)
 
+      if (!res.ok) {
+        let errMsg = 'Generation failed'
+        try { const d = await res.json(); errMsg = d.error || errMsg } catch {}
+        throw new Error(errMsg)
+      }
+
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Generation failed')
+      const reportId = data.results?.[0]?.report_id
 
       setProgress(100)
       toast.success('Report generated successfully!')
-      setTimeout(() => router.push(`/reports/${data.reportId}`), 500)
+      setTimeout(() => {
+        if (reportId) router.push(`/reports/${reportId}`)
+        else router.push('/reports')
+      }, 500)
     } catch (err: any) {
       clearInterval(tick)
-      toast.error(err.message || 'Generation failed')
+      toast.error(err.message || 'Generation failed. Please try again.')
       setGenerating(false)
       setProgress(0)
     }
@@ -196,32 +201,23 @@ function GenerateReportContent() {
         <div className="space-y-4">
           <h2 className="text-lg font-bold text-[var(--indigo-deep)]">Additional Information</h2>
 
-          {selectedReport === 'vastu' ? (
+          {selectedReport === 'astro_vastu' ? (
             <div className="card-divine p-6 space-y-4">
               <p className="text-sm text-[var(--warm-charcoal)]/70 mb-2">Vastu report requires a few details about your home.</p>
               <div>
                 <label className="block text-sm font-medium text-[var(--indigo-deep)] mb-1.5">Main Door Direction</label>
-                <select value={vastuData.houseDirection} onChange={e => setVastuData(v => ({ ...v, houseDirection: e.target.value }))}
+                <select value={vastuData.homeDirection} onChange={e => setVastuData(v => ({ ...v, homeDirection: e.target.value }))}
                   className="w-full px-3 py-2.5 rounded-lg border border-[var(--warm-sand)] bg-white text-sm focus:outline-none focus:border-[var(--saffron)]">
                   <option value="">Select direction</option>
-                  {['North', 'North-East', 'East', 'South-East', 'South', 'South-West', 'West', 'North-West'].map(d => <option key={d} value={d.toLowerCase().replace('-', '_')}>{d}</option>)}
+                  {['North', 'North-East', 'East', 'South-East', 'South', 'South-West', 'West', 'North-West'].map(d => <option key={d} value={d}>{d}</option>)}
                 </select>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-[var(--indigo-deep)] mb-1.5">Plot Shape</label>
-                  <select value={vastuData.plotShape} onChange={e => setVastuData(v => ({ ...v, plotShape: e.target.value }))}
-                    className="w-full px-3 py-2.5 rounded-lg border border-[var(--warm-sand)] bg-white text-sm">
-                    {['rectangular', 'square', 'irregular', 'triangular'].map(s => <option key={s} value={s} className="capitalize">{s}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[var(--indigo-deep)] mb-1.5">Number of Floors</label>
-                  <select value={vastuData.floors} onChange={e => setVastuData(v => ({ ...v, floors: e.target.value }))}
-                    className="w-full px-3 py-2.5 rounded-lg border border-[var(--warm-sand)] bg-white text-sm">
-                    {['1', '2', '3', '4+'].map(f => <option key={f} value={f}>{f}</option>)}
-                  </select>
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-[var(--indigo-deep)] mb-1.5">Sleep Direction (head points to)</label>
+                <select value={vastuData.sleepDirection} onChange={e => setVastuData(v => ({ ...v, sleepDirection: e.target.value }))}
+                  className="w-full px-3 py-2.5 rounded-lg border border-[var(--warm-sand)] bg-white text-sm">
+                  {['North', 'South', 'East', 'West'].map(d => <option key={d} value={d.toLowerCase()}>{d}</option>)}
+                </select>
               </div>
             </div>
           ) : (
@@ -251,8 +247,8 @@ function GenerateReportContent() {
                   <span className="font-medium text-[var(--indigo-deep)]">{REPORT_TYPES.find(r => r.id === selectedReport)?.label}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-[var(--warm-charcoal)]/60">Engine</span>
-                  <span className="font-medium text-[var(--indigo-deep)]">Noxatra AI + Groq Llama-3.3</span>
+                  <span className="text-[var(--warm-charcoal)]/60">Powered by</span>
+                  <span className="font-medium text-[var(--indigo-deep)]">Noxatra AI</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-[var(--warm-charcoal)]/60">Est. Time</span>

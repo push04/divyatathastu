@@ -94,7 +94,12 @@ const YOGAS = [
 ]
 const KARANAS = ['Bava','Balava','Kaulava','Taitila','Garija','Vanija','Vishti','Shakuni','Chatushpada','Naga','Kimstughna']
 const RASHIS  = ['Mesha','Vrishabha','Mithuna','Karka','Simha','Kanya','Tula','Vrishchika','Dhanu','Makara','Kumbha','Meena']
-const RAHU    = ['09:00–10:30','07:30–09:00','12:00–13:30','10:30–12:00','07:30–09:00','10:30–12:00','15:00–16:30']
+const RAHU_SEG_MAP = [7, 1, 6, 4, 5, 3, 2] // Sun=8th, Mon=2nd, Tue=7th, Wed=5th, Thu=6th, Fri=4th, Sat=3rd (0-based)
+function rahuKaalDynamic(srH: number, ssH: number, dow: number): string {
+  const segment = (ssH - srH) / 8
+  const start   = srH + RAHU_SEG_MAP[dow] * segment
+  return `${fmt(start)} – ${fmt(start + segment)}`
+}
 
 function moonPhase(t: number): string {
   if (t === 14) return 'Purnima — Full Moon'
@@ -140,8 +145,11 @@ export async function GET(req: NextRequest) {
   const srH   = parseH(srIST)
   const ssH   = parseH(ssIST)
   const noon  = (srH + ssH) / 2
-  const abhijit = `${fmt(noon - 0.4)} – ${fmt(noon + 0.4)}`
-  const brahma  = `${fmt(srH - 1.5)} – ${fmt(srH)}`
+  const dayDur = ssH - srH
+  const muhuraDur = dayDur / 30 // half of 1/15th of day
+  const abhijit = `${fmt(noon - muhuraDur)} – ${fmt(noon + muhuraDur)}`
+  // Brahma Muhurta: 96–48 minutes before sunrise
+  const brahma  = `${fmt(srH - 1.6)} – ${fmt(srH - 0.8)}`
 
   const dow = new Date(y, m - 1, d).getDay()
 
@@ -159,7 +167,7 @@ export async function GET(req: NextRequest) {
       sunset:         ssIST,
       moonSign:       RASHIS[Math.floor(mLon / 30)],
       sunSign:        RASHIS[Math.floor(sLon / 30)],
-      rahuKaal:       RAHU[dow],
+      rahuKaal:       rahuKaalDynamic(srH, ssH, dow),
       abhijitMuhurat: abhijit,
       brahmaHour:     brahma,
       moonPhase:      moonPhase(tithiNum),

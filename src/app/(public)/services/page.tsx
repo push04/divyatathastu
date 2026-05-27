@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
   title: 'Our Services | MahaTathastu — 14 Vedic Reports',
@@ -23,7 +24,17 @@ const SERVICES = [
   { id: 'remedies', icon: 'healing', label: 'Remedies Summary', price: 299, desc: 'Consolidated remedies — gemstones, mantras, fasting days, deity, charity, and Vedic upaya.', features: ['Gemstone protocol', 'Mantra guidance', 'Fasting days', 'Daan & charity', 'Yantra placement'] },
 ]
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const supabase = await createClient()
+  const { data: bundle } = await supabase
+    .from('products')
+    .select('price,sale_price')
+    .eq('slug', 'full-tathastu-bundle')
+    .single()
+
+  const bundlePrice = bundle?.price ?? 2999
+  const bundleOriginal = bundle?.sale_price ?? 4999
+
   return (
     <div className="min-h-screen">
       {/* Hero */}
@@ -58,8 +69,8 @@ export default function ServicesPage() {
                 </div>
               </div>
               <div className="text-right flex-shrink-0">
-                <div className="text-3xl font-bold text-[var(--indigo-deep)]">₹{SERVICES[0].price.toLocaleString('en-IN')}</div>
-                <div className="text-sm text-[var(--warm-charcoal)]/40 line-through">₹4,999</div>
+                <div className="text-3xl font-bold text-[var(--indigo-deep)]">₹{bundlePrice.toLocaleString('en-IN')}</div>
+                <div className="text-sm text-[var(--warm-charcoal)]/40 line-through">₹{bundleOriginal.toLocaleString('en-IN')}</div>
                 <Link href="/reports/generate" className="btn-divine mt-3 px-6 py-2.5 text-sm block text-center">Get Full Report</Link>
               </div>
             </div>

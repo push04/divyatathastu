@@ -6,6 +6,7 @@ import Testimonials from '@/components/home/Testimonials'
 import InMediaSection from '@/components/home/InMediaSection'
 import MandirTeaser from '@/components/home/MandirTeaser'
 import TathastuCTA from '@/components/home/TathastuCTA'
+import FeaturedProducts from '@/components/home/FeaturedProducts'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -21,6 +22,7 @@ export default function HomePage() {
       <ServicesGrid />
       <HowItWorks />
       <TathastuCTA />
+      <FeaturedProducts />
       <MandirTeaser />
       <Testimonials />
       <InMediaSection />

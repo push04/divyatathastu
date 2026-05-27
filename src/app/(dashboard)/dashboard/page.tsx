@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { getUserLocation } from '@/lib/utils/getLocation'
+import { useBundlePrice } from '@/lib/hooks/useBundlePrice'
 
 interface Profile { id: string; full_name: string; email: string }
 interface FamilyMember { id: string; full_name: string; relation: string; date_of_birth?: string }
@@ -34,13 +36,16 @@ export default function DashboardPage() {
   const [panchang, setPanchang] = useState<PanchangSnap | null>(null)
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
+  const { price: bundlePrice } = useBundlePrice()
 
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0]
-    fetch(`/api/panchang?lat=28.6139&lng=77.2090&date=${today}`)
-      .then(r => r.json())
-      .then(j => { if (j.success) setPanchang({ tithi: j.data.tithi, nakshatra: j.data.nakshatra, yoga: j.data.yoga, rahuKaal: j.data.rahuKaal }) })
-      .catch(() => {})
+    getUserLocation().then(loc => {
+      fetch(`/api/panchang?lat=${loc.lat}&lng=${loc.lng}&date=${today}`)
+        .then(r => r.json())
+        .then(j => { if (j.success) setPanchang({ tithi: j.data.tithi, nakshatra: j.data.nakshatra, yoga: j.data.yoga, rahuKaal: j.data.rahuKaal }) })
+        .catch(() => {})
+    })
   }, [])
 
   useEffect(() => {
@@ -320,7 +325,7 @@ export default function DashboardPage() {
               <h3 className="text-xl text-white mb-1 relative z-10" style={{ fontFamily: "'Playfair Display', serif" }}>Full Tathastu Bundle</h3>
               <p className="text-white/60 text-sm mb-5 relative z-10">All 14 reports + lifetime access for your entire family</p>
               <Link href="/shop" className="relative z-10 inline-flex items-center gap-2 bg-[var(--terracotta)] text-white text-xs px-5 py-2.5 rounded-full font-semibold hover:bg-[var(--terracotta-vivid)] transition-colors shadow-lg" style={{ fontFamily: "'Sora', sans-serif" }}>
-                Upgrade — ₹2,999
+                Upgrade — ₹{(bundlePrice ?? 2999).toLocaleString('en-IN')}
               </Link>
             </div>
           </div>
