@@ -79,8 +79,16 @@ ALTER TABLE public.events ADD CONSTRAINT events_type_check
     'yatra','consultation_camp','online','offline'
   ));
 
--- Make slug nullable so admin can create events without manually setting it
-ALTER TABLE public.events ALTER COLUMN slug DROP NOT NULL;
+-- Make slug nullable if it exists (some installs created events without slug)
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public' AND table_name = 'events' AND column_name = 'slug'
+  ) THEN
+    ALTER TABLE public.events ALTER COLUMN slug DROP NOT NULL;
+  END IF;
+END $$;
 
 -- Add columns used by public events page and admin save payload
 ALTER TABLE public.events
