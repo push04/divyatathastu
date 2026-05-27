@@ -162,7 +162,7 @@ function getFallbackKundli(dob: string): never {
   )
 }
 
-function getAstrologyAnalysis(kundli: ReturnType<typeof getFallbackKundli>) {
+function getAstrologyAnalysis(kundli: ReturnType<typeof calculateKundli>) {
   return {
     summary: `With ${kundli.ascendant} Lagna and ${kundli.moonSign} Moon sign, the native has a unique combination of energies. The birth Nakshatra is ${kundli.nakshatra}, which gives specific qualities and tendencies.`,
     currentPhase: `Currently running ${kundli.currentDasha} Mahadasha with ${kundli.currentAntardasha} Antardasha. This period highlights themes of ${getDashaThemes(kundli.currentDasha)}.`,

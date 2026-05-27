@@ -5,9 +5,9 @@ export type ReportType = 'astrology' | 'astro_vastu' | 'shakti_chakra' | 'numero
   'colour_therapy' | 'child_development' | 'mantra_chanting' | 'mantra_writing' | 'full_tathastu'
 
 export type ReportStatus = 'pending' | 'processing' | 'generated' | 'reviewed' | 'delivered'
-export type ProductType = 'report' | 'ebook' | 'consultation' | 'yantra' | 'gemstone' | 'course' | 'bundle'
-export type OrderStatus = 'pending' | 'paid' | 'processing' | 'completed' | 'refunded' | 'cancelled'
-export type EventType = 'webinar' | 'puja' | 'workshop' | 'yatra' | 'satsang' | 'consultation_camp'
+export type ProductType = 'report' | 'ebook' | 'consultation' | 'yantra' | 'gemstone' | 'course' | 'bundle' | 'physical' | 'herbal'
+export type OrderStatus = 'pending' | 'paid' | 'processing' | 'shipped' | 'delivered' | 'completed' | 'refunded' | 'cancelled'
+export type EventType = 'webinar' | 'puja' | 'workshop' | 'yatra' | 'satsang' | 'consultation_camp' | 'pilgrimage' | 'other' | 'online' | 'offline'
 
 export type Database = {
   public: {
@@ -131,6 +131,7 @@ export type Database = {
           generated_by: 'auto' | 'expert' | 'hybrid'
           reviewed_by: string | null
           expert_notes: string | null
+          admin_notes: string | null
           order_id: string | null
           is_public: boolean
           created_at: string
@@ -148,6 +149,7 @@ export type Database = {
           generated_by?: 'auto' | 'expert' | 'hybrid'
           reviewed_by?: string | null
           expert_notes?: string | null
+          admin_notes?: string | null
           order_id?: string | null
           is_public?: boolean
         }
@@ -163,6 +165,7 @@ export type Database = {
           generated_by?: 'auto' | 'expert' | 'hybrid'
           reviewed_by?: string | null
           expert_notes?: string | null
+          admin_notes?: string | null
           order_id?: string | null
           is_public?: boolean
         }
@@ -183,7 +186,11 @@ export type Database = {
           images: Json
           report_types: Json
           ebook_id: string | null
+          ebook_file_url: string | null
+          ebook_download_limit: number
+          physical: boolean
           is_active: boolean
+          is_featured: boolean
           stock_count: number
           meta_title: string | null
           meta_description: string | null
@@ -200,7 +207,11 @@ export type Database = {
           images?: Json
           report_types?: Json
           ebook_id?: string | null
+          ebook_file_url?: string | null
+          ebook_download_limit?: number
+          physical?: boolean
           is_active?: boolean
+          is_featured?: boolean
           stock_count?: number
           meta_title?: string | null
           meta_description?: string | null
@@ -216,7 +227,11 @@ export type Database = {
           images?: Json
           report_types?: Json
           ebook_id?: string | null
+          ebook_file_url?: string | null
+          ebook_download_limit?: number
+          physical?: boolean
           is_active?: boolean
+          is_featured?: boolean
           stock_count?: number
           meta_title?: string | null
           meta_description?: string | null
@@ -236,6 +251,8 @@ export type Database = {
           total: number
           currency: string
           status: OrderStatus
+          tracking_number: string | null
+          notes: string | null
           payment_method: string | null
           razorpay_order_id: string | null
           razorpay_payment_id: string | null
@@ -254,6 +271,8 @@ export type Database = {
           total: number
           currency?: string
           status?: OrderStatus
+          tracking_number?: string | null
+          notes?: string | null
           payment_method?: string | null
           razorpay_order_id?: string | null
           razorpay_payment_id?: string | null
@@ -270,6 +289,8 @@ export type Database = {
           total?: number
           currency?: string
           status?: OrderStatus
+          tracking_number?: string | null
+          notes?: string | null
           payment_method?: string | null
           razorpay_order_id?: string | null
           razorpay_payment_id?: string | null
@@ -335,47 +356,77 @@ export type Database = {
           title: string
           slug: string
           description: string | null
-          event_type: EventType | null
-          start_at: string
-          end_at: string | null
+          type: string
+          start_datetime: string
+          end_datetime: string | null
+          start_date: string | null
+          start_time: string | null
+          duration_minutes: number | null
           location: string | null
           meeting_link: string | null
           cover_image_url: string | null
           max_attendees: number | null
+          max_participants: number | null
+          current_participants: number
           price: number
           is_free: boolean
-          is_active: boolean
+          is_published: boolean
+          category: string | null
+          host: string | null
+          requirements: string | null
+          includes: Json | null
           created_at: string
+          updated_at: string | null
         }
         Insert: {
           title: string
-          slug: string
+          slug?: string
           description?: string | null
-          event_type?: EventType | null
-          start_at: string
-          end_at?: string | null
+          type?: string
+          start_datetime: string
+          end_datetime?: string | null
+          start_date?: string | null
+          start_time?: string | null
+          duration_minutes?: number | null
           location?: string | null
           meeting_link?: string | null
           cover_image_url?: string | null
           max_attendees?: number | null
+          max_participants?: number | null
+          current_participants?: number
           price?: number
           is_free?: boolean
-          is_active?: boolean
+          is_published?: boolean
+          category?: string | null
+          host?: string | null
+          requirements?: string | null
+          includes?: Json | null
+          updated_at?: string | null
         }
         Update: {
           title?: string
           slug?: string
           description?: string | null
-          event_type?: EventType | null
-          start_at?: string
-          end_at?: string | null
+          type?: string
+          start_datetime?: string
+          end_datetime?: string | null
+          start_date?: string | null
+          start_time?: string | null
+          duration_minutes?: number | null
           location?: string | null
           meeting_link?: string | null
           cover_image_url?: string | null
           max_attendees?: number | null
+          max_participants?: number | null
+          current_participants?: number
           price?: number
           is_free?: boolean
-          is_active?: boolean
+          is_published?: boolean
+          category?: string | null
+          host?: string | null
+          requirements?: string | null
+          includes?: Json | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -392,6 +443,7 @@ export type Database = {
           tags: Json
           is_published: boolean
           published_at: string | null
+          read_time: number | null
           meta_title: string | null
           meta_description: string | null
           schema_markup: Json | null
@@ -408,6 +460,7 @@ export type Database = {
           tags?: Json
           is_published?: boolean
           published_at?: string | null
+          read_time?: number | null
           meta_title?: string | null
           meta_description?: string | null
           schema_markup?: Json | null
@@ -423,11 +476,52 @@ export type Database = {
           tags?: Json
           is_published?: boolean
           published_at?: string | null
+          read_time?: number | null
           meta_title?: string | null
           meta_description?: string | null
           schema_markup?: Json | null
         }
         Relationships: []
+      }
+      handwritten_report_requests: {
+        Row: {
+          id: string
+          user_id: string | null
+          family_member_id: string | null
+          report_type: string
+          description: string | null
+          status: string
+          file_url: string | null
+          file_name: string | null
+          admin_notes: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          user_id?: string | null
+          family_member_id?: string | null
+          report_type?: string
+          description?: string | null
+          status?: string
+          file_url?: string | null
+          file_name?: string | null
+          admin_notes?: string | null
+        }
+        Update: {
+          user_id?: string | null
+          family_member_id?: string | null
+          report_type?: string
+          description?: string | null
+          status?: string
+          file_url?: string | null
+          file_name?: string | null
+          admin_notes?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          { foreignKeyName: 'hrr_user_id_fkey'; columns: ['user_id']; isOneToOne: false; referencedRelation: 'profiles'; referencedColumns: ['id'] },
+          { foreignKeyName: 'hrr_family_member_id_fkey'; columns: ['family_member_id']; isOneToOne: false; referencedRelation: 'family_members'; referencedColumns: ['id'] }
+        ]
       }
       notifications: {
         Row: {
