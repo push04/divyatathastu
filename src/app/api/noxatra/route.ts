@@ -12,8 +12,9 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
     const body = await req.json()
-    const { family_member_id, report_types, order_id } = body as {
+    const { family_member_id, report_types, order_id, vastu } = body as {
       family_member_id: string; report_types: ReportType[]; order_id?: string
+      vastu?: { homeDirection: string; sleepDirection: string }
     }
 
     if (!family_member_id || !report_types?.length) {
@@ -60,7 +61,7 @@ export async function POST(req: NextRequest) {
 
       let reportStatus: 'generated' | 'failed' = 'failed'
       try {
-        const reportData = await generateReportData(member, reportType)
+        const reportData = await generateReportData(member, reportType, reportType === 'astro_vastu' ? vastu : undefined)
 
         await supabase
           .from('reports')

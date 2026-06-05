@@ -98,12 +98,66 @@ export function calculateNumerology(fullName: string, dob: string) {
     challenges:   getChallenges(lifePathNumber),
     careerPaths:  getCareerPaths(destiny),
     compatibility: getLifePathCompatibility(lifePathNumber),
+    karmaNumbers: getKarmaNumbers(fullName),
     interpretation: {
-      lifePath:  interpretLifePath(lifePathNumber),
-      destiny:   interpretDestiny(destiny),
-      soulUrge:  interpretSoulUrge(soulUrge),
+      lifePath:       interpretLifePath(lifePathNumber),
+      lifePathTitle:  LIFE_PATH_TITLES[lifePathNumber] || 'The Seeker',
+      destiny:        interpretDestiny(destiny),
+      soulUrge:       interpretSoulUrge(soulUrge),
+      personalYear:   interpretPersonalYear(personalYear),
+      karmaLesson:    interpretKarmaLesson(getKarmaNumbers(fullName)),
     }
   }
+}
+
+const LIFE_PATH_TITLES: Record<number, string> = {
+  1: 'The Leader', 2: 'The Peacemaker', 3: 'The Creator', 4: 'The Builder',
+  5: 'The Freedom Seeker', 6: 'The Nurturer', 7: 'The Seeker', 8: 'The Achiever',
+  9: 'The Humanitarian', 11: 'The Intuitive Visionary', 22: 'The Master Builder', 33: 'The Master Teacher',
+}
+
+function getKarmaNumbers(fullName: string): number[] {
+  const counts: Record<number, number> = {}
+  fullName.toUpperCase().replace(/[^A-Z]/g, '').split('').forEach(ch => {
+    const v = PYTHAGOREAN[ch]
+    if (v) counts[v] = (counts[v] || 0) + 1
+  })
+  const missing = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(n => !counts[n])
+  return missing.slice(0, 3)
+}
+
+function interpretPersonalYear(n: number): string {
+  const map: Record<number, string> = {
+    1: 'This is your new beginning year — a powerful time to initiate projects, rebrand yourself, and plant seeds for the next 9-year cycle. Leadership opportunities emerge. Act boldly on what you want to create.',
+    2: 'A year of patience, partnership, and inner development. Relationships deepen and collaborations flourish. This is not a year to force outcomes — trust the divine timing and nurture existing connections.',
+    3: 'Joy, creativity, and social expansion define this year. Express yourself freely — through art, writing, speaking, or celebration. Travel, romance, and new friendships enrich your world.',
+    4: 'A foundation-building year requiring discipline and focus. The work you put in now creates structures that last for decades. Health, routines, and practical plans need your attention. Avoid shortcuts.',
+    5: 'A year of change, freedom, and unexpected opportunities. Be flexible and embrace disruption — what leaves your life was meant to go. Travel, new skills, and bold moves are favored.',
+    6: 'Home, family, and service call you this year. A 6 Personal Year asks you to be responsible and nurturing. Marriages, births, and property matters are highlighted. Beauty and harmony grow when you invest in them.',
+    7: 'A deeply introspective year for inner work, spiritual practice, and self-discovery. Step back from the noise of the world. Study, meditation, and time alone will reveal profound insights.',
+    8: 'Power, ambition, and material success are activated this year. Business ventures, financial decisions, and career moves pay off when approached strategically. This is a harvest year for past efforts.',
+    9: 'A year of endings, completions, and release. Let go of what no longer serves. Forgiveness, charitable giving, and spiritual reflection prepare the ground for the new cycle beginning next year.',
+    11: 'A master intuition year — your sixth sense is heightened. Spiritual downloads, synchronicities, and inspired insights guide your path. Share your visions with the world.',
+    22: 'A master builder year — large-scale projects, institutional work, and world-impacting creations are supported. Ground your vision with disciplined action.',
+  }
+  return map[n] || 'A significant year of personal evolution and growth across all life areas.'
+}
+
+function interpretKarmaLesson(missingNumbers: number[]): string {
+  if (missingNumbers.length === 0) return 'No major karmic lessons indicated — your name carries a balanced vibration across all nine numbers.'
+  const LESSONS: Record<number, string> = {
+    1: 'independence and self-reliance',
+    2: 'cooperation and sensitivity to others',
+    3: 'creative expression and joy',
+    4: 'discipline and practical work ethic',
+    5: 'embracing change and freedom',
+    6: 'responsibility and unconditional love',
+    7: 'trust in inner wisdom and spiritual depth',
+    8: 'healthy relationship with power and abundance',
+    9: 'compassion, forgiveness, and humanitarian service',
+  }
+  const lessons = missingNumbers.map(n => LESSONS[n]).filter(Boolean)
+  return `Missing numbers in your name indicate karmic growth areas: ${lessons.join('; ')}. These are themes you are learning to integrate in this lifetime.`
 }
 
 function getLifePathCompatibility(n: number) {

@@ -14,19 +14,19 @@ interface Report {
 
 const REPORT_META: Record<string, { label: string; icon: string; color: string }> = {
   full_tathastu: { label: 'Full Tathastu', icon: 'auto_awesome', color: 'bg-gradient-to-br from-[var(--terracotta)] to-[var(--plum)]' },
-  kundli: { label: 'Kundli', icon: 'brightness_7', color: 'bg-[var(--indigo-deep)]' },
+  astrology: { label: 'Kundli', icon: 'brightness_7', color: 'bg-[var(--indigo-deep)]' },
   numerology: { label: 'Numerology', icon: 'tag', color: 'bg-violet-600' },
-  chakra: { label: 'Chakra', icon: 'spa', color: 'bg-pink-600' },
+  shakti_chakra: { label: 'Shakti Chakra', icon: 'spa', color: 'bg-pink-600' },
   prakriti: { label: 'Prakriti', icon: 'eco', color: 'bg-emerald-600' },
   yantra_colour: { label: 'Yantra & Colour', icon: 'palette', color: 'bg-amber-600' },
-  mantra: { label: 'Mantra', icon: 'self_improvement', color: 'bg-orange-700' },
-  annual_prediction: { label: 'Annual Prediction', icon: 'event', color: 'bg-sky-700' },
-  vastu: { label: 'Vastu', icon: 'house', color: 'bg-teal-600' },
+  mantra_chanting: { label: 'Mantra Chanting', icon: 'self_improvement', color: 'bg-orange-700' },
+  mantra_writing: { label: 'Mantra Writing', icon: 'edit', color: 'bg-orange-600' },
+  astro_vastu: { label: 'Astro Vastu', icon: 'house', color: 'bg-teal-600' },
   child_development: { label: 'Child Development', icon: 'child_care', color: 'bg-lime-600' },
   dmit: { label: 'DMIT', icon: 'psychology', color: 'bg-purple-700' },
   colour_therapy: { label: 'Colour Therapy', icon: 'colorize', color: 'bg-rose-600' },
   psychology: { label: 'Psychology', icon: 'neurology', color: 'bg-slate-600' },
-  remedies: { label: 'Remedies', icon: 'healing', color: 'bg-red-700' },
+  mobile_number: { label: 'Mobile Number', icon: 'phone', color: 'bg-cyan-700' },
 }
 
 export default function ReportsPage() {
@@ -68,7 +68,7 @@ export default function ReportsPage() {
 
       {/* Filter tabs */}
       <div className="flex gap-2 overflow-x-auto pb-1">
-        {['all', 'completed', 'processing', 'pending'].map(f => (
+        {['all', 'generated', 'processing', 'pending'].map(f => (
           <button
             key={f}
             onClick={() => setFilter(f)}
@@ -101,7 +101,7 @@ export default function ReportsPage() {
                     {(r.family_members as any)?.full_name || 'Self'} · {new Date(r.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </p>
                 </div>
-                <span className={`text-xs px-3 py-1 rounded-full font-medium flex-shrink-0 ${r.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : r.status === 'processing' ? 'bg-amber-100 text-amber-700' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>
+                <span className={`text-xs px-3 py-1 rounded-full font-medium flex-shrink-0 ${['generated','reviewed','delivered'].includes(r.status) ? 'bg-emerald-100 text-emerald-700' : r.status === 'processing' ? 'bg-amber-100 text-amber-700' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>
                   {r.status}
                 </span>
               </Link>

@@ -134,12 +134,14 @@ export function calculateKundli(birth: BirthData): KundliData {
   const planets: PlanetPosition[] = []
   let moonLon = 0
 
+  // astroDate.tt is days from J2000.0; getLahiriAyanamsa expects full JD (add 2451545)
+  const jd = astroDate.tt + 2451545.0
+  const ayanamsa = getLahiriAyanamsa(jd)
+
   for (const body of bodies) {
     try {
-      const equatorial = Astronomy.Equator(body, astroDate, observer, true, true)
+      const equatorial = Astronomy.Equator(body, astroDate, observer, false, true)
       const ecliptic = Astronomy.Ecliptic(equatorial.vec)
-      // Apply dynamic Lahiri ayanamsa (~24.2° for 2026)
-      const ayanamsa = getLahiriAyanamsa(astroDate.tt)
       const lon = ((ecliptic.elon - ayanamsa) % 360 + 360) % 360
       if (body === Astronomy.Body.Moon) moonLon = lon
 
@@ -174,7 +176,6 @@ export function calculateKundli(birth: BirthData): KundliData {
     const ramcRad = ramc * Math.PI / 180
     const oblRad = obliquity * Math.PI / 180
     const ascRad = Math.atan2(Math.cos(ramcRad), -(Math.sin(ramcRad) * Math.cos(oblRad) + Math.tan(latRad) * Math.sin(oblRad)))
-    const ayanamsa = getLahiriAyanamsa(astroDate.tt)
     ascDegree = ((ascRad * 180 / Math.PI + 360 - ayanamsa) % 360 + 360) % 360
   } catch {
     ascDegree = 0
@@ -188,7 +189,7 @@ export function calculateKundli(birth: BirthData): KundliData {
   })
 
   // Rahu/Ketu — mean lunar nodes (IAU formula). NOT Moon±180°, which is wrong.
-  const { rahuLon, ketuLon } = getMeanLunarNodes(astroDate.tt, getLahiriAyanamsa(astroDate.tt))
+  const { rahuLon, ketuLon } = getMeanLunarNodes(jd, ayanamsa)
   {
     const rahuRashi = Math.floor(rahuLon / 30)
     const ketuRashi = Math.floor(ketuLon / 30)
@@ -289,13 +290,13 @@ export function getPanchangForDate(date: string, lat: number, lng: number) {
   // Moon longitude for tithi/nakshatra
   let moonLon = 0, sunLon = 0
   try {
-    const moonEq = Astronomy.Equator(Astronomy.Body.Moon, astroDate, observer, true, true)
+    const moonEq = Astronomy.Equator(Astronomy.Body.Moon, astroDate, observer, false, true)
     const moonEcl = Astronomy.Ecliptic(moonEq.vec)
-    const sunEq = Astronomy.Equator(Astronomy.Body.Sun, astroDate, observer, true, true)
+    const sunEq = Astronomy.Equator(Astronomy.Body.Sun, astroDate, observer, false, true)
     const sunEcl = Astronomy.Ecliptic(sunEq.vec)
-    const ayanamsa = getLahiriAyanamsa(astroDate.tt)
-    moonLon = ((moonEcl.elon - ayanamsa + 360) % 360)
-    sunLon = ((sunEcl.elon - ayanamsa + 360) % 360)
+    const panchangAyanamsa = getLahiriAyanamsa(astroDate.tt + 2451545.0)
+    moonLon = ((moonEcl.elon - panchangAyanamsa + 360) % 360)
+    sunLon = ((sunEcl.elon - panchangAyanamsa + 360) % 360)
   } catch {}
 
   const tithiNum = Math.floor(((moonLon - sunLon + 360) % 360) / 12)

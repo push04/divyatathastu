@@ -145,6 +145,7 @@ export async function generateReportData(
         dmit,
         colourTherapy: colours,
         annualPrediction: generateAnnualPrediction(kundli),
+        muhurta: generateMuhurtaGuide(kundli, numerology),
         remediesSummary: generateRemediesSummary(kundli, numerology),
       }
     }
@@ -250,13 +251,180 @@ function getFallbackKundli(dob: string): ReturnType<typeof calculateKundli> {
 function getAstrologyAnalysis(kundli: ReturnType<typeof calculateKundli>) {
   return {
     summary: `With ${kundli.ascendant} Lagna and ${kundli.moonSign} Moon sign, the native has a unique combination of energies. The birth Nakshatra is ${kundli.nakshatra}, which gives specific qualities and tendencies.`,
-    currentPhase: `Currently running ${kundli.currentDasha} Mahadasha with ${kundli.currentAntardasha} Antardasha. This period highlights themes of ${getDashaThemes(kundli.currentDasha)}.`,
+    currentPhase: `Currently running ${kundli.currentDasha} Mahadasha with ${kundli.currentAntardasha} Antardasha. This period highlights themes of ${getDashaThemes(kundli.currentDasha)}. The ${kundli.currentAntardasha} Antardasha within this Mahadasha amplifies ${getDashaThemes(kundli.currentAntardasha)}.`,
+    nakshatraProfile: getNakshatraProfile(kundli.nakshatra),
     career: getCareerFromChart(kundli),
     marriage: getMarriageFromChart(kundli),
     health: getHealthFromChart(kundli),
     finance: getFinanceFromChart(kundli),
+    yogas: detectYogas(kundli),
+    houseThemes: getHouseThemes(kundli),
     remedies: getGeneralRemedies(kundli),
   }
+}
+
+function getNakshatraProfile(nakshatra: string): string {
+  const profiles: Record<string, string> = {
+    Ashwini: 'Ashwini natives are swift, healing, and pioneering. Governed by the Ashwini Kumars (divine physicians), you have natural healing abilities and a love of speed and innovation. Your initiating energy makes you a trailblazer who launches projects with great enthusiasm.',
+    Bharani: 'Bharani nakshatra carries the energy of Yama (lord of dharma and death). You deal with themes of transformation, sexuality, creativity, and strong will. You are deeply creative and have the capacity to hold great responsibility.',
+    Krittika: 'Ruled by Agni (fire), Krittika natives are sharp, precise, and purifying. You have a strong sense of right and wrong, cutting through illusion like a flame. Your determination and critical thinking are your greatest assets.',
+    Rohini: 'Rohini is the most beloved nakshatra of the Moon. You are fertile, creative, sensually aware, and artistic. Ruled by Brahma, you have the power to create beauty in any domain. Material comfort and aesthetic refinement are natural to you.',
+    Mrigashira: 'Mrigashira, the searching star, makes you ever-curious and seekin. Like a deer, you are gentle, restless, and on a perpetual quest for something finer. Ruled by Mars with Soma energy, you have a poetic, romantic nature combined with quick intelligence.',
+    Ardra: 'Ardra, the stormy star of Rudra, brings intensity, emotional depth, and transformation. You experience life deeply and are capable of profound grief and profound joy. Your trials forge extraordinary resilience and inner power.',
+    Punarvasu: 'Punarvasu means "return of the light." You are naturally optimistic, wise, and spiritually inclined. Ruled by Jupiter and Aditi (goddess of infinity), you have a philosophical mind and the ability to bounce back from hardship.',
+    Pushya: 'Pushya is the most auspicious nakshatra, ruled by Saturn and the deity Brihaspati (Jupiter). You are nurturing, protective, and spiritually giving. You have a natural wisdom about caring for others and community.',
+    Ashlesha: 'Ashlesha is the serpent star, associated with kundalini energy, deep psychology, and penetrating intelligence. You can see through facades and have strong healing or harming potential — your intensity must be channeled wisely.',
+    Magha: 'Magha, the ancestral star, is ruled by the Pitrs (ancestors). You carry strong lineage karma and have natural authority, leadership, and pride. Royal qualities, ambition, and a strong sense of tradition define you.',
+    'Purva Phalguni': 'Purva Phalguni is the star of rest and pleasure, governed by Bhaga. You are affectionate, creative, and enjoy the finer things in life. This nakshatra favors partnerships, artistic pursuits, and sensual pleasures.',
+    'Uttara Phalguni': 'Uttara Phalguni is the star of patronage, ruled by Aryaman. You are generous, noble, and have strong leadership combined with warmth. You thrive in partnership and have genuine care for your community.',
+    Hasta: 'Hasta, the star of skilled hands, is ruled by the Sun and deity Savitru. You have extraordinary manual dexterity, healing hands, and a quick, witty mind. Humor and practicality are your gifts.',
+    Chitra: 'Chitra, the brilliant star of Vishwakarma (cosmic architect), makes you deeply aesthetic, creative, and drawn to design and beauty. You have a jewel-like quality that draws attention, and your sense of form is exceptional.',
+    Swati: 'Swati, the independent star, is governed by Vayu (wind). Like a lone blade of grass bending in a storm, you are adaptable, diplomatic, and truly free-spirited. Commerce, music, and the arts suit your temperament.',
+    Vishakha: 'Vishakha, the star of purpose, is ruled by Jupiter and Indra-Agni. You have immense determination, the ability to focus on long-term goals, and transformative power. You are a seeker of peak experiences.',
+    Anuradha: 'Anuradha is the star of devotion and friendship, ruled by Saturn and Mitra. You have an extraordinary capacity for deep, loyal bonds and can inspire groups with your genuine warmth and organizational ability.',
+    Jyeshtha: 'Jyeshtha, the eldest star of Indra, grants authority, seniority, and the ability to handle power. You have natural leadership and are drawn to positions of responsibility. Your protective instincts are strong.',
+    Moola: 'Moola, the root star, governed by Nirrti and Ketu, strips away the non-essential. You are drawn to extremes and have the power to go to the very core of any matter. Spiritual depth and destructive-reconstructive power define you.',
+    'Purva Ashadha': 'Purva Ashadha, the invincible star of Apah (water goddess), makes you vigorous, persuasive, and unstoppable once committed. You have strong opinions and the gift of inspiring others through your conviction.',
+    'Uttara Ashadha': 'Uttara Ashadha, the universal star of Vishvadevas, blesses you with patience, integrity, and the ability to achieve lasting victories. Your success comes through righteousness and genuine contribution.',
+    Shravana: 'Shravana, the listening star of Vishnu, gives you extraordinary powers of receptivity, learning, and communication. You hear what others miss and have a gift for connecting people and preserving wisdom.',
+    Dhanishtha: 'Dhanishtha, the wealthy star of the eight Vasus, bestows material abundance, musical talent, and community leadership. You have natural charisma and the ability to create prosperity around you.',
+    Shatabhisha: 'Shatabhisha, the healing star of Varuna, makes you a solitary mystic, healer, and truth-seeker. You have strong intuition, healing abilities, and a philosophical nature that seeks universal laws.',
+    'Purva Bhadrapada': 'Purva Bhadrapada, ruled by Jupiter and Aja Ekapada, is the fierce, passionate star of transformation. You are intense, idealistic, and capable of tremendous inner fire for a cause you believe in.',
+    'Uttara Bhadrapada': 'Uttara Bhadrapada, the deep star of Ahirbudhnya, gives you profound wisdom, depth of feeling, and spiritual power. You carry great patience and the serpentine kundalini force for awakening.',
+    Revati: 'Revati, the final nakshatra of Pushan, blesses you with a gentle, nourishing, and protective nature. You are a guardian of others, deeply spiritual, and have a luminous inner world that others find healing.',
+  }
+  return profiles[nakshatra] || `${nakshatra} nakshatra grants unique qualities of perception, purpose, and spiritual direction that shape your fundamental nature and karmic path.`
+}
+
+function detectYogas(kundli: ReturnType<typeof calculateKundli>) {
+  const yogas: Array<{ name: string; description: string }> = []
+  const planets = kundli.planets || []
+
+  const getPlanet = (name: string) => planets.find(p => p.name === name)
+  const jupiter = getPlanet('Jupiter')
+  const moon = getPlanet('Moon')
+  const sun = getPlanet('Sun')
+  const mercury = getPlanet('Mercury')
+  const venus = getPlanet('Venus')
+  const mars = getPlanet('Mars')
+  const saturn = getPlanet('Saturn')
+
+  // Gaj Kesari Yoga: Jupiter in 1, 4, 7, or 10 from Moon
+  if (jupiter && moon) {
+    const diff = Math.abs(jupiter.house - moon.house)
+    if ([1, 4, 7, 10].includes(diff) || [0, 3, 6, 9].includes(diff)) {
+      yogas.push({ name: 'Gaj Kesari Yoga', description: 'Jupiter in a kendra from Moon — bestows wisdom, fame, prosperity, and noble character. This yoga elevates the native to positions of respect and ensures long-lasting reputation.' })
+    }
+  }
+
+  // Budha-Aditya Yoga: Sun and Mercury conjunct
+  if (sun && mercury && sun.house === mercury.house) {
+    yogas.push({ name: 'Budha-Aditya Yoga', description: 'Sun and Mercury in the same house — grants sharp intellect, communication skills, recognition in education or business, and a brilliant analytical mind.' })
+  }
+
+  // Chandra-Mangal Yoga: Moon and Mars conjunct or in 7th from each other
+  if (moon && mars && (moon.house === mars.house || Math.abs(moon.house - mars.house) === 6)) {
+    yogas.push({ name: 'Chandra-Mangal Yoga', description: 'Moon and Mars in combination — creates financial acumen, entrepreneurial spirit, and strong drive. The native earns through initiative and has a bold, action-oriented emotional nature.' })
+  }
+
+  // Lakshmi Yoga: Venus in own sign or exaltation in kendra/trikona from ascendant
+  if (venus && [1, 4, 5, 7, 9, 10].includes(venus.house)) {
+    const venusExalted = venus.rashi === 'Pisces'
+    const venusOwn = ['Taurus', 'Libra'].includes(venus.rashi)
+    if (venusExalted || venusOwn) {
+      yogas.push({ name: 'Lakshmi Yoga', description: 'Venus strongly placed in a key house — bestows material abundance, artistic talent, beautiful relationships, and a life of refinement and prosperity.' })
+    }
+  }
+
+  // Shasha Yoga: Saturn in own sign or exaltation in kendra
+  if (saturn && [1, 4, 7, 10].includes(saturn.house)) {
+    const saturnOwn = ['Capricorn', 'Aquarius'].includes(saturn.rashi)
+    const saturnExalted = saturn.rashi === 'Libra'
+    if (saturnOwn || saturnExalted) {
+      yogas.push({ name: 'Shasha Yoga (Panch Mahapurusha)', description: 'Saturn strongly placed in a kendra in own or exalted sign — grants exceptional discipline, organizational mastery, longevity, and the ability to achieve through sustained effort.' })
+    }
+  }
+
+  // Ruchaka Yoga: Mars in own/exalt in kendra
+  if (mars && [1, 4, 7, 10].includes(mars.house)) {
+    const marsOwn = ['Aries', 'Scorpio'].includes(mars.rashi)
+    const marsExalted = mars.rashi === 'Capricorn'
+    if (marsOwn || marsExalted) {
+      yogas.push({ name: 'Ruchaka Yoga (Panch Mahapurusha)', description: 'Mars powerfully placed — blesses with extraordinary physical strength, courage, leadership in military or competitive fields, and a pioneering spirit that overcomes all obstacles.' })
+    }
+  }
+
+  // Hamsa Yoga: Jupiter in own/exalt in kendra
+  if (jupiter && [1, 4, 7, 10].includes(jupiter.house)) {
+    const jupOwn = ['Sagittarius', 'Pisces'].includes(jupiter.rashi)
+    const jupExalted = jupiter.rashi === 'Cancer'
+    if (jupOwn || jupExalted) {
+      yogas.push({ name: 'Hamsa Yoga (Panch Mahapurusha)', description: 'Jupiter magnificently placed — bestows wisdom, spirituality, higher education success, ethical leadership, and a life path aligned with dharma and higher truth.' })
+    }
+  }
+
+  // Dharma-Karma Adhipati Yoga: lords of 9th and 10th in conjunction
+  if (yogas.length === 0) {
+    // Generic positive yoga based on benefics in trines
+    const benefics = [jupiter, venus, mercury].filter(Boolean)
+    const beneficsInTrines = benefics.filter(p => p && [1, 5, 9].includes(p.house))
+    if (beneficsInTrines.length >= 2) {
+      yogas.push({ name: 'Dharma Yoga', description: `Multiple benefic planets in trines (houses 1, 5, 9) create a dharmic pattern supporting spiritual growth, good fortune, and meaningful life purpose.` })
+    }
+  }
+
+  return yogas.slice(0, 4)
+}
+
+function getHouseThemes(kundli: ReturnType<typeof calculateKundli>): Array<{ house: string; insight: string }> {
+  const planets = kundli.planets || []
+  const themes: Array<{ house: string; insight: string }> = []
+  const houseOccupants: Record<number, string[]> = {}
+
+  planets.forEach(p => {
+    if (!houseOccupants[p.house]) houseOccupants[p.house] = []
+    houseOccupants[p.house].push(p.name)
+  })
+
+  const HOUSE_MEANINGS: Record<number, string> = {
+    1: 'Self, personality, health & appearance',
+    2: 'Wealth, family, speech & values',
+    3: 'Siblings, courage, communication & short journeys',
+    4: 'Mother, home, happiness & vehicles',
+    5: 'Intelligence, children, creativity & past merit',
+    6: 'Enemies, health challenges, service & debt',
+    7: 'Marriage, partnerships, public image & business',
+    8: 'Longevity, transformation, occult & inheritance',
+    9: 'Fortune, dharma, father, spirituality & long journeys',
+    10: 'Career, status, government, authority & public life',
+    11: 'Gains, elder siblings, aspirations & social network',
+    12: 'Moksha, foreign lands, losses, spirituality & isolation',
+  }
+
+  const PLANET_HOUSE_EFFECTS: Record<string, Record<number, string>> = {
+    Sun: { 1: 'strong vitality and leadership', 5: 'creative intelligence', 9: 'spiritual authority', 10: 'career prominence' },
+    Moon: { 1: 'emotional sensitivity', 4: 'domestic happiness', 7: 'emotionally connected partnerships', 10: 'career fluctuations' },
+    Jupiter: { 1: 'wisdom and generosity', 5: 'exceptional intelligence', 9: 'profound spirituality', 11: 'abundant gains' },
+    Venus: { 1: 'natural charm', 4: 'beautiful home', 7: 'romantic fulfillment', 11: 'financial gains through creativity' },
+    Mars: { 1: 'courage and drive', 3: 'bold communication', 10: 'ambitious career', 8: 'interest in the occult' },
+    Saturn: { 7: 'delayed but stable marriage', 10: 'career built through hard work', 3: 'disciplined communication' },
+    Mercury: { 1: 'analytical intelligence', 3: 'excellent communication', 7: 'intellectual partnerships' },
+    Rahu: { 1: 'unusual personality', 7: 'unconventional partnerships', 10: 'sudden career rise', 11: 'extraordinary gains' },
+    Ketu: { 1: 'mystical nature', 5: 'past-life creative gifts', 9: 'deep spiritual seeking', 12: 'moksha path' },
+  }
+
+  for (const [houseStr, occupants] of Object.entries(houseOccupants)) {
+    const house = parseInt(houseStr)
+    if (occupants.length > 0) {
+      const effects = occupants.map(p => PLANET_HOUSE_EFFECTS[p]?.[house]).filter(Boolean)
+      const insight = effects.length > 0
+        ? `${occupants.join(', ')} here brings ${effects.join(' and ')} (${HOUSE_MEANINGS[house]})`
+        : `${occupants.join(', ')} activates the themes of ${HOUSE_MEANINGS[house]}`
+      themes.push({ house: `House ${house}`, insight })
+    }
+  }
+
+  return themes.slice(0, 8)
 }
 
 function getDashaThemes(lord: string): string {
@@ -770,18 +938,83 @@ function getColorsToAvoid(ascendant: string): string[] {
 
 function generateAnnualPrediction(kundli: any) {
   const currentYear = new Date().getFullYear()
+  const seed = kundli.dashaLord?.length || 4
+
+  const MONTHLY_THEMES: Record<string, Array<{ theme: string; guidance: string; focus: string }>> = {
+    Sun: [
+      { theme: 'Authority & Visibility', guidance: 'Career matters take center stage. Seek recognition and step into leadership roles. Avoid ego conflicts.', focus: 'Career advancement' },
+      { theme: 'Inner Consolidation', guidance: 'Review and refine your goals. Health and heart need attention. Connect with father or authority figures.', focus: 'Self-reflection' },
+      { theme: 'Creative Fire', guidance: 'Express yourself boldly. Romance, children, and creative projects flourish with solar energy.', focus: 'Creativity & joy' },
+      { theme: 'Strategic Action', guidance: 'Take bold career moves. Your natural authority is at peak. Negotiations favor you.', focus: 'Career peak' },
+      { theme: 'Relationships & Recognition', guidance: 'Public image improves. Partnerships with influential people are favored.', focus: 'Partnerships' },
+      { theme: 'Service & Health', guidance: 'Focus on well-being and service to others. Avoid overworking. Digestive health needs care.', focus: 'Health' },
+      { theme: 'Balance & Diplomacy', guidance: 'Relationship matters call for fairness and patience. Legal matters may arise.', focus: 'Balance' },
+      { theme: 'Transformation', guidance: 'Deep changes are occurring below the surface. Trust the process of letting go.', focus: 'Inner work' },
+      { theme: 'Expansion & Fortune', guidance: 'Travel and higher learning bring breakthroughs. Spiritual practices deepen.', focus: 'Growth' },
+      { theme: 'Career Peak', guidance: 'Your most powerful month for career and public recognition. Make your mark.', focus: 'Achievement' },
+      { theme: 'Social Gains', guidance: 'Networks and friendships bring unexpected opportunities. Group endeavors succeed.', focus: 'Community' },
+      { theme: 'Spiritual Retreat', guidance: 'Rest, reflect, and prepare for a new cycle. Foreign connections may be significant.', focus: 'Completion' },
+    ],
+    Moon: [
+      { theme: 'Emotional Renewal', guidance: 'New cycles begin emotionally. Family connections are highlighted. Trust your instincts.', focus: 'Family & home' },
+      { theme: 'Nurturing & Care', guidance: 'Invest in home and family. Mother or maternal figures are significant. Emotional healing occurs.', focus: 'Nourishment' },
+      { theme: 'Communication & Siblings', guidance: 'Short journeys and sibling interactions bring important messages. Write, speak, and share.', focus: 'Communication' },
+      { theme: 'Home & Security', guidance: 'Domestic life improves. Real estate matters may be favorable. Create your sanctuary.', focus: 'Home life' },
+      { theme: 'Creative Expression', guidance: 'Your emotional nature fuels creativity. Children bring joy. Romance is tender and meaningful.', focus: 'Creativity' },
+      { theme: 'Daily Routines', guidance: 'Focus on health rituals and service. Emotional fluctuations require mindful routines.', focus: 'Wellness' },
+      { theme: 'Relationship Depth', guidance: 'Emotional intimacy in relationships deepens. Be open to vulnerability and connection.', focus: 'Intimacy' },
+      { theme: 'Emotional Transformation', guidance: 'Past patterns surface for healing. Therapy, shadow work, or spiritual practices help.', focus: 'Healing' },
+      { theme: 'Spiritual Journeys', guidance: 'Pilgrimages, retreats, or teacher connections bring profound emotional peace.', focus: 'Spirituality' },
+      { theme: 'Public Emotional Life', guidance: 'Your emotional authenticity draws others to you. Career and public recognition through empathy.', focus: 'Public life' },
+      { theme: 'Community Bonds', guidance: 'Deep connections with like-minded souls flourish. Group emotional work is powerful.', focus: 'Community' },
+      { theme: 'Inner Reflection', guidance: 'Rest and dream. Your subconscious holds keys to the coming cycle. Journal and meditate.', focus: 'Dreams' },
+    ],
+  }
+
+  const DASHA_MONTHLY_THEMES = MONTHLY_THEMES[kundli.currentDasha] || MONTHLY_THEMES.Sun
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
+  const quarters = months.map((month, i) => ({
+    period: `${month} ${currentYear}`,
+    theme: DASHA_MONTHLY_THEMES[i].theme,
+    guidance: DASHA_MONTHLY_THEMES[i].guidance,
+    focus: DASHA_MONTHLY_THEMES[i].focus,
+  }))
+
+  const FAVORABLE_BY_DASHA: Record<string, string[]> = {
+    Sun: ['Jan 14-Feb 13', 'Apr 14-May 14', 'Jul 17-Aug 16'],
+    Moon: ['Feb 13-Mar 14', 'May 15-Jun 14', 'Aug 17-Sep 16'],
+    Mars: ['Mar 14-Apr 13', 'Jun 15-Jul 16', 'Sep 17-Oct 16'],
+    Mercury: ['Apr 13-May 14', 'Jul 17-Aug 16', 'Oct 17-Nov 15'],
+    Jupiter: ['May 14-Jun 14', 'Aug 17-Sep 16', 'Nov 16-Dec 15'],
+    Venus: ['Jun 15-Jul 16', 'Sep 17-Oct 16', 'Dec 16-Jan 14'],
+    Saturn: ['Jul 17-Aug 16', 'Oct 17-Nov 15', 'Jan 14-Feb 12'],
+    Rahu: ['Aug 17-Sep 16', 'Nov 16-Dec 15', 'Feb 13-Mar 13'],
+    Ketu: ['Sep 17-Oct 16', 'Dec 16-Jan 14', 'Mar 14-Apr 13'],
+  }
+
   return {
     year: currentYear,
-    overallTheme: `This is a ${getPlanetTheme(kundli.currentDasha)} year. The ${kundli.currentDasha}-${kundli.currentAntardasha} Dasha combination creates specific opportunities and challenges.`,
-    quarters: [
-      { period: `Jan-Mar ${currentYear}`, theme: 'Foundation setting', guidance: 'Excellent for planning and laying groundwork' },
-      { period: `Apr-Jun ${currentYear}`, theme: 'Growth and action', guidance: 'Peak period for career and relationship moves' },
-      { period: `Jul-Sep ${currentYear}`, theme: 'Introspection', guidance: 'Focus on health and spiritual practices' },
-      { period: `Oct-Dec ${currentYear}`, theme: 'Harvest and completion', guidance: 'Complete projects and celebrate achievements' },
-    ],
-    favorable: ['Jan 15-31', 'Mar 20-Apr 10', 'Jul 1-20', 'Nov 1-20'],
-    cautious: ['Feb 10-25', 'Jun 15-30', 'Sep 10-25'],
+    overallTheme: `${currentYear} runs under the ${kundli.currentDasha} Mahadasha with ${kundli.currentAntardasha} Antardasha. This is a ${getPlanetTheme(kundli.currentDasha)} year. The interplay of these two planetary energies shapes every major life area. ${getAnnualAdvice(kundli.currentDasha)}`,
+    quarters,
+    favorable: FAVORABLE_BY_DASHA[kundli.currentDasha] || ['Mar 20-Apr 10', 'Jul 1-20', 'Nov 1-20'],
+    cautious: ['Eclipse periods', 'Saturn retrograde', 'Mercury retrograde'],
   }
+}
+
+function getAnnualAdvice(dashaLord: string): string {
+  const map: Record<string, string> = {
+    Sun: 'Career, authority, and self-expression are your primary themes. Step forward with confidence and take ownership of your direction.',
+    Moon: 'Emotional intelligence and family bonds are your compass this year. Honor your inner world and the people closest to you.',
+    Mars: 'Action, courage, and initiative are your superpowers. Channel your energy into meaningful ventures and avoid unnecessary conflicts.',
+    Mercury: 'Communication, learning, and business intelligence lead the way. This is an excellent year for education, writing, and trade.',
+    Jupiter: 'Expansion, wisdom, and dharmic living are your highest calling. Seek teachers, study sacred texts, and invest in growth.',
+    Venus: 'Beauty, relationships, and creative work bloom. Love, art, and material refinement come naturally to you this year.',
+    Saturn: 'Discipline, karmic resolution, and sustained effort bring lasting results. What you build this year will endure for decades.',
+    Rahu: 'Innovation, disruption, and unconventional paths bring extraordinary opportunities. Stay grounded amid rapid change.',
+    Ketu: 'Spiritual depth, surrender, and inner liberation are available. Let go of what has run its course and trust the wisdom of non-attachment.',
+  }
+  return map[dashaLord] || 'Focus on aligning with your dharmic path and trusting the cosmic timing of your evolution.'
 }
 
 function getPlanetTheme(planet: string): string {
@@ -800,27 +1033,119 @@ function getPlanetTheme(planet: string): string {
 }
 
 function generateRemediesSummary(kundli: any, numerology: any) {
+  const DASHA_BEEJ: Record<string, string> = {
+    Sun: 'Om Hraam Hreem Hraum Sah Suryaya Namah',
+    Moon: 'Om Shraam Shreem Shraum Sah Chandraya Namah',
+    Mars: 'Om Kraam Kreem Kraum Sah Bhaumaya Namah',
+    Mercury: 'Om Braam Breem Braum Sah Budhaya Namah',
+    Jupiter: 'Om Graam Greem Graum Sah Gurave Namah',
+    Venus: 'Om Draam Dreem Draum Sah Shukraya Namah',
+    Saturn: 'Om Praam Preem Praum Sah Shanaischaraya Namah',
+    Rahu: 'Om Bhraam Bhreem Bhraum Sah Rahave Namah',
+    Ketu: 'Om Sraam Sreem Sraum Sah Ketave Namah',
+  }
+
+  const DEITY_BY_PLANET: Record<string, { deity: string; mantra: string }> = {
+    Sun: { deity: 'Lord Surya / Lord Ram', mantra: 'Aditya Hridayam — 108 times at sunrise' },
+    Moon: { deity: 'Lord Shiva / Goddess Durga', mantra: 'Om Namah Shivaya — 108 times on Mondays' },
+    Mars: { deity: 'Lord Hanuman / Lord Kartikeya', mantra: 'Hanuman Chalisa — daily on Tuesdays' },
+    Mercury: { deity: 'Lord Vishnu / Goddess Saraswati', mantra: 'Om Namo Bhagavate Vasudevaya — 108 times' },
+    Jupiter: { deity: 'Lord Vishnu / Lord Dakshinamurthy', mantra: 'Om Guruve Namah / Guru Stotram on Thursdays' },
+    Venus: { deity: 'Goddess Lakshmi / Goddess Parvati', mantra: 'Om Shreem Mahalakshmiyei Namah on Fridays' },
+    Saturn: { deity: 'Lord Shani / Lord Bhairava', mantra: 'Om Praam Preem Praum Sah Shanaischaraya Namah on Saturdays' },
+    Rahu: { deity: 'Goddess Durga / Lord Bhairava', mantra: 'Rahu Kavach / Durga Chalisa on Saturdays' },
+    Ketu: { deity: 'Lord Ganesha / Lord Bhairava', mantra: 'Om Gam Ganapataye Namah — 108 times daily' },
+  }
+
+  const GEMSTONE_BY_PLANET: Record<string, { stone: string; substitute: string; purpose: string; weight: string; metal: string; day: string }> = {
+    Sun: { stone: 'Ruby (Manik)', substitute: 'Red Garnet or Red Spinel', purpose: 'Career advancement, vitality, and father relationship', weight: 'Minimum 3 carats in gold', metal: 'Gold', day: 'Sunday sunrise' },
+    Moon: { stone: 'Natural Pearl (Moti)', substitute: 'Moonstone or White Coral', purpose: 'Emotional stability, mind clarity, and mother relationship', weight: 'Minimum 4 carats in silver', metal: 'Silver', day: 'Monday morning' },
+    Mars: { stone: 'Red Coral (Moonga)', substitute: 'Bloodstone or Carnelian', purpose: 'Courage, property, and health', weight: 'Minimum 5 carats in copper or gold', metal: 'Copper or Gold', day: 'Tuesday morning' },
+    Mercury: { stone: 'Emerald (Panna)', substitute: 'Green Tourmaline or Peridot', purpose: 'Intelligence, communication, and business', weight: 'Minimum 3 carats in gold', metal: 'Gold', day: 'Wednesday morning' },
+    Jupiter: { stone: 'Yellow Sapphire (Pukhraj)', substitute: 'Yellow Topaz or Citrine', purpose: 'Wisdom, marriage, children, and fortune', weight: 'Minimum 3 carats in gold', metal: 'Gold', day: 'Thursday morning' },
+    Venus: { stone: 'Diamond (Heera)', substitute: 'White Sapphire or White Zircon', purpose: 'Luxury, love, arts, and material comforts', weight: 'Minimum 0.5 carats in white gold or platinum', metal: 'White Gold or Platinum', day: 'Friday morning' },
+    Saturn: { stone: 'Blue Sapphire (Neelam)', substitute: 'Amethyst or Blue Spinel', purpose: 'Discipline, longevity, and karmic resolution', weight: 'Minimum 3 carats in silver or gold', metal: 'Silver or Gold', day: 'Saturday morning' },
+    Rahu: { stone: 'Hessonite (Gomed)', substitute: 'Zircon or Agate', purpose: 'Overcoming obstacles, confusion, and foreign connections', weight: 'Minimum 5 carats in silver', metal: 'Silver', day: 'Saturday evening' },
+    Ketu: { stone: "Cat's Eye (Lehsunia)", substitute: 'Tourmaline or Apatite', purpose: 'Spiritual liberation, intuition, and past karma healing', weight: 'Minimum 3 carats in silver', metal: 'Silver', day: 'Tuesday morning' },
+  }
+
+  const planet = kundli.dashaLord || 'Jupiter'
+  const deity = DEITY_BY_PLANET[planet] || DEITY_BY_PLANET.Jupiter
+  const gemstone = GEMSTONE_BY_PLANET[planet] || GEMSTONE_BY_PLANET.Jupiter
+
   return {
     dailyPractices: [
-      'Morning Surya Namaskar (12 rounds)',
-      `Chant ${kundli.dashaLord} beej mantra 108 times`,
-      'Gratitude journaling (3 things daily)',
-      'Evening meditation (20 minutes)',
+      'Morning Surya Namaskar — 12 rounds at sunrise',
+      `Chant: "${DASHA_BEEJ[planet] || DASHA_BEEJ.Jupiter}" — 108 times`,
+      `Worship ${deity.deity}: ${deity.mantra}`,
+      'Pranayama — 5 minutes Anulom Vilom + 5 minutes Kapalbhati',
+      'Gratitude journaling — 3 blessings before sleep',
+      'Evening meditation — 20 minutes with mala',
     ],
     weeklyPractices: [
-      `Visit temple on ${getAuspiciousDay(kundli.dashaLord)}`,
-      'Donate food or money every week',
-      `Fast on ${getAuspiciousDay(kundli.dashaLord)} (optional)`,
+      `Visit temple on ${getAuspiciousDay(planet)} — offer specific items to the deity`,
+      `Fast (upvas) on ${getAuspiciousDay(planet)} — recommended for karmic clearing`,
+      'Donate food or essentials to the needy every week',
+      'Oil lamp (diya) with sesame or ghee — light at dusk daily',
+      `Recite ${planet === 'Saturn' || planet === 'Rahu' ? 'Shani Stotra' : planet === 'Jupiter' ? 'Guru Stotram' : 'Navgraha Stotra'} on the respective day`,
     ],
-    gemstones: [{
-      stone: 'As per Yantra report',
-      purpose: 'Amplify planetary benefic energies',
-    }],
-    yantras: [`${kundli.dashaLord} Yantra in prayer room`],
+    gemstones: [
+      {
+        stone: gemstone.stone,
+        purpose: gemstone.purpose,
+        weight: gemstone.weight,
+        metal: gemstone.metal,
+        wearingDay: gemstone.day,
+      },
+      {
+        stone: gemstone.substitute,
+        purpose: `Budget substitute for ${gemstone.stone}`,
+        weight: 'Same weight as primary gemstone',
+        metal: gemstone.metal,
+        wearingDay: gemstone.day,
+      },
+    ],
+    yantras: [
+      `${planet} Yantra — energize and install in the North-East prayer room`,
+      'Navgraha Yantra — for general planetary harmony',
+      `Sri Yantra — for overall prosperity and spiritual protection`,
+    ],
     luckyNumbers: numerology.luckyNumbers.slice(0, 3),
     luckyDays: numerology.luckyDays,
-    annualPooja: 'Navgraha Shanti Pooja recommended during Saturn or Rahu dashas',
+    annualPooja: `${planet === 'Saturn' || planet === 'Rahu' || planet === 'Ketu' ? 'Navgraha Shanti Pooja and Mahamrityunjaya Havan' : `${planet} Graha Shanti Pooja`} is strongly recommended. Perform on a ${getAuspiciousDay(planet)} during shukla paksha (waxing moon). Invite a learned Brahmin or conduct through a reliable temple.`,
+    dietRecommendations: getDietByPlanet(planet),
+    charityItems: getCharityByPlanet(planet),
   }
+}
+
+function getDietByPlanet(planet: string): string[] {
+  const map: Record<string, string[]> = {
+    Sun: ['Eat wheat and jaggery on Sundays', 'Include saffron milk', 'Avoid salty foods on Sundays', 'Eat before sunset'],
+    Moon: ['Include milk and rice on Mondays', 'Eat cooling foods — cucumber, coconut', 'Avoid spicy foods on Mondays', 'Stay well-hydrated'],
+    Mars: ['Include red lentils on Tuesdays', 'Eat iron-rich foods — spinach, beets', 'Reduce fried and spicy foods', 'Fast on Tuesdays if possible'],
+    Mercury: ['Include green vegetables on Wednesdays', 'Eat light, easily digestible meals', 'Include sesame seeds', 'Avoid heavy meats'],
+    Jupiter: ['Include turmeric in food daily', 'Eat yellow items on Thursdays — chana dal, banana', 'Include ghee in diet', 'Donate sweets before eating'],
+    Venus: ['Include white foods — curd, milk, rice on Fridays', 'Avoid black items on Fridays', 'Include sour foods', 'Offer food to women before eating'],
+    Saturn: ['Include black sesame in diet on Saturdays', 'Eat iron-rich foods', 'Include mustard oil in cooking', 'Donate black items before eating'],
+    Rahu: ['Include barley and raw onion periodically', 'Avoid non-vegetarian on Saturday', 'Feed crows on Saturdays', 'Include garlic moderately'],
+    Ketu: ['Include sesame and turmeric', 'Eat light sattvic meals', 'Avoid non-vegetarian on Tuesdays', 'Include roots and tubers'],
+  }
+  return map[planet] || map.Jupiter
+}
+
+function getCharityByPlanet(planet: string): string[] {
+  const map: Record<string, string[]> = {
+    Sun: ['Wheat, copper, ruby-colored cloth on Sundays', 'Donate to father figures, government workers'],
+    Moon: ['Rice, white cloth, silver, milk on Mondays', 'Donate to mothers, women, elderly'],
+    Mars: ['Red lentils, red cloth, copper on Tuesdays', 'Donate to soldiers, sportspeople'],
+    Mercury: ['Green vegetables, books, emerald-colored cloth on Wednesdays', 'Donate to students, teachers'],
+    Jupiter: ['Yellow items, books, chana dal on Thursdays', 'Donate to Brahmins, teachers, temples'],
+    Venus: ['White cloth, sugar, curd, silver on Fridays', 'Donate to women, artists, newlyweds'],
+    Saturn: ['Black sesame, oil, iron, blue-black cloth on Saturdays', 'Donate to laborers, poor, disabled'],
+    Rahu: ['Blue cloth, coconut, sesame on Saturdays', 'Feed dogs and crows'],
+    Ketu: ['Mixed grains, brown cloth, blanket on Tuesdays', 'Donate to monks and spiritual seekers'],
+  }
+  return map[planet] || map.Jupiter
 }
 
 function getAuspiciousDay(planet: string): string {
@@ -829,4 +1154,212 @@ function getAuspiciousDay(planet: string): string {
     Jupiter: 'Thursday', Venus: 'Friday', Saturn: 'Saturday', Rahu: 'Saturday', Ketu: 'Tuesday',
   }
   return map[planet] || 'Monday'
+}
+
+function generateMuhurtaGuide(kundli: any, numerology: any) {
+  const lagna = kundli.ascendant
+  const moonSign = kundli.moonSign
+  const dasha = kundli.currentDasha
+  const lp = numerology.lifePathNumber
+
+  // Days of the week (0 = Sunday)
+  const WEEKDAY_PLANET = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn']
+  const PLANET_WEEKDAY: Record<string, string> = {
+    Sun: 'Sunday', Moon: 'Monday', Mars: 'Tuesday', Mercury: 'Wednesday',
+    Jupiter: 'Thursday', Venus: 'Friday', Saturn: 'Saturday', Rahu: 'Saturday', Ketu: 'Tuesday',
+  }
+
+  // Lagna lord mapping
+  const LAGNA_LORD: Record<string, string> = {
+    Aries: 'Mars', Taurus: 'Venus', Gemini: 'Mercury', Cancer: 'Moon',
+    Leo: 'Sun', Virgo: 'Mercury', Libra: 'Venus', Scorpio: 'Mars',
+    Sagittarius: 'Jupiter', Capricorn: 'Saturn', Aquarius: 'Saturn', Pisces: 'Jupiter',
+  }
+
+  // Benefic and malefic planets by lagna
+  const BENEFICS_BY_LAGNA: Record<string, string[]> = {
+    Aries: ['Jupiter', 'Sun'], Taurus: ['Saturn', 'Mercury', 'Venus'],
+    Gemini: ['Venus', 'Saturn'], Cancer: ['Jupiter', 'Mars'],
+    Leo: ['Mars', 'Jupiter', 'Sun'], Virgo: ['Venus', 'Mercury'],
+    Libra: ['Saturn', 'Mercury', 'Venus'], Scorpio: ['Jupiter', 'Moon'],
+    Sagittarius: ['Sun', 'Mars'], Capricorn: ['Venus', 'Mercury', 'Saturn'],
+    Aquarius: ['Venus', 'Saturn'], Pisces: ['Moon', 'Mars', 'Jupiter'],
+  }
+
+  const lagnaLord = LAGNA_LORD[lagna] || 'Jupiter'
+  const benefics = BENEFICS_BY_LAGNA[lagna] || ['Jupiter', 'Venus']
+  const luckyDays = [...new Set([PLANET_WEEKDAY[lagnaLord], PLANET_WEEKDAY[benefics[0]], PLANET_WEEKDAY[benefics[1] || benefics[0]]])]
+
+  const MALEFIC_DAYS_BY_LAGNA: Record<string, string[]> = {
+    Aries: ['Saturday', 'Wednesday'], Taurus: ['Tuesday', 'Sunday'],
+    Gemini: ['Tuesday', 'Thursday'], Cancer: ['Saturn', 'Mercury'].map(p => PLANET_WEEKDAY[p]),
+    Leo: ['Wednesday', 'Saturday'], Virgo: ['Tuesday', 'Thursday'],
+    Libra: ['Tuesday', 'Sunday'], Scorpio: ['Wednesday', 'Friday'],
+    Sagittarius: ['Saturday', 'Friday'], Capricorn: ['Tuesday', 'Monday'],
+    Aquarius: ['Sunday', 'Thursday'], Pisces: ['Saturday', 'Wednesday'],
+  }
+  const unluckyDays = MALEFIC_DAYS_BY_LAGNA[lagna] || ['Tuesday', 'Saturday']
+
+  // Lucky time of day by lagna lord
+  const LUCKY_TIME: Record<string, string> = {
+    Sun: '6 AM – 9 AM (Brahma Muhurta + Sunrise)', Moon: '5 AM – 7 AM or 8 PM – 10 PM',
+    Mars: '6 AM – 8 AM or 4 PM – 6 PM', Mercury: '8 AM – 11 AM',
+    Jupiter: '7 AM – 9 AM or 5 PM – 7 PM', Venus: '6 AM – 8 AM or 7 PM – 9 PM',
+    Saturn: '8 AM – 10 AM or 6 PM – 8 PM',
+  }
+
+  // Unlucky time (Rahu Kaal) varies by weekday
+  const RAHU_KAAL: Record<string, string> = {
+    Sunday: '4:30 PM – 6:00 PM', Monday: '7:30 AM – 9:00 AM',
+    Tuesday: '3:00 PM – 4:30 PM', Wednesday: '12:00 PM – 1:30 PM',
+    Thursday: '1:30 PM – 3:00 PM', Friday: '10:30 AM – 12:00 PM',
+    Saturday: '9:00 AM – 10:30 AM',
+  }
+
+  // Muhurta recommendations by life domain
+  const EDUCATION_TIMING: Record<string, string> = {
+    Aries: 'Wednesday mornings, Mercury hora, during Pushya or Hasta nakshatra',
+    Taurus: 'Wednesday or Friday mornings, Mercury or Venus hora',
+    Gemini: 'Wednesday, Jupiter hora (Thursdays), Shravana or Punarvasu nakshatra',
+    Cancer: 'Thursday mornings, Jupiter hora, Pushya nakshatra is ideal',
+    Leo: 'Sunday or Thursday, Sun or Jupiter hora, Uttara Phalguni nakshatra',
+    Virgo: 'Wednesday mornings, Mercury hora, Hasta or Ashwini nakshatra',
+    Libra: 'Wednesday or Thursday, Mercury or Jupiter hora',
+    Scorpio: 'Thursday mornings, Jupiter hora, Anuradha or Jyeshtha nakshatra',
+    Sagittarius: 'Thursday mornings, Jupiter hora, Purva Ashadha or Shravana nakshatra',
+    Capricorn: 'Wednesday or Saturday mornings, Mercury hora',
+    Aquarius: 'Wednesday or Saturday, Mercury or Saturn hora',
+    Pisces: 'Thursday mornings, Jupiter hora, Revati or Uttara Bhadrapada nakshatra',
+  }
+
+  const MARRIAGE_TIMING: Record<string, string> = {
+    Aries: 'Venus hora on Fridays, avoid Tuesdays. Best months: Vaishakh, Jyeshtha, Magha',
+    Taurus: 'Venus hora on Fridays or Saturdays. Best months: Phalgun, Vaishakh',
+    Gemini: 'Venus or Mercury hora on Wednesdays or Fridays. Avoid Saturdays',
+    Cancer: 'Jupiter hora on Thursdays. Best months: Magha, Vaishakh, Phalguna',
+    Leo: 'Jupiter or Sun hora. Avoid Saturn days. Best months: Kartik, Agrahayan',
+    Virgo: 'Venus or Mercury hora on Wednesdays or Fridays',
+    Libra: 'Venus hora on Fridays. Best months: Vaishakh, Jyeshtha, Phalguna',
+    Scorpio: 'Jupiter hora on Thursdays. Avoid Tuesdays for ceremonies',
+    Sagittarius: 'Jupiter hora on Thursdays. Best months: Magha, Phalguna, Vaishakh',
+    Capricorn: 'Venus hora on Fridays or Saturdays',
+    Aquarius: 'Venus hora on Fridays. Best months: Vaishakh, Jyeshtha',
+    Pisces: 'Jupiter hora on Thursdays. Best months: Magha, Phalguna',
+  }
+
+  const INVESTMENT_TIMING: Record<string, string> = {
+    Aries: 'Sundays (Sun hora) or Tuesdays (Mars hora). Avoid during Mars retrograde',
+    Taurus: 'Fridays (Venus hora) or Saturdays (Saturn hora) for long-term investments',
+    Gemini: 'Wednesdays (Mercury hora) for stocks and trading. Thursdays for long-term',
+    Cancer: 'Mondays (Moon hora) for real estate. Thursdays for funds',
+    Leo: 'Sundays (Sun hora) for equity. Thursdays (Jupiter hora) for gold',
+    Virgo: 'Wednesdays (Mercury hora) for markets. Saturdays for property',
+    Libra: 'Fridays (Venus hora) for luxury assets. Saturdays for long-term',
+    Scorpio: 'Tuesdays (Mars hora) or Saturdays for speculative investments',
+    Sagittarius: 'Thursdays (Jupiter hora) for all investments. Gold on Sundays',
+    Capricorn: 'Saturdays (Saturn hora) for property. Wednesdays for business',
+    Aquarius: 'Saturdays for long-term. Wednesdays for tech stocks',
+    Pisces: 'Thursdays (Jupiter hora) for mutual funds. Fridays for art/luxury',
+  }
+
+  const HEALTH_TIMING: Record<string, string> = {
+    Aries: 'Start health regimens on Tuesdays (Mars rules). Best fasting day: Tuesday',
+    Taurus: 'Start health routines on Fridays. Gentle Venus-ruled practices',
+    Gemini: 'Wednesdays for beginning new health habits. Breathing exercises are key',
+    Cancer: 'Mondays for starting health routines. Moon-ruled cooling practices',
+    Leo: 'Sundays for beginning health regimens. Heart health is primary focus',
+    Virgo: 'Wednesdays and Saturdays for health routines. Digestive health focus',
+    Libra: 'Fridays for gentle health practices. Kidney care is essential',
+    Scorpio: 'Tuesdays for intense health practices. Deep detox protocols',
+    Sagittarius: 'Thursdays for yoga and spiritual health. Liver care essential',
+    Capricorn: 'Saturdays for discipline-based health routines. Bone and joint care',
+    Aquarius: 'Saturdays for health. Circulatory system needs attention',
+    Pisces: 'Thursdays for health. Feet and lymphatic system need regular care',
+  }
+
+  const TRAVEL_TIMING: Record<string, string> = {
+    Aries: 'Tuesdays for short journeys. Thursdays for long and spiritual travel',
+    Taurus: 'Fridays or Wednesdays for leisure. Saturdays for business travel',
+    Gemini: 'Wednesdays are highly favorable. Thursdays for long journeys',
+    Cancer: 'Mondays for short travel. Thursdays for pilgrimages',
+    Leo: 'Sundays and Thursdays are favorable for all travel',
+    Virgo: 'Wednesdays and Thursdays for travel. Avoid Saturdays',
+    Libra: 'Fridays and Wednesdays. Best direction: East or North',
+    Scorpio: 'Tuesdays for business. Thursdays for spiritual journeys',
+    Sagittarius: 'Thursdays are ideal. Jupiter favors long-distance travel',
+    Capricorn: 'Saturdays for business travel. Thursdays for pilgrimage',
+    Aquarius: 'Saturdays and Wednesdays. Long journeys favored',
+    Pisces: 'Thursdays and Mondays. Sea/river pilgrimages are auspicious',
+  }
+
+  const CAREER_TIMING: Record<string, string> = {
+    Aries: 'Sundays and Tuesdays. New ventures: Mars hora on Tuesday morning',
+    Taurus: 'Fridays and Saturdays. Career meetings: Venus hora',
+    Gemini: 'Wednesdays for launches. Thursdays for presentations',
+    Cancer: 'Mondays and Thursdays. New projects: Jupiter hora',
+    Leo: 'Sundays and Thursdays. Promotions: Sun hora',
+    Virgo: 'Wednesdays and Thursdays. Detail work and analysis best on Wednesdays',
+    Libra: 'Fridays and Saturdays. Negotiations: Venus hora',
+    Scorpio: 'Tuesdays and Thursdays. Transformative career moves: Mars hora',
+    Sagittarius: 'Thursdays and Sundays. Expansion: Jupiter hora',
+    Capricorn: 'Saturdays and Wednesdays. Long-term planning: Saturn hora',
+    Aquarius: 'Saturdays and Thursdays. Innovation: Saturn or Jupiter hora',
+    Pisces: 'Thursdays and Mondays. Spiritual career: Jupiter hora',
+  }
+
+  // Hora (planetary hour) chart — first hora of each day
+  const HORA_ORDER: Record<string, string[]> = {
+    Sunday: ['Sun', 'Venus', 'Mercury', 'Moon', 'Saturn', 'Jupiter', 'Mars'],
+    Monday: ['Moon', 'Saturn', 'Jupiter', 'Mars', 'Sun', 'Venus', 'Mercury'],
+    Tuesday: ['Mars', 'Sun', 'Venus', 'Mercury', 'Moon', 'Saturn', 'Jupiter'],
+    Wednesday: ['Mercury', 'Moon', 'Saturn', 'Jupiter', 'Mars', 'Sun', 'Venus'],
+    Thursday: ['Jupiter', 'Mars', 'Sun', 'Venus', 'Mercury', 'Moon', 'Saturn'],
+    Friday: ['Venus', 'Mercury', 'Moon', 'Saturn', 'Jupiter', 'Mars', 'Sun'],
+    Saturday: ['Saturn', 'Jupiter', 'Mars', 'Sun', 'Venus', 'Mercury', 'Moon'],
+  }
+
+  // Key life moments timing
+  const SPECIAL_DATES: Record<string, string[]> = {
+    mostFavorable: [
+      `Thursdays during ${moonSign} Moon transit — peak personal power`,
+      `${luckyDays[0]}s during Shukla Paksha (waxing moon, 1st–14th lunar day)`,
+      'Pushya Nakshatra day — universally auspicious for all beginnings',
+      'Akshaya Tritiya (3rd day of Vaishakh Shukla) — eternal auspiciousness',
+      'Guru Pushya Yoga (Pushya nakshatra on Thursday) — most powerful for wealth',
+    ],
+    avoidDays: [
+      `${unluckyDays[0]}s during Rahu Kaal`,
+      'Amavasya (New Moon) for new beginnings — powerful but volatile',
+      'Saturdays for weddings and major contracts (unless Saturn-ruled lagna)',
+      'During your dasha lord\'s debilitation transit',
+      'Ashtami (8th lunar day) and Chaturdashi (14th) for beginnings',
+    ],
+    eclipsePeriod: 'Avoid all major decisions 3 days before and after solar/lunar eclipses',
+  }
+
+  return {
+    overview: `Your Muhurta (auspicious timing) guide is personalized to your ${lagna} Lagna, ${moonSign} Moon, and ${dasha} Mahadasha. The right timing amplifies your efforts many fold — acting in alignment with cosmic rhythms is one of the most powerful tools of Vedic wisdom.`,
+    luckyDays,
+    unluckyDays,
+    luckyTime: LUCKY_TIME[lagnaLord] || LUCKY_TIME.Jupiter,
+    unluckyTime: `Rahu Kaal — varies by day (see chart below). Especially avoid on ${unluckyDays[0]}`,
+    rahuKaalChart: RAHU_KAAL,
+    horaGuide: {
+      description: 'Each day is divided into 24 planetary hours (Hora). The first hora of each day is ruled by the day\'s planet. Subsequent horas follow a fixed sequence. Always begin important work in a favorable hora.',
+      firstHoraByDay: Object.fromEntries(Object.entries(HORA_ORDER).map(([day, planets]) => [day, `${planets[0]} hora — ${LUCKY_TIME[planets[0]] || '6–7 AM'}`])),
+    },
+    forEducation: EDUCATION_TIMING[lagna] || 'Thursday mornings in Jupiter hora are universally auspicious for education',
+    forMarriage: MARRIAGE_TIMING[lagna] || 'Friday mornings during Venus hora, Shukla Paksha',
+    forInvestment: INVESTMENT_TIMING[lagna] || 'Thursday or Friday mornings for long-term investments',
+    forHealth: HEALTH_TIMING[lagna] || 'Begin health regimens on auspicious weekday of lagna lord',
+    forTravel: TRAVEL_TIMING[lagna] || 'Thursday is universally favorable for long journeys',
+    forCareer: CAREER_TIMING[lagna] || 'Thursday mornings for career initiatives, Jupiter hora',
+    forPropertyPurchase: `${['Cancer','Taurus','Capricorn','Scorpio'].includes(lagna) ? 'Highly favorable' : 'Proceed with care'} for property. Best day: Saturday (Saturn blesses permanent structures). Avoid during Rahu/Ketu periods.`,
+    forNameCeremony: 'Pushya Nakshatra or the nakshatra of the ${moonSign} Moon are ideal for naming ceremonies',
+    specialDates: SPECIAL_DATES,
+    personalLuckyNumbers: numerology.luckyNumbers,
+    personalLuckyDays: numerology.luckyDays,
+    lifePath: lp,
+    currentYearNote: `Personal Year ${numerology.personalYearNumber}: ${numerology.personalYearNumber <= 3 ? 'First half of year favors new beginnings' : numerology.personalYearNumber <= 6 ? 'Mid-year is your peak action window' : 'Last quarter brings completion and harvest'}`,
+  }
 }
