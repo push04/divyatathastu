@@ -87,7 +87,7 @@ export async function generateReportData(
 
     case 'mantra_chanting':
     case 'mantra_writing': {
-      const mantras = calculateMantraGuidance(kundli.dashaLord, kundli.nakshatra, kundli.ascendant, kundli.moonSign)
+      const mantras = calculateMantraGuidance(kundli.dashaLord, kundli.nakshatra, kundli.ascendant, kundli.moonSign, kundli.nakshatraPada)
       return { member: { name: member.full_name }, mantras, type: reportType }
     }
 
@@ -126,7 +126,7 @@ export async function generateReportData(
         Promise.resolve(calculateChakras(kundli.nakshatra, kundli.planets)),
         Promise.resolve(calculatePrakriti(kundli.nakshatra)),
         Promise.resolve(calculateYantraColour(kundli.moonSign, kundli.ascendant, kundli.nakshatra)),
-        Promise.resolve(calculateMantraGuidance(kundli.dashaLord, kundli.nakshatra, kundli.ascendant, kundli.moonSign)),
+        Promise.resolve(calculateMantraGuidance(kundli.dashaLord, kundli.nakshatra, kundli.ascendant, kundli.moonSign, kundli.nakshatraPada)),
         Promise.resolve(generatePsychologyReport(kundli)),
         Promise.resolve(generateVastuAnalysis(kundli, vastuInput)),
         Promise.resolve(generateDmitReport(kundli, member.date_of_birth)),

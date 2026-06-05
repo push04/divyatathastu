@@ -208,6 +208,38 @@ const PLANET_MANTRA_DATA: Record<string, {
   },
 }
 
+// 27 Nakshatras × 4 Padas = 108 sacred syllables for Nama Akshara (birth sound)
+// Used to derive the personal beej sound for mantra initiation
+const NAKSHATRA_PADA_SYLLABLES: Record<string, [string, string, string, string]> = {
+  'Ashwini':           ['Chu',  'Che',  'Cho',  'La'  ],
+  'Bharani':           ['Li',   'Lu',   'Le',   'Lo'  ],
+  'Krittika':          ['A',    'I',    'U',    'E'   ],
+  'Rohini':            ['O',    'Va',   'Vi',   'Vu'  ],
+  'Mrigashira':        ['Ve',   'Vo',   'Ka',   'Ki'  ],
+  'Ardra':             ['Ku',   'Gha',  'Na',   'Chha'],
+  'Punarvasu':         ['Ke',   'Ko',   'Ha',   'Hi'  ],
+  'Pushya':            ['Hu',   'He',   'Ho',   'Da'  ],
+  'Ashlesha':          ['Di',   'Du',   'De',   'Do'  ],
+  'Magha':             ['Ma',   'Mi',   'Mu',   'Me'  ],
+  'Purva Phalguni':    ['Mo',   'Ta',   'Ti',   'Tu'  ],
+  'Uttara Phalguni':   ['Te',   'To',   'Pa',   'Pi'  ],
+  'Hasta':             ['Pu',   'Sha',  'Na',   'Tha' ],
+  'Chitra':            ['Pe',   'Po',   'Ra',   'Ri'  ],
+  'Swati':             ['Ru',   'Re',   'Ro',   'Ta'  ],
+  'Vishakha':          ['Ti',   'Tu',   'Te',   'To'  ],
+  'Anuradha':          ['Na',   'Ni',   'Nu',   'Ne'  ],
+  'Jyeshtha':          ['No',   'Ya',   'Yi',   'Yu'  ],
+  'Moola':             ['Ye',   'Yo',   'Bha',  'Bhi' ],
+  'Purva Ashadha':     ['Bhu',  'Dha',  'Bha',  'Dha' ],
+  'Uttara Ashadha':    ['Be',   'Bo',   'Ja',   'Ji'  ],
+  'Shravana':          ['Ju',   'Je',   'Jo',   'Gha' ],
+  'Dhanishtha':        ['Ga',   'Gi',   'Gu',   'Ge'  ],
+  'Shatabhisha':       ['Go',   'Sa',   'Si',   'Su'  ],
+  'Purva Bhadrapada':  ['Se',   'So',   'Da',   'Di'  ],
+  'Uttara Bhadrapada': ['Du',   'Tha',  'Jha',  'Da'  ],
+  'Revati':            ['De',   'Do',   'Cha',  'Chi' ],
+}
+
 const NAKSHATRA_BEEJ: Record<string, string> = {
   'Ashwini': 'ॐ अश्विनी देव्यै नमः',
   'Bharani': 'ॐ यमाय नमः',
@@ -243,11 +275,19 @@ export function calculateMantraGuidance(
   nakshatra: string,
   ascendant: string,
   moonSign: string,
+  nakshatraPada?: number,
 ) {
   const primaryData = PLANET_MANTRA_DATA[dashaLord] || PLANET_MANTRA_DATA.Jupiter
   const nakshatraBeej = NAKSHATRA_BEEJ[nakshatra] || 'ॐ नमः शिवाय'
 
+  const padaSyllables = NAKSHATRA_PADA_SYLLABLES[nakshatra]
+  const padaIdx = nakshatraPada && nakshatraPada >= 1 && nakshatraPada <= 4 ? nakshatraPada - 1 : 0
+  const namaAkshara = padaSyllables ? padaSyllables[padaIdx] : null
+
   return {
+    namaAkshara,        // Personal birth syllable — used as start of Nama Japa
+    nakshatra,
+    nakshatraPada: nakshatraPada || 1,
     chanting: {
       primaryPlanet: dashaLord,
       beejMantra: primaryData.beejMantra,
@@ -273,6 +313,9 @@ export function calculateMantraGuidance(
         'Conclude with the deity mantra',
         'Sit in silence for 5 minutes',
       ],
+      ...(namaAkshara && {
+        namaJapaGuidance: `Your Nama Akshara (birth syllable) is "${namaAkshara}". Any mantra or name beginning with this syllable resonates deeply with your soul energy. Consider taking initiation with a deity whose name starts with "${namaAkshara}".`,
+      }),
     },
     likhitJapa: {
       ...primaryData.likhitJapa,

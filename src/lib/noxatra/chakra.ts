@@ -26,16 +26,17 @@ const NAKSHATRA_CHAKRA: Record<string, number> = {
   'Purva Bhadrapada': 3, 'Uttara Bhadrapada': 4, 'Revati': 5,
 }
 
+// Per Vedic astrology: each planet governs specific chakra centres
 const PLANET_CHAKRA_MODIFIER: Record<string, number[]> = {
-  'Sun': [0, 2],    // Root + Solar Plexus
-  'Moon': [1, 6],   // Sacral + Crown
-  'Mars': [0, 2],   // Root + Solar
-  'Mercury': [4, 2], // Throat + Solar
-  'Jupiter': [6, 3], // Crown + Heart
-  'Venus': [1, 3],   // Sacral + Heart
-  'Saturn': [0, 5],  // Root + Third Eye
-  'Rahu': [2, 5],    // Solar + Third Eye
-  'Ketu': [6, 0],    // Crown + Root
+  'Sun':     [2],       // Solar Plexus — will, identity, fire principle
+  'Moon':    [1, 3, 5], // Sacral + Heart + Third Eye — emotions, love, intuition
+  'Mars':    [0, 2],    // Root + Solar Plexus — survival instincts, aggression
+  'Mercury': [4],       // Throat — communication, expression
+  'Jupiter': [5, 6],    // Third Eye + Crown — wisdom, spiritual expansion
+  'Venus':   [1, 3],    // Sacral + Heart — pleasure, love, creativity
+  'Saturn':  [0],       // Root — karma, discipline, foundations
+  'Rahu':    [2, 5],    // Solar Plexus + Third Eye — obsession, illusion, ambition
+  'Ketu':    [6, 0],    // Crown + Root — spiritual liberation, past karma
 }
 
 const CHAKRAS = [
@@ -109,15 +110,21 @@ export function calculateChakras(nakshatra: string, planets: Array<{ name: strin
     return 35 + ((seed * (i + 1)) % 45)
   })
 
-  // Planet modifiers
+  // Planet modifiers — Kendra/Trikona = strength, Dusthana = debilitation
   planets.forEach(planet => {
     const affected = PLANET_CHAKRA_MODIFIER[planet.name]
-    if (affected) {
-      const houseStrength = planet.house <= 6 ? 8 : -5
-      affected.forEach(chakraIdx => {
-        baseLevels[chakraIdx] = Math.min(95, Math.max(10, baseLevels[chakraIdx] + houseStrength))
-      })
-    }
+    if (!affected) return
+    const h = planet.house
+    const strength =
+      [1, 4, 7, 10].includes(h) ?  10 :   // Kendra — angular, powerful
+      [5, 9].includes(h)         ?   8 :   // Trikona — auspicious, spiritual
+      h === 11                   ?   5 :   // Upachaya — gains
+      [2, 3].includes(h)         ?   2 :   // Mild
+      [6, 8, 12].includes(h)     ?  -8 :   // Dusthana — challenging
+                                      0
+    affected.forEach(chakraIdx => {
+      baseLevels[chakraIdx] = Math.min(95, Math.max(10, baseLevels[chakraIdx] + strength))
+    })
   })
 
   return CHAKRAS.map((chakra, i) => ({
