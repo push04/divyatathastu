@@ -92,13 +92,17 @@ function GenerateReportContent() {
       }
 
       const data = await res.json()
-      const reportId = data.results?.[0]?.report_id
+      const result = data.results?.[0]
+      const reportId = result?.report_id
+
+      if (result?.status === 'failed' || !reportId) {
+        throw new Error('Report generation failed. Please check your birth details and try again.')
+      }
 
       setProgress(100)
       toast.success('Report generated successfully!')
       setTimeout(() => {
-        if (reportId) router.push(`/reports/${reportId}`)
-        else router.push('/reports')
+        router.push(`/reports/${reportId}`)
       }, 500)
     } catch (err: any) {
       clearInterval(tick)

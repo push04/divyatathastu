@@ -4,7 +4,7 @@ export type ReportType = 'astrology' | 'astro_vastu' | 'shakti_chakra' | 'numero
   'mobile_number' | 'psychology' | 'prakriti' | 'yantra_colour' | 'dmit' |
   'colour_therapy' | 'child_development' | 'mantra_chanting' | 'mantra_writing' | 'full_tathastu'
 
-export type ReportStatus = 'pending' | 'processing' | 'generated' | 'reviewed' | 'delivered'
+export type ReportStatus = 'pending' | 'processing' | 'generated' | 'failed' | 'reviewed' | 'delivered'
 export type ProductType = 'report' | 'ebook' | 'consultation' | 'yantra' | 'gemstone' | 'course' | 'bundle' | 'physical' | 'herbal'
 export type OrderStatus = 'pending' | 'paid' | 'processing' | 'shipped' | 'delivered' | 'completed' | 'refunded' | 'cancelled'
 export type EventType = 'webinar' | 'puja' | 'workshop' | 'yatra' | 'satsang' | 'consultation_camp' | 'pilgrimage' | 'other' | 'online' | 'offline'

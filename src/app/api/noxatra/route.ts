@@ -58,11 +58,10 @@ export async function POST(req: NextRequest) {
 
       if (reportError || !report) continue
 
+      let reportStatus: 'generated' | 'failed' = 'failed'
       try {
-        // Generate report data
         const reportData = await generateReportData(member, reportType)
 
-        // Update report with generated data
         await supabase
           .from('reports')
           .update({
@@ -72,22 +71,28 @@ export async function POST(req: NextRequest) {
           })
           .eq('id', report.id)
 
-        // Create notification
-        await supabase.from('notifications').insert({
-          user_id: user.id,
-          type: 'report_ready',
-          title: `Your ${reportType.replace(/_/g, ' ')} report is ready!`,
-          body: `${member.full_name}'s ${reportType.replace(/_/g, ' ')} report has been generated.`,
-          data: { report_id: report.id, report_type: reportType } as any,
-        })
-
-        results.push({ report_id: report.id, report_type: reportType, status: 'generated' })
+        reportStatus = 'generated'
       } catch (genError) {
+        console.error(`Report generation error [${reportType}]:`, genError)
         await supabase
           .from('reports')
-          .update({ status: 'pending' })
+          .update({ status: 'failed' })
           .eq('id', report.id)
-        results.push({ report_id: report.id, report_type: reportType, status: 'failed' })
+      }
+
+      results.push({ report_id: report.id, report_type: reportType, status: reportStatus })
+
+      // Fire-and-forget — notification failure must never undo a successful report
+      if (reportStatus === 'generated') {
+        void Promise.resolve(
+          supabase.from('notifications').insert({
+            user_id: user.id,
+            type: 'report_ready',
+            title: `Your ${reportType.replace(/_/g, ' ')} report is ready!`,
+            body: `${member.full_name}'s ${reportType.replace(/_/g, ' ')} report has been generated.`,
+            data: { report_id: report.id, report_type: reportType } as any,
+          })
+        ).catch(() => {})
       }
     }
 
