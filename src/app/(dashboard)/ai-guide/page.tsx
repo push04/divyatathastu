@@ -9,7 +9,7 @@ interface Message {
   timestamp: Date
 }
 
-const SUGGESTED = [
+const SUGGESTED_EN = [
   'What does my birth nakshatra say about my career?',
   'Explain the significance of Ekadashi fasting',
   'Which gemstone is good for concentration and studies?',
@@ -20,32 +20,64 @@ const SUGGESTED = [
   'How to perform Rudrabhishek at home?',
 ]
 
+const SUGGESTED_HI = [
+  'मेरी जन्म नक्षत्र मेरे करियर के बारे में क्या बताती है?',
+  'एकादशी व्रत का महत्त्व समझाइए',
+  'एकाग्रता और पढ़ाई के लिए कौन सा रत्न अच्छा है?',
+  'विंशोत्तरी और योगिनी दशा में क्या अंतर है?',
+  'अपना जीवन पथ अंक कैसे निकालें?',
+  'सातवें भाव में राहु का क्या अर्थ है?',
+  'धन और समृद्धि के लिए सर्वश्रेष्ठ मंत्र?',
+  'घर पर रुद्राभिषेक कैसे करें?',
+]
+
+const SYSTEM_EN = `You are a wise Vedic spiritual guide with deep knowledge of:
+- Jyotisha (Vedic Astrology): kundli, planets, dashas, nakshatras, yogas
+- Numerology: Chaldean and Pythagorean systems
+- Yoga, Pranayama, and Meditation
+- Ayurveda: Vata, Pitta, Kapha, herbs, diet
+- Chakras, kundalini, and energy healing
+- Mantras, Stotras, Yantras, and Tantric practices
+- Hindu philosophy: Vedas, Upanishads, Bhagavad Gita
+- Vastu Shastra
+- Festivals, rituals, puja vidhi
+- Indian pilgrimage and sacred geography
+
+Answer with warmth, wisdom and clarity. Use markdown formatting: **bold** for key terms, ## for section headings, - for bullet points. Use Sanskrit terms with explanations. Keep responses comprehensive but well-structured. End with a relevant mantra or blessing when appropriate.`
+
+const SYSTEM_HI = `आप एक विद्वान वैदिक आध्यात्मिक मार्गदर्शक हैं जिन्हें निम्नलिखित का गहन ज्ञान है:
+- ज्योतिष शास्त्र: कुंडली, ग्रह, दशाएं, नक्षत्र, योग
+- अंकशास्त्र: चाल्डियन और पाइथागोरियन पद्धतियां
+- योग, प्राणायाम और ध्यान
+- आयुर्वेद: वात, पित्त, कफ, जड़ी-बूटियां, आहार
+- चक्र, कुंडलिनी और ऊर्जा चिकित्सा
+- मंत्र, स्तोत्र, यंत्र और तांत्रिक अभ्यास
+- हिंदू दर्शन: वेद, उपनिषद, भगवद गीता
+- वास्तु शास्त्र
+- त्योहार, अनुष्ठान, पूजा विधि
+- भारतीय तीर्थ स्थल और पवित्र भूगोल
+
+**महत्वपूर्ण: सभी उत्तर केवल हिंदी में दें।** उत्तर गर्मजोशी, ज्ञान और स्पष्टता के साथ दें। Markdown formatting का उपयोग करें: **बोल्ड** मुख्य शब्दों के लिए, ## शीर्षकों के लिए, - बुलेट पॉइंट के लिए। संस्कृत शब्दों का उपयोग हिंदी अर्थ के साथ करें। अंत में प्रासंगिक मंत्र या आशीर्वाद दें।`
+
 function renderMarkdown(text: string): string {
   return text
-    // Headings
     .replace(/^### (.+)$/gm, '<h3 class="font-bold text-[var(--indigo-deep)] text-sm mt-3 mb-1">$1</h3>')
     .replace(/^## (.+)$/gm, '<h2 class="font-bold text-[var(--indigo-deep)] mt-3 mb-1">$1</h2>')
     .replace(/^# (.+)$/gm, '<h1 class="font-bold text-[var(--indigo-deep)] text-base mt-3 mb-1">$1</h1>')
-    // Bold and italic
     .replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>')
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    // Bullet lists
     .replace(/^[-•] (.+)$/gm, '<li class="ml-3 flex gap-2"><span class="text-[var(--saffron)] flex-shrink-0 mt-0.5">•</span><span>$1</span></li>')
     .replace(/^  [-•] (.+)$/gm, '<li class="ml-6 flex gap-2 text-sm opacity-80"><span class="flex-shrink-0">◦</span><span>$1</span></li>')
-    // Numbered lists
     .replace(/^\d+\. (.+)$/gm, '<li class="ml-3 list-decimal list-inside">$1</li>')
-    // Wrap consecutive <li> items in <ul>
     .replace(/(<li[^>]*>.*<\/li>(\n|$))+/g, (match) => `<ul class="space-y-0.5 my-1">${match}</ul>`)
-    // Horizontal rule
     .replace(/^---$/gm, '<hr class="border-[var(--warm-sand)] my-2"/>')
-    // Double newlines → paragraph break
     .replace(/\n\n/g, '</p><p class="mt-2">')
-    // Single newlines → line break (only between non-HTML lines)
     .replace(/\n(?!<)/g, '<br/>')
 }
 
 export default function AIGuidePage() {
+  const [lang, setLang] = useState<'en' | 'hi'>('en')
   const [messages, setMessages] = useState<Message[]>([{
     role: 'assistant',
     content: 'Namaste! I am your AI Spiritual Guide, powered by Vedic wisdom and modern AI. Ask me anything about astrology, numerology, mantras, rituals, chakras, Ayurveda, or any spiritual topic. How can I illuminate your path today?',
@@ -56,9 +88,21 @@ export default function AIGuidePage() {
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
+  const isHindi = lang === 'hi'
+  const SUGGESTED = isHindi ? SUGGESTED_HI : SUGGESTED_EN
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  function switchLang(newLang: 'en' | 'hi') {
+    setLang(newLang)
+    const greeting = newLang === 'hi'
+      ? 'नमस्ते! मैं आपका AI आध्यात्मिक मार्गदर्शक हूँ, वैदिक ज्ञान और आधुनिक AI से संचालित। ज्योतिष, अंकशास्त्र, मंत्र, अनुष्ठान, चक्र, आयुर्वेद या किसी भी आध्यात्मिक विषय के बारे में पूछें। आज मैं आपका मार्ग कैसे प्रकाशित करूं?'
+      : 'Namaste! I am your AI Spiritual Guide, powered by Vedic wisdom and modern AI. Ask me anything about astrology, numerology, mantras, rituals, chakras, Ayurveda, or any spiritual topic. How can I illuminate your path today?'
+    setMessages([{ role: 'assistant', content: greeting, timestamp: new Date() }])
+    setInput('')
+  }
 
   async function sendMessage(text?: string) {
     const q = (text || input).trim()
@@ -78,19 +122,7 @@ export default function AIGuidePage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: [...messages, userMsg].map(m => ({ role: m.role, content: m.content })),
-          system: `You are a wise Vedic spiritual guide with deep knowledge of:
-- Jyotisha (Vedic Astrology): kundli, planets, dashas, nakshatras, yogas
-- Numerology: Chaldean and Pythagorean systems
-- Yoga, Pranayama, and Meditation
-- Ayurveda: Vata, Pitta, Kapha, herbs, diet
-- Chakras, kundalini, and energy healing
-- Mantras, Stotras, Yantras, and Tantric practices
-- Hindu philosophy: Vedas, Upanishads, Bhagavad Gita
-- Vastu Shastra
-- Festivals, rituals, puja vidhi
-- Indian pilgrimage and sacred geography
-
-Answer with warmth, wisdom and clarity. Use markdown formatting: **bold** for key terms, ## for section headings, - for bullet points. Use Sanskrit terms with explanations. Keep responses comprehensive but well-structured. End with a relevant mantra or blessing when appropriate.`,
+          system: isHindi ? SYSTEM_HI : SYSTEM_EN,
         }),
       })
 
@@ -122,7 +154,7 @@ Answer with warmth, wisdom and clarity. Use markdown formatting: **bold** for ke
         }
       }
     } catch {
-      toast.error('Failed to get response. Please try again.')
+      toast.error(isHindi ? 'उत्तर प्राप्त नहीं हुआ। कृपया पुनः प्रयास करें।' : 'Failed to get response. Please try again.')
       setMessages(prev => prev.slice(0, -1))
     }
 
@@ -140,12 +172,29 @@ Answer with warmth, wisdom and clarity. Use markdown formatting: **bold** for ke
       <div className="px-6 py-4 bg-[var(--indigo-deep)] text-white flex items-center gap-3 flex-shrink-0">
         <div className="w-10 h-10 rounded-full gradient-saffron flex items-center justify-center text-xl font-bold">ॐ</div>
         <div>
-          <h1 className="font-bold">AI Spiritual Guide</h1>
-          <p className="text-xs text-white/60">Vedic Wisdom · Powered by AI</p>
+          <h1 className="font-bold">{isHindi ? 'AI आध्यात्मिक मार्गदर्शक' : 'AI Spiritual Guide'}</h1>
+          <p className="text-xs text-white/60">{isHindi ? 'वैदिक ज्ञान · AI द्वारा संचालित' : 'Vedic Wisdom · Powered by AI'}</p>
         </div>
-        <div className="ml-auto flex items-center gap-2">
-          <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-xs text-white/60">Online</span>
+        <div className="ml-auto flex items-center gap-3">
+          {/* Language Toggle */}
+          <div className="flex items-center bg-white/10 rounded-lg p-0.5 gap-0.5">
+            <button
+              onClick={() => switchLang('en')}
+              className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all ${lang === 'en' ? 'bg-white text-[var(--indigo-deep)]' : 'text-white/70 hover:text-white'}`}
+            >
+              EN
+            </button>
+            <button
+              onClick={() => switchLang('hi')}
+              className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all ${lang === 'hi' ? 'bg-white text-[var(--indigo-deep)]' : 'text-white/70 hover:text-white'}`}
+            >
+              हिं
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-xs text-white/60">{isHindi ? 'ऑनलाइन' : 'Online'}</span>
+          </div>
         </div>
       </div>
 
@@ -178,7 +227,9 @@ Answer with warmth, wisdom and clarity. Use markdown formatting: **bold** for ke
         {/* Suggestions (only on first message) */}
         {messages.length === 1 && (
           <div className="space-y-2">
-            <p className="text-xs text-[var(--warm-charcoal)]/50 px-11">Suggested questions:</p>
+            <p className="text-xs text-[var(--warm-charcoal)]/50 px-11">
+              {isHindi ? 'सुझाए गए प्रश्न:' : 'Suggested questions:'}
+            </p>
             <div className="flex flex-wrap gap-2 pl-11">
               {SUGGESTED.map(s => (
                 <button key={s} onClick={() => sendMessage(s)} className="text-xs bg-white border border-[var(--warm-sand)] hover:border-[var(--saffron)] px-3 py-1.5 rounded-full text-[var(--indigo-deep)] transition-all text-left">
@@ -201,7 +252,7 @@ Answer with warmth, wisdom and clarity. Use markdown formatting: **bold** for ke
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask about astrology, mantras, rituals..."
+            placeholder={isHindi ? 'ज्योतिष, मंत्र, अनुष्ठान के बारे में पूछें...' : 'Ask about astrology, mantras, rituals...'}
             disabled={streaming}
             className="flex-1 px-4 py-2.5 rounded-xl border border-[var(--warm-sand)] bg-[var(--kutch-white)] text-sm focus:outline-none focus:border-[var(--saffron)] disabled:opacity-50"
           />
@@ -216,7 +267,9 @@ Answer with warmth, wisdom and clarity. Use markdown formatting: **bold** for ke
             }
           </button>
         </div>
-        <p className="text-center text-xs text-[var(--warm-charcoal)]/30 mt-2">AI responses are for spiritual guidance only, not medical/legal advice</p>
+        <p className="text-center text-xs text-[var(--warm-charcoal)]/30 mt-2">
+          {isHindi ? 'AI उत्तर केवल आध्यात्मिक मार्गदर्शन के लिए हैं, चिकित्सा/कानूनी सलाह नहीं' : 'AI responses are for spiritual guidance only, not medical/legal advice'}
+        </p>
       </div>
     </div>
   )

@@ -21,27 +21,96 @@ interface FamilyMember {
 }
 
 const REPORT_TYPES = [
-  { id: 'full_tathastu', label: 'Full Tathastu', icon: 'auto_awesome', desc: 'All 12 reports combined — complete life blueprint', price: 2999, badge: 'BEST VALUE' },
-  { id: 'astrology', label: 'Kundli / Horoscope', icon: 'brightness_7', desc: 'Birth chart, planets, dashas, predictions', price: 499 },
-  { id: 'numerology', label: 'Numerology', icon: 'tag', desc: 'Life path, destiny, lucky numbers & mobile compatibility', price: 299 },
-  { id: 'shakti_chakra', label: 'Chakra Analysis', icon: 'local_florist', desc: 'All 7 chakras — balance, mantras, crystals', price: 299 },
-  { id: 'prakriti', label: 'Prakriti (Ayurveda)', icon: 'eco', desc: 'Vata-Pitta-Kapha constitution + diet & herbs', price: 299 },
-  { id: 'yantra_colour', label: 'Yantra & Colour', icon: 'palette', desc: 'Personal yantra, power colors, gemstone', price: 299 },
-  { id: 'mantra_chanting', label: 'Mantra Science', icon: 'temple_hindu', desc: 'Personal beej mantra, likhit japa guidance', price: 299 },
-  { id: 'astro_vastu', label: 'Vastu Report', icon: 'house', desc: 'Home/office direction analysis & remedies', price: 399 },
-  { id: 'child_development', label: 'Child Development', icon: 'child_care', desc: 'Learning style, talents, education guidance', price: 399 },
-  { id: 'dmit', label: 'DMIT (Brain Mapping)', icon: 'psychology', desc: 'Multiple intelligence profile, career fit', price: 499 },
-  { id: 'colour_therapy', label: 'Colour Therapy', icon: 'colorize', desc: 'Healing colors for health, wealth & love', price: 299 },
-  { id: 'psychology', label: 'Vedic Psychology', icon: 'self_improvement', desc: 'Moon sign personality, EQ, shadow work', price: 399 },
+  { id: 'full_tathastu', label: 'Full Tathastu', labelHi: 'पूर्ण तथास्तु', icon: 'auto_awesome', desc: 'All 12 reports combined — complete life blueprint', descHi: 'सभी 12 रिपोर्ट एक साथ — सम्पूर्ण जीवन खाका', price: 2999, badge: 'BEST VALUE', badgeHi: 'सर्वोत्तम मूल्य' },
+  { id: 'astrology', label: 'Kundli / Horoscope', labelHi: 'कुंडली / जन्मपत्री', icon: 'brightness_7', desc: 'Birth chart, planets, dashas, predictions', descHi: 'जन्म कुंडली, ग्रह, दशाएं, भविष्यवाणी', price: 499 },
+  { id: 'numerology', label: 'Numerology', labelHi: 'अंकशास्त्र', icon: 'tag', desc: 'Life path, destiny, lucky numbers & mobile compatibility', descHi: 'जीवन पथ, भाग्यांक, शुभ अंक और मोबाइल अनुकूलता', price: 299 },
+  { id: 'shakti_chakra', label: 'Chakra Analysis', labelHi: 'चक्र विश्लेषण', icon: 'local_florist', desc: 'All 7 chakras — balance, mantras, crystals', descHi: 'सातों चक्र — संतुलन, मंत्र, क्रिस्टल', price: 299 },
+  { id: 'prakriti', label: 'Prakriti (Ayurveda)', labelHi: 'प्रकृति (आयुर्वेद)', icon: 'eco', desc: 'Vata-Pitta-Kapha constitution + diet & herbs', descHi: 'वात-पित्त-कफ प्रकृति + आहार और जड़ी-बूटियां', price: 299 },
+  { id: 'yantra_colour', label: 'Yantra & Colour', labelHi: 'यंत्र और रंग', icon: 'palette', desc: 'Personal yantra, power colors, gemstone', descHi: 'व्यक्तिगत यंत्र, शक्तिशाली रंग, रत्न', price: 299 },
+  { id: 'mantra_chanting', label: 'Mantra Science', labelHi: 'मंत्र विज्ञान', icon: 'temple_hindu', desc: 'Personal beej mantra, likhit japa guidance', descHi: 'व्यक्तिगत बीज मंत्र, लिखित जप मार्गदर्शन', price: 299 },
+  { id: 'astro_vastu', label: 'Vastu Report', labelHi: 'वास्तु रिपोर्ट', icon: 'house', desc: 'Home/office direction analysis & remedies', descHi: 'घर/कार्यालय दिशा विश्लेषण और उपाय', price: 399 },
+  { id: 'child_development', label: 'Child Development', labelHi: 'बाल विकास', icon: 'child_care', desc: 'Learning style, talents, education guidance', descHi: 'सीखने की शैली, प्रतिभा, शिक्षा मार्गदर्शन', price: 399 },
+  { id: 'dmit', label: 'DMIT (Brain Mapping)', labelHi: 'DMIT (मस्तिष्क मानचित्र)', icon: 'psychology', desc: 'Multiple intelligence profile, career fit', descHi: 'बहु-बुद्धिमत्ता प्रोफाइल, करियर उपयुक्तता', price: 499 },
+  { id: 'colour_therapy', label: 'Colour Therapy', labelHi: 'रंग चिकित्सा', icon: 'colorize', desc: 'Healing colors for health, wealth & love', descHi: 'स्वास्थ्य, धन और प्रेम के लिए उपचारात्मक रंग', price: 299 },
+  { id: 'psychology', label: 'Vedic Psychology', labelHi: 'वैदिक मनोविज्ञान', icon: 'self_improvement', desc: 'Moon sign personality, EQ, shadow work', descHi: 'चंद्र राशि व्यक्तित्व, भावनात्मक बुद्धि, छाया कार्य', price: 399 },
 ]
 
-const STEPS = ['Select Member', 'Choose Report', 'Additional Info', 'Generate']
+const DIRECTIONS = ['North', 'North-East', 'East', 'South-East', 'South', 'South-West', 'West', 'North-West']
+const DIRECTIONS_HI = ['उत्तर', 'उत्तर-पूर्व', 'पूर्व', 'दक्षिण-पूर्व', 'दक्षिण', 'दक्षिण-पश्चिम', 'पश्चिम', 'उत्तर-पश्चिम']
+const SLEEP_DIRS = ['North', 'South', 'East', 'West']
+const SLEEP_DIRS_HI = ['उत्तर', 'दक्षिण', 'पूर्व', 'पश्चिम']
+
+const T = {
+  en: {
+    title: 'Generate Noxatra Report',
+    subtitle: 'AI-powered Vedic analysis in 60 seconds',
+    steps: ['Select Member', 'Choose Report', 'Additional Info', 'Generate'],
+    selectMember: 'Select Family Member',
+    noMembers: 'No family members yet',
+    noMembersDesc: 'Add a family member first to generate reports',
+    addMember: 'Add Member',
+    chooseReport: 'Choose Report Type',
+    additionalInfo: 'Additional Information',
+    vastuDesc: 'Vastu report requires a few details about your home.',
+    doorDir: 'Main Door Direction',
+    selectDir: 'Select direction',
+    sleepDir: 'Sleep Direction (head points to)',
+    allSet: 'All set!',
+    allSetDesc: 'No additional information needed for this report type.',
+    readyGenerate: 'Ready to Generate',
+    member: 'Member',
+    reportType: 'Report Type',
+    poweredBy: 'Powered by',
+    estTime: 'Est. Time',
+    estTimeVal: '~30-60 seconds',
+    prevFailed: 'Previous attempt failed',
+    generate: 'Generate Report Now',
+    retry: 'Retry Generation',
+    back: 'Back',
+    continue: 'Continue',
+    calculating: 'Calculating divine insights...',
+    calcDesc: 'Analysing birth chart · Computing dashas · Generating predictions',
+    langToggle: 'EN',
+  },
+  hi: {
+    title: 'नोक्षत्र रिपोर्ट बनाएं',
+    subtitle: 'AI-संचालित वैदिक विश्लेषण 60 सेकंड में',
+    steps: ['सदस्य चुनें', 'रिपोर्ट चुनें', 'अतिरिक्त जानकारी', 'बनाएं'],
+    selectMember: 'परिवार का सदस्य चुनें',
+    noMembers: 'अभी कोई परिवार सदस्य नहीं',
+    noMembersDesc: 'रिपोर्ट बनाने के लिए पहले परिवार का सदस्य जोड़ें',
+    addMember: 'सदस्य जोड़ें',
+    chooseReport: 'रिपोर्ट प्रकार चुनें',
+    additionalInfo: 'अतिरिक्त जानकारी',
+    vastuDesc: 'वास्तु रिपोर्ट के लिए आपके घर की कुछ जानकारी चाहिए।',
+    doorDir: 'मुख्य द्वार की दिशा',
+    selectDir: 'दिशा चुनें',
+    sleepDir: 'सोने की दिशा (सिर की ओर)',
+    allSet: 'सब तैयार है!',
+    allSetDesc: 'इस रिपोर्ट के लिए कोई अतिरिक्त जानकारी की आवश्यकता नहीं।',
+    readyGenerate: 'रिपोर्ट बनाने के लिए तैयार',
+    member: 'सदस्य',
+    reportType: 'रिपोर्ट प्रकार',
+    poweredBy: 'संचालित',
+    estTime: 'अनुमानित समय',
+    estTimeVal: '~30-60 सेकंड',
+    prevFailed: 'पिछला प्रयास विफल हुआ',
+    generate: 'अभी रिपोर्ट बनाएं',
+    retry: 'पुनः प्रयास करें',
+    back: 'वापस',
+    continue: 'आगे बढ़ें',
+    calculating: 'दिव्य अंतर्दृष्टि की गणना हो रही है...',
+    calcDesc: 'जन्म कुंडली विश्लेषण · दशा गणना · भविष्यवाणी',
+    langToggle: 'हिं',
+  },
+}
 
 function GenerateReportContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
 
+  const [lang, setLang] = useState<'en' | 'hi'>('en')
   const [step, setStep] = useState(0)
   const [members, setMembers] = useState<FamilyMember[]>([])
   const [selectedMember, setSelectedMember] = useState<string>(searchParams.get('member') || '')
@@ -50,6 +119,9 @@ function GenerateReportContent() {
   const [generating, setGenerating] = useState(false)
   const [progress, setProgress] = useState(0)
   const [lastError, setLastError] = useState<string | null>(null)
+
+  const t = T[lang]
+  const isHindi = lang === 'hi'
 
   useEffect(() => {
     async function load() {
@@ -65,7 +137,7 @@ function GenerateReportContent() {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleGenerate() {
-    if (!selectedMember || !selectedReport) { toast.error('Select member and report type'); return }
+    if (!selectedMember || !selectedReport) { toast.error(isHindi ? 'सदस्य और रिपोर्ट प्रकार चुनें' : 'Select member and report type'); return }
     setGenerating(true)
     setProgress(10)
     setLastError(null)
@@ -80,6 +152,7 @@ function GenerateReportContent() {
           family_member_id: selectedMember,
           report_types: [selectedReport],
           vastu: selectedReport === 'astro_vastu' ? vastuData : undefined,
+          language: lang,
         }),
       })
 
@@ -87,7 +160,7 @@ function GenerateReportContent() {
       setProgress(95)
 
       if (!res.ok) {
-        let errMsg = 'Generation failed'
+        let errMsg = isHindi ? 'रिपोर्ट बनाना विफल' : 'Generation failed'
         try { const d = await res.json(); errMsg = d.error || errMsg } catch {}
         throw new Error(errMsg)
       }
@@ -98,17 +171,17 @@ function GenerateReportContent() {
 
       if (result?.status === 'failed' || !reportId) {
         const detail = result?.error ? ` (${result.error})` : ''
-        throw new Error(`Report generation failed${detail}. Please try again.`)
+        throw new Error(isHindi ? `रिपोर्ट बनाना विफल${detail}। कृपया पुनः प्रयास करें।` : `Report generation failed${detail}. Please try again.`)
       }
 
       setProgress(100)
-      toast.success('Report generated successfully!')
+      toast.success(isHindi ? 'रिपोर्ट सफलतापूर्वक बनाई गई!' : 'Report generated successfully!')
       setTimeout(() => {
         router.push(`/reports/${reportId}`)
       }, 500)
     } catch (err: any) {
       clearInterval(tick)
-      const msg = err.message || 'Generation failed. Please try again.'
+      const msg = err.message || (isHindi ? 'रिपोर्ट बनाना विफल। कृपया पुनः प्रयास करें।' : 'Generation failed. Please try again.')
       setLastError(msg)
       toast.error(msg)
       setGenerating(false)
@@ -123,22 +196,42 @@ function GenerateReportContent() {
     true,
   ]
 
+  const selectedReportInfo = REPORT_TYPES.find(r => r.id === selectedReport)
+  const selectedMemberInfo = members.find(m => m.id === selectedMember)
+
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-[var(--indigo-deep)]">Generate Noxatra Report</h1>
-        <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">AI-powered Vedic analysis in 60 seconds</p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-[var(--indigo-deep)]">{t.title}</h1>
+          <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">{t.subtitle}</p>
+        </div>
+        {/* Language Toggle */}
+        <div className="flex items-center bg-[var(--warm-sand)] rounded-lg p-0.5 gap-0.5 flex-shrink-0">
+          <button
+            onClick={() => setLang('en')}
+            className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'en' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--warm-charcoal)]/60 hover:text-[var(--indigo-deep)]'}`}
+          >
+            EN
+          </button>
+          <button
+            onClick={() => setLang('hi')}
+            className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'hi' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--warm-charcoal)]/60 hover:text-[var(--indigo-deep)]'}`}
+          >
+            हिं
+          </button>
+        </div>
       </div>
 
       {/* Progress steps */}
       <div className="flex items-center gap-2">
-        {STEPS.map((s, i) => (
+        {t.steps.map((s, i) => (
           <div key={s} className="flex items-center gap-2 flex-1">
             <div className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold transition-all ${i < step ? 'bg-emerald-500 text-white' : i === step ? 'bg-[var(--indigo-deep)] text-white' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/50'}`}>
               {i < step ? <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>check</span> : i + 1}
             </div>
             <span className={`text-xs font-medium hidden sm:block ${i === step ? 'text-[var(--indigo-deep)]' : 'text-[var(--warm-charcoal)]/50'}`}>{s}</span>
-            {i < STEPS.length - 1 && <div className={`flex-1 h-0.5 ${i < step ? 'bg-emerald-500' : 'bg-[var(--warm-sand)]'}`} />}
+            {i < t.steps.length - 1 && <div className={`flex-1 h-0.5 ${i < step ? 'bg-emerald-500' : 'bg-[var(--warm-sand)]'}`} />}
           </div>
         ))}
       </div>
@@ -146,13 +239,13 @@ function GenerateReportContent() {
       {/* Step 0: Select Member */}
       {step === 0 && (
         <div className="space-y-3">
-          <h2 className="text-lg font-bold text-[var(--indigo-deep)]">Select Family Member</h2>
+          <h2 className="text-lg font-bold text-[var(--indigo-deep)]">{t.selectMember}</h2>
           {members.length === 0 ? (
             <div className="card-divine p-8 text-center">
               <div className="flex justify-center mb-3"><span className="material-symbols-outlined text-[32px] text-[var(--indigo-deep)]" style={{ fontVariationSettings: "'FILL' 1" }}>family_restroom</span></div>
-              <p className="font-medium text-[var(--indigo-deep)] mb-1">No family members yet</p>
-              <p className="text-sm text-[var(--warm-charcoal)]/60 mb-4">Add a family member first to generate reports</p>
-              <Link href="/family/add" className="btn-divine px-6 py-2.5 text-sm">Add Member</Link>
+              <p className="font-medium text-[var(--indigo-deep)] mb-1">{t.noMembers}</p>
+              <p className="text-sm text-[var(--warm-charcoal)]/60 mb-4">{t.noMembersDesc}</p>
+              <Link href="/family/add" className="btn-divine px-6 py-2.5 text-sm">{t.addMember}</Link>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -180,7 +273,7 @@ function GenerateReportContent() {
       {/* Step 1: Report Type */}
       {step === 1 && (
         <div className="space-y-3">
-          <h2 className="text-lg font-bold text-[var(--indigo-deep)]">Choose Report Type</h2>
+          <h2 className="text-lg font-bold text-[var(--indigo-deep)]">{t.chooseReport}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {REPORT_TYPES.map(rt => (
               <button
@@ -189,12 +282,14 @@ function GenerateReportContent() {
                 className={`relative flex items-start gap-3 p-4 rounded-xl border text-left transition-all ${selectedReport === rt.id ? 'border-[var(--terracotta)] bg-[var(--warm-sand)]' : 'border-[var(--warm-sand)] bg-white hover:border-[var(--saffron)]'}`}
               >
                 {rt.badge && (
-                  <span className="absolute top-2 right-2 text-xs bg-[var(--terracotta)] text-white px-2 py-0.5 rounded-full font-bold">{rt.badge}</span>
+                  <span className="absolute top-2 right-2 text-xs bg-[var(--terracotta)] text-white px-2 py-0.5 rounded-full font-bold">
+                    {isHindi ? rt.badgeHi : rt.badge}
+                  </span>
                 )}
                 <span className="material-symbols-outlined text-[24px] flex-shrink-0 text-[var(--indigo-deep)]" style={{ fontVariationSettings: "'FILL' 1" }}>{rt.icon}</span>
                 <div className="flex-1 min-w-0 pr-6">
-                  <p className="font-semibold text-[var(--indigo-deep)] text-sm">{rt.label}</p>
-                  <p className="text-xs text-[var(--warm-charcoal)]/60 mt-0.5">{rt.desc}</p>
+                  <p className="font-semibold text-[var(--indigo-deep)] text-sm">{isHindi ? rt.labelHi : rt.label}</p>
+                  <p className="text-xs text-[var(--warm-charcoal)]/60 mt-0.5">{isHindi ? rt.descHi : rt.desc}</p>
                   <p className="text-xs font-bold text-[var(--terracotta)] mt-1">₹{rt.price.toLocaleString('en-IN')}</p>
                 </div>
                 {selectedReport === rt.id && <span className="material-symbols-outlined text-[20px] text-[var(--terracotta)] ml-auto flex-shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>}
@@ -207,32 +302,32 @@ function GenerateReportContent() {
       {/* Step 2: Additional Info */}
       {step === 2 && (
         <div className="space-y-4">
-          <h2 className="text-lg font-bold text-[var(--indigo-deep)]">Additional Information</h2>
+          <h2 className="text-lg font-bold text-[var(--indigo-deep)]">{t.additionalInfo}</h2>
 
           {selectedReport === 'astro_vastu' ? (
             <div className="card-divine p-6 space-y-4">
-              <p className="text-sm text-[var(--warm-charcoal)]/70 mb-2">Vastu report requires a few details about your home.</p>
+              <p className="text-sm text-[var(--warm-charcoal)]/70 mb-2">{t.vastuDesc}</p>
               <div>
-                <label className="block text-sm font-medium text-[var(--indigo-deep)] mb-1.5">Main Door Direction</label>
+                <label className="block text-sm font-medium text-[var(--indigo-deep)] mb-1.5">{t.doorDir}</label>
                 <select value={vastuData.homeDirection} onChange={e => setVastuData(v => ({ ...v, homeDirection: e.target.value }))}
                   className="w-full px-3 py-2.5 rounded-lg border border-[var(--warm-sand)] bg-white text-sm focus:outline-none focus:border-[var(--saffron)]">
-                  <option value="">Select direction</option>
-                  {['North', 'North-East', 'East', 'South-East', 'South', 'South-West', 'West', 'North-West'].map(d => <option key={d} value={d}>{d}</option>)}
+                  <option value="">{t.selectDir}</option>
+                  {DIRECTIONS.map((d, i) => <option key={d} value={d}>{isHindi ? DIRECTIONS_HI[i] : d}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-[var(--indigo-deep)] mb-1.5">Sleep Direction (head points to)</label>
+                <label className="block text-sm font-medium text-[var(--indigo-deep)] mb-1.5">{t.sleepDir}</label>
                 <select value={vastuData.sleepDirection} onChange={e => setVastuData(v => ({ ...v, sleepDirection: e.target.value }))}
                   className="w-full px-3 py-2.5 rounded-lg border border-[var(--warm-sand)] bg-white text-sm">
-                  {['North', 'South', 'East', 'West'].map(d => <option key={d} value={d.toLowerCase()}>{d}</option>)}
+                  {SLEEP_DIRS.map((d, i) => <option key={d} value={d.toLowerCase()}>{isHindi ? SLEEP_DIRS_HI[i] : d}</option>)}
                 </select>
               </div>
             </div>
           ) : (
             <div className="card-divine p-6 text-center">
               <div className="flex justify-center mb-3"><span className="material-symbols-outlined text-[40px] text-emerald-500" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span></div>
-              <p className="font-medium text-[var(--indigo-deep)]">All set!</p>
-              <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">No additional information needed for this report type.</p>
+              <p className="font-medium text-[var(--indigo-deep)]">{t.allSet}</p>
+              <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">{t.allSetDesc}</p>
             </div>
           )}
         </div>
@@ -241,26 +336,30 @@ function GenerateReportContent() {
       {/* Step 3: Generate */}
       {step === 3 && (
         <div className="space-y-4">
-          <h2 className="text-lg font-bold text-[var(--indigo-deep)]">Ready to Generate</h2>
+          <h2 className="text-lg font-bold text-[var(--indigo-deep)]">{t.readyGenerate}</h2>
 
           {!generating ? (
             <>
               <div className="card-divine p-6 space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-[var(--warm-charcoal)]/60">Member</span>
-                  <span className="font-medium text-[var(--indigo-deep)]">{members.find(m => m.id === selectedMember)?.full_name}</span>
+                  <span className="text-[var(--warm-charcoal)]/60">{t.member}</span>
+                  <span className="font-medium text-[var(--indigo-deep)]">{selectedMemberInfo?.full_name}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-[var(--warm-charcoal)]/60">Report Type</span>
-                  <span className="font-medium text-[var(--indigo-deep)]">{REPORT_TYPES.find(r => r.id === selectedReport)?.label}</span>
+                  <span className="text-[var(--warm-charcoal)]/60">{t.reportType}</span>
+                  <span className="font-medium text-[var(--indigo-deep)]">{isHindi ? selectedReportInfo?.labelHi : selectedReportInfo?.label}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-[var(--warm-charcoal)]/60">Powered by</span>
+                  <span className="text-[var(--warm-charcoal)]/60">{t.poweredBy}</span>
                   <span className="font-medium text-[var(--indigo-deep)]">Noxatra AI</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-[var(--warm-charcoal)]/60">Est. Time</span>
-                  <span className="font-medium text-[var(--indigo-deep)]">~30-60 seconds</span>
+                  <span className="text-[var(--warm-charcoal)]/60">{t.estTime}</span>
+                  <span className="font-medium text-[var(--indigo-deep)]">{t.estTimeVal}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-[var(--warm-charcoal)]/60">{isHindi ? 'भाषा' : 'Language'}</span>
+                  <span className="font-medium text-[var(--indigo-deep)]">{isHindi ? 'हिंदी 🇮🇳' : 'English'}</span>
                 </div>
               </div>
 
@@ -268,7 +367,7 @@ function GenerateReportContent() {
                 <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 flex items-start gap-2">
                   <span className="material-symbols-outlined text-[18px] flex-shrink-0 mt-0.5">error</span>
                   <div>
-                    <p className="font-semibold">Previous attempt failed</p>
+                    <p className="font-semibold">{t.prevFailed}</p>
                     <p className="mt-0.5 opacity-80">{lastError}</p>
                   </div>
                 </div>
@@ -276,15 +375,15 @@ function GenerateReportContent() {
 
               <button onClick={handleGenerate} className="btn-divine w-full py-4 text-base font-bold inline-flex items-center justify-center gap-2">
                 <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
-                {lastError ? 'Retry Generation' : 'Generate Report Now'}
+                {lastError ? t.retry : t.generate}
               </button>
             </>
           ) : (
             <div className="card-divine p-8 text-center space-y-4">
               <div className="text-5xl animate-spin-slow">ॐ</div>
               <div>
-                <p className="font-bold text-[var(--indigo-deep)] text-lg">Calculating divine insights...</p>
-                <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">Analysing birth chart · Computing dashas · Generating predictions</p>
+                <p className="font-bold text-[var(--indigo-deep)] text-lg">{t.calculating}</p>
+                <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">{t.calcDesc}</p>
               </div>
               <div className="bg-[var(--warm-sand)] rounded-full h-2.5 overflow-hidden">
                 <div className="h-full bg-gradient-to-r from-[var(--terracotta)] to-[var(--saffron)] transition-all duration-500 rounded-full" style={{ width: `${progress}%` }} />
@@ -303,16 +402,16 @@ function GenerateReportContent() {
             disabled={step === 0}
             className="px-4 py-2 rounded-lg border border-[var(--warm-sand)] text-sm font-medium text-[var(--warm-charcoal)]/60 hover:border-[var(--indigo-deep)] hover:text-[var(--indigo-deep)] disabled:opacity-30 transition-all"
           >
-            <span className="inline-flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">arrow_back</span>Back</span>
+            <span className="inline-flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">arrow_back</span>{t.back}</span>
           </button>
 
-          {step < STEPS.length - 1 ? (
+          {step < t.steps.length - 1 ? (
             <button
               onClick={() => setStep(s => s + 1)}
               disabled={!canProceed[step]}
               className="btn-divine px-6 py-2 text-sm disabled:opacity-40 inline-flex items-center gap-1"
             >
-              Continue <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+              {t.continue} <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
             </button>
           ) : null}
         </div>

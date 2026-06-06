@@ -1,16 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Keeps astronomy-engine external (not bundled by Turbopack/webpack).
+  // Node.js loads it natively at runtime, picking the CJS entry point from
+  // the package's exports map — avoiding the ESM "Unexpected token 'export'"
+  // crash that occurs when Turbopack bundles the ESM version into a CJS chunk.
   serverExternalPackages: ['astronomy-engine'],
-  experimental: {
-    turbo: {
-      resolveAlias: {
-        // Force the CJS build — Turbopack picks the ESM export otherwise,
-        // which throws "SyntaxError: Unexpected token 'export'" at runtime
-        'astronomy-engine': './node_modules/astronomy-engine/astronomy.js',
-      },
-    },
-  },
 };
 
 export default nextConfig;

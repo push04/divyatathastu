@@ -33,6 +33,7 @@ export const metadata: Metadata = {
     description: '14 personalized holistic life reports for your family.',
   },
   robots: { index: true, follow: true },
+  verification: { google: 'i2XgNN0Y2xc_4i7WgtyHGITi_AH42OXW-314j1v232k' },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

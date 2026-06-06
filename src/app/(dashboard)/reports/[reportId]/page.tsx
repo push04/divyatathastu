@@ -24,6 +24,16 @@ const REPORT_TITLES: Record<string, string> = {
   child_development: 'Child Development', mobile_number: 'Mobile Number Analysis',
 }
 
+const REPORT_TITLES_HI: Record<string, string> = {
+  full_tathastu: 'पूर्ण तथास्तु रिपोर्ट', astrology: 'कुंडली और जन्म कुंडली',
+  numerology: 'अंकशास्त्र विश्लेषण', shakti_chakra: 'शक्ति चक्र रिपोर्ट',
+  prakriti: 'प्रकृति (आयुर्वेद)', yantra_colour: 'यंत्र और रंग चिकित्सा',
+  mantra_chanting: 'मंत्र जप मार्गदर्शन', mantra_writing: 'लिखित जप मार्गदर्शन',
+  astro_vastu: 'ज्योतिष वास्तु रिपोर्ट', psychology: 'वैदिक मनोविज्ञान',
+  dmit: 'DMIT बुद्धिमत्ता प्रोफाइल', colour_therapy: 'रंग चिकित्सा',
+  child_development: 'बाल विकास', mobile_number: 'मोबाइल नंबर विश्लेषण',
+}
+
 function Section({ title, icon, children, printAlwaysOpen }: { title: string; icon?: string; children: React.ReactNode; printAlwaysOpen?: boolean }) {
   const [open, setOpen] = useState(true)
   return (
@@ -793,6 +803,7 @@ export default function ReportDetailPage() {
   const [report, setReport] = useState<Report | null>(null)
   const [loading, setLoading] = useState(true)
   const [downloading, setDownloading] = useState(false)
+  const [lang, setLang] = useState<'en' | 'hi'>('en')
   const printRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -832,7 +843,9 @@ export default function ReportDetailPage() {
 
   const d = report.report_content || {}
   const member = report.family_members as any
-  const title = REPORT_TITLES[report.report_type] || `${report.report_type.replace(/_/g, ' ')} Report`
+  const isHindi = lang === 'hi'
+  const titles = isHindi ? REPORT_TITLES_HI : REPORT_TITLES
+  const title = titles[report.report_type] || `${report.report_type.replace(/_/g, ' ')} Report`
 
   return (
     <>
@@ -882,7 +895,12 @@ export default function ReportDetailPage() {
                 </p>
               )}
             </div>
-            <div className="flex items-center gap-2 print:hidden">
+            <div className="flex items-center gap-2 print:hidden flex-wrap justify-end">
+              {/* Language Toggle */}
+              <div className="flex items-center bg-[var(--warm-sand)] rounded-lg p-0.5 gap-0.5">
+                <button onClick={() => setLang('en')} className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all ${lang === 'en' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--warm-charcoal)]/60 hover:text-[var(--indigo-deep)]'}`}>EN</button>
+                <button onClick={() => setLang('hi')} className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all ${lang === 'hi' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--warm-charcoal)]/60 hover:text-[var(--indigo-deep)]'}`}>हिं</button>
+              </div>
               <span className={`text-sm px-3 py-1 rounded-full font-medium ${['generated', 'reviewed', 'delivered'].includes(report.status) ? 'bg-emerald-100 text-emerald-700' : report.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
                 {report.status}
               </span>
@@ -893,7 +911,7 @@ export default function ReportDetailPage() {
                   className="flex items-center gap-2 px-4 py-2 bg-[var(--indigo-deep)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
                   <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>download</span>
-                  {downloading ? 'Preparing…' : 'Download PDF'}
+                  {downloading ? (isHindi ? 'तैयार हो रहा है…' : 'Preparing…') : (isHindi ? 'PDF डाउनलोड करें' : 'Download PDF')}
                 </button>
               )}
             </div>
@@ -917,7 +935,7 @@ export default function ReportDetailPage() {
                 <ChakraSection data={d.chakras || d.chakra} />
               )}
               {(report.report_type === 'prakriti' || report.report_type === 'full_tathastu') && d.prakriti && (
-                <Section title="Prakriti (Ayurvedic Constitution)" icon="eco">
+                <Section title={isHindi ? 'प्रकृति (आयुर्वेदिक संरचना)' : 'Prakriti (Ayurvedic Constitution)'} icon="eco">
                   <div className="mt-4 space-y-4">
                     <div className="grid grid-cols-3 gap-3">
                       {[

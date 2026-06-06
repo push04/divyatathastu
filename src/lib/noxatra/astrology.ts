@@ -1,7 +1,4 @@
-import { createRequire } from 'module'
-const _require = createRequire(import.meta.url)
-// Force CJS entry point — Turbopack picks ESM otherwise, which crashes in production
-const Astronomy = _require('astronomy-engine') as typeof import('astronomy-engine')
+import * as Astronomy from 'astronomy-engine'
 
 // ── Ayanamsa & Node helpers ──────────────────────────────────────────────────
 
