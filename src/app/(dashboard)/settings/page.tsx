@@ -1,5 +1,7 @@
 'use client'
 
+import SudarshanLoader from '@/components/SudarshanLoader'
+
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -74,7 +76,7 @@ export default function SettingsPage() {
     }
   }
 
-  if (loading) return <div className="flex items-center justify-center h-64"><div className="text-3xl animate-spin-slow">ॐ</div></div>
+  if (loading) return <div className="flex items-center justify-center h-64"><SudarshanLoader size="sm" /></div>
 
   return (
     <div className="p-6 max-w-2xl mx-auto space-y-6">

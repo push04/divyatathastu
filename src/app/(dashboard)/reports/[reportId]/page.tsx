@@ -1,5 +1,7 @@
 'use client'
 
+import SudarshanLoader from '@/components/SudarshanLoader'
+
 import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
@@ -829,7 +831,7 @@ export default function ReportDetailPage() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="text-4xl animate-spin-slow">ॐ</div>
+      <SudarshanLoader size="md" />
     </div>
   )
   if (!report) return (
@@ -919,7 +921,7 @@ export default function ReportDetailPage() {
 
           {!['generated', 'reviewed', 'delivered'].includes(report.status) ? (
             <div className="card-divine p-8 text-center">
-              <div className="text-5xl animate-spin-slow mb-4">ॐ</div>
+              <SudarshanLoader size="lg" className="mb-4" />
               <p className="font-bold text-[var(--indigo-deep)]">Report is being generated...</p>
               <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">Please refresh in a few moments</p>
             </div>

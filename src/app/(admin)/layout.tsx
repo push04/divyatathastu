@@ -2,6 +2,7 @@
 
 export const dynamic = 'force-dynamic'
 
+import SudarshanLoader from '@/components/SudarshanLoader'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
@@ -96,7 +97,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (!authorized) return (
     <div className="flex items-center justify-center min-h-screen bg-[var(--kutch-white)]">
-      <div className="text-3xl animate-spin" style={{ fontFamily: "'Playfair Display', serif", color: 'var(--terracotta)' }}>ॐ</div>
+      <SudarshanLoader size="md" />
     </div>
   )
 

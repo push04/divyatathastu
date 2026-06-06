@@ -1,5 +1,6 @@
 'use client'
 
+import SudarshanLoader from '@/components/SudarshanLoader'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
@@ -146,7 +147,7 @@ export default function PilgrimagePage() {
               </div>
               <button onClick={generate} disabled={generating} className="btn-divine w-full py-3 font-bold disabled:opacity-50">
                 {generating ? (
-                  <span className="flex items-center justify-center gap-2"><span className="animate-spin">ॐ</span> Planning...</span>
+                  <span className="flex items-center justify-center gap-2"><SudarshanLoader size="sm" /> Planning...</span>
                 ) : <span className="inline-flex items-center gap-2"><span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span> Plan Pilgrimage ({selected.size} temples)</span>}
               </button>
             </div>

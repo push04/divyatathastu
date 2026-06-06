@@ -1,5 +1,7 @@
 'use client'
 
+import SudarshanLoader from '@/components/SudarshanLoader'
+
 export const dynamic = 'force-dynamic'
 
 import { useEffect, useState, Suspense } from 'react'
@@ -380,7 +382,7 @@ function GenerateReportContent() {
             </>
           ) : (
             <div className="card-divine p-8 text-center space-y-4">
-              <div className="text-5xl animate-spin-slow">ॐ</div>
+              <SudarshanLoader size="lg" />
               <div>
                 <p className="font-bold text-[var(--indigo-deep)] text-lg">{t.calculating}</p>
                 <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">{t.calcDesc}</p>
@@ -422,7 +424,7 @@ function GenerateReportContent() {
 
 export default function GenerateReportPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-3xl animate-spin-slow">ॐ</div></div>}>
+    <Suspense fallback={<div className="flex items-center justify-center h-64"><SudarshanLoader size="sm" /></div>}>
       <GenerateReportContent />
     </Suspense>
   )

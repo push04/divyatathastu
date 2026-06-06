@@ -1,5 +1,7 @@
 'use client'
 
+import SudarshanLoader from '@/components/SudarshanLoader'
+
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -62,7 +64,7 @@ export default function FamilyPage() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="text-3xl animate-spin-slow">ॐ</div>
+      <SudarshanLoader size="sm" />
     </div>
   )
 

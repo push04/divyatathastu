@@ -1,5 +1,7 @@
 'use client'
 
+import SudarshanLoader from '@/components/SudarshanLoader'
+
 import { useEffect, useState } from 'react'
 import { getSavedCity, saveCity } from '@/lib/utils/getLocation'
 
@@ -240,7 +242,7 @@ export default function PanchangPage() {
             {loading ? (
               <div className="flex items-center justify-center h-48">
                 <div className="text-center">
-                  <div style={{ fontSize: 40, fontFamily: 'serif', color: 'var(--terracotta)', opacity: 0.3 }} className="animate-spin-slow">ॐ</div>
+                  <SudarshanLoader size="md" className="opacity-30" />
                   <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: 'rgba(28,30,74,0.35)', marginTop: 12 }}>Computing positions…</p>
                 </div>
               </div>

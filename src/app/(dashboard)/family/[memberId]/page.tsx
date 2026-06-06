@@ -1,5 +1,7 @@
 'use client'
 
+import SudarshanLoader from '@/components/SudarshanLoader'
+
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -67,7 +69,7 @@ export default function MemberProfilePage() {
     return Math.floor((Date.now() - new Date(date_of_birth).getTime()) / (1000 * 60 * 60 * 24 * 365.25))
   }
 
-  if (loading) return <div className="flex items-center justify-center h-64"><div className="text-3xl animate-spin-slow">ॐ</div></div>
+  if (loading) return <div className="flex items-center justify-center h-64"><SudarshanLoader size="sm" /></div>
   if (!member) return <div className="p-6 text-center"><p>Member not found.</p><Link href="/family" className="text-[var(--terracotta)] inline-flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">arrow_back</span>Back</Link></div>
 
   return (

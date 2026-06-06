@@ -1,5 +1,7 @@
 'use client'
 
+import SudarshanLoader from '@/components/SudarshanLoader'
+
 import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -192,7 +194,7 @@ export default function AdminProductsPage() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="text-3xl animate-spin-slow" style={{ color: 'var(--terracotta)', fontFamily: "'Playfair Display', serif" }}>ॐ</div>
+      <SudarshanLoader size="sm" />
     </div>
   )
 

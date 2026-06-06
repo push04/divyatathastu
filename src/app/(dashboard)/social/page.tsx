@@ -1,5 +1,6 @@
 'use client'
 
+import SudarshanLoader from '@/components/SudarshanLoader'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
@@ -141,7 +142,7 @@ ${platform === 'WhatsApp Status' ? 'Short, inspiring. Under 100 chars.' : ''}`,
 
         <button onClick={generate} disabled={generating} className="btn-divine w-full py-3 text-sm font-bold disabled:opacity-50">
           {generating ? (
-            <span className="flex items-center justify-center gap-2"><span className="animate-spin">ॐ</span> Generating 3 posts...</span>
+            <span className="flex items-center justify-center gap-2"><SudarshanLoader size="sm" /> Generating 3 posts...</span>
           ) : (
             <span className="flex items-center justify-center gap-2">
               <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>

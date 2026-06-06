@@ -1,5 +1,7 @@
 'use client'
 
+import SudarshanLoader from '@/components/SudarshanLoader'
+
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -54,7 +56,7 @@ export default function ReportsPage() {
 
   const filtered = filter === 'all' ? reports : reports.filter(r => r.status === filter)
 
-  if (loading) return <div className="flex items-center justify-center h-64"><div className="text-3xl animate-spin-slow">ॐ</div></div>
+  if (loading) return <div className="flex items-center justify-center h-64"><SudarshanLoader size="sm" /></div>
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-6">

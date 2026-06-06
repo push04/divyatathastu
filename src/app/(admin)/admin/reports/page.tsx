@@ -1,5 +1,7 @@
 'use client'
 
+import SudarshanLoader from '@/components/SudarshanLoader'
+
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -115,7 +117,7 @@ export default function AdminReportsPage() {
 
   const content = selectedReport?.report_content || selectedReport?.raw_data
 
-  if (loading) return <div className="flex items-center justify-center h-64"><div className="text-3xl animate-spin-slow text-[var(--terracotta)]">ॐ</div></div>
+  if (loading) return <div className="flex items-center justify-center h-64"><SudarshanLoader size="sm" /></div>
 
   return (
     <div className="p-6 space-y-5">
