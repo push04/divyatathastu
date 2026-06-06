@@ -58,6 +58,16 @@ export default function AdminEbooksPage() {
     return name.toLowerCase().replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim()
   }
 
+  function makeUniqueSlug(base: string, excludeId?: string): string {
+    const taken = new Set(ebooks.filter(e => e.id !== excludeId).map(e => e.slug))
+    if (!taken.has(base)) return base
+    for (let i = 2; i <= 99; i++) {
+      const candidate = `${base}-${i}`
+      if (!taken.has(candidate)) return candidate
+    }
+    return `${base}-${Date.now().toString(36)}`
+  }
+
   function openEdit(eb: Ebook) {
     setEditingId(eb.id)
     setForm({
@@ -118,7 +128,8 @@ export default function AdminEbooksPage() {
     setSaving(true)
     setUploadProgress(20)
 
-    const slug = form.slug || generateSlug(form.name)
+    const baseSlug = form.slug || generateSlug(form.name)
+    const slug = makeUniqueSlug(baseSlug, editingId ?? undefined)
     const payload: any = {
       name: form.name,
       description: form.description || null,
