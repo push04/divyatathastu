@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { generateReportData } from '@/lib/noxatra/engine'
+import { generateReportDataSafe } from '@/lib/noxatra/engine'
 import type { ReportType } from '@/types/database.types'
 
 export const maxDuration = 60
@@ -21,18 +21,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // Verify family member belongs to user
-    const { data: member, error: memberError } = await supabase
-      .from('family_members')
-      .select('*, families!inner(owner_id)')
-      .eq('id', family_member_id)
-      .single()
-
-    if (memberError || !member) {
-      return NextResponse.json({ error: 'Family member not found' }, { status: 404 })
-    }
-
-    // Get user's family
+    // Get user's family first, then verify member belongs to it
     const { data: family } = await supabase
       .from('families')
       .select('id')
@@ -40,6 +29,18 @@ export async function POST(req: NextRequest) {
       .single()
 
     if (!family) return NextResponse.json({ error: 'Family not found' }, { status: 404 })
+
+    const { data: member, error: memberError } = await supabase
+      .from('family_members')
+      .select('*')
+      .eq('id', family_member_id)
+      .eq('family_id', family.id)
+      .single()
+
+    if (memberError || !member) {
+      console.error('Member lookup error:', memberError)
+      return NextResponse.json({ error: 'Family member not found' }, { status: 404 })
+    }
 
     // Create report records and process
     const results = []
@@ -57,13 +58,25 @@ export async function POST(req: NextRequest) {
         .select()
         .single()
 
-      if (reportError || !report) continue
+      if (reportError || !report) {
+        console.error(`Report insert error [${reportType}]:`, reportError)
+        results.push({ report_id: null, report_type: reportType, status: 'failed', error: reportError?.message || 'Database insert failed' })
+        continue
+      }
+
+      const { data: reportData, error: genError } = await generateReportDataSafe(
+        member, reportType, reportType === 'astro_vastu' ? vastu : undefined
+      )
 
       let reportStatus: 'generated' | 'failed' = 'failed'
-      try {
-        const reportData = await generateReportData(member, reportType, reportType === 'astro_vastu' ? vastu : undefined)
+      let errorDetail = ''
 
-        await supabase
+      if (genError || !reportData) {
+        errorDetail = genError ?? 'Engine returned no data'
+        console.error(`Report generation error [${reportType}]: ${errorDetail}`)
+        await supabase.from('reports').update({ status: 'failed' }).eq('id', report.id)
+      } else {
+        const { error: updateError } = await supabase
           .from('reports')
           .update({
             status: 'generated',
@@ -72,16 +85,16 @@ export async function POST(req: NextRequest) {
           })
           .eq('id', report.id)
 
-        reportStatus = 'generated'
-      } catch (genError) {
-        console.error(`Report generation error [${reportType}]:`, genError)
-        await supabase
-          .from('reports')
-          .update({ status: 'failed' })
-          .eq('id', report.id)
+        if (updateError) {
+          errorDetail = `DB update failed: ${updateError.message}`
+          console.error(`Report update error [${reportType}]:`, updateError)
+          await supabase.from('reports').update({ status: 'failed' }).eq('id', report.id)
+        } else {
+          reportStatus = 'generated'
+        }
       }
 
-      results.push({ report_id: report.id, report_type: reportType, status: reportStatus })
+      results.push({ report_id: report.id, report_type: reportType, status: reportStatus, error: errorDetail || undefined })
 
       // Fire-and-forget — notification failure must never undo a successful report
       if (reportStatus === 'generated') {
@@ -100,6 +113,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, results })
   } catch (err) {
     console.error('Noxatra error:', err)
-    return NextResponse.json({ error: 'Report generation failed' }, { status: 500 })
+    const msg = err instanceof Error ? err.message : 'Report generation failed'
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }

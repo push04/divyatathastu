@@ -26,10 +26,14 @@ export async function generateReportData(
 ): Promise<Record<string, unknown>> {
   const lat = member.birth_latitude ?? 28.6139
   const lng = member.birth_longitude ?? 77.2090
-  const time = member.time_of_birth ?? '12:00'
+  // Guard: time must be a valid HH:MM string
+  const rawTime = member.time_of_birth ?? '12:00'
+  const time = /^\d{1,2}:\d{2}/.test(rawTime) ? rawTime : '12:00'
+  // Guard: DOB must be a valid YYYY-MM-DD string
+  const dob = member.date_of_birth ?? '2000-01-01'
 
   const birthData: BirthData = {
-    date: member.date_of_birth,
+    date: dob,
     time,
     lat,
     lng,
@@ -40,7 +44,11 @@ export async function generateReportData(
   try {
     kundli = calculateKundli(birthData)
   } catch {
-    kundli = getFallbackKundli(member.date_of_birth)
+    try {
+      kundli = getFallbackKundli(dob)
+    } catch {
+      kundli = getFallbackKundli('2000-01-01')
+    }
   }
 
   switch (reportType) {
@@ -152,6 +160,20 @@ export async function generateReportData(
 
     default:
       return { error: `Unknown report type: ${reportType}` }
+  }
+}
+
+// Re-export as a safe wrapper that never throws — callers always get data or an error object
+export async function generateReportDataSafe(
+  member: FamilyMemberData,
+  reportType: ReportType,
+  vastu?: { homeDirection: string; sleepDirection: string }
+): Promise<{ data: Record<string, unknown> | null; error: string | null }> {
+  try {
+    const data = await generateReportData(member, reportType, vastu)
+    return { data, error: null }
+  } catch (err) {
+    return { data: null, error: err instanceof Error ? err.message : String(err) }
   }
 }
 

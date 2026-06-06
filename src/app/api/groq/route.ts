@@ -8,6 +8,29 @@ function getGroq() {
 
 export const maxDuration = 60
 
+function isRateLimitError(err: any): boolean {
+  return err?.status === 429 || err?.error?.type === 'tokens' ||
+    (typeof err?.message === 'string' && /rate.?limit/i.test(err.message))
+}
+
+async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 3): Promise<T> {
+  let lastError: any
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn()
+    } catch (err: any) {
+      lastError = err
+      if (isRateLimitError(err) && attempt < maxAttempts) {
+        // Exponential back-off: 3 s, then 6 s
+        await new Promise(resolve => setTimeout(resolve, attempt * 3000))
+        continue
+      }
+      throw err
+    }
+  }
+  throw lastError
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { messages, system, reportData, reportType, memberName, stream: useStream = true } = await req.json()
@@ -19,8 +42,9 @@ Generate deeply personalized, compassionate, and actionable insights. Write in a
 ${reportData ? `Report Data: ${JSON.stringify(reportData, null, 2)}` : ''}`
 
     const groq = getGroq()
+
     if (!useStream) {
-      const completion = await groq.chat.completions.create({
+      const completion = await withRetry(() => groq.chat.completions.create({
         model: 'llama-3.3-70b-versatile',
         messages: [
           { role: 'system', content: systemPrompt },
@@ -29,11 +53,12 @@ ${reportData ? `Report Data: ${JSON.stringify(reportData, null, 2)}` : ''}`
         stream: false,
         max_tokens: 2048,
         temperature: 0.7,
-      })
+      }))
       return NextResponse.json({ content: completion.choices[0]?.message?.content || '' })
     }
 
-    const stream = await groq.chat.completions.create({
+    // For streaming, retry applies to the initial stream creation only
+    const stream = await withRetry(() => groq.chat.completions.create({
       model: 'llama-3.3-70b-versatile',
       messages: [
         { role: 'system', content: systemPrompt },
@@ -42,14 +67,18 @@ ${reportData ? `Report Data: ${JSON.stringify(reportData, null, 2)}` : ''}`
       stream: true,
       max_tokens: 4096,
       temperature: 0.7,
-    })
+    }))
 
     const encoder = new TextEncoder()
     const readable = new ReadableStream({
       async start(controller) {
-        for await (const chunk of stream) {
-          const delta = chunk.choices[0]?.delta?.content || ''
-          if (delta) controller.enqueue(encoder.encode(`data: ${JSON.stringify({ choices: [{ delta: { content: delta } }] })}\n\n`))
+        try {
+          for await (const chunk of stream) {
+            const delta = chunk.choices[0]?.delta?.content || ''
+            if (delta) controller.enqueue(encoder.encode(`data: ${JSON.stringify({ choices: [{ delta: { content: delta } }] })}\n\n`))
+          }
+        } catch (streamErr) {
+          console.error('Groq stream error:', streamErr)
         }
         controller.enqueue(encoder.encode('data: [DONE]\n\n'))
         controller.close()
@@ -63,8 +92,14 @@ ${reportData ? `Report Data: ${JSON.stringify(reportData, null, 2)}` : ''}`
         'Connection': 'keep-alive',
       },
     })
-  } catch (err) {
+  } catch (err: any) {
     console.error('Groq error:', err)
-    return NextResponse.json({ error: 'AI generation failed' }, { status: 500 })
+    if (isRateLimitError(err)) {
+      return NextResponse.json(
+        { error: 'AI is busy right now (rate limit). Please wait 1–2 minutes and try again.' },
+        { status: 429 }
+      )
+    }
+    return NextResponse.json({ error: 'AI generation failed. Please try again.' }, { status: 500 })
   }
 }

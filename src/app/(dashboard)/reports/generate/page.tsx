@@ -49,6 +49,7 @@ function GenerateReportContent() {
   const [vastuData, setVastuData] = useState({ homeDirection: '', sleepDirection: 'south' })
   const [generating, setGenerating] = useState(false)
   const [progress, setProgress] = useState(0)
+  const [lastError, setLastError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
@@ -67,6 +68,7 @@ function GenerateReportContent() {
     if (!selectedMember || !selectedReport) { toast.error('Select member and report type'); return }
     setGenerating(true)
     setProgress(10)
+    setLastError(null)
 
     const tick = setInterval(() => setProgress(p => Math.min(p + 6, 88)), 1500)
 
@@ -74,7 +76,6 @@ function GenerateReportContent() {
       const res = await fetch('/api/noxatra', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        redirect: 'error',
         body: JSON.stringify({
           family_member_id: selectedMember,
           report_types: [selectedReport],
@@ -96,7 +97,8 @@ function GenerateReportContent() {
       const reportId = result?.report_id
 
       if (result?.status === 'failed' || !reportId) {
-        throw new Error('Report generation failed. Please check your birth details and try again.')
+        const detail = result?.error ? ` (${result.error})` : ''
+        throw new Error(`Report generation failed${detail}. Please try again.`)
       }
 
       setProgress(100)
@@ -106,7 +108,9 @@ function GenerateReportContent() {
       }, 500)
     } catch (err: any) {
       clearInterval(tick)
-      toast.error(err.message || 'Generation failed. Please try again.')
+      const msg = err.message || 'Generation failed. Please try again.'
+      setLastError(msg)
+      toast.error(msg)
       setGenerating(false)
       setProgress(0)
     }
@@ -260,8 +264,19 @@ function GenerateReportContent() {
                 </div>
               </div>
 
+              {lastError && (
+                <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 flex items-start gap-2">
+                  <span className="material-symbols-outlined text-[18px] flex-shrink-0 mt-0.5">error</span>
+                  <div>
+                    <p className="font-semibold">Previous attempt failed</p>
+                    <p className="mt-0.5 opacity-80">{lastError}</p>
+                  </div>
+                </div>
+              )}
+
               <button onClick={handleGenerate} className="btn-divine w-full py-4 text-base font-bold inline-flex items-center justify-center gap-2">
-                <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span> Generate Report Now
+                <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+                {lastError ? 'Retry Generation' : 'Generate Report Now'}
               </button>
             </>
           ) : (
