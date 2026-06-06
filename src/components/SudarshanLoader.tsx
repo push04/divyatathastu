@@ -5,7 +5,7 @@ export default function SudarshanLoader({
   size?: 'sm' | 'md' | 'lg'
   className?: string
 }) {
-  const dim = size === 'sm' ? 40 : size === 'lg' ? 80 : 60
+  const dim = size === 'sm' ? 56 : size === 'lg' ? 108 : 80
 
   const outerPetals = Array.from({ length: 16 }, (_, i) => i * 22.5)
   const innerPetals = Array.from({ length: 8 }, (_, i) => i * 45)
@@ -56,9 +56,6 @@ export default function SudarshanLoader({
       {/* Separator rings */}
       <circle cx="100" cy="100" r="62" fill="none" stroke="#F0C040" strokeWidth="2" />
       <circle cx="100" cy="100" r="60" fill="none" stroke="#D4884A" strokeWidth="0.6" opacity="0.7" />
-
-      {/* Spoke area fill — slightly lighter than disc */}
-      <circle cx="100" cy="100" r="59" fill="#2A2350" />
 
       {/* 8 gold diamond spokes */}
       {spokes.map((angle) => (
