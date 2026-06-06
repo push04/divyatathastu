@@ -57,6 +57,52 @@ function Section({ title, icon, children, printAlwaysOpen }: { title: string; ic
   )
 }
 
+function nameToColor(name: string): string {
+  const map: Record<string, string> = {
+    red: '#ef4444', 'dark red': '#991b1b', 'deep red': '#7f1d1d', 'blood red': '#b91c1c',
+    orange: '#f97316', 'dark orange': '#ea580c', saffron: '#f59e0b', amber: '#f59e0b',
+    yellow: '#eab308', 'light yellow': '#fde68a', gold: '#d97706', 'pale yellow': '#fef9c3',
+    green: '#22c55e', 'light green': '#86efac', 'dark green': '#15803d', emerald: '#10b981',
+    blue: '#3b82f6', 'light blue': '#93c5fd', 'dark blue': '#1d4ed8', 'sky blue': '#38bdf8', 'pale blue': '#dbeafe',
+    navy: '#1e3a8a', indigo: '#6366f1', violet: '#7c3aed', purple: '#a855f7', 'dark purple': '#7e22ce',
+    pink: '#ec4899', 'light pink': '#f9a8d4', 'soft pink': '#fda4af', rose: '#fb7185',
+    lavender: '#c4b5fd', 'light lavender': '#ede9fe', lilac: '#d8b4fe',
+    white: '#f8fafc', 'warm white': '#fef9f0', cream: '#fef3c7', ivory: '#fffff0',
+    silver: '#cbd5e1', grey: '#9ca3af', gray: '#9ca3af',
+    black: '#1e293b', 'dark maroon': '#450a0a', maroon: '#7f1d1d', brown: '#92400e',
+    turquoise: '#2dd4bf', teal: '#0d9488', cyan: '#06b6d4', aqua: '#22d3ee',
+    coral: '#f87171', salmon: '#fca5a5', peach: '#fdba74', magenta: '#e879f9',
+  }
+  const lower = name.toLowerCase().trim()
+  if (map[lower]) return map[lower]
+  for (const [k, v] of Object.entries(map)) {
+    if (lower.includes(k)) return v
+  }
+  return '#c4a882'
+}
+
+function ColorSwatch({ name, size = 'sm' }: { name: string; size?: 'sm' | 'md' | 'lg' }) {
+  const bg = nameToColor(name)
+  const dim = size === 'lg' ? 'w-10 h-10' : size === 'md' ? 'w-6 h-6' : 'w-3.5 h-3.5'
+  const isLight = ['#f8fafc','#fef9f0','#fef3c7','#fef9c3','#fde68a','#fef9c3','#fffff0','#dbeafe','#ede9fe','#fce7f3','#f9a8d4','#fdba74'].includes(bg)
+  return (
+    <span
+      className={`${dim} rounded-full flex-shrink-0 border shadow-sm`}
+      style={{ backgroundColor: bg, borderColor: isLight ? '#d1d5db' : 'rgba(255,255,255,0.35)' }}
+      title={name}
+    />
+  )
+}
+
+function ColorBadge({ name }: { name: string }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full bg-white border border-[var(--warm-sand)] font-medium text-[var(--indigo-deep)] shadow-sm">
+      <ColorSwatch name={name} size="sm" />
+      {name}
+    </span>
+  )
+}
+
 function InfoCard({ label, value, large }: { label: string; value: string | number | undefined; large?: boolean }) {
   if (!value && value !== 0) return null
   return (
@@ -348,7 +394,7 @@ function YantraSection({ data }: { data: any }) {
           <p className="text-xs font-bold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-2">Power Colours</p>
           <div className="flex gap-2 flex-wrap">
             {(Array.isArray(data.colourTherapy.power) ? data.colourTherapy.power : [data.colourTherapy.power]).map((c: string) => (
-              <span key={c} className="text-sm px-3 py-1 rounded-full font-medium border-2 border-[var(--saffron)] bg-amber-50">{c}</span>
+              <ColorBadge key={c} name={c} />
             ))}
           </div>
         </div>
@@ -375,21 +421,33 @@ function YantraSection({ data }: { data: any }) {
       {data.colourTherapy && (
         <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
           {data.colourTherapy.forHealth && (
-            <div className="bg-[var(--warm-sand)] rounded-lg p-2.5">
-              <p className="font-bold text-[var(--indigo-deep)]/60 mb-0.5">For Health</p>
-              <p className="text-[var(--warm-charcoal)]/70">{Array.isArray(data.colourTherapy.forHealth) ? data.colourTherapy.forHealth.join(', ') : data.colourTherapy.forHealth}</p>
+            <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-3">
+              <p className="font-bold text-emerald-700 mb-1.5">For Health</p>
+              <div className="flex flex-wrap gap-1">
+                {(Array.isArray(data.colourTherapy.forHealth) ? data.colourTherapy.forHealth : [data.colourTherapy.forHealth]).map((c: string) => (
+                  <ColorBadge key={c} name={c} />
+                ))}
+              </div>
             </div>
           )}
           {data.colourTherapy.forWealth && (
-            <div className="bg-[var(--warm-sand)] rounded-lg p-2.5">
-              <p className="font-bold text-[var(--indigo-deep)]/60 mb-0.5">For Wealth</p>
-              <p className="text-[var(--warm-charcoal)]/70">{Array.isArray(data.colourTherapy.forWealth) ? data.colourTherapy.forWealth.join(', ') : data.colourTherapy.forWealth}</p>
+            <div className="bg-amber-50 border border-amber-100 rounded-xl p-3">
+              <p className="font-bold text-amber-700 mb-1.5">For Wealth</p>
+              <div className="flex flex-wrap gap-1">
+                {(Array.isArray(data.colourTherapy.forWealth) ? data.colourTherapy.forWealth : [data.colourTherapy.forWealth]).map((c: string) => (
+                  <ColorBadge key={c} name={c} />
+                ))}
+              </div>
             </div>
           )}
           {data.colourTherapy.avoid && (
-            <div className="bg-red-50 rounded-lg p-2.5">
-              <p className="font-bold text-red-600/70 mb-0.5">Avoid</p>
-              <p className="text-red-600/80">{Array.isArray(data.colourTherapy.avoid) ? data.colourTherapy.avoid.join(', ') : data.colourTherapy.avoid}</p>
+            <div className="bg-red-50 border border-red-100 rounded-xl p-3">
+              <p className="font-bold text-red-700 mb-1.5">Avoid</p>
+              <div className="flex flex-wrap gap-1">
+                {(Array.isArray(data.colourTherapy.avoid) ? data.colourTherapy.avoid : [data.colourTherapy.avoid]).map((c: string) => (
+                  <ColorBadge key={c} name={c} />
+                ))}
+              </div>
             </div>
           )}
         </div>
@@ -1123,54 +1181,91 @@ export default function ReportDetailPage() {
               )}
               {(report.report_type === 'colour_therapy' || report.report_type === 'full_tathastu') && d.colourTherapy && (
                 <Section title="Colour Therapy" icon="palette">
-                  <div className="mt-4 space-y-4">
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <div className="mt-4 space-y-5">
+                    {/* Healing color quadrant */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                       {[
-                        { label: 'Physical Healing', colors: d.colourTherapy.healingColors?.physical },
-                        { label: 'Emotional Healing', colors: d.colourTherapy.healingColors?.emotional },
-                        { label: 'Mental Clarity', colors: d.colourTherapy.healingColors?.mental },
-                        { label: 'Spiritual Growth', colors: d.colourTherapy.healingColors?.spiritual },
-                      ].filter(i => i.colors?.length).map(item => (
-                        <div key={item.label} className="bg-[var(--warm-sand)] rounded-xl p-3">
-                          <p className="text-xs font-bold text-[var(--indigo-deep)]/60 mb-1.5">{item.label}</p>
-                          <div className="flex flex-wrap gap-1">
-                            {item.colors.slice(0, 3).map((c: string) => (
-                              <span key={c} className="text-xs bg-white/80 px-1.5 py-0.5 rounded">{c}</span>
-                            ))}
+                        { label: 'Physical Healing', colors: d.colourTherapy.healingColors?.physical, accent: '#10b981', bg: 'bg-emerald-50 border-emerald-100' },
+                        { label: 'Emotional Healing', colors: d.colourTherapy.healingColors?.emotional, accent: '#ec4899', bg: 'bg-pink-50 border-pink-100' },
+                        { label: 'Mental Clarity', colors: d.colourTherapy.healingColors?.mental, accent: '#3b82f6', bg: 'bg-blue-50 border-blue-100' },
+                        { label: 'Spiritual Growth', colors: d.colourTherapy.healingColors?.spiritual, accent: '#8b5cf6', bg: 'bg-violet-50 border-violet-100' },
+                      ].filter(i => i.colors?.length).map(item => {
+                        const cols: string[] = item.colors.slice(0, 4)
+                        return (
+                          <div key={item.label} className={`rounded-xl p-3 border ${item.bg} overflow-hidden`}>
+                            {/* Color stripe at top */}
+                            <div className="flex gap-0.5 mb-2.5 rounded-lg overflow-hidden h-4">
+                              {cols.map((c: string) => (
+                                <div key={c} className="flex-1 h-full" style={{ backgroundColor: nameToColor(c) }} title={c} />
+                              ))}
+                            </div>
+                            <p className="text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: item.accent }}>{item.label}</p>
+                            <div className="flex flex-col gap-1">
+                              {cols.map((c: string) => (
+                                <span key={c} className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--indigo-deep)]">
+                                  <ColorSwatch name={c} size="sm" />
+                                  {c}
+                                </span>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        )
+                      })}
                     </div>
+
+                    {/* Chromotherapy protocol */}
                     {d.colourTherapy.chromotherapy && (
-                      <div className="bg-[var(--warm-sand)] rounded-xl p-4">
-                        <p className="text-xs font-bold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-2">Chromotherapy Protocol</p>
-                        <div className="space-y-1 text-sm text-[var(--warm-charcoal)]/70">
-                          <p>• Primary color: <span className="font-medium">{d.colourTherapy.chromotherapy.primaryColor}</span></p>
-                          <p>• {d.colourTherapy.chromotherapy.sessions}</p>
-                          <p>• Duration: {d.colourTherapy.chromotherapy.duration}</p>
+                      <div className="rounded-xl border border-[var(--warm-sand)] overflow-hidden">
+                        <div className="h-10 w-full" style={{ backgroundColor: nameToColor(d.colourTherapy.chromotherapy.primaryColor || '') }} />
+                        <div className="p-4">
+                          <div className="flex items-center gap-3 mb-3">
+                            <ColorSwatch name={d.colourTherapy.chromotherapy.primaryColor || ''} size="lg" />
+                            <div>
+                              <p className="font-bold text-[var(--indigo-deep)]">{d.colourTherapy.chromotherapy.primaryColor}</p>
+                              <p className="text-xs text-[var(--warm-charcoal)]/50">Primary Healing Color</p>
+                            </div>
+                          </div>
+                          <p className="text-[10px] font-bold text-[var(--indigo-deep)]/50 uppercase tracking-wider mb-2">Chromotherapy Protocol</p>
+                          <div className="space-y-1 text-sm text-[var(--warm-charcoal)]/70">
+                            {d.colourTherapy.chromotherapy.sessions && <p>• {d.colourTherapy.chromotherapy.sessions}</p>}
+                            {d.colourTherapy.chromotherapy.duration && <p>• Duration: {d.colourTherapy.chromotherapy.duration}</p>}
+                          </div>
+                          {d.colourTherapy.chromotherapy.waterSolarization && (
+                            <p className="mt-2 text-xs text-[var(--warm-charcoal)]/55 italic">{d.colourTherapy.chromotherapy.waterSolarization}</p>
+                          )}
                         </div>
-                        {d.colourTherapy.chromotherapy.waterSolarization && (
-                          <p className="mt-2 text-xs text-[var(--warm-charcoal)]/60 italic">{d.colourTherapy.chromotherapy.waterSolarization}</p>
-                        )}
                       </div>
                     )}
+
+                    {/* Clothing colors */}
                     {d.colourTherapy.clothing && (
                       <div>
                         <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Clothing Colors</p>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-                          {Object.entries(d.colourTherapy.clothing).filter(([k]) => k !== 'weeklySchedule').map(([key, val]) => (
-                            <div key={key} className="bg-[var(--warm-sand)] rounded-lg p-2">
-                              <p className="font-bold text-[var(--indigo-deep)]/60 capitalize mb-0.5">{key.replace(/([A-Z])/g, ' $1')}</p>
-                              <p className="text-[var(--warm-charcoal)]/70">{val as string}</p>
-                            </div>
-                          ))}
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          {Object.entries(d.colourTherapy.clothing).filter(([k]) => k !== 'weeklySchedule').map(([key, val]) => {
+                            const colorName = val as string
+                            return (
+                              <div key={key} className="rounded-xl border border-[var(--warm-sand)] overflow-hidden">
+                                <div className="h-7 w-full opacity-80" style={{ backgroundColor: nameToColor(colorName) }} />
+                                <div className="p-2.5">
+                                  <p className="text-[10px] font-bold text-[var(--indigo-deep)]/50 uppercase mb-0.5">{key.replace(/([A-Z])/g, ' $1')}</p>
+                                  <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--indigo-deep)]">
+                                    <ColorSwatch name={colorName} size="sm" />
+                                    {colorName}
+                                  </span>
+                                </div>
+                              </div>
+                            )
+                          })}
                         </div>
                       </div>
                     )}
+
+                    {/* Colour meditation */}
                     {d.colourTherapy.colorMeditation && (
-                      <div className="bg-[var(--warm-sand)] rounded-xl p-4">
-                        <p className="text-xs font-bold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-1">Colour Meditation</p>
-                        <p className="text-sm text-[var(--warm-charcoal)]/70 leading-relaxed">{d.colourTherapy.colorMeditation}</p>
+                      <div className="bg-gradient-to-br from-violet-50 to-indigo-50 border border-violet-100 rounded-xl p-4">
+                        <p className="text-[10px] font-bold text-violet-600 uppercase tracking-wider mb-1.5">Colour Meditation</p>
+                        <p className="text-sm text-[var(--warm-charcoal)]/75 leading-relaxed">{d.colourTherapy.colorMeditation}</p>
                       </div>
                     )}
                   </div>

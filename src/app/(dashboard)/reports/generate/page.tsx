@@ -381,7 +381,7 @@ function GenerateReportContent() {
               </button>
             </>
           ) : (
-            <div className="card-divine p-8 text-center space-y-4">
+            <div className="card-divine p-8 flex flex-col items-center space-y-4">
               <SudarshanLoader size="lg" />
               <div>
                 <p className="font-bold text-[var(--indigo-deep)] text-lg">{t.calculating}</p>
