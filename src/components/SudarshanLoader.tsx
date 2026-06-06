@@ -1,7 +1,3 @@
-/**
- * Sudarshan Chakra spinning loader — replaces the plain ॐ text spinner.
- * The 12-pointed disc (Vishnu's divine wheel) rotates via animate-spin-slow.
- */
 export default function SudarshanLoader({
   size = 'md',
   className = '',
@@ -9,40 +5,114 @@ export default function SudarshanLoader({
   size?: 'sm' | 'md' | 'lg'
   className?: string
 }) {
-  const dim = size === 'sm' ? 32 : size === 'lg' ? 60 : 44
+  const dim = size === 'sm' ? 28 : size === 'lg' ? 64 : 48
+
+  const outerPetals = Array.from({ length: 16 }, (_, i) => i * 22.5)
+  const innerPetals = Array.from({ length: 8 }, (_, i) => i * 45)
+  const spokes = Array.from({ length: 8 }, (_, i) => i * 45)
+  const spokeDots = Array.from({ length: 8 }, (_, i) => i * 45 + 22.5)
 
   return (
     <svg
       width={dim}
       height={dim}
-      viewBox="0 0 100 100"
+      viewBox="0 0 200 200"
       xmlns="http://www.w3.org/2000/svg"
       className={`animate-spin-slow ${className}`}
       aria-label="Loading"
       role="img"
     >
-      {/* 12-pointed outer star rim (6 peaks + 6 valleys) */}
+      {/* 12-toothed serrated outer star — the weapon edge */}
       <polygon
-        points="50,5 66.5,21.4 89,27.5 83,50 89,72.5 66.5,78.6 50,95 33.5,78.6 11,72.5 17,50 11,27.5 33.5,21.4"
+        points="100,4 121.5,19.8 148,16.9 158.7,41.3 183.1,52 180.2,78.5 196,100 180.2,121.5 183.1,148 158.7,158.7 148,183.1 121.5,180.2 100,196 78.5,180.2 52,183.1 41.3,158.7 16.9,148 19.8,121.5 4,100 19.8,78.5 16.9,52 41.3,41.3 52,16.9 78.5,19.8"
         fill="#E36414"
       />
-      {/* Outer ring */}
-      <circle cx="50" cy="50" r="29" fill="none" stroke="#C67D53" strokeWidth="2.5" />
-      {/* 6 main spokes */}
-      <g stroke="#2F2A44" strokeWidth="3" strokeLinecap="round">
-        <line x1="50" y1="50" x2="50" y2="22" />
-        <line x1="50" y1="50" x2="74.2" y2="36" />
-        <line x1="50" y1="50" x2="74.2" y2="64" />
-        <line x1="50" y1="50" x2="50" y2="78" />
-        <line x1="50" y1="50" x2="25.8" y2="64" />
-        <line x1="50" y1="50" x2="25.8" y2="36" />
-      </g>
-      {/* Inner decorative ring */}
-      <circle cx="50" cy="50" r="14" fill="none" stroke="#C67D53" strokeWidth="2" />
-      {/* Center hub */}
-      <circle cx="50" cy="50" r="9" fill="#2F2A44" />
-      {/* Center jewel */}
-      <circle cx="50" cy="50" r="4" fill="#E36414" />
+
+      {/* Main dark disc */}
+      <circle cx="100" cy="100" r="82" fill="#2F2A44" />
+
+      {/* Outer gold rings */}
+      <circle cx="100" cy="100" r="80" fill="none" stroke="#D4A017" strokeWidth="2.5" />
+      <circle cx="100" cy="100" r="76" fill="none" stroke="#D4A017" strokeWidth="0.7" opacity="0.5" />
+
+      {/* 16 outer lotus petals */}
+      {outerPetals.map((angle) => (
+        <ellipse
+          key={angle}
+          cx="100"
+          cy="29"
+          rx="4.5"
+          ry="10"
+          fill="#E36414"
+          stroke="#D4A017"
+          strokeWidth="0.6"
+          transform={`rotate(${angle}, 100, 100)`}
+        />
+      ))}
+
+      {/* Separator rings */}
+      <circle cx="100" cy="100" r="62" fill="none" stroke="#D4A017" strokeWidth="1.5" />
+      <circle cx="100" cy="100" r="60" fill="none" stroke="#C67D53" strokeWidth="0.5" opacity="0.6" />
+
+      {/* Spoke area dark fill */}
+      <circle cx="100" cy="100" r="59" fill="#1F1A35" />
+
+      {/* 8 diamond-shaped spokes */}
+      {spokes.map((angle) => (
+        <path
+          key={angle}
+          d="M 100,42 L 97,52 L 100,58 L 103,52 Z"
+          fill="#D4A017"
+          transform={`rotate(${angle}, 100, 100)`}
+        />
+      ))}
+
+      {/* 8 inter-spoke terracotta dots */}
+      {spokeDots.map((angle) => (
+        <circle
+          key={angle}
+          cx="100"
+          cy="50"
+          r="2.2"
+          fill="#C67D53"
+          transform={`rotate(${angle}, 100, 100)`}
+        />
+      ))}
+
+      {/* Inner ring */}
+      <circle cx="100" cy="100" r="40" fill="none" stroke="#D4A017" strokeWidth="2" />
+      <circle cx="100" cy="100" r="37.5" fill="none" stroke="#C67D53" strokeWidth="0.6" opacity="0.7" />
+
+      {/* 8 inner lotus petals */}
+      {innerPetals.map((angle) => (
+        <ellipse
+          key={`i${angle}`}
+          cx="100"
+          cy="65"
+          rx="3"
+          ry="7"
+          fill="#C67D53"
+          stroke="#D4A017"
+          strokeWidth="0.5"
+          transform={`rotate(${angle}, 100, 100)`}
+        />
+      ))}
+
+      {/* Center disc */}
+      <circle cx="100" cy="100" r="27" fill="#2F2A44" />
+
+      {/* Center decorative rings */}
+      <circle cx="100" cy="100" r="25" fill="none" stroke="#D4A017" strokeWidth="1.5" />
+      <circle cx="100" cy="100" r="20" fill="none" stroke="#E36414" strokeWidth="0.8" opacity="0.7" />
+
+      {/* Center saffron jewel */}
+      <circle cx="100" cy="100" r="16" fill="#E36414" />
+
+      {/* Hub */}
+      <circle cx="100" cy="100" r="9" fill="#2F2A44" />
+
+      {/* Center golden dot */}
+      <circle cx="100" cy="100" r="5" fill="#D4A017" />
     </svg>
   )
 }

@@ -13,6 +13,7 @@ const navItems = [
   { href: '/reports', label: 'Reports', icon: 'description' },
   { href: '/reports/generate', label: 'Generate Report', icon: 'auto_awesome' },
   { href: '/ai-guide', label: 'AI Spiritual Guide', icon: 'psychology' },
+  { href: '/puja', label: 'Puja & Rituals', icon: 'temple_hindu' },
   { href: '/panchang', label: 'Panchang', icon: 'calendar_today' },
   { href: '/mandir-finder', label: 'Mandir Finder', icon: 'temple_hindu' },
   { href: '/pilgrimage', label: 'Pilgrimage', icon: 'travel_explore' },
