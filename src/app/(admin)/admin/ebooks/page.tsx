@@ -167,6 +167,20 @@ export default function AdminEbooksPage() {
       await supabase.from('products').update(updates).eq('id', targetId!)
     }
 
+    // Keep ebooks table in sync so my-library can find this ebook
+    const finalFileUrl = pdfUrl ?? (editingId ? ebooks.find(e => e.id === editingId)?.ebook_file_url : null)
+    if (finalFileUrl) {
+      await supabase.from('ebooks').upsert({
+        id: targetId!,
+        title: form.name,
+        file_url: finalFileUrl,
+        description: form.description || null,
+        author: 'MahaTathastu',
+        language: null,
+        tags: [],
+      }, { onConflict: 'id' })
+    }
+
     setUploadProgress(100)
     toast.success(editingId ? 'Ebook updated!' : 'Ebook created!')
     await load()

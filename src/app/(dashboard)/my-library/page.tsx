@@ -84,13 +84,13 @@ export default function MyLibraryPage() {
       <div className="p-6 max-w-5xl">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-[var(--indigo-deep)]">My Ebook Library</h1>
-          <Link href="/ebooks" className="btn-divine text-sm">Browse Ebooks</Link>
+          <Link href="/shop?category=ebook" className="btn-divine text-sm">Browse Ebooks</Link>
         </div>
         <div className="card-divine p-16 text-center">
           <span className="material-symbols-outlined text-[64px] text-[var(--warm-sand)] block mb-4" style={{ fontVariationSettings: "'FILL' 1" }}>menu_book</span>
           <h2 className="text-xl font-semibold text-[var(--indigo-deep)] mb-2">No ebooks yet</h2>
           <p className="text-sm text-[var(--warm-charcoal)]/60 mb-6">Purchase an ebook from the store to start reading.</p>
-          <Link href="/ebooks" className="btn-divine text-sm">Browse Ebooks</Link>
+          <Link href="/shop?category=ebook" className="btn-divine text-sm">Browse Ebooks</Link>
         </div>
       </div>
     )
@@ -103,7 +103,7 @@ export default function MyLibraryPage() {
           <h1 className="text-2xl font-bold text-[var(--indigo-deep)]">My Ebook Library</h1>
           <p className="text-sm text-[var(--warm-charcoal)]/60">{purchases.length} book{purchases.length !== 1 ? 's' : ''} purchased</p>
         </div>
-        <Link href="/ebooks" className="btn-divine text-sm">Browse More</Link>
+        <Link href="/shop?category=ebook" className="btn-divine text-sm">Browse More</Link>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

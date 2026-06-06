@@ -71,7 +71,13 @@ export default function ShopPage() {
   const router = useRouter()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
-  const [category, setCategory] = useState('all')
+  const [category, setCategory] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const p = new URLSearchParams(window.location.search).get('category')
+      return p && CATEGORIES.some(c => c.value === p) ? p : 'all'
+    }
+    return 'all'
+  })
   const [sort, setSort] = useState('featured')
   const [search, setSearch] = useState('')
   const [cart, setCart] = useState<Map<string, number>>(new Map())

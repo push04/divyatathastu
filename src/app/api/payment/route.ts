@@ -116,6 +116,45 @@ export async function POST(req: NextRequest) {
       razorpay_payment_id,
     }).eq('id', db_order_id)
 
+    // Fulfil ebook purchases — sync ebooks table + ebook_purchases for each ebook item
+    const { data: orderRow } = await supabase.from('orders').select('items,user_id').eq('id', db_order_id).single()
+    const orderItems: any[] = orderRow?.items || []
+    const ebookItems = orderItems.filter((i: any) => i.product_type === 'ebook')
+    for (const item of ebookItems) {
+      const { data: product } = await supabase
+        .from('products')
+        .select('ebook_file_url,ebook_download_limit,description,name')
+        .eq('id', item.id)
+        .single()
+      if (!product?.ebook_file_url) continue
+      // Ensure ebooks row exists (upsert by product id)
+      await supabase.from('ebooks').upsert({
+        id: item.id,
+        title: product.name,
+        file_url: product.ebook_file_url,
+        description: product.description || null,
+        author: 'MahaTathastu',
+        language: null,
+        tags: [],
+      }, { onConflict: 'id' })
+      // Create purchase record (avoid duplicate if retried)
+      const { data: existing } = await supabase
+        .from('ebook_purchases')
+        .select('id')
+        .eq('user_id', orderRow.user_id)
+        .eq('ebook_id', item.id)
+        .maybeSingle()
+      if (!existing) {
+        await supabase.from('ebook_purchases').insert({
+          user_id: orderRow.user_id,
+          ebook_id: item.id,
+          download_count: 0,
+          max_downloads: product.ebook_download_limit ?? 3,
+          purchased_at: new Date().toISOString(),
+        })
+      }
+    }
+
     return NextResponse.json({ success: true, verified: true })
   }
 
