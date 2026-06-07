@@ -16,7 +16,7 @@ interface Booking {
   id: string; slot_id: string; status: string; booked_at: string
   meeting_link: string | null; call_mode: string
   profiles: { full_name: string; email: string } | null
-  consultation_slots: { date: string; start_time: string; end_time: string; profiles: { full_name: string } | null } | null
+  consultation_slots: { date: string; start_time: string; end_time: string } | null
 }
 
 interface Expert { id: string; full_name: string }
@@ -61,13 +61,14 @@ export default function AdminConsultationsPage() {
         .order('date').order('start_time'),
       supabase.from('profiles').select('id,full_name').eq('role', 'expert'),
       supabase.from('consultation_bookings')
-        .select('id,slot_id,status,booked_at,meeting_link,call_mode,profiles!user_id(full_name,email),consultation_slots(date,start_time,end_time,profiles!expert_id(full_name))')
+        .select('id,slot_id,status,booked_at,meeting_link,call_mode,profiles!user_id(full_name,email),consultation_slots(date,start_time,end_time)')
         .order('booked_at', { ascending: false })
         .limit(100),
       (supabase as any).from('platform_settings').select('value').eq('key', 'livekit_mode').single(),
     ])
     setSlots((slotsRes.data || []) as unknown as Slot[])
     setExperts(expertsRes.data || [])
+    if (bookingsRes.error) console.error('Bookings query error:', bookingsRes.error)
     setBookings((bookingsRes.data || []) as unknown as Booking[])
     if (modeRes.data?.value) setLivekitMode(modeRes.data.value as 'production' | 'sandbox')
     setLoading(false)
@@ -185,7 +186,7 @@ export default function AdminConsultationsPage() {
         {([
           { key: 'slots', label: 'Slots', icon: 'event' },
           { key: 'bookings', label: `Bookings (${bookings.length})`, icon: 'book_online' },
-          { key: 'livekit', label: 'LiveKit Plan', icon: 'videocam' },
+          { key: 'livekit', label: 'Video Settings', icon: 'videocam' },
         ] as const).map(t => (
           <button key={t.key} onClick={() => setTab(t.key)}
             className={`inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium border-b-2 transition-all -mb-px ${tab === t.key ? 'border-[var(--indigo-deep)] text-[var(--indigo-deep)]' : 'border-transparent text-[var(--warm-charcoal)]/50 hover:text-[var(--indigo-deep)]'}`}>
@@ -309,7 +310,7 @@ export default function AdminConsultationsPage() {
                           <p className="font-semibold text-[var(--indigo-deep)] text-sm">{b.profiles?.full_name || 'Unknown'}</p>
                           <p className="text-xs text-[var(--warm-charcoal)]/50">{b.profiles?.email}</p>
                           <p className="text-xs text-[var(--warm-charcoal)]/40 mt-0.5">
-                            {slot ? `${slot.date} · ${slot.start_time?.slice(0,5)} – ${slot.end_time?.slice(0,5)} · ${slot.profiles?.full_name || 'Expert'}` : new Date(b.booked_at).toLocaleDateString('en-IN')}
+                            {slot ? `${slot.date} · ${slot.start_time?.slice(0,5)} – ${slot.end_time?.slice(0,5)}` : new Date(b.booked_at).toLocaleDateString('en-IN')}
                           </p>
                         </div>
                       </div>
@@ -319,7 +320,7 @@ export default function AdminConsultationsPage() {
                           <span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'FILL' 1" }}>
                             {b.call_mode === 'google_meet' ? 'meeting_room' : 'videocam'}
                           </span>
-                          {b.call_mode === 'google_meet' ? 'Google Meet' : 'LiveKit'}
+                          {b.call_mode === 'google_meet' ? 'Google Meet' : 'Built-in Video'}
                         </span>
                         {/* Status dropdown */}
                         <select value={b.status} onChange={e => updateBookingStatus(b.id, e.target.value)}
@@ -435,10 +436,10 @@ export default function AdminConsultationsPage() {
                   Token Mode
                 </h3>
                 <p className="text-xs text-[var(--warm-charcoal)]/50 max-w-sm leading-relaxed">
-                  Controls how LiveKit access tokens are generated for video calls.
+                  Controls how video call tokens are generated.
                   {livekitMode === 'sandbox'
-                    ? ' Sandbox uses LiveKit\'s free test token server — no API key needed, but sessions are ephemeral and not production-grade.'
-                    : ' Production uses your API key+secret to mint signed JWTs — secure, rate-limited, and billed against your Build plan.'}
+                    ? ' Sandbox uses a free test server — no API key needed, but sessions are ephemeral and not production-grade.'
+                    : ' Production uses your private API key to mint signed tokens — secure and fully under your control.'}
                 </p>
               </div>
               {/* Toggle pills */}
@@ -463,10 +464,10 @@ export default function AdminConsultationsPage() {
                 {livekitMode === 'sandbox' ? 'Sandbox Active' : 'Production Active'}
               </span>
               {livekitMode === 'production' && (
-                <span className="text-xs text-[var(--warm-charcoal)]/40">Token endpoint: <code className="text-[var(--indigo-deep)] bg-[var(--warm-sand)] px-1.5 py-0.5 rounded">/api/get-livekit-token</code> → JWT via API key</span>
+                <span className="text-xs text-[var(--warm-charcoal)]/40">Token endpoint: <code className="text-[var(--indigo-deep)] bg-[var(--warm-sand)] px-1.5 py-0.5 rounded">/api/get-video-token</code> → signed JWT</span>
               )}
               {livekitMode === 'sandbox' && (
-                <span className="text-xs text-amber-700/70">Token endpoint: <code className="bg-amber-50 px-1.5 py-0.5 rounded">mahatathastu-2hw6kd.sandbox.livekit.io/token</code></span>
+                <span className="text-xs text-amber-700/70">Token endpoint: <code className="bg-amber-50 px-1.5 py-0.5 rounded">sandbox.mahatathastu.com/token</code> (dev)</span>
               )}
             </div>
 
@@ -493,7 +494,7 @@ export default function AdminConsultationsPage() {
               <div className="flex-1">
                 <div className="flex items-center gap-3 flex-wrap">
                   <h2 className="text-lg font-bold text-white" style={{ fontFamily: "'Playfair Display', serif" }}>
-                    LiveKit Cloud — Build Plan
+                    MahaTathastu Video — Build Plan
                   </h2>
                   <span className="text-[10px] px-2.5 py-1 rounded-full bg-emerald-900/60 text-emerald-400 font-bold border border-emerald-700/40 uppercase tracking-widest">
                     Free · $0/mo
@@ -502,7 +503,7 @@ export default function AdminConsultationsPage() {
                     Hard Caps — No Overage
                   </span>
                 </div>
-                <p className="text-sm text-white/50 mt-1">Project: <span className="text-amber-400/80 font-mono">mahatathastu-chyl883d.livekit.cloud</span></p>
+                <p className="text-sm text-white/50 mt-1">Server: <span className="text-amber-400/80 font-mono">mahatathastu-chyl883d</span></p>
               </div>
             </div>
           </div>
@@ -530,10 +531,10 @@ export default function AdminConsultationsPage() {
           <div className="bento-card p-4 flex gap-3 items-start border-amber-200" style={{ background: '#fffbeb' }}>
             <span className="material-symbols-outlined text-amber-500 text-[22px] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
             <div>
-              <p className="text-sm font-bold text-amber-800 mb-1">Build Plan Hard Caps</p>
+              <p className="text-sm font-bold text-amber-800 mb-1">Video Call Capacity Limits</p>
               <p className="text-xs text-amber-700 leading-relaxed">
-                The Build plan has <strong>hard caps with no overage</strong> — once limits are hit, calls will fail. Key constraint: <strong>only 100 total concurrent participants</strong> across all rooms. For 1-on-1 sessions that's 50 simultaneous calls max.
-                Monthly: <strong>5,000 WebRTC minutes</strong> (~83 hours of video calls).
+                Current plan has <strong>hard caps with no overage</strong> — once limits are hit, calls will fail. Key constraint: <strong>only 100 total concurrent participants</strong> across all rooms. For 1-on-1 sessions that's 50 simultaneous calls max.
+                Monthly: <strong>5,000 video minutes</strong> (~83 hours of calls).
                 When approaching limits, use the <strong>Google Meet fallback</strong> in the Bookings tab.
               </p>
             </div>
@@ -549,20 +550,20 @@ export default function AdminConsultationsPage() {
                 <li>Go to the <strong>Bookings</strong> tab above</li>
                 <li>Click <strong>"Set Meet Link"</strong> on any confirmed booking and paste the link</li>
                 <li>User will see a <strong>"Join via Google Meet"</strong> button on their consultations page</li>
-                <li>LiveKit room is automatically hidden when a Meet link is set</li>
+                <li>The built-in video room is automatically hidden when a Meet link is set</li>
               </ol>
             </div>
           </div>
 
           {/* Sandbox token server */}
           <div className="bento-card p-4">
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-[var(--warm-charcoal)]/50 mb-3">Connection Details</h3>
+            <h3 className="text-xs font-semibold uppercase tracking-widest text-[var(--warm-charcoal)]/50 mb-3">Server Configuration</h3>
             <div className="space-y-2.5">
               {[
-                { label: 'WebSocket URL', value: 'wss://mahatathastu-chyl883d.livekit.cloud', icon: 'link' },
+                { label: 'Video Server URL', value: 'wss://mahatathastu-chyl883d.livekit.cloud', icon: 'link' },
                 { label: 'API Key', value: 'APIpzFzHWtWzyPS', icon: 'key' },
-                { label: 'Sandbox Token Server', value: 'https://mahatathastu-2hw6kd.sandbox.livekit.io', icon: 'token' },
-                { label: 'Sandbox ID', value: 'mahatathastu-2hw6kd', icon: 'tag' },
+                { label: 'Dev Token Server', value: 'https://mahatathastu-2hw6kd.sandbox.livekit.io', icon: 'token' },
+                { label: 'Dev Server ID', value: 'mahatathastu-2hw6kd', icon: 'tag' },
               ].map(row => (
                 <div key={row.label} className="flex items-center gap-3">
                   <span className="material-symbols-outlined text-[var(--indigo-deep)]/40 text-[16px] shrink-0">{row.icon}</span>
@@ -579,7 +580,7 @@ export default function AdminConsultationsPage() {
 
           {/* Upgrade tip */}
           <div className="text-center py-4 text-xs text-[var(--warm-charcoal)]/40">
-            To upgrade: <a href="https://livekit.io/pricing" target="_blank" rel="noopener noreferrer" className="text-[var(--indigo-deep)] hover:underline">livekit.io/pricing</a> — Ship plan ($100/mo) gives 50,000 WebRTC minutes + 500 GB egress + unlimited participants
+            To increase capacity, contact your infrastructure provider — next tier gives 50,000 video minutes + 500 GB bandwidth + unlimited participants
           </div>
         </div>
       )}
