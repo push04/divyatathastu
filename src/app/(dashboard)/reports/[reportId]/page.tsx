@@ -30,13 +30,13 @@ const REPORT_TITLES: Record<string, string> = {
 }
 
 const REPORT_TITLES_HI: Record<string, string> = {
-  full_tathastu: 'à¤ªà¥‚à¤°à¥à¤£ à¤¤à¤¥à¤¾à¤¸à¥à¤¤à¥ à¤°à¤¿à¤ªà¥‹à¤°à¥à¤Ÿ', astrology: 'à¤•à¥à¤‚à¤¡à¤²à¥€ à¤”à¤° à¤œà¤¨à¥à¤® à¤•à¥à¤‚à¤¡à¤²à¥€',
-  numerology: 'à¤…à¤‚à¤•à¤¶à¤¾à¤¸à¥à¤¤à¥à¤° à¤µà¤¿à¤¶à¥à¤²à¥‡à¤·à¤£', shakti_chakra: 'à¤¶à¤•à¥à¤¤à¤¿ à¤šà¤•à¥à¤° à¤°à¤¿à¤ªà¥‹à¤°à¥à¤Ÿ',
-  prakriti: 'à¤ªà¥à¤°à¤•à¥ƒà¤¤à¤¿ (à¤†à¤¯à¥à¤°à¥à¤µà¥‡à¤¦)', yantra_colour: 'à¤¯à¤‚à¤¤à¥à¤° à¤”à¤° à¤°à¤‚à¤— à¤šà¤¿à¤•à¤¿à¤¤à¥à¤¸à¤¾',
-  mantra_chanting: 'à¤®à¤‚à¤¤à¥à¤° à¤œà¤ª à¤®à¤¾à¤°à¥à¤—à¤¦à¤°à¥à¤¶à¤¨', mantra_writing: 'à¤²à¤¿à¤–à¤¿à¤¤ à¤œà¤ª à¤®à¤¾à¤°à¥à¤—à¤¦à¤°à¥à¤¶à¤¨',
-  astro_vastu: 'à¤œà¥à¤¯à¥‹à¤¤à¤¿à¤· à¤µà¤¾à¤¸à¥à¤¤à¥ à¤°à¤¿à¤ªà¥‹à¤°à¥à¤Ÿ', psychology: 'à¤µà¥ˆà¤¦à¤¿à¤• à¤®à¤¨à¥‹à¤µà¤¿à¤œà¥à¤žà¤¾à¤¨',
-  dmit: 'DMIT à¤¬à¥à¤¦à¥à¤§à¤¿à¤®à¤¤à¥à¤¤à¤¾ à¤ªà¥à¤°à¥‹à¤«à¤¾à¤‡à¤²', colour_therapy: 'à¤°à¤‚à¤— à¤šà¤¿à¤•à¤¿à¤¤à¥à¤¸à¤¾',
-  child_development: 'à¤¬à¤¾à¤² à¤µà¤¿à¤•à¤¾à¤¸', mobile_number: 'à¤®à¥‹à¤¬à¤¾à¤‡à¤² à¤¨à¤‚à¤¬à¤° à¤µà¤¿à¤¶à¥à¤²à¥‡à¤·à¤£',
+  full_tathastu: 'पूर्ण तथास्तु रिपोर्ट', astrology: 'कुंडली और जन्म कुंडली',
+  numerology: 'अंकशास्त्र विश्लेषण', shakti_chakra: 'शक्ति चक्र रिपोर्ट',
+  prakriti: 'प्रकृति (आयुर्वेद)', yantra_colour: 'यंत्र और रंग चिकित्सा',
+  mantra_chanting: 'मंत्र जप मार्गदर्शन', mantra_writing: 'लिखित जप मार्गदर्शन',
+  astro_vastu: 'ज्योतिष वास्तु रिपोर्ट', psychology: 'वैदिक मनोविज्ञान',
+  dmit: 'DMIT बुद्धिमत्ता प्रोफाइल', colour_therapy: 'रंग चिकित्सा',
+  child_development: 'बाल विकास', mobile_number: 'मोबाइल नंबर विश्लेषण',
 }
 
 function Section({ title, icon, children, printAlwaysOpen }: { title: string; icon?: string; children: React.ReactNode; printAlwaysOpen?: boolean }) {
@@ -157,7 +157,7 @@ function KundliSection({ data }: { data: any }) {
                       {p.retrograde && <span className="ml-1 text-xs text-[var(--terracotta)]">(R)</span>}
                     </td>
                     <td className="px-3 py-2 text-[var(--warm-charcoal)]/80">{p.rashi}</td>
-                    <td className="px-3 py-2 text-[var(--warm-charcoal)]/60">{p.degree?.toFixed(2)}Â°</td>
+                    <td className="px-3 py-2 text-[var(--warm-charcoal)]/60">{p.degree?.toFixed(2)}°</td>
                     <td className="px-3 py-2 text-[var(--warm-charcoal)]/80">{p.house}</td>
                     <td className="px-3 py-2 text-[var(--warm-charcoal)]/70">{p.nakshatra}</td>
                     <td className="px-3 py-2 text-[var(--warm-charcoal)]/60">{p.pada}</td>
@@ -234,7 +234,7 @@ function KundliSection({ data }: { data: any }) {
             <div className="bg-[var(--warm-sand)] rounded-xl p-4">
               <p className="text-xs font-bold text-[var(--saffron)] uppercase tracking-wider mb-2">Remedies</p>
               {analysis.remedies.map((r: string) => (
-                <p key={r} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">â€¢ {r}</p>
+                <p key={r} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {r}</p>
               ))}
             </div>
           )}
@@ -283,7 +283,7 @@ function NumerologySection({ data }: { data: any }) {
 
       {n.interpretation?.personalYear && (
         <div className="mt-3 bg-gradient-to-r from-amber-50 to-[var(--warm-sand)] rounded-xl p-3 border-l-4 border-[var(--saffron)]">
-          <p className="text-xs font-bold text-[var(--saffron)] uppercase tracking-wider mb-1">Personal Year {n.personalYearNumber} â€” {new Date().getFullYear()}</p>
+          <p className="text-xs font-bold text-[var(--saffron)] uppercase tracking-wider mb-1">Personal Year {n.personalYearNumber} — {new Date().getFullYear()}</p>
           <p className="text-sm text-[var(--warm-charcoal)]/80">{n.interpretation.personalYear}</p>
         </div>
       )}
@@ -355,7 +355,7 @@ function ChakraSection({ data }: { data: any }) {
                   className="flex-shrink-0 w-14 h-14 rounded-full flex flex-col items-center justify-center text-white shadow-lg"
                   style={{ backgroundColor: cd.color, boxShadow: `0 0 18px ${cd.color}60` }}
                 >
-                  <span className="text-sm font-black leading-none">{c.level ?? 'â€“'}%</span>
+                  <span className="text-sm font-black leading-none">{c.level ?? '–'}%</span>
                 </div>
 
                 <div className="flex-1 min-w-0">
@@ -363,7 +363,7 @@ function ChakraSection({ data }: { data: any }) {
                     <div>
                       <span className="font-bold text-[var(--indigo-deep)]">{c.name}</span>
                       {c.sanskrit && <span className="ml-1.5 text-xs text-[var(--warm-charcoal)]/50 italic">{c.sanskrit}</span>}
-                      {c.element && <span className="ml-1.5 text-[10px] text-[var(--warm-charcoal)]/40">Â· {c.element}</span>}
+                      {c.element && <span className="ml-1.5 text-[10px] text-[var(--warm-charcoal)]/40">· {c.element}</span>}
                     </div>
                     <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold text-white ${isBalanced ? 'bg-emerald-500' : isBlocked ? 'bg-red-500' : 'bg-amber-500'}`}>
                       {c.status}
@@ -513,7 +513,7 @@ function MantraSection({ data }: { data: any }) {
           <p className="text-xs text-white/50 uppercase tracking-wider mb-2">Your Beej Mantra</p>
           <p className="text-2xl font-bold leading-relaxed">{chanting.beejMantra}</p>
           <p className="text-sm mt-3 text-white/80">Chant <span className="font-bold">{chanting.dailyCount}</span> times daily</p>
-          <p className="text-xs mt-1 text-white/50">Best time: {chanting.bestTime} Â· Face {chanting.direction} Â· Mala: {chanting.mala}</p>
+          <p className="text-xs mt-1 text-white/50">Best time: {chanting.bestTime} · Face {chanting.direction} · Mala: {chanting.mala}</p>
         </div>
 
         {namaAkshara && (
@@ -631,7 +631,7 @@ function VastuSection({ data }: { data: any }) {
           <div className="bg-[var(--warm-sand)] rounded-xl p-4">
             <p className="text-xs font-bold text-[var(--terracotta)] uppercase tracking-wider mb-2">Vastu Remedies</p>
             {data.remedies.map((r: string) => (
-              <p key={r} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">â€¢ {r}</p>
+              <p key={r} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {r}</p>
             ))}
           </div>
         )}
@@ -652,7 +652,7 @@ function MuhurtaSection({ data }: { data: any }) {
     { label: 'Property Purchase', icon: 'home', value: data.forPropertyPurchase },
   ]
   return (
-    <Section title="Muhurta â€” Auspicious Timing Guide" icon="schedule">
+    <Section title="Muhurta — Auspicious Timing Guide" icon="schedule">
       <div className="mt-4 space-y-5">
         {data.overview && (
           <p className="text-sm text-[var(--warm-charcoal)]/80 leading-relaxed bg-gradient-to-r from-amber-50 to-[var(--warm-sand)] rounded-xl p-4 border-l-4 border-[var(--saffron)]">
@@ -736,7 +736,7 @@ function MuhurtaSection({ data }: { data: any }) {
               <div className="bg-emerald-50 rounded-xl p-4">
                 <p className="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-2">Most Favorable Periods</p>
                 {data.specialDates.mostFavorable.map((s: string) => (
-                  <p key={s} className="text-xs text-emerald-800 py-0.5">âœ“ {s}</p>
+                  <p key={s} className="text-xs text-emerald-800 py-0.5">✓ {s}</p>
                 ))}
               </div>
             )}
@@ -744,7 +744,7 @@ function MuhurtaSection({ data }: { data: any }) {
               <div className="bg-red-50 rounded-xl p-4">
                 <p className="text-xs font-bold text-red-600 uppercase tracking-wider mb-2">Avoid for New Beginnings</p>
                 {data.specialDates.avoidDays.map((s: string) => (
-                  <p key={s} className="text-xs text-red-700 py-0.5">âœ— {s}</p>
+                  <p key={s} className="text-xs text-red-700 py-0.5">✗ {s}</p>
                 ))}
               </div>
             )}
@@ -808,7 +808,7 @@ function RemediesSection({ data }: { data: any }) {
             </p>
             <div className="space-y-1.5">
               {data.weeklyPractices.map((p: string) => (
-                <p key={p} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">â€¢ {p}</p>
+                <p key={p} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {p}</p>
               ))}
             </div>
           </div>
@@ -820,7 +820,7 @@ function RemediesSection({ data }: { data: any }) {
               <div key={g.stone} className={`rounded-xl p-3 text-sm mb-2 ${i === 0 ? 'bg-gradient-to-r from-amber-50 to-[var(--warm-sand)] border border-amber-200' : 'bg-[var(--warm-sand)]'}`}>
                 <p className="font-bold text-[var(--indigo-deep)]">{g.stone}</p>
                 {g.purpose && <p className="text-xs text-[var(--warm-charcoal)]/70 mt-0.5">{g.purpose}</p>}
-                {g.weight && <p className="text-xs text-[var(--warm-charcoal)]/60 mt-0.5">Weight: {g.weight} Â· Wear on: {g.wearingDay}</p>}
+                {g.weight && <p className="text-xs text-[var(--warm-charcoal)]/60 mt-0.5">Weight: {g.weight} · Wear on: {g.wearingDay}</p>}
               </div>
             ))}
           </div>
@@ -832,7 +832,7 @@ function RemediesSection({ data }: { data: any }) {
               Diet & Food Remedies
             </p>
             {data.dietRecommendations.map((d: string) => (
-              <p key={d} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">â€¢ {d}</p>
+              <p key={d} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {d}</p>
             ))}
           </div>
         )}
@@ -840,7 +840,7 @@ function RemediesSection({ data }: { data: any }) {
           <div className="bg-[var(--warm-sand)] rounded-xl p-3">
             <p className="text-xs font-bold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-2">Dana (Charity Items)</p>
             {data.charityItems.map((c: string) => (
-              <p key={c} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">â€¢ {c}</p>
+              <p key={c} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {c}</p>
             ))}
           </div>
         )}
@@ -856,7 +856,7 @@ function RemediesSection({ data }: { data: any }) {
           <div>
             <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Yantras</p>
             {data.yantras.map((y: string) => (
-              <p key={y} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">â€¢ {y}</p>
+              <p key={y} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {y}</p>
             ))}
           </div>
         )}
@@ -905,30 +905,37 @@ function GenericSection({ title, icon, data }: { title: string; icon: string; da
 }
 
 // ============================================================
-// BOOK VIEWER â€” page-turning book UI
+// BOOK VIEWER — page-turning book UI
 // ============================================================
 
 const BOOK_ANIM_STYLES = `
-  @keyframes bookExitLeft {
-    from { transform: translateX(0); opacity: 1; }
-    to   { transform: translateX(-110%) perspective(2500px) rotateY(14deg); opacity: 0; }
+  @keyframes pgFlipOutFwd {
+    0%   { transform: perspective(2200px) rotateY(0deg); opacity: 1; transform-origin: right center; }
+    60%  { opacity: 0.3; }
+    100% { transform: perspective(2200px) rotateY(-110deg); opacity: 0; transform-origin: right center; }
   }
-  @keyframes bookExitRight {
-    from { transform: translateX(0); opacity: 1; }
-    to   { transform: translateX(110%) perspective(2500px) rotateY(-14deg); opacity: 0; }
+  @keyframes pgFlipInFwd {
+    0%   { transform: perspective(2200px) rotateY(110deg); opacity: 0; transform-origin: left center; }
+    40%  { opacity: 0.3; }
+    100% { transform: perspective(2200px) rotateY(0deg); opacity: 1; transform-origin: left center; }
   }
-  @keyframes bookEnterRight {
-    from { transform: translateX(110%) perspective(2500px) rotateY(-14deg); opacity: 0; }
-    to   { transform: translateX(0); opacity: 1; }
+  @keyframes pgFlipOutBwd {
+    0%   { transform: perspective(2200px) rotateY(0deg); opacity: 1; transform-origin: left center; }
+    60%  { opacity: 0.3; }
+    100% { transform: perspective(2200px) rotateY(110deg); opacity: 0; transform-origin: left center; }
   }
-  @keyframes bookEnterLeft {
-    from { transform: translateX(-110%) perspective(2500px) rotateY(14deg); opacity: 0; }
-    to   { transform: translateX(0); opacity: 1; }
+  @keyframes pgFlipInBwd {
+    0%   { transform: perspective(2200px) rotateY(-110deg); opacity: 0; transform-origin: right center; }
+    40%  { opacity: 0.3; }
+    100% { transform: perspective(2200px) rotateY(0deg); opacity: 1; transform-origin: right center; }
   }
-  .book-exit-left  { animation: bookExitLeft  0.65s cubic-bezier(0.77,0,0.175,1) forwards; position: absolute; inset: 0; }
-  .book-exit-right { animation: bookExitRight 0.65s cubic-bezier(0.77,0,0.175,1) forwards; position: absolute; inset: 0; }
-  .book-enter-right { animation: bookEnterRight 0.65s cubic-bezier(0.77,0,0.175,1) forwards; position: absolute; inset: 0; z-index: 10; }
-  .book-enter-left  { animation: bookEnterLeft  0.65s cubic-bezier(0.77,0,0.175,1) forwards; position: absolute; inset: 0; z-index: 10; }
+  .book-exit-left  { animation: pgFlipOutFwd 0.55s cubic-bezier(0.4,0,0.2,1) forwards; position: absolute; inset: 0; z-index: 5; }
+  .book-exit-right { animation: pgFlipOutBwd 0.55s cubic-bezier(0.4,0,0.2,1) forwards; position: absolute; inset: 0; z-index: 5; }
+  .book-enter-right { animation: pgFlipInFwd 0.55s cubic-bezier(0.4,0,0.2,1) forwards; position: absolute; inset: 0; z-index: 10; }
+  .book-enter-left  { animation: pgFlipInBwd 0.55s cubic-bezier(0.4,0,0.2,1) forwards; position: absolute; inset: 0; z-index: 10; }
+  .book-scroll::-webkit-scrollbar { width: 4px; }
+  .book-scroll::-webkit-scrollbar-track { background: transparent; }
+  .book-scroll::-webkit-scrollbar-thumb { background: rgba(47,42,68,0.2); border-radius: 4px; }
 `
 
 interface BookChapter {
@@ -941,7 +948,7 @@ interface BookChapter {
   show: boolean
 }
 
-// â”€â”€â”€ Decorative left-panel SVG components â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Decorative left-panel SVG components ──────────────────
 
 function OmMandala({ size = 180 }: { size?: number }) {
   const cx = size / 2, cy = size / 2, r = size * 0.44
@@ -965,7 +972,7 @@ function OmMandala({ size = 180 }: { size?: number }) {
           stroke="#D4A017" strokeWidth="0.4" strokeOpacity="0.22" />
       })}
       <text x={cx} y={cy + size * 0.09} textAnchor="middle" fontSize={size * 0.35}
-        fill="#D4A017" style={{ fontFamily: 'serif', fontWeight: 'bold' }}>à¥</text>
+        fill="#D4A017" style={{ fontFamily: 'serif', fontWeight: 'bold' }}>ॐ</text>
     </svg>
   )
 }
@@ -1030,7 +1037,7 @@ function VastuCompassPanel({ size = 170 }: { size?: number }) {
       })}
       <circle cx={cx} cy={cy} r={r * 0.26} fill="#2F2A44" fillOpacity="0.08" stroke="#2F2A44" strokeWidth="1" />
       <text x={cx} y={cy - 3} textAnchor="middle" fontSize={9} fill="#2F2A44" fontWeight="bold">VASTU</text>
-      <text x={cx} y={cy + 9} textAnchor="middle" fontSize={8} fill="#2F2A44">à¤ªà¥à¤°à¥à¤·</text>
+      <text x={cx} y={cy + 9} textAnchor="middle" fontSize={8} fill="#2F2A44">पुरुष</text>
     </svg>
   )
 }
@@ -1041,7 +1048,7 @@ function DoshaPanel({ vata = 33, pitta = 34, kapha = 33 }: { vata?: number; pitt
       <circle cx="90" cy="58" r="47" fill="#bae6fd" fillOpacity="0.6" stroke="#0284c7" strokeWidth="1.5" />
       <circle cx="55" cy="128" r="47" fill="#fed7aa" fillOpacity="0.6" stroke="#ea580c" strokeWidth="1.5" />
       <circle cx="125" cy="128" r="47" fill="#bbf7d0" fillOpacity="0.6" stroke="#16a34a" strokeWidth="1.5" />
-      <text x="90" y="40" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#0284c7">VÄta</text>
+      <text x="90" y="40" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#0284c7">Vāta</text>
       <text x="90" y="53" textAnchor="middle" fontSize="13" fontWeight="bold" fill="#0284c7">{vata}%</text>
       <text x="35" y="147" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#ea580c">Pitta</text>
       <text x="35" y="160" textAnchor="middle" fontSize="13" fontWeight="bold" fill="#ea580c">{pitta}%</text>
@@ -1058,9 +1065,9 @@ function MoonArchetypePanel({ archetype }: { archetype?: string }) {
         <circle cx="65" cy="65" r="55" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="2" />
         <ellipse cx="82" cy="65" rx="43" ry="55" fill="#1e293b" fillOpacity="0.88" />
         {[[18, 18], [108, 12], [12, 98], [108, 95], [55, 10]].map(([x, y], i) => (
-          <text key={i} x={x} y={y} textAnchor="middle" fontSize="9" fill="#f59e0b">â˜…</text>
+          <text key={i} x={x} y={y} textAnchor="middle" fontSize="9" fill="#f59e0b">★</text>
         ))}
-        <text x="43" y="73" textAnchor="middle" fontSize="34" fill="#D4A017" style={{ fontFamily: 'serif' }}>â˜½</text>
+        <text x="43" y="73" textAnchor="middle" fontSize="34" fill="#D4A017" style={{ fontFamily: 'serif' }}>☽</text>
       </svg>
       {archetype && (
         <p className="text-center text-xs font-bold text-[var(--indigo-deep)] bg-[var(--warm-sand)] px-3 py-1.5 rounded-full"
@@ -1075,7 +1082,7 @@ function MoonArchetypePanel({ archetype }: { archetype?: string }) {
 function DMITPanel({ intelligences }: { intelligences?: Array<{ type: string; score: number }> }) {
   if (!intelligences?.length) return (
     <div className="flex flex-col items-center gap-2">
-      <div className="w-32 h-32 rounded-full border-2 border-dashed border-[var(--warm-sand)] flex items-center justify-center text-4xl">ðŸ§ </div>
+      <div className="w-32 h-32 rounded-full border-2 border-dashed border-[var(--warm-sand)] flex items-center justify-center text-4xl">🧠</div>
       <p className="text-xs text-[var(--warm-charcoal)]/40 uppercase tracking-wider">Intelligence Profile</p>
     </div>
   )
@@ -1169,7 +1176,7 @@ function AnnualArcPanel({ year = new Date().getFullYear() }: { year?: number }) 
         )
       })}
       <circle cx={cx} cy={cy - 22} r="20" fill="#f59e0b" fillOpacity="0.18" stroke="#f59e0b" strokeWidth="1.5" />
-      <text x={cx} y={cy - 16} textAnchor="middle" fontSize="18" fill="#f59e0b">â˜‰</text>
+      <text x={cx} y={cy - 16} textAnchor="middle" fontSize="18" fill="#f59e0b">☉</text>
       <text x={cx} y={cy + 8} textAnchor="middle" fontSize="15" fontWeight="bold" fill="#2F2A44"
         style={{ fontFamily: "'Playfair Display', serif" }}>{year}</text>
     </svg>
@@ -1180,63 +1187,79 @@ function RemediesPanel() {
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="grid grid-cols-3 gap-2">
-        {['ðŸª”', 'ðŸ“¿', 'ðŸ’Ž', 'ðŸŒ¿', 'ðŸ•‰ï¸', 'ðŸŒº'].map((emoji, i) => (
+        {['🪔', '📿', '💎', '🌿', '🕉️', '🌺'].map((emoji, i) => (
           <div key={i} className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--warm-sand)] to-amber-50 border border-[var(--saffron)]/20 flex items-center justify-center text-xl shadow-sm">
             {emoji}
           </div>
         ))}
       </div>
-      <p className="text-[10px] text-[var(--warm-charcoal)]/40 text-center font-medium tracking-widest uppercase">UpÄya Â· Remedies</p>
+      <p className="text-[10px] text-[var(--warm-charcoal)]/40 text-center font-medium tracking-widest uppercase">Upāya · Remedies</p>
     </div>
   )
 }
 
-// â”€â”€â”€ Chapter Spread Layout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Chapter Spread Layout ─────────────────────────────────
 
-function ChapterSpread({ chapter }: { chapter: BookChapter }) {
+function ChapterSpread({ chapter, height }: { chapter: BookChapter; height: number }) {
   return (
-    <div className="grid md:grid-cols-[280px_1fr] min-h-[520px]">
-      {/* LEFT PAGE â€” decorative visual */}
-      <div className="hidden md:flex flex-col bg-gradient-to-br from-[#fdf6e8] via-[var(--warm-sand)] to-amber-50 border-r-2 border-[var(--saffron)]/20 p-6 relative overflow-hidden">
-        {/* Decorative corner ornament */}
-        <div className="absolute top-3 left-3 text-[var(--saffron)]/20 text-3xl select-none" style={{ fontFamily: 'serif' }}>â‹</div>
-        <div className="absolute bottom-3 right-3 text-[var(--saffron)]/20 text-3xl select-none rotate-180" style={{ fontFamily: 'serif' }}>â‹</div>
+    <div style={{ display: 'flex', height }}>
+      {/* LEFT PAGE — warm parchment panel (hidden on mobile) */}
+      <div className="hidden md:flex" style={{
+        width: 340, flexShrink: 0,
+        background: 'linear-gradient(160deg, #fdf6e3 0%, #fef9ed 55%, #faf3de 100%)',
+        flexDirection: 'column', padding: '24px 20px', position: 'relative', overflow: 'hidden',
+        borderRight: '1px solid rgba(212,160,23,0.25)',
+      }}>
+        {/* Background mandala watermark */}
+        <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0.07 }} viewBox="0 0 340 580" preserveAspectRatio="xMidYMid meet">
+          <circle cx="170" cy="290" r="150" fill="none" stroke="#C49A0A" strokeWidth="1.5" />
+          <circle cx="170" cy="290" r="120" fill="none" stroke="#C49A0A" strokeWidth="1" />
+          <circle cx="170" cy="290" r="90" fill="none" stroke="#C49A0A" strokeWidth="1" />
+          {Array.from({ length: 12 }, (_, i) => {
+            const a = (i / 12) * Math.PI * 2; const r = 150
+            return <line key={i} x1="170" y1="290" x2={170 + r * Math.cos(a)} y2={290 + r * Math.sin(a)} stroke="#C49A0A" strokeWidth="0.8" />
+          })}
+        </svg>
 
-        {/* Chapter label */}
-        <div className="mb-5">
-          <p className="text-[10px] text-[var(--warm-charcoal)]/35 uppercase tracking-[0.2em] font-medium">Chapter {chapter.number}</p>
-          <h2 className="text-xl font-bold text-[var(--indigo-deep)] leading-tight mt-0.5"
-            style={{ fontFamily: "'Playfair Display', serif" }}>{chapter.title}</h2>
-          <p className="text-base text-[var(--saffron)] mt-1" style={{ fontFamily: 'serif' }}>{chapter.sanskrit}</p>
-          <div className="mt-2 h-px bg-gradient-to-r from-[var(--saffron)]/50 to-transparent" />
+        {/* Saffron top accent */}
+        <div style={{ height: 3, background: 'linear-gradient(90deg, transparent, #D4A017 40%, #D4A017 60%, transparent)', borderRadius: 2, marginBottom: 20 }} />
+
+        {/* Chapter identity */}
+        <div style={{ marginBottom: 16 }}>
+          <p style={{ fontSize: 9, color: '#B8860B', letterSpacing: '0.35em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 5 }}>
+            CHAPTER {chapter.number}
+          </p>
+          <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 21, fontWeight: 700, color: '#2F2A44', margin: '0 0 4px', lineHeight: 1.25 }}>
+            {chapter.title}
+          </h2>
+          <p style={{ fontFamily: 'Georgia, serif', fontSize: 14, color: '#B8860B', margin: 0 }}>
+            {chapter.sanskrit}
+          </p>
+          <div style={{ height: 1, background: 'linear-gradient(90deg, rgba(212,160,23,0.5), transparent)', marginTop: 14 }} />
         </div>
 
-        {/* Visual */}
-        <div className="flex-1 flex items-center justify-center py-2">
+        {/* Visual chart — fills remaining space */}
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 0 }}>
           {chapter.leftPanel}
         </div>
 
-        {/* Page texture line at bottom */}
-        <div className="mt-4 flex gap-0.5">
-          {Array.from({ length: 20 }, (_, i) => (
-            <div key={i} className="flex-1 h-0.5 rounded-full bg-[var(--saffron)]/15" />
-          ))}
-        </div>
+        {/* Bottom Om */}
+        <div style={{ textAlign: 'center', fontSize: 22, color: 'rgba(212,160,23,0.4)', marginTop: 12, fontFamily: 'Georgia, serif', letterSpacing: '0.1em' }}>ॐ</div>
+        <div style={{ height: 3, background: 'linear-gradient(90deg, transparent, #D4A017 40%, #D4A017 60%, transparent)', borderRadius: 2, marginTop: 12 }} />
       </div>
 
-      {/* RIGHT PAGE â€” content */}
-      <div className="bg-white overflow-y-auto max-h-[80vh] md:max-h-none">
+      {/* Book spine shadow */}
+      <div className="hidden md:block" style={{ width: 8, flexShrink: 0, background: 'linear-gradient(90deg, rgba(0,0,0,0.18), rgba(0,0,0,0.04), transparent)', zIndex: 2 }} />
+
+      {/* RIGHT PAGE — content */}
+      <div style={{ flex: 1, background: '#FFFFFF', overflowY: 'auto', display: 'flex', flexDirection: 'column' }} className="book-scroll">
         {/* Mobile chapter header */}
-        <div className="md:hidden flex items-center gap-3 px-5 pt-5 pb-3 border-b border-[var(--warm-sand)] bg-gradient-to-r from-[var(--warm-sand)] to-amber-50">
-          <div className="w-8 h-8 rounded-full bg-[var(--saffron)]/20 flex items-center justify-center shrink-0">
-            <span className="text-xs font-bold text-[var(--saffron)]">{chapter.number}</span>
-          </div>
-          <div>
-            <p className="text-xs font-bold text-[var(--indigo-deep)]">{chapter.title}</p>
-            <p className="text-xs text-[var(--saffron)]" style={{ fontFamily: 'serif' }}>{chapter.sanskrit}</p>
-          </div>
+        <div className="md:hidden" style={{ background: 'linear-gradient(90deg, #fdf6e3, #fef9ed)', borderBottom: '2px solid #D4A017', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+          <span style={{ fontSize: 10, fontWeight: 700, color: '#B8860B', letterSpacing: '0.15em' }}>CH. {chapter.number}</span>
+          <div style={{ width: 1, height: 14, background: 'rgba(212,160,23,0.5)' }} />
+          <span style={{ fontSize: 12, color: '#2F2A44', fontWeight: 600 }}>{chapter.title}</span>
         </div>
-        <div className="p-5 space-y-4">
+        <div style={{ padding: '20px 24px 32px', flex: 1 }}>
           {chapter.content}
         </div>
       </div>
@@ -1244,16 +1267,16 @@ function ChapterSpread({ chapter }: { chapter: BookChapter }) {
   )
 }
 
-// â”€â”€â”€ Book Viewer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Book Viewer ───────────────────────────────────────────
+
+const BOOK_HEIGHT = 600
 
 function BookViewer({ chapters }: { chapters: BookChapter[] }) {
   const active = chapters.filter(c => c.show)
   const [displayIdx, setDisplayIdx] = useState(0)
   const [incoming, setIncoming] = useState<{ idx: number; dir: 1 | -1 } | null>(null)
   const [isAnimating, setIsAnimating] = useState(false)
-  const [bookHeight, setBookHeight] = useState(600)
   const bookRef = useRef<HTMLDivElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
   const [isFS, setIsFS] = useState(false)
 
   useEffect(() => {
@@ -1265,108 +1288,124 @@ function BookViewer({ chapters }: { chapters: BookChapter[] }) {
   function goTo(to: number) {
     if (isAnimating || to === displayIdx || to < 0 || to >= active.length) return
     const dir: 1 | -1 = to > displayIdx ? 1 : -1
-    if (containerRef.current) setBookHeight(containerRef.current.offsetHeight)
     setIncoming({ idx: to, dir })
     setIsAnimating(true)
     setTimeout(() => {
       setDisplayIdx(to)
       setIncoming(null)
       setIsAnimating(false)
-    }, 700)
+    }, 580)
   }
 
   function toggleFullscreen() {
     if (!document.fullscreenElement) {
-      bookRef.current?.requestFullscreen().then(() => setIsFS(true)).catch(() => {})
+      bookRef.current?.requestFullscreen().catch(() => {})
     } else {
-      document.exitFullscreen().then(() => setIsFS(false)).catch(() => {})
+      document.exitFullscreen().catch(() => {})
     }
   }
 
   const cur = active[displayIdx]
   const inc = incoming ? active[incoming.idx] : null
   const dir = incoming?.dir ?? 1
+  const bookH = isFS ? (typeof window !== 'undefined' ? window.innerHeight - 110 : 640) : BOOK_HEIGHT
 
   return (
-    <div ref={bookRef} className={isFS ? 'fixed inset-0 z-50 bg-[var(--warm-cream)] flex flex-col' : ''}>
-      {isFS && (
-        <div className="px-6 py-3 flex items-center justify-between border-b border-[var(--warm-sand)] bg-[var(--warm-cream)]">
-          <span className="text-sm font-medium text-[var(--warm-charcoal)]/60">
-            Chapter {cur.number} Â· {cur.title}
+    <div ref={bookRef} className={isFS ? 'fixed inset-0 z-50 flex flex-col' : ''}
+      style={isFS ? { background: '#f7f3ea' } : undefined}>
+
+      {/* ── Top chrome bar — light theme ── */}
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '10px 16px', borderBottom: '2px solid #D4A017',
+        background: 'linear-gradient(90deg, #fdf6e3, #fef9ed, #fdf6e3)',
+        borderRadius: isFS ? 0 : '16px 16px 0 0',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span style={{ fontSize: 20, color: '#D4A017', fontFamily: 'Georgia, serif' }}>ॐ</span>
+          <div>
+            <p style={{ fontSize: 9, color: '#B8860B', letterSpacing: '0.2em', textTransform: 'uppercase', margin: 0, fontWeight: 600 }}>DivyaTathastu · Noxatra</p>
+            <p style={{ fontSize: 13, fontWeight: 700, color: '#2F2A44', margin: 0, fontFamily: "'Playfair Display', serif" }}>{cur.title}</p>
+          </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <span style={{ fontSize: 11, color: 'rgba(47,42,68,0.5)', fontWeight: 600 }}>
+            {displayIdx + 1} of {active.length}
           </span>
           <button onClick={toggleFullscreen}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-[var(--indigo-deep)] bg-[var(--warm-sand)] rounded-lg hover:bg-amber-100 transition-colors">
-            <span className="material-symbols-outlined text-[16px]">fullscreen_exit</span>Exit
+            style={{ background: 'white', border: '1px solid rgba(212,160,23,0.4)', borderRadius: 8, padding: '5px 10px', color: '#2F2A44', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
+            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>{isFS ? 'fullscreen_exit' : 'fullscreen'}</span>
+            <span style={{ fontSize: 11, fontWeight: 600 }}>{isFS ? 'Exit' : 'Fullscreen'}</span>
           </button>
         </div>
-      )}
+      </div>
 
-      {/* Book body */}
-      <div className={`${isFS ? 'flex-1 overflow-hidden' : ''}`}>
-        {/* Book container with animation */}
-        <div
-          ref={containerRef}
-          className="relative rounded-2xl overflow-hidden shadow-2xl border border-[var(--saffron)]/20"
-          style={{ minHeight: isAnimating ? bookHeight : undefined }}
-        >
-          {/* Book spine gutter */}
-          <div className="hidden md:block absolute left-[280px] top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-[var(--saffron)]/30 to-transparent z-20 pointer-events-none" />
-          <div className="hidden md:block absolute left-[281px] top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-[var(--saffron)]/10 to-transparent z-20 pointer-events-none" />
+      {/* ── Book body with side arrows ── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 0, padding: isFS ? '12px 0' : '0', flex: isFS ? 1 : undefined }}>
 
-          {/* Current chapter (exits during anim) */}
+        {/* LEFT arrow */}
+        <button onClick={() => goTo(displayIdx - 1)} disabled={displayIdx === 0 || isAnimating}
+          style={{
+            width: 44, height: 80, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: displayIdx === 0 ? '#f9f6ef' : 'white',
+            border: '1px solid rgba(212,160,23,0.35)', borderRight: 'none',
+            borderRadius: '10px 0 0 10px', cursor: displayIdx === 0 ? 'default' : 'pointer',
+            opacity: displayIdx === 0 ? 0.35 : 1, transition: 'all 0.2s', flexShrink: 0,
+            boxShadow: displayIdx > 0 ? '0 4px 15px rgba(0,0,0,0.1)' : 'none',
+          }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 26, color: '#2F2A44' }}>chevron_left</span>
+        </button>
+
+        {/* The book itself */}
+        <div style={{ flex: 1, position: 'relative', height: bookH, overflow: 'hidden',
+          boxShadow: '0 20px 50px rgba(0,0,0,0.12), 0 6px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(212,160,23,0.2)',
+          borderRadius: isFS ? 0 : '0 0 4px 4px',
+        }}>
+          {/* Current chapter */}
           <div className={isAnimating ? (dir > 0 ? 'book-exit-left' : 'book-exit-right') : ''}>
-            <ChapterSpread chapter={cur} />
+            <ChapterSpread chapter={cur} height={bookH} />
           </div>
-
           {/* Incoming chapter */}
           {inc && (
             <div className={dir > 0 ? 'book-enter-right' : 'book-enter-left'}>
-              <ChapterSpread chapter={inc} />
+              <ChapterSpread chapter={inc} height={bookH} />
             </div>
           )}
         </div>
 
-        {/* Navigation bar */}
-        <div className="flex items-center justify-between mt-4 print:hidden gap-3">
-          <button
-            onClick={() => goTo(displayIdx - 1)}
-            disabled={displayIdx === 0 || isAnimating}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--warm-sand)] bg-white text-sm font-medium text-[var(--warm-charcoal)]/60 hover:border-[var(--indigo-deep)] hover:text-[var(--indigo-deep)] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-          >
-            <span className="material-symbols-outlined text-[18px]">chevron_left</span>
-            <span className="hidden sm:inline max-w-[100px] truncate">{displayIdx > 0 ? active[displayIdx - 1].title : 'Start'}</span>
-          </button>
+        {/* RIGHT arrow */}
+        <button onClick={() => goTo(displayIdx + 1)} disabled={displayIdx === active.length - 1 || isAnimating}
+          style={{
+            width: 44, height: 80, display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: displayIdx === active.length - 1 ? '#f9f6ef' : 'white',
+            border: '1px solid rgba(212,160,23,0.35)', borderLeft: 'none',
+            borderRadius: '0 10px 10px 0', cursor: displayIdx === active.length - 1 ? 'default' : 'pointer',
+            opacity: displayIdx === active.length - 1 ? 0.35 : 1, transition: 'all 0.2s', flexShrink: 0,
+            boxShadow: displayIdx < active.length - 1 ? '0 4px 15px rgba(0,0,0,0.1)' : 'none',
+          }}>
+          <span className="material-symbols-outlined" style={{ fontSize: 26, color: '#2F2A44' }}>chevron_right</span>
+        </button>
+      </div>
 
-          {/* Chapter dots */}
-          <div className="flex items-center gap-1.5 flex-wrap justify-center">
-            {active.map((c, i) => (
-              <button key={c.id} onClick={() => goTo(i)} title={c.title}
-                className={`rounded-full transition-all duration-300 ${
-                  i === displayIdx
-                    ? 'w-7 h-2.5 bg-[var(--indigo-deep)]'
-                    : 'w-2.5 h-2.5 bg-[var(--warm-sand)] hover:bg-[var(--warm-charcoal)]/30'
-                }`} />
-            ))}
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Fullscreen toggle */}
-            <button onClick={toggleFullscreen}
-              className="flex items-center gap-1 px-2.5 py-2 rounded-xl border border-[var(--warm-sand)] bg-white text-xs text-[var(--warm-charcoal)]/50 hover:text-[var(--indigo-deep)] hover:border-[var(--indigo-deep)] transition-all"
-              title="Toggle fullscreen">
-              <span className="material-symbols-outlined text-[16px]">{isFS ? 'fullscreen_exit' : 'fullscreen'}</span>
-            </button>
-
-            <button
-              onClick={() => goTo(displayIdx + 1)}
-              disabled={displayIdx === active.length - 1 || isAnimating}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-[var(--warm-sand)] bg-white text-sm font-medium text-[var(--warm-charcoal)]/60 hover:border-[var(--indigo-deep)] hover:text-[var(--indigo-deep)] transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-            >
-              <span className="hidden sm:inline max-w-[100px] truncate">{displayIdx < active.length - 1 ? active[displayIdx + 1].title : 'End'}</span>
-              <span className="material-symbols-outlined text-[18px]">chevron_right</span>
-            </button>
-          </div>
+      {/* ── Chapter dots & reading progress — light ── */}
+      <div style={{ padding: '10px 60px', display: 'flex', alignItems: 'center', gap: 10, background: isFS ? '#fdf8f0' : undefined }}>
+        <div style={{ flex: 1, height: 3, background: 'rgba(212,160,23,0.15)', borderRadius: 2, overflow: 'hidden' }}>
+          <div style={{ height: '100%', width: `${((displayIdx + 1) / active.length) * 100}%`, background: 'linear-gradient(90deg, #2F2A44, #D4A017)', transition: 'width 0.4s ease', borderRadius: 2 }} />
         </div>
+        <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
+          {active.map((c, i) => (
+            <button key={c.id} onClick={() => goTo(i)} title={c.title}
+              style={{
+                border: 'none', cursor: 'pointer', padding: 0, borderRadius: 99,
+                background: i === displayIdx ? '#2F2A44' : 'rgba(212,160,23,0.35)',
+                width: i === displayIdx ? 20 : 7, height: 7,
+                transition: 'all 0.3s',
+              }} />
+          ))}
+        </div>
+        <span style={{ fontSize: 10, color: 'rgba(47,42,68,0.45)', whiteSpace: 'nowrap', fontWeight: 600 }}>
+          {displayIdx + 1} / {active.length}
+        </span>
       </div>
     </div>
   )
@@ -1418,7 +1457,7 @@ export default function ReportDetailPage() {
       <SudarshanLoader size="lg" />
       <div className="text-center">
         <p className="font-bold text-[var(--indigo-deep)] text-lg">Your report is being generated</p>
-        <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">Please wait â€” this page will update automatically</p>
+        <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">Please wait — this page will update automatically</p>
       </div>
       <Link href="/reports/generate" className="text-sm text-[var(--terracotta)] hover:underline inline-flex items-center gap-1">
         <span className="material-symbols-outlined text-[16px]">arrow_back</span>Back to Generate
@@ -1436,13 +1475,13 @@ export default function ReportDetailPage() {
 
   const chapters: BookChapter[] = [
     {
-      id: 'astrology', number: 'I', title: 'Kundli & Birth Chart', sanskrit: 'à¤—à¥à¤°à¤¹ à¤œà¥à¤¯à¥‹à¤¤à¤¿à¤·',
+      id: 'astrology', number: 'I', title: 'Kundli & Birth Chart', sanskrit: 'ग्रह ज्योतिष',
       leftPanel: d.kundli ? <KundliWheel kundli={d.kundli} /> : <OmMandala size={175} />,
       content: <KundliSection data={d} />,
       show: (report.report_type === 'astrology' || isFull) && !!d.kundli,
     },
     {
-      id: 'numerology', number: 'II', title: 'Numerology Analysis', sanskrit: 'à¤…à¤‚à¤•à¤¶à¤¾à¤¸à¥à¤¤à¥à¤°',
+      id: 'numerology', number: 'II', title: 'Numerology Analysis', sanskrit: 'अंकशास्त्र',
       leftPanel: d.numerology
         ? <NumerologyGrid numerology={d.numerology} member={{ name: member?.full_name, dob: member?.date_of_birth }} />
         : <OmMandala size={175} />,
@@ -1450,7 +1489,7 @@ export default function ReportDetailPage() {
       show: (report.report_type === 'numerology' || isFull) && !!d.numerology,
     },
     {
-      id: 'shakti_chakra', number: 'III', title: 'Shakti Chakra', sanskrit: 'à¤¶à¤•à¥à¤¤à¤¿ à¤šà¤•à¥à¤°',
+      id: 'shakti_chakra', number: 'III', title: 'Shakti Chakra', sanskrit: 'शक्ति चक्र',
       leftPanel: (d.chakras || d.chakra)
         ? <ChakraChart data={{ chakras: d.chakras || d.chakra, overallBalance: d.overallBalance }} />
         : <OmMandala size={175} />,
@@ -1458,7 +1497,7 @@ export default function ReportDetailPage() {
       show: (report.report_type === 'shakti_chakra' || isFull) && !!(d.chakras || d.chakra),
     },
     {
-      id: 'prakriti', number: 'IV', title: 'Prakriti Â· Ayurveda', sanskrit: 'à¤ªà¥à¤°à¤•à¥ƒà¤¤à¤¿',
+      id: 'prakriti', number: 'IV', title: 'Prakriti · Ayurveda', sanskrit: 'प्रकृति',
       leftPanel: <DoshaPanel vata={d.prakriti?.vata} pitta={d.prakriti?.pitta} kapha={d.prakriti?.kapha} />,
       content: (
         <Section title="Prakriti (Ayurvedic Constitution)" icon="eco">
@@ -1491,7 +1530,7 @@ export default function ReportDetailPage() {
             {d.prakriti?.lifestyle?.length > 0 && (
               <div>
                 <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Lifestyle Guidelines</p>
-                {d.prakriti.lifestyle.map((l: string) => <p key={l} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">â€¢ {l}</p>)}
+                {d.prakriti.lifestyle.map((l: string) => <p key={l} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {l}</p>)}
               </div>
             )}
             {d.prakriti?.avoid?.length > 0 && (
@@ -1508,17 +1547,17 @@ export default function ReportDetailPage() {
       show: (report.report_type === 'prakriti' || isFull) && !!d.prakriti,
     },
     {
-      id: 'yantra_colour', number: 'V', title: 'Yantra & Colour', sanskrit: 'à¤¯à¤‚à¤¤à¥à¤° à¤°à¤‚à¤— à¤šà¤¿à¤•à¤¿à¤¤à¥à¤¸à¤¾',
+      id: 'yantra_colour', number: 'V', title: 'Yantra & Colour', sanskrit: 'यंत्र रंग चिकित्सा',
       leftPanel: <SriYantraPanel size={175} />,
       content: <YantraSection data={d.yantra || d.yantraColour} />,
       show: (report.report_type === 'yantra_colour' || isFull) && !!(d.yantra || d.yantraColour),
     },
     {
-      id: 'mantra_chanting', number: 'VI', title: 'Mantra Guidance', sanskrit: 'à¤®à¤‚à¤¤à¥à¤° à¤œà¤ª',
+      id: 'mantra_chanting', number: 'VI', title: 'Mantra Guidance', sanskrit: 'मंत्र जप',
       leftPanel: (
         <div className="flex flex-col items-center gap-4">
           <div className="w-28 h-28 rounded-full bg-gradient-to-br from-[var(--indigo-deep)] to-[var(--plum)] flex items-center justify-center shadow-xl">
-            <span className="text-5xl text-white" style={{ fontFamily: 'serif' }}>à¥</span>
+            <span className="text-5xl text-white" style={{ fontFamily: 'serif' }}>ॐ</span>
           </div>
           {(d.mantras?.chanting?.beejMantra || d.mantra?.chanting?.beejMantra) && (
             <div className="bg-[var(--indigo-deep)]/8 border border-[var(--indigo-deep)]/15 rounded-xl px-3 py-2 text-center max-w-[190px]">
@@ -1533,7 +1572,7 @@ export default function ReportDetailPage() {
       show: (['mantra_chanting', 'mantra_writing'].includes(report.report_type) || isFull) && !!(d.mantras || d.mantra),
     },
     {
-      id: 'psychology', number: 'VII', title: 'Vedic Psychology', sanskrit: 'à¤µà¥ˆà¤¦à¤¿à¤• à¤®à¤¨à¥‹à¤µà¤¿à¤œà¥à¤žà¤¾à¤¨',
+      id: 'psychology', number: 'VII', title: 'Vedic Psychology', sanskrit: 'वैदिक मनोविज्ञान',
       leftPanel: <MoonArchetypePanel archetype={d.psychology?.moonPersonalityType} />,
       content: (
         <Section title="Vedic Psychology Profile" icon="self_improvement">
@@ -1574,7 +1613,7 @@ export default function ReportDetailPage() {
             {d.psychology?.shadowWork?.length > 0 && (
               <div>
                 <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Shadow Work Themes</p>
-                {d.psychology.shadowWork.map((s: string) => <p key={s} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">â€¢ {s}</p>)}
+                {d.psychology.shadowWork.map((s: string) => <p key={s} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {s}</p>)}
               </div>
             )}
           </div>
@@ -1583,13 +1622,13 @@ export default function ReportDetailPage() {
       show: (report.report_type === 'psychology' || isFull) && !!d.psychology,
     },
     {
-      id: 'astro_vastu', number: 'VIII', title: 'Astro Vastu', sanskrit: 'à¤œà¥à¤¯à¥‹à¤¤à¤¿à¤· à¤µà¤¾à¤¸à¥à¤¤à¥',
+      id: 'astro_vastu', number: 'VIII', title: 'Astro Vastu', sanskrit: 'ज्योतिष वास्तु',
       leftPanel: <VastuCompassPanel size={165} />,
       content: <VastuSection data={d.vastu || d.vastuAnalysis} />,
       show: (report.report_type === 'astro_vastu' || isFull) && !!(d.vastu || d.vastuAnalysis),
     },
     {
-      id: 'dmit', number: 'IX', title: 'DMIT Intelligence', sanskrit: 'à¤¬à¥à¤¦à¥à¤§à¤¿à¤®à¤¤à¥à¤¤à¤¾ à¤ªà¥à¤°à¥‹à¤«à¤¾à¤‡à¤²',
+      id: 'dmit', number: 'IX', title: 'DMIT Intelligence', sanskrit: 'बुद्धिमत्ता प्रोफाइल',
       leftPanel: <DMITPanel intelligences={d.dmit?.allIntelligences} />,
       content: (
         <Section title="DMIT Intelligence Profile" icon="psychology">
@@ -1607,7 +1646,7 @@ export default function ReportDetailPage() {
                   <div key={intel.type} className="mb-2">
                     <div className="flex items-center justify-between mb-0.5">
                       <span className="text-sm font-medium text-[var(--indigo-deep)]">{intel.type}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${intel.strength === 'Strong' ? 'bg-emerald-100 text-emerald-700' : intel.strength === 'Moderate' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600'}`}>{intel.strength} Â· {intel.score}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${intel.strength === 'Strong' ? 'bg-emerald-100 text-emerald-700' : intel.strength === 'Moderate' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600'}`}>{intel.strength} · {intel.score}</span>
                     </div>
                     <div className="bg-[var(--warm-sand)] rounded-full h-1.5 overflow-hidden">
                       <div className="h-full bg-[var(--indigo-deep)] rounded-full" style={{ width: `${intel.score}%` }} />
@@ -1642,7 +1681,7 @@ export default function ReportDetailPage() {
       show: (report.report_type === 'dmit' || isFull) && !!d.dmit,
     },
     {
-      id: 'colour_therapy', number: 'X', title: 'Colour Therapy', sanskrit: 'à¤°à¤‚à¤— à¤šà¤¿à¤•à¤¿à¤¤à¥à¤¸à¤¾',
+      id: 'colour_therapy', number: 'X', title: 'Colour Therapy', sanskrit: 'रंग चिकित्सा',
       leftPanel: <ColourWheelPanel size={155} />,
       content: (
         <Section title="Colour Therapy" icon="palette">
@@ -1683,8 +1722,8 @@ export default function ReportDetailPage() {
                       <p className="text-xs text-[var(--warm-charcoal)]/50">Primary Healing Color</p>
                     </div>
                   </div>
-                  {d.colourTherapy.chromotherapy.sessions && <p className="text-sm text-[var(--warm-charcoal)]/70">â€¢ {d.colourTherapy.chromotherapy.sessions}</p>}
-                  {d.colourTherapy.chromotherapy.duration && <p className="text-sm text-[var(--warm-charcoal)]/70">â€¢ Duration: {d.colourTherapy.chromotherapy.duration}</p>}
+                  {d.colourTherapy.chromotherapy.sessions && <p className="text-sm text-[var(--warm-charcoal)]/70">• {d.colourTherapy.chromotherapy.sessions}</p>}
+                  {d.colourTherapy.chromotherapy.duration && <p className="text-sm text-[var(--warm-charcoal)]/70">• Duration: {d.colourTherapy.chromotherapy.duration}</p>}
                   {d.colourTherapy.chromotherapy.waterSolarization && (
                     <p className="mt-2 text-xs text-[var(--warm-charcoal)]/55 italic">{d.colourTherapy.chromotherapy.waterSolarization}</p>
                   )}
@@ -1703,7 +1742,7 @@ export default function ReportDetailPage() {
       show: (report.report_type === 'colour_therapy' || isFull) && !!d.colourTherapy,
     },
     {
-      id: 'annual_prediction', number: 'XI', title: 'Annual Prediction', sanskrit: 'à¤µà¤¾à¤°à¥à¤·à¤¿à¤• à¤­à¤µà¤¿à¤·à¥à¤¯à¤µà¤¾à¤£à¥€',
+      id: 'annual_prediction', number: 'XI', title: 'Annual Prediction', sanskrit: 'वार्षिक भविष्यवाणी',
       leftPanel: <AnnualArcPanel />,
       content: (
         <Section title="Annual Prediction" icon="calendar_today">
@@ -1730,19 +1769,19 @@ export default function ReportDetailPage() {
       show: isFull && !!d.annualPrediction,
     },
     {
-      id: 'muhurta', number: 'XII', title: 'Muhurta â€” Timing', sanskrit: 'à¤®à¥à¤¹à¥‚à¤°à¥à¤¤',
+      id: 'muhurta', number: 'XII', title: 'Muhurta — Timing', sanskrit: 'मुहूर्त',
       leftPanel: <AnnualArcPanel />,
       content: <MuhurtaSection data={d.muhurta} />,
       show: isFull && !!d.muhurta,
     },
     {
-      id: 'remedies', number: 'XIII', title: 'Remedies & UpÄya', sanskrit: 'à¤‰à¤ªà¤¾à¤¯',
+      id: 'remedies', number: 'XIII', title: 'Remedies & Upāya', sanskrit: 'उपाय',
       leftPanel: <RemediesPanel />,
       content: <RemediesSection data={d.remediesSummary || d.remedies} />,
       show: isFull && !!(d.remediesSummary || d.remedies),
     },
     {
-      id: 'child_development', number: 'I', title: 'Child Development', sanskrit: 'à¤¬à¤¾à¤² à¤µà¤¿à¤•à¤¾à¤¸',
+      id: 'child_development', number: 'I', title: 'Child Development', sanskrit: 'बाल विकास',
       leftPanel: <OmMandala size={175} />,
       content: (
         <Section title="Child Development Report" icon="child_care">
@@ -1760,13 +1799,13 @@ export default function ReportDetailPage() {
             {d.childDevelopment?.milestones?.length > 0 && (
               <div>
                 <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Key Milestones</p>
-                {d.childDevelopment.milestones.map((m: string) => <p key={m} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">â€¢ {m}</p>)}
+                {d.childDevelopment.milestones.map((m: string) => <p key={m} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {m}</p>)}
               </div>
             )}
             {d.childDevelopment?.parentingAdvice?.length > 0 && (
               <div className="bg-[var(--warm-sand)] rounded-xl p-4">
                 <p className="text-xs font-bold text-[var(--saffron)] uppercase tracking-wider mb-2">Parenting Guidance</p>
-                {d.childDevelopment.parentingAdvice.map((a: string) => <p key={a} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">â€¢ {a}</p>)}
+                {d.childDevelopment.parentingAdvice.map((a: string) => <p key={a} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {a}</p>)}
               </div>
             )}
           </div>
@@ -1775,7 +1814,7 @@ export default function ReportDetailPage() {
       show: report.report_type === 'child_development' && !!d.childDevelopment,
     },
     {
-      id: 'mobile_number', number: 'I', title: 'Mobile Number Analysis', sanskrit: 'à¤…à¤‚à¤•à¤¶à¤¾à¤¸à¥à¤¤à¥à¤°',
+      id: 'mobile_number', number: 'I', title: 'Mobile Number Analysis', sanskrit: 'अंकशास्त्र',
       leftPanel: <NumerologyGrid numerology={{ lifePathNumber: d.lifePath || 1, destinyNumber: d.mobile?.totalNumber || 1, soulUrgeNumber: 1, personalityNumber: 1, dateOfBirth: '', fullName: '' }} />,
       content: (
         <Section title="Mobile Number Analysis" icon="phone">
@@ -1810,8 +1849,8 @@ export default function ReportDetailPage() {
     @media print {
       @page { size: A4 portrait; margin: 1.5cm; }
       body { visibility: hidden; }
-      #rpa, #rpa * { visibility: visible; }
-      #rpa { position: absolute; left: 0; top: 0; width: 100%; }
+      #rpa { display: block !important; visibility: visible !important; position: absolute; left: 0; top: 0; width: 100%; }
+      #rpa * { visibility: visible !important; }
       .no-print { display: none !important; }
       .card-divine { box-shadow: none !important; border: 1px solid #e5e7eb !important; break-inside: avoid; margin-bottom: 10px; }
       table { font-size: 9px !important; width: 100%; border-collapse: collapse; }
@@ -1835,14 +1874,14 @@ export default function ReportDetailPage() {
             <h1 className="text-2xl font-bold text-[var(--indigo-deep)] mt-1" style={{ fontFamily: "'Playfair Display', serif" }}>{title}</h1>
             {member && (
               <p className="text-sm text-[var(--warm-charcoal)]/60 mt-0.5">
-                {member.full_name} Â· {member.place_of_birth || ''} Â· {new Date(report.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+                {member.full_name} · {member.place_of_birth || ''} · {new Date(report.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
               </p>
             )}
           </div>
           <div className="flex items-center gap-2 flex-wrap justify-end">
             <div className="flex items-center bg-[var(--warm-sand)] rounded-lg p-0.5 gap-0.5">
               <button onClick={() => setLang('en')} className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all ${lang === 'en' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--warm-charcoal)]/60 hover:text-[var(--indigo-deep)]'}`}>EN</button>
-              <button onClick={() => setLang('hi')} className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all ${lang === 'hi' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--warm-charcoal)]/60 hover:text-[var(--indigo-deep)]'}`}>à¤¹à¤¿à¤‚</button>
+              <button onClick={() => setLang('hi')} className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all ${lang === 'hi' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--warm-charcoal)]/60 hover:text-[var(--indigo-deep)]'}`}>हिं</button>
             </div>
             <span className={`text-sm px-3 py-1 rounded-full font-medium ${isGenerated ? 'bg-emerald-100 text-emerald-700' : report.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
               {report.status}
@@ -1851,7 +1890,7 @@ export default function ReportDetailPage() {
               <button onClick={handlePrint} disabled={downloading}
                 className="flex items-center gap-2 px-4 py-2 bg-[var(--indigo-deep)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50">
                 <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>download</span>
-                {downloading ? 'Preparingâ€¦' : 'Download PDF'}
+                {downloading ? 'Preparing…' : 'Download PDF'}
               </button>
             )}
           </div>
@@ -1877,9 +1916,9 @@ export default function ReportDetailPage() {
           {/* COVER PAGE */}
           <div style={{ minHeight: '27cm', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(160deg, #1a1535 0%, #2F2A44 50%, #1a1535 100%)', color: 'white', padding: '60px 48px', pageBreakAfter: 'always' }}>
             <div style={{ width: '100%', maxWidth: 480, textAlign: 'center' }}>
-              <div style={{ fontSize: 80, marginBottom: 8, color: '#D4A017', lineHeight: 1 }}>à¥</div>
+              <div style={{ fontSize: 80, marginBottom: 8, color: '#D4A017', lineHeight: 1 }}>ॐ</div>
               <div style={{ width: 60, height: 2, background: 'linear-gradient(90deg, transparent, #D4A017, transparent)', margin: '16px auto' }} />
-              <p style={{ fontSize: 11, color: 'rgba(212,160,23,0.7)', letterSpacing: '0.4em', textTransform: 'uppercase', marginBottom: 20 }}>DivyaTathastu Â· Noxatra System</p>
+              <p style={{ fontSize: 11, color: 'rgba(212,160,23,0.7)', letterSpacing: '0.4em', textTransform: 'uppercase', marginBottom: 20 }}>DivyaTathastu · Noxatra System</p>
               <h1 style={{ fontFamily: 'Georgia, serif', fontSize: 34, fontWeight: 700, color: '#D4A017', marginBottom: 12, lineHeight: 1.2 }}>{title}</h1>
               <div style={{ width: 60, height: 2, background: 'linear-gradient(90deg, transparent, #D4A017, transparent)', margin: '16px auto 28px' }} />
               {member && (
@@ -1898,8 +1937,8 @@ export default function ReportDetailPage() {
               </p>
               <div style={{ marginTop: 40, padding: '16px 20px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }}>
                 <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', lineHeight: 1.7 }}>
-                  Prepared using Vedic Jyotish Â· Numerology Â· Chakra Analysis Â· Ayurveda<br />
-                  Vastu Shastra Â· Psychology Â· DMIT Â· Colour Therapy Â· Annual Prediction
+                  Prepared using Vedic Jyotish · Numerology · Chakra Analysis · Ayurveda<br />
+                  Vastu Shastra · Psychology · DMIT · Colour Therapy · Annual Prediction
                 </p>
               </div>
             </div>
@@ -1908,7 +1947,7 @@ export default function ReportDetailPage() {
           {/* ABOUT & BENEFITS PAGE */}
           <div style={{ padding: '44px 44px', pageBreakAfter: 'always', minHeight: '27cm', background: '#fdf8f0' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, paddingBottom: 16, borderBottom: '2px solid #D4A017' }}>
-              <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#2F2A44', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, color: '#D4A017', flexShrink: 0 }}>à¥</div>
+              <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#2F2A44', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, color: '#D4A017', flexShrink: 0 }}>ॐ</div>
               <div>
                 <p style={{ fontSize: 10, color: '#D4A017', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Preface</p>
                 <h2 style={{ fontFamily: 'Georgia, serif', fontSize: 20, color: '#2F2A44', fontWeight: 700, margin: 0 }}>Understanding Your Report</h2>
@@ -1916,27 +1955,27 @@ export default function ReportDetailPage() {
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
               <div style={{ background: 'white', borderRadius: 10, padding: 18, border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                <h3 style={{ color: '#E36414', fontSize: 13, fontWeight: 700, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>ðŸ”­ What Is This Report?</h3>
-                <p style={{ fontSize: 11, color: '#374151', lineHeight: 1.65 }}>The Noxatra Report integrates 11 Vedic life-science systems into a single comprehensive document. Jyotish astrology, numerology, Ayurvedic Prakriti, chakra analysis, Vastu Shastra, Vedic psychology, DMIT, colour therapy, auspicious timing, and personalized remedies â€” all computed precisely from your birth data.</p>
+                <h3 style={{ color: '#E36414', fontSize: 13, fontWeight: 700, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>🔭 What Is This Report?</h3>
+                <p style={{ fontSize: 11, color: '#374151', lineHeight: 1.65 }}>The Noxatra Report integrates 11 Vedic life-science systems into a single comprehensive document. Jyotish astrology, numerology, Ayurvedic Prakriti, chakra analysis, Vastu Shastra, Vedic psychology, DMIT, colour therapy, auspicious timing, and personalized remedies — all computed precisely from your birth data.</p>
               </div>
               <div style={{ background: 'white', borderRadius: 10, padding: 18, border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                <h3 style={{ color: '#2F2A44', fontSize: 13, fontWeight: 700, marginBottom: 10 }}>âœ¨ How To Use This Report</h3>
-                <p style={{ fontSize: 11, color: '#374151', lineHeight: 1.65 }}>Read each chapter as a mirror to your soul â€” not as fate, but as guidance. Use the planetary positions to understand your natural timing. Apply the remedies consistently. Align your home per Vastu recommendations. Chant your personal mantra daily. Let this report become your personal dharmic compass.</p>
+                <h3 style={{ color: '#2F2A44', fontSize: 13, fontWeight: 700, marginBottom: 10 }}>✨ How To Use This Report</h3>
+                <p style={{ fontSize: 11, color: '#374151', lineHeight: 1.65 }}>Read each chapter as a mirror to your soul — not as fate, but as guidance. Use the planetary positions to understand your natural timing. Apply the remedies consistently. Align your home per Vastu recommendations. Chant your personal mantra daily. Let this report become your personal dharmic compass.</p>
               </div>
             </div>
             <div style={{ background: '#2F2A44', borderRadius: 10, padding: 22, color: 'white', marginBottom: 18 }}>
-              <h3 style={{ color: '#D4A017', fontSize: 13, fontWeight: 700, marginBottom: 14 }}>What This Report Covers â€” {visibleChapters.length} Chapters</h3>
+              <h3 style={{ color: '#D4A017', fontSize: 13, fontWeight: 700, marginBottom: 14 }}>What This Report Covers — {visibleChapters.length} Chapters</h3>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
                 {[
-                  { e: 'â­', t: 'Birth Chart (Kundli)', d: 'Planets, houses, yogas, dasha periods' },
-                  { e: 'ðŸ”¢', t: 'Numerology', d: 'Life path, soul urge, karmic numbers' },
-                  { e: 'ðŸŒˆ', t: 'Chakra Analysis', d: '7 energy centers with balance scores' },
-                  { e: 'ðŸŒ¿', t: 'Prakriti (Ayurveda)', d: 'Body constitution & health blueprint' },
-                  { e: 'ðŸ”¶', t: 'Yantra & Colour', d: 'Personal yantra, gemstone, power colors' },
-                  { e: 'ðŸ“¿', t: 'Mantra Practice', d: 'Personalized beej mantra & ritual guide' },
-                  { e: 'ðŸ§˜', t: 'Psychology Profile', d: 'Moon archetype & personality insights' },
-                  { e: 'ðŸ ', t: 'Astro Vastu', d: 'Home directions aligned to your planets' },
-                  { e: 'ðŸ“…', t: 'Muhurta & Timing', d: 'Auspicious dates for key life decisions' },
+                  { e: '⭐', t: 'Birth Chart (Kundli)', d: 'Planets, houses, yogas, dasha periods' },
+                  { e: '🔢', t: 'Numerology', d: 'Life path, soul urge, karmic numbers' },
+                  { e: '🌈', t: 'Chakra Analysis', d: '7 energy centers with balance scores' },
+                  { e: '🌿', t: 'Prakriti (Ayurveda)', d: 'Body constitution & health blueprint' },
+                  { e: '🔶', t: 'Yantra & Colour', d: 'Personal yantra, gemstone, power colors' },
+                  { e: '📿', t: 'Mantra Practice', d: 'Personalized beej mantra & ritual guide' },
+                  { e: '🧘', t: 'Psychology Profile', d: 'Moon archetype & personality insights' },
+                  { e: '🏠', t: 'Astro Vastu', d: 'Home directions aligned to your planets' },
+                  { e: '📅', t: 'Muhurta & Timing', d: 'Auspicious dates for key life decisions' },
                 ].map(b => (
                   <div key={b.t} style={{ background: 'rgba(255,255,255,0.07)', borderRadius: 7, padding: 10 }}>
                     <div style={{ fontSize: 16, marginBottom: 4 }}>{b.e}</div>
@@ -1948,7 +1987,7 @@ export default function ReportDetailPage() {
             </div>
             <div style={{ background: 'white', borderRadius: 10, padding: 18, border: '1px solid #e5e7eb' }}>
               <h3 style={{ color: '#2F2A44', fontSize: 13, fontWeight: 700, marginBottom: 10 }}>About DivyaTathastu</h3>
-              <p style={{ fontSize: 11, color: '#374151', lineHeight: 1.65 }}>DivyaTathastu is India's premier Vedic life sciences platform, combining 5,000 years of ancient Indian wisdom with NASA-grade computational precision. Our Noxatra engine processes birth data through 11 distinct analytical frameworks. Planetary positions are computed with Lahiri ayanamsa (official ayanamsa of the Government of India) for authentic sidereal astrology. Every report is freshly generated â€” no templates, only precise personalized calculations.</p>
+              <p style={{ fontSize: 11, color: '#374151', lineHeight: 1.65 }}>DivyaTathastu is India's premier Vedic life sciences platform, combining 5,000 years of ancient Indian wisdom with NASA-grade computational precision. Our Noxatra engine processes birth data through 11 distinct analytical frameworks. Planetary positions are computed with Lahiri ayanamsa (official ayanamsa of the Government of India) for authentic sidereal astrology. Every report is freshly generated — no templates, only precise personalized calculations.</p>
             </div>
           </div>
 
@@ -1961,7 +2000,7 @@ export default function ReportDetailPage() {
             {[
               { label: 'Cover', desc: 'Report Identity & Date' },
               { label: 'Preface', desc: 'Understanding Your Report & About DivyaTathastu' },
-              ...visibleChapters.map(c => ({ label: `Chapter ${c.number}`, desc: `${c.title} Â· ${c.sanskrit}` })),
+              ...visibleChapters.map(c => ({ label: `Chapter ${c.number}`, desc: `${c.title} · ${c.sanskrit}` })),
               { label: 'Appendix', desc: 'Disclaimer, Guidance Notes & Closing' },
             ].map((item, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '9px 0', borderBottom: '1px solid #f3f4f6' }}>
@@ -1996,7 +2035,7 @@ export default function ReportDetailPage() {
               { title: 'Medical Disclaimer', body: 'The Ayurvedic and health-related content (Prakriti analysis, health recommendations, dietary suggestions) is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider for medical decisions.' },
               { title: 'Financial Disclaimer', body: 'Muhurta timing guidance and financial period analysis are traditional Vedic tools for awareness and should not be used as the sole basis for financial or investment decisions. Consult qualified financial advisors for investment choices.' },
               { title: 'Astronomical Accuracy', body: 'Planetary positions are calculated using the NASA-grade astronomy-engine library with Lahiri ayanamsa (the official standard of the Government of India). Results depend on the accuracy of birth date, time, and place provided.' },
-              { title: 'Free Will & Destiny', body: 'Vedic astrology recognizes that the birth chart shows tendencies and potential â€” not fixed destiny. Human free will, conscious effort, and spiritual practice can always influence outcomes. This report is a map, not a sentence.' },
+              { title: 'Free Will & Destiny', body: 'Vedic astrology recognizes that the birth chart shows tendencies and potential — not fixed destiny. Human free will, conscious effort, and spiritual practice can always influence outcomes. This report is a map, not a sentence.' },
             ].map(item => (
               <div key={item.title} style={{ marginBottom: 16, background: 'white', borderRadius: 8, padding: 16, border: '1px solid #e5e7eb' }}>
                 <p style={{ fontSize: 12, fontWeight: 700, color: '#2F2A44', marginBottom: 6 }}>{item.title}</p>
@@ -2004,11 +2043,11 @@ export default function ReportDetailPage() {
               </div>
             ))}
             <div style={{ marginTop: 28, background: '#2F2A44', borderRadius: 10, padding: '24px 28px', color: 'white', textAlign: 'center' }}>
-              <p style={{ fontSize: 28, margin: '0 0 8px', color: '#D4A017' }}>à¥ à¤¤à¤¤à¥ à¤¸à¤¤à¥</p>
+              <p style={{ fontSize: 28, margin: '0 0 8px', color: '#D4A017' }}>ॐ तत् सत्</p>
               <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.65)', marginBottom: 8 }}>
                 May this report guide you on your path to self-knowledge and dharmic living.
               </p>
-              <p style={{ fontSize: 12, color: '#D4A017', marginBottom: 4 }}>â€” DivyaTathastu Â· Noxatra Report System</p>
+              <p style={{ fontSize: 12, color: '#D4A017', marginBottom: 4 }}>— DivyaTathastu · Noxatra Report System</p>
               <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>www.divyatathastu.com</p>
             </div>
           </div>
