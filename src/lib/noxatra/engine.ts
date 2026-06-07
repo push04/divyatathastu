@@ -958,7 +958,7 @@ function getColorsToAvoid(ascendant: string): string[] {
   return map[ascendant] || ['Dull and muddy tones']
 }
 
-function generateAnnualPrediction(kundli: any) {
+export function generateAnnualPrediction(kundli: any) {
   const currentYear = new Date().getFullYear()
   const seed = kundli.dashaLord?.length || 4
 
@@ -1054,7 +1054,7 @@ function getPlanetTheme(planet: string): string {
   return map[planet] || 'significant for personal growth'
 }
 
-function generateRemediesSummary(kundli: any, numerology: any) {
+export function generateRemediesSummary(kundli: any, numerology: any) {
   const DASHA_BEEJ: Record<string, string> = {
     Sun: 'Om Hraam Hreem Hraum Sah Suryaya Namah',
     Moon: 'Om Shraam Shreem Shraum Sah Chandraya Namah',
@@ -1178,7 +1178,7 @@ function getAuspiciousDay(planet: string): string {
   return map[planet] || 'Monday'
 }
 
-function generateMuhurtaGuide(kundli: any, numerology: any) {
+export function generateMuhurtaGuide(kundli: any, numerology: any) {
   const lagna = kundli.ascendant
   const moonSign = kundli.moonSign
   const dasha = kundli.currentDasha
@@ -1341,7 +1341,7 @@ function generateMuhurtaGuide(kundli: any, numerology: any) {
   }
 
   // Key life moments timing
-  const SPECIAL_DATES: Record<string, string[]> = {
+  const SPECIAL_DATES: Record<string, string | string[]> = {
     mostFavorable: [
       `Thursdays during ${moonSign} Moon transit — peak personal power`,
       `${luckyDays[0]}s during Shukla Paksha (waxing moon, 1st–14th lunar day)`,

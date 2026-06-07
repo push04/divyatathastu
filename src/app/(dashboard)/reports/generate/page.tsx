@@ -4,7 +4,7 @@ import SudarshanLoader from '@/components/SudarshanLoader'
 
 export const dynamic = 'force-dynamic'
 
-import { useEffect, useState, Suspense } from 'react'
+import { useEffect, useState, useRef, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -42,10 +42,56 @@ const DIRECTIONS_HI = ['उत्तर', 'उत्तर-पूर्व', '�
 const SLEEP_DIRS = ['North', 'South', 'East', 'West']
 const SLEEP_DIRS_HI = ['उत्तर', 'दक्षिण', 'पूर्व', 'पश्चिम']
 
+// Section definitions — each becomes one /api/noxatra/section call
+const FULL_TATHASTU_SECTIONS = [
+  { sectionType: 'astrology',       name: 'Kundli & Birth Chart',         nameHi: 'कुंडली व जन्म पत्री',    icon: 'brightness_7',   estSeconds: 12 },
+  { sectionType: 'numerology',      name: 'Numerology Analysis',          nameHi: 'अंक विज्ञान',             icon: 'tag',            estSeconds: 4  },
+  { sectionType: 'shakti_chakra',   name: 'Shakti Chakra Analysis',       nameHi: 'शक्ति चक्र विश्लेषण',   icon: 'local_florist',  estSeconds: 4  },
+  { sectionType: 'prakriti',        name: 'Prakriti (Ayurveda)',          nameHi: 'प्रकृति आयुर्वेद',        icon: 'eco',            estSeconds: 3  },
+  { sectionType: 'yantra_colour',   name: 'Yantra & Colour Therapy',      nameHi: 'यंत्र और रंग चिकित्सा',  icon: 'palette',        estSeconds: 3  },
+  { sectionType: 'mantra_chanting', name: 'Mantra Science',               nameHi: 'मंत्र विज्ञान',            icon: 'temple_hindu',   estSeconds: 3  },
+  { sectionType: 'psychology',      name: 'Vedic Psychology',             nameHi: 'वैदिक मनोविज्ञान',       icon: 'self_improvement', estSeconds: 3 },
+  { sectionType: 'astro_vastu',     name: 'Astro Vastu Report',           nameHi: 'ज्योतिष वास्तु',          icon: 'house',          estSeconds: 4  },
+  { sectionType: 'dmit',            name: 'Brain Mapping (DMIT)',         nameHi: 'मस्तिष्क मानचित्र',      icon: 'psychology',     estSeconds: 4  },
+  { sectionType: 'colour_therapy',  name: 'Colour Therapy',               nameHi: 'रंग चिकित्सा',             icon: 'colorize',       estSeconds: 3  },
+  { sectionType: '_finale',         name: 'Annual Predictions & Remedies',nameHi: 'वार्षिक भविष्यवाणी',     icon: 'event_note',     estSeconds: 4  },
+]
+
+// Sanskrit subtitles for progress screen
+const SECTION_SANSKRIT: Record<string, string> = {
+  astrology: 'ग्रह ज्योतिष',
+  numerology: 'अंक विद्या',
+  shakti_chakra: 'शक्ति चक्र',
+  prakriti: 'त्रिदोष प्रकृति',
+  yantra_colour: 'यंत्र शास्त्र',
+  mantra_chanting: 'बीज मंत्र',
+  psychology: 'मनो विश्लेषण',
+  astro_vastu: 'दिशा शास्त्र',
+  dmit: 'मस्तिष्क मानचित्र',
+  colour_therapy: 'रंग चिकित्सा',
+  _finale: 'काल भविष्यवाणी',
+}
+
+// Individual report type → section list (single section)
+const SINGLE_SECTIONS: Record<string, { sectionType: string; name: string; nameHi: string; icon: string; estSeconds: number }[]> = {
+  astrology:       [{ sectionType: 'astrology',       name: 'Kundli & Birth Chart',   nameHi: 'कुंडली विश्लेषण', icon: 'brightness_7',     estSeconds: 12 }],
+  numerology:      [{ sectionType: 'numerology',      name: 'Numerology Analysis',    nameHi: 'अंक विश्लेषण',   icon: 'tag',               estSeconds: 6  }],
+  shakti_chakra:   [{ sectionType: 'shakti_chakra',   name: 'Chakra Analysis',        nameHi: 'चक्र विश्लेषण',  icon: 'local_florist',    estSeconds: 8  }],
+  prakriti:        [{ sectionType: 'prakriti',        name: 'Prakriti (Ayurveda)',    nameHi: 'आयुर्वेद प्रकृति', icon: 'eco',             estSeconds: 6  }],
+  yantra_colour:   [{ sectionType: 'yantra_colour',   name: 'Yantra & Colour',        nameHi: 'यंत्र और रंग',   icon: 'palette',          estSeconds: 6  }],
+  mantra_chanting: [{ sectionType: 'mantra_chanting', name: 'Mantra Science',         nameHi: 'मंत्र विज्ञान',   icon: 'temple_hindu',    estSeconds: 6  }],
+  astro_vastu:     [{ sectionType: 'astro_vastu',     name: 'Vastu Analysis',         nameHi: 'वास्तु विश्लेषण', icon: 'house',           estSeconds: 8  }],
+  child_development:[{ sectionType: 'child_development', name: 'Child Development',   nameHi: 'बाल विकास',       icon: 'child_care',      estSeconds: 8  }],
+  dmit:            [{ sectionType: 'dmit',            name: 'Brain Mapping',          nameHi: 'मस्तिष्क मानचित्र', icon: 'psychology',   estSeconds: 8  }],
+  colour_therapy:  [{ sectionType: 'colour_therapy',  name: 'Colour Therapy',         nameHi: 'रंग चिकित्सा',   icon: 'colorize',        estSeconds: 6  }],
+  psychology:      [{ sectionType: 'psychology',      name: 'Vedic Psychology',       nameHi: 'वैदिक मनोविज्ञान', icon: 'self_improvement', estSeconds: 8 }],
+  mobile_number:   [{ sectionType: 'mobile_number',   name: 'Mobile Analysis',        nameHi: 'मोबाइल विश्लेषण', icon: 'phone',           estSeconds: 4  }],
+}
+
 const T = {
   en: {
     title: 'Generate Noxatra Report',
-    subtitle: 'AI-powered Vedic analysis in 60 seconds',
+    subtitle: 'Vedic analysis powered by astronomy calculations',
     steps: ['Select Member', 'Choose Report', 'Additional Info', 'Generate'],
     selectMember: 'Select Family Member',
     noMembers: 'No family members yet',
@@ -62,21 +108,22 @@ const T = {
     readyGenerate: 'Ready to Generate',
     member: 'Member',
     reportType: 'Report Type',
-    poweredBy: 'Powered by',
+    poweredBy: 'Engine',
     estTime: 'Est. Time',
-    estTimeVal: '~30-60 seconds',
     prevFailed: 'Previous attempt failed',
     generate: 'Generate Report Now',
     retry: 'Retry Generation',
     back: 'Back',
     continue: 'Continue',
-    calculating: 'Calculating divine insights...',
-    calcDesc: 'Analysing birth chart · Computing dashas · Generating predictions',
+    craftingTitle: 'Divinely Crafting Your Report',
+    craftingSubtitle: 'Each chapter is being computed from sacred astronomical calculations',
+    remaining: 'seconds remaining',
+    viewReport: 'View Your Report',
     langToggle: 'EN',
   },
   hi: {
     title: 'नोक्षत्र रिपोर्ट बनाएं',
-    subtitle: 'AI-संचालित वैदिक विश्लेषण 60 सेकंड में',
+    subtitle: 'ज्योतिषीय गणनाओं पर आधारित वैदिक विश्लेषण',
     steps: ['सदस्य चुनें', 'रिपोर्ट चुनें', 'अतिरिक्त जानकारी', 'बनाएं'],
     selectMember: 'परिवार का सदस्य चुनें',
     noMembers: 'अभी कोई परिवार सदस्य नहीं',
@@ -93,18 +140,31 @@ const T = {
     readyGenerate: 'रिपोर्ट बनाने के लिए तैयार',
     member: 'सदस्य',
     reportType: 'रिपोर्ट प्रकार',
-    poweredBy: 'संचालित',
+    poweredBy: 'इंजन',
     estTime: 'अनुमानित समय',
-    estTimeVal: '~30-60 सेकंड',
     prevFailed: 'पिछला प्रयास विफल हुआ',
     generate: 'अभी रिपोर्ट बनाएं',
     retry: 'पुनः प्रयास करें',
     back: 'वापस',
     continue: 'आगे बढ़ें',
-    calculating: 'दिव्य अंतर्दृष्टि की गणना हो रही है...',
-    calcDesc: 'जन्म कुंडली विश्लेषण · दशा गणना · भविष्यवाणी',
+    craftingTitle: 'आपकी रिपोर्ट दिव्य रूप से बन रही है',
+    craftingSubtitle: 'प्रत्येक अध्याय पवित्र ज्योतिषीय गणनाओं से तैयार हो रहा है',
+    remaining: 'सेकंड शेष',
+    viewReport: 'रिपोर्ट देखें',
     langToggle: 'हिं',
   },
+}
+
+type SectionStatus = 'pending' | 'active' | 'done' | 'error'
+
+interface SectionProgress {
+  sectionType: string
+  name: string
+  nameHi: string
+  icon: string
+  estSeconds: number
+  status: SectionStatus
+  elapsed?: number
 }
 
 function GenerateReportContent() {
@@ -118,9 +178,15 @@ function GenerateReportContent() {
   const [selectedMember, setSelectedMember] = useState<string>(searchParams.get('member') || '')
   const [selectedReport, setSelectedReport] = useState<string>('')
   const [vastuData, setVastuData] = useState({ homeDirection: '', sleepDirection: 'south' })
-  const [generating, setGenerating] = useState(false)
-  const [progress, setProgress] = useState(0)
   const [lastError, setLastError] = useState<string | null>(null)
+
+  // Generation state
+  const [generating, setGenerating] = useState(false)
+  const [reportId, setReportId] = useState<string | null>(null)
+  const [sections, setSections] = useState<SectionProgress[]>([])
+  const [secondsLeft, setSecondsLeft] = useState(0)
+  const [allDone, setAllDone] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const t = T[lang]
   const isHindi = lang === 'hi'
@@ -138,16 +204,35 @@ function GenerateReportContent() {
     if (searchParams.get('member')) setStep(1)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  async function handleGenerate() {
-    if (!selectedMember || !selectedReport) { toast.error(isHindi ? 'सदस्य और रिपोर्ट प्रकार चुनें' : 'Select member and report type'); return }
-    setGenerating(true)
-    setProgress(10)
-    setLastError(null)
+  // Countdown timer
+  useEffect(() => {
+    if (!generating || allDone) return
+    timerRef.current = setInterval(() => {
+      setSecondsLeft(s => Math.max(0, s - 1))
+    }, 1000)
+    return () => { if (timerRef.current) clearInterval(timerRef.current) }
+  }, [generating, allDone])
 
-    const tick = setInterval(() => setProgress(p => Math.min(p + 6, 88)), 1500)
+  async function handleGenerate() {
+    if (!selectedMember || !selectedReport) {
+      toast.error(isHindi ? 'सदस्य और रिपोर्ट प्रकार चुनें' : 'Select member and report type')
+      return
+    }
+    setLastError(null)
+    setGenerating(true)
+
+    // Build section list
+    const sectionDefs = selectedReport === 'full_tathastu'
+      ? FULL_TATHASTU_SECTIONS
+      : (SINGLE_SECTIONS[selectedReport] || [{ sectionType: selectedReport, name: selectedReport, nameHi: selectedReport, icon: 'article', estSeconds: 10 }])
+
+    const initialSections: SectionProgress[] = sectionDefs.map(s => ({ ...s, status: 'pending' }))
+    setSections(initialSections)
+    setSecondsLeft(sectionDefs.reduce((a, s) => a + s.estSeconds, 0))
 
     try {
-      const res = await fetch('/api/noxatra', {
+      // Step 1: Create report record (instant)
+      const createRes = await fetch('/api/noxatra', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -158,36 +243,64 @@ function GenerateReportContent() {
         }),
       })
 
-      clearInterval(tick)
-      setProgress(95)
-
-      if (!res.ok) {
-        let errMsg = isHindi ? 'रिपोर्ट बनाना विफल' : 'Generation failed'
-        try { const d = await res.json(); errMsg = d.error || errMsg } catch {}
-        throw new Error(errMsg)
+      if (!createRes.ok) {
+        const d = await createRes.json().catch(() => ({}))
+        throw new Error(d.error || 'Failed to create report')
       }
 
-      const data = await res.json()
-      const result = data.results?.[0]
-      const reportId = result?.report_id
+      const createData = await createRes.json()
+      const rId = createData.reportId
+      if (!rId) throw new Error('No report ID returned')
+      setReportId(rId)
 
-      if (result?.status === 'failed' || !reportId) {
-        const detail = result?.error ? ` (${result.error})` : ''
-        throw new Error(isHindi ? `रिपोर्ट बनाना विफल${detail}। कृपया पुनः प्रयास करें।` : `Report generation failed${detail}. Please try again.`)
+      // Step 2: Generate sections sequentially
+      for (let i = 0; i < sectionDefs.length; i++) {
+        const sec = sectionDefs[i]
+        const isFinal = i === sectionDefs.length - 1
+
+        // Mark as active
+        setSections(prev => prev.map((s, idx) =>
+          idx === i ? { ...s, status: 'active' } : s
+        ))
+
+        const start = Date.now()
+        const secRes = await fetch('/api/noxatra/section', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ reportId: rId, sectionType: sec.sectionType, isFinal }),
+        })
+
+        const elapsed = Math.round((Date.now() - start) / 1000)
+
+        if (!secRes.ok) {
+          const d = await secRes.json().catch(() => ({}))
+          // Mark as error but continue with other sections
+          setSections(prev => prev.map((s, idx) =>
+            idx === i ? { ...s, status: 'error', elapsed } : s
+          ))
+          console.error(`Section ${sec.sectionType} failed:`, d.error)
+          continue
+        }
+
+        setSections(prev => prev.map((s, idx) =>
+          idx === i ? { ...s, status: 'done', elapsed } : s
+        ))
+
+        // Update remaining time estimate
+        const remainingEst = sectionDefs.slice(i + 1).reduce((a, s) => a + s.estSeconds, 0)
+        setSecondsLeft(remainingEst)
       }
 
-      setProgress(100)
+      setAllDone(true)
+      setSecondsLeft(0)
+      if (timerRef.current) clearInterval(timerRef.current)
       toast.success(isHindi ? 'रिपोर्ट सफलतापूर्वक बनाई गई!' : 'Report generated successfully!')
-      setTimeout(() => {
-        router.push(`/reports/${reportId}`)
-      }, 500)
     } catch (err: any) {
-      clearInterval(tick)
-      const msg = err.message || (isHindi ? 'रिपोर्ट बनाना विफल। कृपया पुनः प्रयास करें।' : 'Generation failed. Please try again.')
+      const msg = err.message || 'Generation failed. Please try again.'
       setLastError(msg)
       toast.error(msg)
       setGenerating(false)
-      setProgress(0)
+      setSections([])
     }
   }
 
@@ -200,7 +313,139 @@ function GenerateReportContent() {
 
   const selectedReportInfo = REPORT_TYPES.find(r => r.id === selectedReport)
   const selectedMemberInfo = members.find(m => m.id === selectedMember)
+  const totalEstSeconds = selectedReport === 'full_tathastu' ? 47 : (SINGLE_SECTIONS[selectedReport]?.[0]?.estSeconds || 10)
 
+  // ── GENERATION PROGRESS VIEW ──
+  if (generating) {
+    const doneSections = sections.filter(s => s.status === 'done').length
+    const totalSections = sections.length
+    const progressPct = totalSections > 0 ? Math.round((doneSections / totalSections) * 100) : 0
+    const activeSec = sections.find(s => s.status === 'active')
+
+    return (
+      <div className="p-6 max-w-2xl mx-auto">
+        <div className="card-divine overflow-hidden">
+          {/* Header */}
+          <div className="bg-gradient-to-br from-[var(--indigo-deep)] to-[#3B2882] p-8 text-white text-center">
+            <div className="flex justify-center mb-4">
+              <SudarshanLoader size="lg" />
+            </div>
+            <h2 className="text-xl font-bold mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
+              {t.craftingTitle}
+            </h2>
+            <p className="text-white/70 text-sm">{t.craftingSubtitle}</p>
+            {selectedMemberInfo && (
+              <p className="text-[#D4A017] text-sm font-medium mt-2">
+                {selectedMemberInfo.full_name} · {isHindi ? selectedReportInfo?.labelHi : selectedReportInfo?.label}
+              </p>
+            )}
+          </div>
+
+          {/* Progress bar */}
+          <div className="px-6 pt-5">
+            <div className="flex items-center justify-between text-xs font-medium mb-2">
+              <span className="text-[var(--indigo-deep)]">{doneSections} / {totalSections} {isHindi ? 'अध्याय पूर्ण' : 'chapters done'}</span>
+              {!allDone && secondsLeft > 0 && (
+                <span className="text-[var(--warm-charcoal)]/60">~{secondsLeft}s {t.remaining}</span>
+              )}
+              {allDone && <span className="text-emerald-600 font-bold">{isHindi ? 'पूर्ण ✓' : 'Complete ✓'}</span>}
+            </div>
+            <div className="w-full bg-[var(--warm-sand)] rounded-full h-2 overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-[var(--terracotta)] to-[var(--saffron)] transition-all duration-700 rounded-full"
+                style={{ width: `${allDone ? 100 : progressPct}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Active section banner */}
+          {activeSec && !allDone && (
+            <div className="mx-6 mt-4 flex items-center gap-3 px-4 py-3 bg-[var(--warm-sand)] rounded-xl border border-[var(--saffron)]/30">
+              <div className="w-5 h-5 flex-shrink-0">
+                <SudarshanLoader size="sm" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-bold text-[var(--indigo-deep)] truncate">
+                  {isHindi ? activeSec.nameHi : activeSec.name}
+                </p>
+                <p className="text-[10px] text-[var(--warm-charcoal)]/50">{SECTION_SANSKRIT[activeSec.sectionType] || ''}</p>
+              </div>
+              <span className="text-[10px] text-[var(--saffron)] font-bold animate-pulse">{isHindi ? 'गणना हो रही है' : 'calculating...'}</span>
+            </div>
+          )}
+
+          {/* Section list */}
+          <div className="p-6 space-y-2">
+            {sections.map((sec) => (
+              <div
+                key={sec.sectionType}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
+                  sec.status === 'done' ? 'bg-emerald-50 border border-emerald-200'
+                  : sec.status === 'active' ? 'bg-[var(--warm-sand)] border border-[var(--saffron)]/40'
+                  : sec.status === 'error' ? 'bg-red-50 border border-red-200'
+                  : 'bg-white border border-[var(--warm-sand)]'
+                }`}
+              >
+                {/* Status icon */}
+                <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
+                  {sec.status === 'done' ? (
+                    <span className="material-symbols-outlined text-[20px] text-emerald-500" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                  ) : sec.status === 'active' ? (
+                    <SudarshanLoader size="sm" />
+                  ) : sec.status === 'error' ? (
+                    <span className="material-symbols-outlined text-[20px] text-red-400" style={{ fontVariationSettings: "'FILL' 1" }}>error</span>
+                  ) : (
+                    <span className="material-symbols-outlined text-[20px] text-[var(--warm-charcoal)]/30">{sec.icon}</span>
+                  )}
+                </div>
+
+                {/* Name */}
+                <div className="flex-1 min-w-0">
+                  <p className={`text-sm font-medium truncate ${
+                    sec.status === 'done' ? 'text-emerald-700'
+                    : sec.status === 'active' ? 'text-[var(--indigo-deep)]'
+                    : sec.status === 'error' ? 'text-red-600'
+                    : 'text-[var(--warm-charcoal)]/40'
+                  }`}>
+                    {isHindi ? sec.nameHi : sec.name}
+                  </p>
+                  {sec.status !== 'pending' && (
+                    <p className={`text-[10px] ${sec.status === 'done' ? 'text-emerald-500' : 'text-[var(--warm-charcoal)]/40'}`}>
+                      {SECTION_SANSKRIT[sec.sectionType] || ''}
+                    </p>
+                  )}
+                </div>
+
+                {/* Time / est */}
+                <span className={`text-xs font-medium flex-shrink-0 ${
+                  sec.status === 'done' ? 'text-emerald-500'
+                  : sec.status === 'active' ? 'text-[var(--saffron)]'
+                  : 'text-[var(--warm-charcoal)]/30'
+                }`}>
+                  {sec.status === 'done' && sec.elapsed ? `${sec.elapsed}s` : sec.status === 'pending' ? `~${sec.estSeconds}s` : ''}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Done CTA */}
+          {allDone && reportId && (
+            <div className="px-6 pb-6">
+              <button
+                onClick={() => router.push(`/reports/${reportId}`)}
+                className="btn-divine w-full py-4 text-base font-bold inline-flex items-center justify-center gap-2"
+              >
+                <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+                {t.viewReport}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  // ── SETUP WIZARD ──
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
       <div className="flex items-start justify-between">
@@ -208,24 +453,19 @@ function GenerateReportContent() {
           <h1 className="text-2xl font-bold text-[var(--indigo-deep)]">{t.title}</h1>
           <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">{t.subtitle}</p>
         </div>
-        {/* Language Toggle */}
         <div className="flex items-center bg-[var(--warm-sand)] rounded-lg p-0.5 gap-0.5 flex-shrink-0">
           <button
             onClick={() => setLang('en')}
             className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'en' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--warm-charcoal)]/60 hover:text-[var(--indigo-deep)]'}`}
-          >
-            EN
-          </button>
+          >EN</button>
           <button
             onClick={() => setLang('hi')}
             className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'hi' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--warm-charcoal)]/60 hover:text-[var(--indigo-deep)]'}`}
-          >
-            हिं
-          </button>
+          >हिं</button>
         </div>
       </div>
 
-      {/* Progress steps */}
+      {/* Step indicator */}
       <div className="flex items-center gap-2">
         {t.steps.map((s, i) => (
           <div key={s} className="flex items-center gap-2 flex-1">
@@ -305,7 +545,6 @@ function GenerateReportContent() {
       {step === 2 && (
         <div className="space-y-4">
           <h2 className="text-lg font-bold text-[var(--indigo-deep)]">{t.additionalInfo}</h2>
-
           {selectedReport === 'astro_vastu' ? (
             <div className="card-divine p-6 space-y-4">
               <p className="text-sm text-[var(--warm-charcoal)]/70 mb-2">{t.vastuDesc}</p>
@@ -335,89 +574,69 @@ function GenerateReportContent() {
         </div>
       )}
 
-      {/* Step 3: Generate */}
+      {/* Step 3: Confirm & Generate */}
       {step === 3 && (
         <div className="space-y-4">
           <h2 className="text-lg font-bold text-[var(--indigo-deep)]">{t.readyGenerate}</h2>
 
-          {!generating ? (
-            <>
-              <div className="card-divine p-6 space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-[var(--warm-charcoal)]/60">{t.member}</span>
-                  <span className="font-medium text-[var(--indigo-deep)]">{selectedMemberInfo?.full_name}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-[var(--warm-charcoal)]/60">{t.reportType}</span>
-                  <span className="font-medium text-[var(--indigo-deep)]">{isHindi ? selectedReportInfo?.labelHi : selectedReportInfo?.label}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-[var(--warm-charcoal)]/60">{t.poweredBy}</span>
-                  <span className="font-medium text-[var(--indigo-deep)]">Noxatra AI</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-[var(--warm-charcoal)]/60">{t.estTime}</span>
-                  <span className="font-medium text-[var(--indigo-deep)]">{t.estTimeVal}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-[var(--warm-charcoal)]/60">{isHindi ? 'भाषा' : 'Language'}</span>
-                  <span className="font-medium text-[var(--indigo-deep)]">{isHindi ? 'हिंदी 🇮🇳' : 'English'}</span>
-                </div>
-              </div>
+          <div className="card-divine p-6 space-y-3">
+            <div className="flex justify-between text-sm">
+              <span className="text-[var(--warm-charcoal)]/60">{t.member}</span>
+              <span className="font-medium text-[var(--indigo-deep)]">{selectedMemberInfo?.full_name}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-[var(--warm-charcoal)]/60">{t.reportType}</span>
+              <span className="font-medium text-[var(--indigo-deep)]">{isHindi ? selectedReportInfo?.labelHi : selectedReportInfo?.label}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-[var(--warm-charcoal)]/60">{t.poweredBy}</span>
+              <span className="font-medium text-[var(--indigo-deep)]">Noxatra Vedic Engine</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-[var(--warm-charcoal)]/60">{t.estTime}</span>
+              <span className="font-medium text-[var(--indigo-deep)]">~{totalEstSeconds}s</span>
+            </div>
+          </div>
 
-              {lastError && (
-                <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 flex items-start gap-2">
-                  <span className="material-symbols-outlined text-[18px] flex-shrink-0 mt-0.5">error</span>
-                  <div>
-                    <p className="font-semibold">{t.prevFailed}</p>
-                    <p className="mt-0.5 opacity-80">{lastError}</p>
-                  </div>
-                </div>
-              )}
-
-              <button onClick={handleGenerate} className="btn-divine w-full py-4 text-base font-bold inline-flex items-center justify-center gap-2">
-                <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
-                {lastError ? t.retry : t.generate}
-              </button>
-            </>
-          ) : (
-            <div className="card-divine p-8 flex flex-col items-center space-y-4">
-              <SudarshanLoader size="lg" />
+          {lastError && (
+            <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 flex items-start gap-2">
+              <span className="material-symbols-outlined text-[18px] flex-shrink-0 mt-0.5">error</span>
               <div>
-                <p className="font-bold text-[var(--indigo-deep)] text-lg">{t.calculating}</p>
-                <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">{t.calcDesc}</p>
+                <p className="font-semibold">{t.prevFailed}</p>
+                <p className="mt-0.5 opacity-80">{lastError}</p>
               </div>
-              <div className="bg-[var(--warm-sand)] rounded-full h-2.5 overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-[var(--terracotta)] to-[var(--saffron)] transition-all duration-500 rounded-full" style={{ width: `${progress}%` }} />
-              </div>
-              <p className="text-sm font-medium text-[var(--terracotta)]">{progress}%</p>
             </div>
           )}
+
+          <button onClick={handleGenerate} className="btn-divine w-full py-4 text-base font-bold inline-flex items-center justify-center gap-2">
+            <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+            {lastError ? t.retry : t.generate}
+          </button>
         </div>
       )}
 
       {/* Navigation */}
-      {!generating && (
-        <div className="flex items-center justify-between pt-2">
-          <button
-            onClick={() => setStep(s => Math.max(0, s - 1))}
-            disabled={step === 0}
-            className="px-4 py-2 rounded-lg border border-[var(--warm-sand)] text-sm font-medium text-[var(--warm-charcoal)]/60 hover:border-[var(--indigo-deep)] hover:text-[var(--indigo-deep)] disabled:opacity-30 transition-all"
-          >
-            <span className="inline-flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">arrow_back</span>{t.back}</span>
-          </button>
+      <div className="flex items-center justify-between pt-2">
+        <button
+          onClick={() => setStep(s => Math.max(0, s - 1))}
+          disabled={step === 0}
+          className="px-4 py-2 rounded-lg border border-[var(--warm-sand)] text-sm font-medium text-[var(--warm-charcoal)]/60 hover:border-[var(--indigo-deep)] hover:text-[var(--indigo-deep)] disabled:opacity-30 transition-all"
+        >
+          <span className="inline-flex items-center gap-1">
+            <span className="material-symbols-outlined text-[16px]">arrow_back</span>{t.back}
+          </span>
+        </button>
 
-          {step < t.steps.length - 1 ? (
-            <button
-              onClick={() => setStep(s => s + 1)}
-              disabled={!canProceed[step]}
-              className="btn-divine px-6 py-2 text-sm disabled:opacity-40 inline-flex items-center gap-1"
-            >
-              {t.continue} <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-            </button>
-          ) : null}
-        </div>
-      )}
+        {step < t.steps.length - 1 && (
+          <button
+            onClick={() => setStep(s => s + 1)}
+            disabled={!canProceed[step]}
+            className="btn-divine px-6 py-2 text-sm disabled:opacity-40 inline-flex items-center gap-1"
+          >
+            {t.continue} <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+          </button>
+        )}
+      </div>
     </div>
   )
 }

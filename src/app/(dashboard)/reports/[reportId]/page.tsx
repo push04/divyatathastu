@@ -945,6 +945,19 @@ export default function ReportDetailPage() {
     </div>
   )
 
+  if (report.status === 'processing') return (
+    <div className="flex flex-col items-center justify-center h-64 gap-4 p-6">
+      <SudarshanLoader size="lg" />
+      <div className="text-center">
+        <p className="font-bold text-[var(--indigo-deep)] text-lg">Your report is being generated</p>
+        <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">Please wait — this page will update automatically</p>
+      </div>
+      <Link href="/reports/generate" className="text-sm text-[var(--terracotta)] hover:underline inline-flex items-center gap-1">
+        <span className="material-symbols-outlined text-[16px]">arrow_back</span>Back to Generate
+      </Link>
+    </div>
+  )
+
   const d = report.report_content || {}
   const member = report.family_members as any
   const isHindi = lang === 'hi'
