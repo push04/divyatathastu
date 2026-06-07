@@ -87,10 +87,7 @@ export default function AdminConsultationsPage() {
 
   useEffect(() => {
     loadAll()
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) supabase.from('profiles').select('full_name').eq('id', user.id).single()
-        .then(({ data }) => { if (data?.full_name) setAdminName(data.full_name) })
-    })
+    // Admin always joins as "Vedic Expert" so the client sees the role, not the admin's personal name
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function addSlot() {
