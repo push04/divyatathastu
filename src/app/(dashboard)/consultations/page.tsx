@@ -1,6 +1,7 @@
 'use client'
 
 import SudarshanLoader from '@/components/SudarshanLoader'
+import ConsultationRoom from '@/components/consultation/ConsultationRoom'
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -21,6 +22,8 @@ interface Booking {
   slot_id: string
   status: string
   booked_at: string
+  meet_link: string | null
+  call_mode: string
   consultation_slots: { expert_id: string; date: string; start_time: string; end_time: string } | null
 }
 
@@ -34,6 +37,14 @@ export default function ConsultationsPage() {
   const [tab, setTab] = useState<'book' | 'my'>('book')
   const [filter, setFilter] = useState('All')
   const [booking, setBooking] = useState<string | null>(null)
+  const [activeCallBookingId, setActiveCallBookingId] = useState<string | null>(null)
+  const [profile, setProfile] = useState<{ full_name: string } | null>(null)
+
+  useEffect(() => {
+    createClient().auth.getUser().then(({ data: { user } }) => {
+      if (user) createClient().from('profiles').select('full_name').eq('id', user.id).single().then(({ data }) => { if (data) setProfile(data as any) })
+    })
+  }, [])
 
   useEffect(() => {
     async function load() {
@@ -45,7 +56,7 @@ export default function ConsultationsPage() {
       if (slotsRes.data) setSlots(slotsRes.data)
 
       if (user) {
-        const { data: bks } = await supabase.from('consultation_bookings').select('id,slot_id,status,booked_at,consultation_slots(expert_id,date,start_time,end_time)').eq('user_id', user.id).order('booked_at', { ascending: false })
+        const { data: bks } = await supabase.from('consultation_bookings').select('id,slot_id,status,booked_at,meet_link,call_mode,consultation_slots(expert_id,date,start_time,end_time)').eq('user_id', user.id).order('booked_at', { ascending: false })
         if (bks) setBookings(bks as unknown as Booking[])
       }
       setLoading(false)
@@ -150,16 +161,60 @@ export default function ConsultationsPage() {
           ) : (
             bookings.map(b => {
               const slot = b.consultation_slots as any
+              const isActive = activeCallBookingId === b.id
               return (
-                <div key={b.id} className="card-divine p-4 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-[var(--indigo-deep)] flex items-center justify-center text-white font-bold flex-shrink-0">
-                    <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>person</span>
+                <div key={b.id} className="card-divine overflow-hidden">
+                  <div className="p-4 flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-[var(--indigo-deep)] flex items-center justify-center text-white font-bold flex-shrink-0">
+                      <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>person</span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-bold text-[var(--indigo-deep)]">Expert Consultation</p>
+                      <p className="text-sm text-[var(--warm-charcoal)]/60">{slot ? `${new Date(slot.date).toLocaleDateString('en-IN')} at ${slot.start_time}` : new Date(b.booked_at).toLocaleDateString('en-IN')}</p>
+                    </div>
+                    <div className="flex items-center gap-2 flex-wrap justify-end">
+                      <span className={`text-xs px-3 py-1 rounded-full font-medium ${b.status === 'confirmed' ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>{b.status}</span>
+                      {b.status === 'confirmed' && b.meet_link && (
+                        <a
+                          href={b.meet_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-all"
+                        >
+                          <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>meeting_room</span>
+                          Join via Google Meet
+                        </a>
+                      )}
+                      {b.status === 'confirmed' && b.call_mode !== 'google_meet' && (
+                        <button
+                          onClick={() => setActiveCallBookingId(isActive ? null : b.id)}
+                          className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full font-semibold transition-all ${isActive ? 'bg-red-100 text-red-700' : 'bg-[var(--indigo-deep)] text-white hover:opacity-90'}`}
+                        >
+                          <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                            {isActive ? 'call_end' : 'videocam'}
+                          </span>
+                          {isActive ? 'Leave Call' : 'Join Call'}
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <p className="font-bold text-[var(--indigo-deep)]">Expert Consultation</p>
-                    <p className="text-sm text-[var(--warm-charcoal)]/60">{slot ? `${new Date(slot.date).toLocaleDateString('en-IN')} at ${slot.start_time}` : new Date(b.booked_at).toLocaleDateString('en-IN')}</p>
-                  </div>
-                  <span className={`text-xs px-3 py-1 rounded-full font-medium ${b.status === 'confirmed' ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>{b.status}</span>
+                  {b.meet_link && b.status === 'confirmed' && (
+                    <div className="px-4 pb-3 pt-0">
+                      <div className="flex items-center gap-2 bg-blue-50 rounded-xl px-3 py-2 border border-blue-100">
+                        <span className="material-symbols-outlined text-blue-400 text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>info</span>
+                        <p className="text-xs text-blue-600">Your expert has set up a Google Meet for this session. Click <strong>Join via Google Meet</strong> above to join.</p>
+                      </div>
+                    </div>
+                  )}
+                  {isActive && b.call_mode !== 'google_meet' && (
+                    <div className="px-4 pb-4">
+                      <ConsultationRoom
+                        bookingId={b.id}
+                        userName={profile?.full_name || 'User'}
+                        onLeave={() => setActiveCallBookingId(null)}
+                      />
+                    </div>
+                  )}
                 </div>
               )
             })

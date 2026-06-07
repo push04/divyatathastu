@@ -21,6 +21,7 @@ const adminNav = [
   { href: '/admin/events', label: 'Events', icon: 'event_note' },
   { href: '/admin/blog', label: 'Blog', icon: 'article' },
   { href: '/admin/handwritten-reports', label: 'Handwritten Reports', icon: 'draw' },
+  { href: '/admin/services', label: 'Divine Services', icon: 'spa' },
   { href: '/admin/coupons', label: 'Coupons', icon: 'redeem' },
   { href: '/admin/notifications', label: 'Notifications', icon: 'notifications' },
 ]

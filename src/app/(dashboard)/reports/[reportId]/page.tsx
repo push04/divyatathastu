@@ -1847,14 +1847,14 @@ export default function ReportDetailPage() {
 
   const PRINT_CSS = `
     @media print {
-      @page { size: A4 portrait; margin: 1.5cm; }
-      body { visibility: hidden; }
+      @page { size: A4 portrait; margin: 0; }
+      body { visibility: hidden; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
       #rpa { display: block !important; visibility: visible !important; position: absolute; left: 0; top: 0; width: 100%; }
-      #rpa * { visibility: visible !important; }
+      #rpa * { visibility: visible !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
       .no-print { display: none !important; }
-      .card-divine { box-shadow: none !important; border: 1px solid #e5e7eb !important; break-inside: avoid; margin-bottom: 10px; }
+      .card-divine { box-shadow: none !important; border: 1px solid #d4a017 !important; break-inside: avoid; margin-bottom: 10px; }
       table { font-size: 9px !important; width: 100%; border-collapse: collapse; }
-      table th, table td { padding: 3px 6px !important; border: 1px solid #e5e7eb; }
+      table th, table td { padding: 3px 6px !important; border: 1px solid #c8a96e; }
       h2 { font-size: 15px !important; } h3 { font-size: 12px !important; }
       p, span, li { font-size: 11px !important; line-height: 1.55 !important; }
     }
@@ -1913,81 +1913,177 @@ export default function ReportDetailPage() {
         {/* Print-only: beautiful 30-page PDF layout */}
         <div id="rpa" ref={printRef} style={{ display: 'none' }}>
 
-          {/* COVER PAGE */}
-          <div style={{ minHeight: '27cm', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(160deg, #1a1535 0%, #2F2A44 50%, #1a1535 100%)', color: 'white', padding: '60px 48px', pageBreakAfter: 'always' }}>
-            <div style={{ width: '100%', maxWidth: 480, textAlign: 'center' }}>
-              <div style={{ fontSize: 80, marginBottom: 8, color: '#D4A017', lineHeight: 1 }}>ॐ</div>
-              <div style={{ width: 60, height: 2, background: 'linear-gradient(90deg, transparent, #D4A017, transparent)', margin: '16px auto' }} />
-              <p style={{ fontSize: 11, color: 'rgba(212,160,23,0.7)', letterSpacing: '0.4em', textTransform: 'uppercase', marginBottom: 20 }}>DivyaTathastu · Noxatra System</p>
-              <h1 style={{ fontFamily: 'Georgia, serif', fontSize: 34, fontWeight: 700, color: '#D4A017', marginBottom: 12, lineHeight: 1.2 }}>{title}</h1>
-              <div style={{ width: 60, height: 2, background: 'linear-gradient(90deg, transparent, #D4A017, transparent)', margin: '16px auto 28px' }} />
-              {member && (
-                <div style={{ background: 'rgba(212,160,23,0.1)', border: '1px solid rgba(212,160,23,0.3)', borderRadius: 12, padding: '20px 28px', marginBottom: 32 }}>
-                  <p style={{ fontSize: 22, fontWeight: 700, color: 'white', marginBottom: 8, fontFamily: 'Georgia, serif' }}>{member.full_name}</p>
-                  {member.date_of_birth && (
-                    <p style={{ fontSize: 13, color: '#D4A017', marginBottom: 4 }}>
-                      Born: {new Date(member.date_of_birth).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
-                    </p>
-                  )}
-                  {member.place_of_birth && <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>{member.place_of_birth}</p>}
+          {/* COVER PAGE — Tathastu parchment style */}
+          <div style={{ minHeight: '29.7cm', background: '#f5ede0', pageBreakAfter: 'always', position: 'relative', overflow: 'hidden', fontFamily: 'Georgia, serif' }}>
+            {/* Decorative corner borders */}
+            {[{ top: 12, left: 12 }, { top: 12, right: 12 }, { bottom: 12, left: 12 }, { bottom: 12, right: 12 }].map((pos, i) => (
+              <div key={i} style={{ position: 'absolute', width: 40, height: 40, ...pos, borderColor: '#c8922a', borderStyle: 'solid', borderWidth: i === 0 ? '3px 0 0 3px' : i === 1 ? '3px 3px 0 0' : i === 2 ? '0 0 3px 3px' : '0 3px 3px 0' }} />
+            ))}
+            {/* Full decorative border */}
+            <div style={{ position: 'absolute', inset: 8, border: '1px solid #c8922a', opacity: 0.4, pointerEvents: 'none' }} />
+
+            {/* Top Sanskrit invocation */}
+            <div style={{ textAlign: 'center', padding: '28px 0 0', color: '#cc2200', fontSize: 13, fontWeight: 700 }}>
+              ॐ महागणपतये नमः | श्रीमात्रे नमः |
+            </div>
+
+            {/* Two-column layout */}
+            <div style={{ display: 'flex', minHeight: '22cm', margin: '12px 24px 0' }}>
+              {/* LEFT — Gyanampeetham */}
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRight: '1px solid #c8922a', padding: '24px 28px', gap: 20 }}>
+                {/* G logo circle */}
+                <div style={{ width: 100, height: 100, borderRadius: '50%', background: '#6b3a2a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 48, fontWeight: 900, fontFamily: 'Georgia, serif', boxShadow: '0 4px 20px rgba(107,58,42,0.3)' }}>
+                  G
                 </div>
-              )}
-              <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>
-                Generated: {new Date(report.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
-              </p>
-              <div style={{ marginTop: 40, padding: '16px 20px', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8 }}>
-                <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', lineHeight: 1.7 }}>
-                  Prepared using Vedic Jyotish · Numerology · Chakra Analysis · Ayurveda<br />
-                  Vastu Shastra · Psychology · DMIT · Colour Therapy · Annual Prediction
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: 24, fontWeight: 900, color: '#2c1a0e', letterSpacing: '0.05em', fontFamily: 'Georgia, serif' }}>GYANAMPEETHAM</div>
+                  <div style={{ fontSize: 10, color: '#6b3a2a', letterSpacing: '0.25em', marginTop: 4 }}>"DISCOVER THE DIVINE WITHIN"</div>
+                </div>
+                {/* Lotus SVG */}
+                <svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+                  {[0,40,80,120,160,200,240,280,320].map((a, i) => (
+                    <ellipse key={i} cx="45" cy="45" rx="10" ry="28" fill="#7c6db5" opacity="0.55" transform={`rotate(${a} 45 45)`} />
+                  ))}
+                  <circle cx="45" cy="45" r="10" fill="#7c6db5" opacity="0.8" />
+                </svg>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: 16, fontWeight: 900, color: '#7c6db5', letterSpacing: '0.2em', fontFamily: 'Georgia, serif' }}>ANUSHTHAAN INDIA</div>
+                  <div style={{ fontSize: 8, color: '#7c6db5', letterSpacing: '0.15em', marginTop: 3 }}>"EDUCATING SOCIETY WITH WISDOM FOR A BETTER LIFE"</div>
+                </div>
+                <p style={{ fontSize: 8, color: '#888', textAlign: 'center', marginTop: 12, lineHeight: 1.5, maxWidth: 220 }}>
+                  "AI tools were utilized during development; however, all inventive steps, claims, and final outcomes are attributable to human ingenuity and supervision."
                 </p>
               </div>
+
+              {/* RIGHT — Tathastu report */}
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 28px', gap: 14 }}>
+                {/* Sri Yantra top */}
+                <div style={{ display: 'flex', gap: 20, marginBottom: 4 }}>
+                  {[0, 1].map(k => (
+                    <svg key={k} width="52" height="52" viewBox="0 0 52 52">
+                      <circle cx="26" cy="26" r="24" fill="none" stroke="#c8922a" strokeWidth="1" />
+                      <circle cx="26" cy="26" r="18" fill="none" stroke="#c8922a" strokeWidth="0.7" />
+                      {[0,45,90,135,180,225,270,315].map((a, i) => (
+                        <rect key={i} x="23" y="8" width="6" height="10" rx="3" fill="#c8922a" opacity="0.6" transform={`rotate(${a} 26 26)`} />
+                      ))}
+                      <polygon points="26,12 38,34 14,34" fill="none" stroke="#cc2200" strokeWidth="1.2" />
+                      <polygon points="26,40 38,18 14,18" fill="none" stroke="#cc2200" strokeWidth="1.2" />
+                    </svg>
+                  ))}
+                </div>
+                {/* © mark */}
+                <div style={{ alignSelf: 'flex-end', fontSize: 10, color: '#888', marginBottom: -8 }}>©</div>
+                {/* TATHASTU logo */}
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: 38, fontWeight: 900, color: '#2c1a0e', letterSpacing: '0.1em', fontFamily: 'Georgia, serif' }}>TATHASTU</div>
+                  <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, #c8922a, transparent)', margin: '6px 0' }} />
+                  <div style={{ fontSize: 11, color: '#2c1a0e', letterSpacing: '0.1em' }}>Decode Your Life. Design Your Future.</div>
+                </div>
+
+                {/* 18 Acharyas */}
+                <div style={{ textAlign: 'center', color: '#cc2200', fontSize: 10, lineHeight: 1.7 }}>
+                  <div style={{ fontWeight: 700, marginBottom: 2 }}>ज्योतिष शास्त्र (वेदांग ज्योतिष) के 18 आचार्य:</div>
+                  <div>सूर्य, पितामह (ब्रह्मा), व्यास, वशिष्ठ, अत्रि, पराशर, कश्यप, नारद, गर्ग,</div>
+                  <div>मरीचि, मनु, अंगिरा, लोमश, पौलिश, च्यवन, यवन, भृगु और शौनक</div>
+                </div>
+
+                {/* Yantra grid symbol */}
+                <svg width="70" height="60" viewBox="0 0 70 60">
+                  {[0,1,2,3,4].map(r => [0,1,2,3,4].map(c => (
+                    <polygon key={`${r}-${c}`} points={`${8+c*12},${30-r*10} ${14+c*12},${30-r*10+8} ${2+c*12},${30-r*10+8}`} fill="none" stroke="#cc2200" strokeWidth="1" />
+                  )))}
+                </svg>
+
+                {/* Report type */}
+                <div style={{ background: 'rgba(200,146,42,0.12)', border: '1px solid #c8922a', borderRadius: 8, padding: '12px 20px', textAlign: 'center', width: '100%' }}>
+                  <div style={{ fontSize: 11, color: '#c8922a', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 4 }}>{title}</div>
+                  {member && (
+                    <>
+                      <div style={{ fontSize: 18, fontWeight: 700, color: '#2c1a0e' }}>{member.full_name}</div>
+                      {member.date_of_birth && <div style={{ fontSize: 10, color: '#666', marginTop: 2 }}>Born: {new Date(member.date_of_birth).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</div>}
+                      {member.place_of_birth && <div style={{ fontSize: 10, color: '#888' }}>{member.place_of_birth}</div>}
+                    </>
+                  )}
+                  <div style={{ fontSize: 9, color: '#888', marginTop: 6 }}>Generated: {new Date(report.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+                </div>
+
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: '#2c1a0e' }}>~AN INITIATIVE OF ANUSHTHAAN INDIA~</div>
+                  <div style={{ fontSize: 9, color: '#666', marginTop: 3 }}>Contents are copyright protected and owned by DivyaTathastu</div>
+                </div>
+              </div>
+            </div>
+            {/* Bottom bar */}
+            <div style={{ textAlign: 'center', padding: '10px 0 20px', color: '#888', fontSize: 9 }}>
+              9858784784 · www.divyatathastu.com · levitatelabs.online@gmail.com
             </div>
           </div>
 
-          {/* ABOUT & BENEFITS PAGE */}
-          <div style={{ padding: '44px 44px', pageBreakAfter: 'always', minHeight: '27cm', background: '#fdf8f0' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, paddingBottom: 16, borderBottom: '2px solid #D4A017' }}>
-              <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#2F2A44', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, color: '#D4A017', flexShrink: 0 }}>ॐ</div>
-              <div>
-                <p style={{ fontSize: 10, color: '#D4A017', letterSpacing: '0.2em', textTransform: 'uppercase' }}>Preface</p>
-                <h2 style={{ fontFamily: 'Georgia, serif', fontSize: 20, color: '#2F2A44', fontWeight: 700, margin: 0 }}>Understanding Your Report</h2>
+          {/* ABOUT & BENEFITS PAGE — parchment style */}
+          <div style={{ padding: '0', pageBreakAfter: 'always', minHeight: '29.7cm', background: '#f5ede0', fontFamily: 'Georgia, serif', position: 'relative' }}>
+            {/* Decorative border */}
+            <div style={{ position: 'absolute', inset: 8, border: '1px solid #c8922a', opacity: 0.5, pointerEvents: 'none' }} />
+            {[{ top: 12, left: 12 }, { top: 12, right: 12 }, { bottom: 12, left: 12 }, { bottom: 12, right: 12 }].map((pos, i) => (
+              <div key={i} style={{ position: 'absolute', width: 32, height: 32, ...pos, borderColor: '#c8922a', borderStyle: 'solid', borderWidth: i === 0 ? '3px 0 0 3px' : i === 1 ? '3px 3px 0 0' : i === 2 ? '0 0 3px 3px' : '0 3px 3px 0' }} />
+            ))}
+            <div style={{ padding: '36px 44px' }}>
+              {/* Divine Guidance header */}
+              <div style={{ textAlign: 'center', marginBottom: 20, paddingBottom: 14, borderBottom: '2px solid #c8922a' }}>
+                <div style={{ fontSize: 16, fontWeight: 700, color: '#1a3a8c' }}>Divine Guidance & Remedy Instructions</div>
+                <div style={{ fontSize: 10, color: '#cc2200', marginTop: 4 }}>Shree Matra Namah</div>
               </div>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
-              <div style={{ background: 'white', borderRadius: 10, padding: 18, border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                <h3 style={{ color: '#E36414', fontSize: 13, fontWeight: 700, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>🔭 What Is This Report?</h3>
-                <p style={{ fontSize: 11, color: '#374151', lineHeight: 1.65 }}>The Noxatra Report integrates 11 Vedic life-science systems into a single comprehensive document. Jyotish astrology, numerology, Ayurvedic Prakriti, chakra analysis, Vastu Shastra, Vedic psychology, DMIT, colour therapy, auspicious timing, and personalized remedies — all computed precisely from your birth data.</p>
-              </div>
-              <div style={{ background: 'white', borderRadius: 10, padding: 18, border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
-                <h3 style={{ color: '#2F2A44', fontSize: 13, fontWeight: 700, marginBottom: 10 }}>✨ How To Use This Report</h3>
-                <p style={{ fontSize: 11, color: '#374151', lineHeight: 1.65 }}>Read each chapter as a mirror to your soul — not as fate, but as guidance. Use the planetary positions to understand your natural timing. Apply the remedies consistently. Align your home per Vastu recommendations. Chant your personal mantra daily. Let this report become your personal dharmic compass.</p>
-              </div>
-            </div>
-            <div style={{ background: '#2F2A44', borderRadius: 10, padding: 22, color: 'white', marginBottom: 18 }}>
-              <h3 style={{ color: '#D4A017', fontSize: 13, fontWeight: 700, marginBottom: 14 }}>What This Report Covers — {visibleChapters.length} Chapters</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
-                {[
-                  { e: '⭐', t: 'Birth Chart (Kundli)', d: 'Planets, houses, yogas, dasha periods' },
-                  { e: '🔢', t: 'Numerology', d: 'Life path, soul urge, karmic numbers' },
-                  { e: '🌈', t: 'Chakra Analysis', d: '7 energy centers with balance scores' },
-                  { e: '🌿', t: 'Prakriti (Ayurveda)', d: 'Body constitution & health blueprint' },
-                  { e: '🔶', t: 'Yantra & Colour', d: 'Personal yantra, gemstone, power colors' },
-                  { e: '📿', t: 'Mantra Practice', d: 'Personalized beej mantra & ritual guide' },
-                  { e: '🧘', t: 'Psychology Profile', d: 'Moon archetype & personality insights' },
-                  { e: '🏠', t: 'Astro Vastu', d: 'Home directions aligned to your planets' },
-                  { e: '📅', t: 'Muhurta & Timing', d: 'Auspicious dates for key life decisions' },
-                ].map(b => (
-                  <div key={b.t} style={{ background: 'rgba(255,255,255,0.07)', borderRadius: 7, padding: 10 }}>
-                    <div style={{ fontSize: 16, marginBottom: 4 }}>{b.e}</div>
-                    <p style={{ fontSize: 10, fontWeight: 700, color: '#D4A017', marginBottom: 3 }}>{b.t}</p>
-                    <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.6)', lineHeight: 1.4 }}>{b.d}</p>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                {/* Left column */}
+                <div>
+                  <p style={{ fontSize: 10.5, color: '#1a1a1a', lineHeight: 1.75, marginBottom: 12 }}>
+                    This report has been prepared by the Tathastu Team based on the details provided by the devotee.
+                  </p>
+                  <p style={{ fontSize: 10.5, color: '#1a1a1a', lineHeight: 1.75, marginBottom: 12 }}>
+                    We sincerely request the devotee to follow all the remedies mentioned in this report with full dedication, discipline, and unwavering faith. Faith and devotion are the strongest mediums through which divine blessings flow into one's life.
+                  </p>
+                  <p style={{ fontSize: 10.5, color: '#1a1a1a', lineHeight: 1.75, marginBottom: 12 }}>
+                    For purification and correction of your karmic energies, it is essential to practice these remedies continuously for a minimum of 90 days.
+                  </p>
+                  <p style={{ fontSize: 10.5, color: '#1a1a1a', lineHeight: 1.75, marginBottom: 16 }}>
+                    May divine grace guide you, protect you, and fulfill your righteous wishes.
+                  </p>
+                  <p style={{ fontSize: 10, color: '#555' }}>Regards,<br />Tathastu Team</p>
+
+                  <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid #c8922a' }}>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: '#1a3a8c', marginBottom: 8 }}>Divine Wisdom Behind the Tathastu Report</div>
+                    <p style={{ fontSize: 10.5, color: '#1a1a1a', lineHeight: 1.75 }}>
+                      Preparing a Tathastu Report is not just a process—it is a sacred responsibility. Each report is carefully created based on multiple dimensions of life, integrating the wisdom of Vedic Astrology, Bhrigu Nandi Nadi, and Jaimini (Gemini) Jyotish, so that the remedies can deliver faster and more impactful results.
+                    </p>
                   </div>
-                ))}
+                </div>
+                {/* Right column — 13 reports grid */}
+                <div style={{ background: 'white', border: '2px solid #c8922a', borderRadius: 10, padding: 16 }}>
+                  <div style={{ textAlign: 'center', marginBottom: 10 }}>
+                    <div style={{ fontSize: 10, color: '#1a1a1a', fontWeight: 700, lineHeight: 1.5 }}>
+                      India's First Comprehensive Report<br />
+                      <span style={{ color: '#cc2200' }}>Covering 360° Aspects of Human Life</span><br />
+                      for Future Holistic Growth and Development
+                    </div>
+                    <div style={{ fontSize: 18, fontWeight: 900, color: '#2c1a0e', margin: '8px 0 2px', letterSpacing: '0.08em' }}>TATHASTU</div>
+                    <div style={{ fontSize: 9, color: '#888', letterSpacing: '0.1em' }}>— ONE FAMILY REPORT —</div>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: '#1a3a8c', marginTop: 6, padding: '3px 8px', border: '1px solid #1a3a8c', borderRadius: 4, display: 'inline-block' }}>
+                      13 PERSONALIZED REPORTS
+                    </div>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, fontSize: 9, color: '#2c1a0e' }}>
+                    {['Astrology Report', 'Astro-Vastu Report', 'Shakti Chakra Report', 'Numerology Report', 'Mobile Number Report', 'Psychology Report', 'Prakriti Report', 'Yantra Colour Report', 'DMIT Report', 'Colour Therapy Report', 'Child Development Report', 'Mantra Chanting Guidance', 'Affirmation Report (Tithi Wise)'].map(r => (
+                      <div key={r} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <span style={{ color: '#c8922a', fontSize: 10 }}>✦</span> {r}
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ marginTop: 12, textAlign: 'center', background: '#f5ede0', borderRadius: 6, padding: '8px 12px' }}>
+                    <div style={{ fontSize: 9, color: '#1a1a1a', marginBottom: 4 }}>✓ Hurry! Life Time Report Support &nbsp; ✓ Complete Guidance & Remedies</div>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: '#1a1a1a' }}>With Remedies Contact:</div>
+                    <div style={{ fontSize: 15, fontWeight: 900, color: '#cc2200', marginTop: 2 }}>📞 9858784784</div>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div style={{ background: 'white', borderRadius: 10, padding: 18, border: '1px solid #e5e7eb' }}>
-              <h3 style={{ color: '#2F2A44', fontSize: 13, fontWeight: 700, marginBottom: 10 }}>About DivyaTathastu</h3>
-              <p style={{ fontSize: 11, color: '#374151', lineHeight: 1.65 }}>DivyaTathastu is India's premier Vedic life sciences platform, combining 5,000 years of ancient Indian wisdom with NASA-grade computational precision. Our Noxatra engine processes birth data through 11 distinct analytical frameworks. Planetary positions are computed with Lahiri ayanamsa (official ayanamsa of the Government of India) for authentic sidereal astrology. Every report is freshly generated — no templates, only precise personalized calculations.</p>
             </div>
           </div>
 
@@ -2013,42 +2109,63 @@ export default function ReportDetailPage() {
 
           {/* CHAPTER PAGES */}
           {visibleChapters.map((c) => (
-            <div key={c.id} style={{ pageBreakBefore: 'always' }}>
-              <div style={{ background: 'linear-gradient(135deg, #2F2A44 0%, #3d3560 100%)', padding: '28px 44px', color: 'white' }}>
-                <p style={{ fontSize: 10, color: 'rgba(212,160,23,0.75)', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 6 }}>Chapter {c.number}</p>
-                <h2 style={{ fontFamily: 'Georgia, serif', fontSize: 26, fontWeight: 700, color: '#D4A017', marginBottom: 4, lineHeight: 1.2 }}>{c.title}</h2>
-                <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)', fontFamily: 'Georgia, serif', margin: 0 }}>{c.sanskrit}</p>
+            <div key={c.id} style={{ pageBreakBefore: 'always', background: '#f5ede0', minHeight: '29.7cm', position: 'relative', fontFamily: 'Georgia, serif' }}>
+              {/* Chapter decorative border */}
+              <div style={{ position: 'absolute', inset: 8, border: '1px solid #c8922a', opacity: 0.4, pointerEvents: 'none' }} />
+              {/* Chapter header — blue/gold style like Tathastu book */}
+              <div style={{ padding: '24px 44px 18px', borderBottom: '2px solid #c8922a', background: '#f5ede0' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#1a3a8c', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 14, fontWeight: 700, flexShrink: 0, fontFamily: 'Georgia, serif' }}>
+                    {c.number}
+                  </div>
+                  <div>
+                    <p style={{ fontSize: 9, color: '#c8922a', letterSpacing: '0.25em', textTransform: 'uppercase', marginBottom: 3, fontFamily: 'Georgia, serif' }}>Chapter {c.number}</p>
+                    <h2 style={{ fontFamily: 'Georgia, serif', fontSize: 22, fontWeight: 700, color: '#1a3a8c', marginBottom: 2, lineHeight: 1.2 }}>{c.title}</h2>
+                    {c.sanskrit && <p style={{ fontSize: 13, color: '#cc2200', fontFamily: 'Georgia, serif', margin: 0 }}>{c.sanskrit}</p>}
+                  </div>
+                  <div style={{ marginLeft: 'auto', fontSize: 28, color: '#c8922a', opacity: 0.5 }}>ॐ</div>
+                </div>
               </div>
-              <div style={{ padding: '24px 44px 36px', background: '#ffffff' }}>
+              <div style={{ padding: '20px 44px 36px', background: '#f5ede0' }}>
                 {c.content}
               </div>
             </div>
           ))}
 
-          {/* DISCLAIMER PAGE */}
-          <div style={{ padding: '44px', pageBreakBefore: 'always', background: '#fdf8f0', minHeight: '22cm' }}>
-            <div style={{ borderBottom: '2px solid #D4A017', paddingBottom: 14, marginBottom: 24 }}>
-              <h2 style={{ fontFamily: 'Georgia, serif', fontSize: 18, color: '#2F2A44', fontWeight: 700, margin: 0 }}>Appendix: Disclaimer & Guidance Notes</h2>
-            </div>
-            {[
-              { title: 'Nature of This Report', body: 'This Noxatra report is prepared for informational, educational, and self-discovery purposes only. It is based on traditional Indian astrological, numerological, and Ayurvedic systems and should be treated as guidance for self-awareness rather than as definitive prediction or professional advice.' },
-              { title: 'Medical Disclaimer', body: 'The Ayurvedic and health-related content (Prakriti analysis, health recommendations, dietary suggestions) is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider for medical decisions.' },
-              { title: 'Financial Disclaimer', body: 'Muhurta timing guidance and financial period analysis are traditional Vedic tools for awareness and should not be used as the sole basis for financial or investment decisions. Consult qualified financial advisors for investment choices.' },
-              { title: 'Astronomical Accuracy', body: 'Planetary positions are calculated using the NASA-grade astronomy-engine library with Lahiri ayanamsa (the official standard of the Government of India). Results depend on the accuracy of birth date, time, and place provided.' },
-              { title: 'Free Will & Destiny', body: 'Vedic astrology recognizes that the birth chart shows tendencies and potential — not fixed destiny. Human free will, conscious effort, and spiritual practice can always influence outcomes. This report is a map, not a sentence.' },
-            ].map(item => (
-              <div key={item.title} style={{ marginBottom: 16, background: 'white', borderRadius: 8, padding: 16, border: '1px solid #e5e7eb' }}>
-                <p style={{ fontSize: 12, fontWeight: 700, color: '#2F2A44', marginBottom: 6 }}>{item.title}</p>
-                <p style={{ fontSize: 11, color: '#374151', lineHeight: 1.65, margin: 0 }}>{item.body}</p>
-              </div>
+          {/* DISCLAIMER PAGE — parchment */}
+          <div style={{ padding: '0', pageBreakBefore: 'always', background: '#f5ede0', minHeight: '29.7cm', position: 'relative', fontFamily: 'Georgia, serif' }}>
+            <div style={{ position: 'absolute', inset: 8, border: '1px solid #c8922a', opacity: 0.4, pointerEvents: 'none' }} />
+            {[{ top: 12, left: 12 }, { top: 12, right: 12 }, { bottom: 12, left: 12 }, { bottom: 12, right: 12 }].map((pos, i) => (
+              <div key={i} style={{ position: 'absolute', width: 32, height: 32, ...pos, borderColor: '#c8922a', borderStyle: 'solid', borderWidth: i === 0 ? '3px 0 0 3px' : i === 1 ? '3px 3px 0 0' : i === 2 ? '0 0 3px 3px' : '0 3px 3px 0' }} />
             ))}
-            <div style={{ marginTop: 28, background: '#2F2A44', borderRadius: 10, padding: '24px 28px', color: 'white', textAlign: 'center' }}>
-              <p style={{ fontSize: 28, margin: '0 0 8px', color: '#D4A017' }}>ॐ तत् सत्</p>
-              <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.65)', marginBottom: 8 }}>
-                May this report guide you on your path to self-knowledge and dharmic living.
-              </p>
-              <p style={{ fontSize: 12, color: '#D4A017', marginBottom: 4 }}>— DivyaTathastu · Noxatra Report System</p>
-              <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>www.divyatathastu.com</p>
+            <div style={{ padding: '36px 44px' }}>
+              <div style={{ borderBottom: '2px solid #c8922a', paddingBottom: 14, marginBottom: 24, display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ fontSize: 24, color: '#c8922a' }}>ॐ</div>
+                <h2 style={{ fontFamily: 'Georgia, serif', fontSize: 18, color: '#1a3a8c', fontWeight: 700, margin: 0 }}>Appendix: Disclaimer & Guidance Notes</h2>
+              </div>
+              {[
+                { title: 'Nature of This Report', body: 'This Tathastu report is prepared for informational, educational, and self-discovery purposes only. It is based on traditional Indian astrological, numerological, and Ayurvedic systems and should be treated as guidance for self-awareness rather than as definitive prediction or professional advice.' },
+                { title: 'Medical Disclaimer', body: 'The Ayurvedic and health-related content (Prakriti analysis, health recommendations, dietary suggestions) is not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider for medical decisions.' },
+                { title: 'Financial Disclaimer', body: 'Muhurta timing guidance and financial period analysis are traditional Vedic tools for awareness and should not be used as the sole basis for financial or investment decisions. Consult qualified financial advisors for investment choices.' },
+                { title: 'Astronomical Accuracy', body: 'Planetary positions are calculated using the NASA-grade astronomy-engine library with Lahiri ayanamsa (the official standard of the Government of India). Results depend on the accuracy of birth date, time, and place provided.' },
+                { title: 'Free Will & Destiny', body: 'Vedic astrology recognizes that the birth chart shows tendencies and potential — not fixed destiny. Human free will, conscious effort, and spiritual practice can always influence outcomes. This report is a map, not a sentence.' },
+              ].map(item => (
+                <div key={item.title} style={{ marginBottom: 14, background: 'white', borderRadius: 8, padding: '12px 16px', border: '1px solid #d4b896' }}>
+                  <p style={{ fontSize: 11.5, fontWeight: 700, color: '#1a3a8c', marginBottom: 5 }}>{item.title}</p>
+                  <p style={{ fontSize: 10.5, color: '#374151', lineHeight: 1.7, margin: 0 }}>{item.body}</p>
+                </div>
+              ))}
+              {/* Closing — parchment style, no dark box */}
+              <div style={{ marginTop: 24, border: '2px solid #c8922a', borderRadius: 10, padding: '20px 28px', textAlign: 'center', background: 'rgba(200,146,42,0.06)' }}>
+                <p style={{ fontSize: 32, margin: '0 0 6px', color: '#cc2200', fontFamily: 'Georgia, serif' }}>ॐ तत् सत्</p>
+                <p style={{ fontSize: 11, color: '#2c1a0e', marginBottom: 6, lineHeight: 1.7 }}>
+                  May this report guide you on your path to self-knowledge and dharmic living.<br />
+                  Follow the remedies with faith, patience and devotion for 90 days minimum.
+                </p>
+                <p style={{ fontSize: 11, color: '#1a3a8c', fontWeight: 700, marginBottom: 3 }}>— DivyaTathastu · Tathastu Report System</p>
+                <p style={{ fontSize: 9, color: '#888' }}>www.divyatathastu.com · 9858784784</p>
+                <p style={{ fontSize: 8, color: '#aaa', marginTop: 8 }}>Contents of this product/report are copyright protected and owned by DivyaTathastu / Abhishek Pandey</p>
+              </div>
             </div>
           </div>
 

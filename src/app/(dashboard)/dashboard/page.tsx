@@ -27,6 +27,81 @@ const QUICK = [
   { href: '/consultations', label: 'Book Consult', icon: 'event', color: 'bg-rose-600' },
 ]
 
+const DIVINE_SERVICES = [
+  {
+    href: '/gyanampeetham',
+    label: 'Gyanampeetham',
+    desc: 'Discover the Divine Within',
+    emoji: '🕉️',
+    bg: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
+    badge: null,
+    color: '#92400e',
+  },
+  {
+    href: '/shop?category=vastu-paintings',
+    label: 'Vastu Paintings',
+    desc: 'Sacred art for home harmony',
+    emoji: '🖼️',
+    bg: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
+    badge: null,
+    color: '#1e40af',
+  },
+  {
+    href: '/sadhana',
+    label: 'Saadhana',
+    desc: 'Guided spiritual practices',
+    emoji: '🙏',
+    bg: 'linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%)',
+    badge: 'Book',
+    color: '#6b21a8',
+  },
+  {
+    href: '/mahaganpati',
+    label: 'Mahaganpati',
+    desc: 'Ganesh puja & divine blessings',
+    emoji: '🐘',
+    bg: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)',
+    badge: 'Book',
+    color: '#9d174d',
+  },
+  {
+    href: '/puja',
+    label: 'Pooja & Rituals',
+    desc: 'Vedic ceremonies & rituals',
+    emoji: '🪔',
+    bg: 'linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%)',
+    badge: 'Book',
+    color: '#9a3412',
+  },
+  {
+    href: '/ardra-jalam',
+    label: 'Ardra Jalam',
+    desc: 'Sacred healing water — special product',
+    emoji: '💧',
+    bg: 'linear-gradient(135deg, #ecfdf5 0%, #a7f3d0 100%)',
+    badge: 'Special',
+    color: '#065f46',
+  },
+  {
+    href: '/ayurveda',
+    label: 'Ayurveda & Med Astro',
+    desc: 'Holistic health & planetary healing',
+    emoji: '🌿',
+    bg: 'linear-gradient(135deg, #f0fdf4 0%, #bbf7d0 100%)',
+    badge: null,
+    color: '#166534',
+  },
+  {
+    href: '/courses',
+    label: 'Learning Courses',
+    desc: 'Live & recorded Vedic lectures',
+    emoji: '📚',
+    bg: 'linear-gradient(135deg, #eff6ff 0%, #bfdbfe 100%)',
+    badge: 'New',
+    color: '#1e3a8a',
+  },
+]
+
 export default function DashboardPage() {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [planType, setPlanType] = useState<string>('free')
@@ -221,6 +296,43 @@ export default function DashboardPage() {
                   <span className="material-symbols-outlined text-white text-[18px]">{a.icon}</span>
                 </div>
                 <p className="text-[11px] font-semibold text-[var(--indigo-deep)]" style={{ fontFamily: "'Sora', sans-serif" }}>{a.label}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* ── Divine Services ── */}
+        <div className="md:col-span-12">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--indigo-deep)]/50" style={{ fontFamily: "'Sora', sans-serif" }}>
+              Divine Services
+            </h2>
+            <span className="text-[10px] text-[var(--terracotta)] font-semibold" style={{ fontFamily: "'Sora', sans-serif" }}>Anushthaan India · Gyanampeetham</span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {DIVINE_SERVICES.map(s => (
+              <Link
+                key={s.href}
+                href={s.href}
+                className="bento-card p-4 flex flex-col items-center text-center hover:shadow-lg hover:-translate-y-0.5 group transition-all duration-200 relative overflow-hidden"
+              >
+                <div
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 text-2xl group-hover:scale-110 transition-transform shadow-sm"
+                  style={{ background: s.bg }}
+                >
+                  {s.emoji}
+                </div>
+                <p className="text-[13px] font-semibold text-[var(--indigo-deep)] mb-1 leading-tight" style={{ fontFamily: "'Sora', sans-serif" }}>
+                  {s.label}
+                </p>
+                <p className="text-[10px] text-[var(--indigo-deep)]/40 leading-tight mb-2">{s.desc}</p>
+                {s.badge && (
+                  <span className="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wide"
+                    style={{ background: `${s.color}15`, color: s.color }}>
+                    {s.badge}
+                  </span>
+                )}
+                <span className="material-symbols-outlined text-[14px] text-[var(--outline-variant)] absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
               </Link>
             ))}
           </div>

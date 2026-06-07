@@ -54,34 +54,37 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing reportId or sectionType' }, { status: 400 })
     }
 
-    // Fetch report + member data in one query
+    // Verify user owns a family
+    const { data: family } = await supabase
+      .from('families')
+      .select('id')
+      .eq('owner_id', user.id)
+      .single()
+
+    if (!family) return NextResponse.json({ error: 'Family not found' }, { status: 404 })
+
+    // Fetch report and verify it belongs to this family
     const { data: report, error: reportErr } = await supabase
       .from('reports')
-      .select(`
-        id, report_type, report_content, raw_data, status,
-        family_members!inner(
-          id, full_name, date_of_birth, time_of_birth, place_of_birth,
-          birth_latitude, birth_longitude, birth_timezone, gender, mobile_number,
-          families!inner(owner_id)
-        )
-      `)
+      .select('id, report_type, report_content, raw_data, status, family_member_id')
       .eq('id', reportId)
+      .eq('family_id', family.id)
       .single()
 
     if (reportErr || !report) {
-      return NextResponse.json({ error: 'Report not found' }, { status: 404 })
+      return NextResponse.json({ error: 'Report not found or access denied' }, { status: 404 })
     }
 
-    // Verify ownership
-    const fm = report.family_members as any
-    if (fm?.families?.owner_id !== user.id) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-    }
+    // Fetch member data
+    const { data: member, error: memberErr } = await supabase
+      .from('family_members')
+      .select('id, full_name, date_of_birth, time_of_birth, place_of_birth, birth_latitude, birth_longitude, birth_timezone, gender, mobile_number')
+      .eq('id', report.family_member_id)
+      .eq('family_id', family.id)
+      .single()
 
-    const member = fm as {
-      id: string; full_name: string; date_of_birth: string; time_of_birth: string | null
-      place_of_birth: string; birth_latitude: number | null; birth_longitude: number | null
-      birth_timezone: string | null; gender: string | null; mobile_number: string | null
+    if (memberErr || !member) {
+      return NextResponse.json({ error: 'Family member not found' }, { status: 404 })
     }
 
     const existingContent = (report.report_content || {}) as Record<string, unknown>
