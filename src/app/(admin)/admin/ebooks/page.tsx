@@ -180,7 +180,7 @@ export default function AdminEbooksPage() {
         author: 'MahaTathastu',
         language: null,
         tags: [],
-      }, { onConflict: 'id' })
+      } as any, { onConflict: 'id' })
     }
 
     setUploadProgress(100)

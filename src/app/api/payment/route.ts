@@ -118,7 +118,7 @@ export async function POST(req: NextRequest) {
 
     // Fulfil ebook purchases — sync ebooks table + ebook_purchases for each ebook item
     const { data: orderRow } = await supabase.from('orders').select('items,user_id').eq('id', db_order_id).single()
-    const orderItems: any[] = orderRow?.items || []
+    const orderItems: any[] = (orderRow?.items as any[]) || []
     const ebookItems = orderItems.filter((i: any) => i.product_type === 'ebook')
     for (const item of ebookItems) {
       const { data: product } = await supabase
@@ -136,7 +136,7 @@ export async function POST(req: NextRequest) {
         author: 'MahaTathastu',
         language: null,
         tags: [],
-      }, { onConflict: 'id' })
+      } as any, { onConflict: 'id' })
       // Create purchase record (avoid duplicate if retried)
       const { data: existing } = await supabase
         .from('ebook_purchases')
@@ -151,7 +151,7 @@ export async function POST(req: NextRequest) {
           download_count: 0,
           max_downloads: product.ebook_download_limit ?? 3,
           purchased_at: new Date().toISOString(),
-        })
+        } as any)
       }
     }
 
