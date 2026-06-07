@@ -57,7 +57,8 @@ function Section({ title, icon, children, printAlwaysOpen }: { title: string; ic
   )
 }
 
-function nameToColor(name: string): string {
+function nameToColor(name: unknown): string {
+  if (!name || typeof name !== 'string') return '#c4a882'
   const map: Record<string, string> = {
     red: '#ef4444', 'dark red': '#991b1b', 'deep red': '#7f1d1d', 'blood red': '#b91c1c',
     orange: '#f97316', 'dark orange': '#ea580c', saffron: '#f59e0b', amber: '#f59e0b',
@@ -315,56 +316,99 @@ function NumerologySection({ data }: { data: any }) {
 function ChakraSection({ data }: { data: any }) {
   const chakras = Array.isArray(data) ? data : (data.chakras || data)
   if (!chakras?.length) return null
-  const CHAKRA_COLORS = ['#DC2626', '#EA580C', '#CA8A04', '#16A34A', '#0284C7', '#4F46E5', '#7C3AED']
-  const CHAKRA_BG = ['bg-red-50', 'bg-orange-50', 'bg-yellow-50', 'bg-green-50', 'bg-sky-50', 'bg-indigo-50', 'bg-violet-50']
+  const CD = [
+    { color: '#DC2626', from: 'from-red-100',    to: 'to-red-50',    border: 'border-red-200' },
+    { color: '#EA580C', from: 'from-orange-100',  to: 'to-orange-50', border: 'border-orange-200' },
+    { color: '#CA8A04', from: 'from-yellow-100',  to: 'to-yellow-50', border: 'border-yellow-200' },
+    { color: '#16A34A', from: 'from-green-100',   to: 'to-green-50',  border: 'border-green-200' },
+    { color: '#0284C7', from: 'from-sky-100',     to: 'to-sky-50',    border: 'border-sky-200' },
+    { color: '#4F46E5', from: 'from-indigo-100',  to: 'to-indigo-50', border: 'border-indigo-200' },
+    { color: '#7C3AED', from: 'from-violet-100',  to: 'to-violet-50', border: 'border-violet-200' },
+  ]
   return (
     <Section title="Shakti Chakra Analysis" icon="local_florist">
-      <div className="space-y-4 mt-4">
+      {/* Rainbow overview bar */}
+      <div className="mt-4 mb-5 flex gap-1 h-5 rounded-full overflow-hidden">
         {chakras.map((c: any, i: number) => (
-          <div key={c.name} className={`rounded-xl p-4 ${CHAKRA_BG[i] || 'bg-[var(--warm-sand)]'}`}>
-            <div className="flex justify-between items-start mb-2">
-              <div>
-                <span className="font-bold text-[var(--indigo-deep)] text-sm">{c.name}</span>
-                {c.sanskrit && <span className="ml-2 text-xs text-[var(--warm-charcoal)]/50">({c.sanskrit}) · {c.element}</span>}
-              </div>
-              <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${c.status === 'balanced' ? 'bg-emerald-100 text-emerald-700' : c.status === 'blocked' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
-                {c.status} · {c.level}%
-              </span>
-            </div>
-            <div className="bg-white/60 rounded-full h-2 overflow-hidden mb-3">
-              <div className="h-full rounded-full transition-all" style={{ width: `${c.level}%`, backgroundColor: CHAKRA_COLORS[i] }} />
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-              {c.mantras?.length > 0 && (
-                <div>
-                  <p className="font-semibold text-[var(--warm-charcoal)]/50 mb-0.5">Mantra</p>
-                  <p className="text-[var(--indigo-deep)] font-bold">{c.mantras[0]}</p>
-                </div>
-              )}
-              {c.crystals?.length > 0 && (
-                <div>
-                  <p className="font-semibold text-[var(--warm-charcoal)]/50 mb-0.5">Crystals</p>
-                  <p className="text-[var(--indigo-deep)]">{c.crystals.slice(0, 2).join(', ')}</p>
-                </div>
-              )}
-              {c.yoga?.length > 0 && (
-                <div>
-                  <p className="font-semibold text-[var(--warm-charcoal)]/50 mb-0.5">Yoga Pose</p>
-                  <p className="text-[var(--indigo-deep)]">{c.yoga[0]}</p>
-                </div>
-              )}
-              {c.foods?.length > 0 && (
-                <div>
-                  <p className="font-semibold text-[var(--warm-charcoal)]/50 mb-0.5">Healing Foods</p>
-                  <p className="text-[var(--indigo-deep)]">{c.foods.slice(0, 2).join(', ')}</p>
-                </div>
-              )}
-            </div>
-            {c.affirmations?.length > 0 && (
-              <p className="mt-2 text-xs italic text-[var(--warm-charcoal)]/60 border-l-2 border-current pl-2">"{c.affirmations[0]}"</p>
-            )}
-          </div>
+          <div
+            key={c.name || i}
+            className="flex-1 rounded-sm"
+            style={{ backgroundColor: CD[i]?.color || '#9ca3af', opacity: Math.min(1, (c.level || 50) / 100 + 0.35) }}
+            title={`${c.name}: ${c.level}%`}
+          />
         ))}
+      </div>
+
+      <div className="space-y-3">
+        {chakras.map((c: any, i: number) => {
+          const cd = CD[i] || { color: '#9ca3af', from: 'from-gray-100', to: 'to-gray-50', border: 'border-gray-200' }
+          const isBalanced = c.status === 'balanced'
+          const isBlocked = c.status === 'blocked'
+          return (
+            <div key={c.name || i} className={`rounded-2xl bg-gradient-to-r ${cd.from} ${cd.to} border ${cd.border} p-4`}>
+              <div className="flex items-start gap-4">
+                {/* Glowing chakra circle */}
+                <div
+                  className="flex-shrink-0 w-14 h-14 rounded-full flex flex-col items-center justify-center text-white shadow-lg"
+                  style={{ backgroundColor: cd.color, boxShadow: `0 0 18px ${cd.color}60` }}
+                >
+                  <span className="text-sm font-black leading-none">{c.level ?? '–'}%</span>
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1.5 flex-wrap gap-1">
+                    <div>
+                      <span className="font-bold text-[var(--indigo-deep)]">{c.name}</span>
+                      {c.sanskrit && <span className="ml-1.5 text-xs text-[var(--warm-charcoal)]/50 italic">{c.sanskrit}</span>}
+                      {c.element && <span className="ml-1.5 text-[10px] text-[var(--warm-charcoal)]/40">· {c.element}</span>}
+                    </div>
+                    <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold text-white ${isBalanced ? 'bg-emerald-500' : isBlocked ? 'bg-red-500' : 'bg-amber-500'}`}>
+                      {c.status}
+                    </span>
+                  </div>
+
+                  {/* Progress bar */}
+                  <div className="bg-white/50 rounded-full h-2 overflow-hidden mb-3">
+                    <div className="h-full rounded-full" style={{ width: `${c.level ?? 0}%`, backgroundColor: cd.color }} />
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                    {c.mantras?.length > 0 && (
+                      <div className="bg-white/60 rounded-xl p-2.5">
+                        <p className="font-semibold text-[var(--warm-charcoal)]/50 mb-0.5">Beej Mantra</p>
+                        <p className="font-black text-base leading-none" style={{ color: cd.color }}>{c.mantras[0]}</p>
+                      </div>
+                    )}
+                    {c.crystals?.length > 0 && (
+                      <div className="bg-white/60 rounded-xl p-2.5">
+                        <p className="font-semibold text-[var(--warm-charcoal)]/50 mb-0.5">Crystals</p>
+                        <p className="text-[var(--indigo-deep)] font-medium">{c.crystals.slice(0, 2).join(', ')}</p>
+                      </div>
+                    )}
+                    {c.yoga?.length > 0 && (
+                      <div className="bg-white/60 rounded-xl p-2.5">
+                        <p className="font-semibold text-[var(--warm-charcoal)]/50 mb-0.5">Yoga</p>
+                        <p className="text-[var(--indigo-deep)] font-medium">{c.yoga[0]}</p>
+                      </div>
+                    )}
+                    {c.foods?.length > 0 && (
+                      <div className="bg-white/60 rounded-xl p-2.5">
+                        <p className="font-semibold text-[var(--warm-charcoal)]/50 mb-0.5">Foods</p>
+                        <p className="text-[var(--indigo-deep)] font-medium">{c.foods.slice(0, 2).join(', ')}</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {c.affirmations?.length > 0 && (
+                    <p className="mt-2.5 text-xs italic text-[var(--warm-charcoal)]/60 border-l-2 pl-2.5" style={{ borderColor: cd.color }}>
+                      "{c.affirmations[0]}"
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )
+        })}
       </div>
     </Section>
   )
@@ -1190,7 +1234,7 @@ export default function ReportDetailPage() {
                         { label: 'Mental Clarity', colors: d.colourTherapy.healingColors?.mental, accent: '#3b82f6', bg: 'bg-blue-50 border-blue-100' },
                         { label: 'Spiritual Growth', colors: d.colourTherapy.healingColors?.spiritual, accent: '#8b5cf6', bg: 'bg-violet-50 border-violet-100' },
                       ].filter(i => i.colors?.length).map(item => {
-                        const cols: string[] = item.colors.slice(0, 4)
+                        const cols: string[] = (Array.isArray(item.colors) ? item.colors : typeof item.colors === 'string' ? [item.colors] : []).slice(0, 4)
                         return (
                           <div key={item.label} className={`rounded-xl p-3 border ${item.bg} overflow-hidden`}>
                             {/* Color stripe at top */}
@@ -1242,7 +1286,7 @@ export default function ReportDetailPage() {
                       <div>
                         <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Clothing Colors</p>
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                          {Object.entries(d.colourTherapy.clothing).filter(([k]) => k !== 'weeklySchedule').map(([key, val]) => {
+                          {Object.entries(d.colourTherapy.clothing).filter(([k, v]) => k !== 'weeklySchedule' && typeof v === 'string').map(([key, val]) => {
                             const colorName = val as string
                             return (
                               <div key={key} className="rounded-xl border border-[var(--warm-sand)] overflow-hidden">
