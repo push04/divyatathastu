@@ -13,7 +13,7 @@ interface Slot {
 
 interface Booking {
   id: string; slot_id: string; status: string; booked_at: string
-  meet_link: string | null; call_mode: string
+  meeting_link: string | null; call_mode: string
   profiles: { full_name: string; email: string } | null
   consultation_slots: { date: string; start_time: string; end_time: string; profiles: { full_name: string } | null } | null
 }
@@ -58,10 +58,10 @@ export default function AdminConsultationsPage() {
         .order('date').order('start_time'),
       supabase.from('profiles').select('id,full_name').eq('role', 'expert'),
       supabase.from('consultation_bookings')
-        .select('id,slot_id,status,booked_at,meet_link,call_mode,profiles!user_id(full_name,email),consultation_slots(date,start_time,end_time,profiles!expert_id(full_name))')
+        .select('id,slot_id,status,booked_at,meeting_link,call_mode,profiles!user_id(full_name,email),consultation_slots(date,start_time,end_time,profiles!expert_id(full_name))')
         .order('booked_at', { ascending: false })
         .limit(100),
-      supabase.from('platform_settings').select('value').eq('key', 'livekit_mode').single(),
+      (supabase as any).from('platform_settings').select('value').eq('key', 'livekit_mode').single(),
     ])
     setSlots((slotsRes.data || []) as unknown as Slot[])
     setExperts(expertsRes.data || [])
@@ -72,7 +72,7 @@ export default function AdminConsultationsPage() {
 
   async function saveLivekitMode(newMode: 'production' | 'sandbox') {
     setSavingMode(true)
-    const { error } = await supabase.from('platform_settings').upsert({ key: 'livekit_mode', value: newMode, updated_at: new Date().toISOString() })
+    const { error } = await (supabase as any).from('platform_settings').upsert({ key: 'livekit_mode', value: newMode, updated_at: new Date().toISOString() })
     if (error) toast.error('Failed to save: ' + error.message)
     else { setLivekitMode(newMode); toast.success(newMode === 'sandbox' ? 'Switched to Sandbox mode — dev only' : 'Switched to Production mode') }
     setSavingMode(false)
@@ -108,20 +108,20 @@ export default function AdminConsultationsPage() {
 
   function openMeetEdit(b: Booking) {
     setMeetLinkEditing(b.id)
-    setMeetLinkValue(b.meet_link || '')
+    setMeetLinkValue(b.meeting_link || '')
   }
 
   async function saveMeetLink(bookingId: string) {
     setSavingMeet(true)
     const isGoogleMeet = meetLinkValue.includes('meet.google.com') || meetLinkValue.includes('zoom.us') || meetLinkValue.startsWith('http')
     const { error } = await supabase.from('consultation_bookings').update({
-      meet_link: meetLinkValue || null,
+      meeting_link: meetLinkValue || null,
       call_mode: meetLinkValue ? 'google_meet' : 'livekit',
-    }).eq('id', bookingId)
+    } as any).eq('id', bookingId)
     if (error) toast.error(error.message)
     else {
       toast.success(meetLinkValue ? 'Meet link saved — user will see it' : 'Meet link removed — LiveKit will be used')
-      setBookings(bks => bks.map(b => b.id === bookingId ? { ...b, meet_link: meetLinkValue || null, call_mode: meetLinkValue ? 'google_meet' : 'livekit' } : b))
+      setBookings(bks => bks.map(b => b.id === bookingId ? { ...b, meeting_link: meetLinkValue || null, call_mode: meetLinkValue ? 'google_meet' : 'livekit' } : b))
       setMeetLinkEditing(null)
     }
     setSavingMeet(false)
@@ -145,7 +145,7 @@ export default function AdminConsultationsPage() {
   const stats = {
     booked: slots.filter(s => s.is_booked).length,
     available: slots.filter(s => !s.is_booked && !s.is_blocked).length,
-    meetLinks: bookings.filter(b => b.meet_link).length,
+    meetLinks: bookings.filter(b => b.meeting_link).length,
   }
 
   if (loading) return <div className="flex items-center justify-center h-64"><SudarshanLoader size="sm" /></div>
@@ -352,7 +352,7 @@ export default function AdminConsultationsPage() {
                             User will see a "Join via Google Meet" button — LiveKit room will be hidden.
                           </p>
                         )}
-                        {!meetLinkValue && b.meet_link && (
+                        {!meetLinkValue && b.meeting_link && (
                           <p className="text-xs text-amber-600 mt-2 flex items-center gap-1">
                             <span className="material-symbols-outlined text-[13px]">warning</span>
                             Saving empty will remove the Meet link and switch back to LiveKit.
@@ -362,13 +362,13 @@ export default function AdminConsultationsPage() {
                     )}
 
                     {/* Show existing meet link if set */}
-                    {!isEditing && b.meet_link && (
+                    {!isEditing && b.meeting_link && (
                       <div className="px-4 pb-3 pt-0">
                         <div className="flex items-center gap-2 bg-blue-50 rounded-xl px-3 py-2 border border-blue-100">
                           <span className="material-symbols-outlined text-blue-500 text-[15px]" style={{ fontVariationSettings: "'FILL' 1" }}>meeting_room</span>
-                          <a href={b.meet_link} target="_blank" rel="noopener noreferrer"
-                            className="text-xs text-blue-600 hover:underline font-medium truncate flex-1">{b.meet_link}</a>
-                          <button onClick={() => navigator.clipboard.writeText(b.meet_link!)}
+                          <a href={b.meeting_link} target="_blank" rel="noopener noreferrer"
+                            className="text-xs text-blue-600 hover:underline font-medium truncate flex-1">{b.meeting_link}</a>
+                          <button onClick={() => navigator.clipboard.writeText(b.meeting_link!)}
                             className="text-blue-400 hover:text-blue-600 transition-colors shrink-0">
                             <span className="material-symbols-outlined text-[14px]">content_copy</span>
                           </button>

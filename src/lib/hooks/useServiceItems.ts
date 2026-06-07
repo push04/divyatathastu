@@ -46,7 +46,7 @@ export function useServiceItems(category?: ServiceCategory, onlyActive = true) {
 
   const fetch = useCallback(async () => {
     setLoading(true)
-    let q = supabase.from('service_items').select('*').order('display_order')
+    let q = (supabase as any).from('service_items').select('*').order('display_order')
     if (category) q = q.eq('category', category)
     if (onlyActive) q = q.eq('is_active', true)
     const { data, error: err } = await q

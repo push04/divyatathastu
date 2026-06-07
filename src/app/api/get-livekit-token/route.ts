@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Read livekit_mode from platform_settings
-  const { data: setting } = await supabase
+  const { data: setting } = await (supabase as any)
     .from('platform_settings')
     .select('value')
     .eq('key', 'livekit_mode')

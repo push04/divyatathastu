@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -14,21 +14,21 @@ const LEVEL_CONFIG: Record<string, { bg: string; text: string; label: string }> 
 }
 
 const SUBJECTS = [
-  { icon: '🌟', title: 'Vedic Astrology (Jyotish)', desc: 'The 12 rashis, 9 grahas, 27 nakshatras, dashas & transits. From lagna reading to advanced prediction techniques.' },
-  { icon: '🏠', title: 'Vastu Shastra', desc: 'Ancient science of space energetics — directional balance, Vastu Purusha Mandal, remedies without demolition.' },
-  { icon: '🔢', title: 'Numerology & Yantra', desc: 'Pythagorean, Chaldean & Lo Shu grid systems. Yantra construction and number magic squares.' },
-  { icon: '🌿', title: 'Ayurveda Basics', desc: 'Prakriti assessment, dinacharya (daily routine), seasonal eating, and herbal wisdom for modern life.' },
-  { icon: '📿', title: 'Mantra & Tantra Shastra', desc: 'The science of sound — beej mantras, mantra siddhi, kavach creation, and protective practices.' },
-  { icon: '🔮', title: 'Palmistry & Face Reading', desc: 'Samudrika Shastra — reading destiny, character, and health through physical features.' },
+  { icon: 'ðŸŒŸ', title: 'Vedic Astrology (Jyotish)', desc: 'The 12 rashis, 9 grahas, 27 nakshatras, dashas & transits. From lagna reading to advanced prediction techniques.' },
+  { icon: 'ðŸ ', title: 'Vastu Shastra', desc: 'Ancient science of space energetics â€” directional balance, Vastu Purusha Mandal, remedies without demolition.' },
+  { icon: 'ðŸ”¢', title: 'Numerology & Yantra', desc: 'Pythagorean, Chaldean & Lo Shu grid systems. Yantra construction and number magic squares.' },
+  { icon: 'ðŸŒ¿', title: 'Ayurveda Basics', desc: 'Prakriti assessment, dinacharya (daily routine), seasonal eating, and herbal wisdom for modern life.' },
+  { icon: 'ðŸ“¿', title: 'Mantra & Tantra Shastra', desc: 'The science of sound â€” beej mantras, mantra siddhi, kavach creation, and protective practices.' },
+  { icon: 'ðŸ”®', title: 'Palmistry & Face Reading', desc: 'Samudrika Shastra â€” reading destiny, character, and health through physical features.' },
 ]
 
 const FORMAT_FEATURES = [
-  { icon: '📹', title: 'Live Video Classes', desc: 'Weekly live sessions via video conference with real-time Q&A with the faculty' },
-  { icon: '🎬', title: 'Recorded Library', desc: 'Lifetime access to all recorded sessions, additional lectures, and bonus content' },
-  { icon: '📄', title: 'Study Materials', desc: 'Comprehensive PDF notes, worksheets, chart examples, and reference tables' },
-  { icon: '👥', title: 'Student Community', desc: 'Access to private student group for peer learning, chart discussions, and practice' },
-  { icon: '🏆', title: 'Certificate of Completion', desc: 'Gyanampeetham completion certificate upon passing the final assessment' },
-  { icon: '📞', title: 'Mentorship Access', desc: 'Email and messaging support from course faculty for assignment review' },
+  { icon: 'ðŸ“¹', title: 'Live Video Classes', desc: 'Weekly live sessions via video conference with real-time Q&A with the faculty' },
+  { icon: 'ðŸŽ¬', title: 'Recorded Library', desc: 'Lifetime access to all recorded sessions, additional lectures, and bonus content' },
+  { icon: 'ðŸ“„', title: 'Study Materials', desc: 'Comprehensive PDF notes, worksheets, chart examples, and reference tables' },
+  { icon: 'ðŸ‘¥', title: 'Student Community', desc: 'Access to private student group for peer learning, chart discussions, and practice' },
+  { icon: 'ðŸ†', title: 'Certificate of Completion', desc: 'Gyanampeetham completion certificate upon passing the final assessment' },
+  { icon: 'ðŸ“ž', title: 'Mentorship Access', desc: 'Email and messaging support from course faculty for assignment review' },
 ]
 
 export default function CoursesPage() {
@@ -44,7 +44,7 @@ export default function CoursesPage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { toast.error('Please login to enroll'); return }
     setEnrolling(item.id)
-    const { error } = await supabase.from('service_bookings').insert({
+    const { error } = await (supabase as any).from('service_bookings').insert({
       service_item_id: item.id, user_id: user.id,
       status: 'pending', amount: item.price ?? 0, payment_status: 'pending',
     })
@@ -72,14 +72,14 @@ export default function CoursesPage() {
       {/* Hero */}
       <div style={{ background: 'linear-gradient(160deg, #eef2ff 0%, #e0e7ff 50%, #c7d2fe 100%)', borderBottom: '2px solid rgba(99,102,241,0.3)' }}>
         <div className="max-w-5xl mx-auto px-6 py-16 text-center">
-          <div className="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-6 shadow-xl" style={{ background: 'linear-gradient(135deg, #312e81, #3730a3)' }}>📚</div>
+          <div className="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-6 shadow-xl" style={{ background: 'linear-gradient(135deg, #312e81, #3730a3)' }}>ðŸ“š</div>
           <p className="text-xs text-[#312e81] tracking-[0.4em] uppercase mb-3" style={{ fontFamily: "'Sora', sans-serif" }}>Gyanampeetham Institute</p>
           <h1 className="text-5xl font-black text-[#1e1b4b] mb-3 tracking-wide" style={{ fontFamily: "'Playfair Display', serif" }}>Learning Courses</h1>
           <p className="text-sm text-[#312e81] tracking-[0.15em] mb-6" style={{ fontFamily: "'Sora', sans-serif" }}>
-            Live · Recorded · Certified
+            Live Â· Recorded Â· Certified
           </p>
           <p className="text-base text-[var(--warm-charcoal)]/70 max-w-2xl mx-auto leading-relaxed">
-            Structured courses in Vedic sciences taught by experienced Acharyas. From beginner foundations to advanced masterclasses — learn astrology, Vastu, numerology, and more at your own pace or in live sessions.
+            Structured courses in Vedic sciences taught by experienced Acharyas. From beginner foundations to advanced masterclasses â€” learn astrology, Vastu, numerology, and more at your own pace or in live sessions.
           </p>
           {/* Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto mt-10">
@@ -125,13 +125,13 @@ export default function CoursesPage() {
           {courses.length > 0 && (
             <div className="flex flex-col sm:flex-row gap-3 mb-6">
               <input value={search} onChange={e => setSearch(e.target.value)}
-                placeholder="Search courses…"
+                placeholder="Search coursesâ€¦"
                 className="border border-[var(--warm-sand)] rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[var(--indigo-deep)] w-full sm:w-56" />
               <div className="flex gap-2 flex-wrap">
                 {(['all', 'live', 'recorded'] as const).map(t => (
                   <button key={t} onClick={() => setTypeFilter(t)}
                     className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize transition-all ${typeFilter === t ? 'bg-[var(--indigo-deep)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>
-                    {t === 'all' ? 'All Types' : t === 'live' ? '🔴 Live' : '🎬 Recorded'}
+                    {t === 'all' ? 'All Types' : t === 'live' ? 'ðŸ”´ Live' : 'ðŸŽ¬ Recorded'}
                   </button>
                 ))}
                 {levels.map(l => (
@@ -167,20 +167,20 @@ export default function CoursesPage() {
                       </div>
                     ) : (
                       <div className="w-full h-24 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)' }}>
-                        <span className="text-4xl">📚</span>
+                        <span className="text-4xl">ðŸ“š</span>
                       </div>
                     )}
                     <div className="p-5 flex flex-col flex-1">
                       <div className="flex items-start justify-between mb-2">
                         <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold" style={{ background: lc.bg, color: lc.text }}>{lc.label}</span>
                         <div className="flex gap-1 ml-2">
-                          {item.is_live && <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-semibold">🔴 Live</span>}
+                          {item.is_live && <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-semibold">ðŸ”´ Live</span>}
                         </div>
                       </div>
                       {item.duration && <p className="text-[11px] text-[var(--warm-charcoal)]/40 mb-1" style={{ fontFamily: "'Sora', sans-serif" }}>{item.duration}</p>}
                       <h3 className="font-bold text-[var(--indigo-deep)] mb-2 text-sm flex-1" style={{ fontFamily: "'Playfair Display', serif" }}>{item.title}</h3>
                       {item.description && <p className="text-xs text-[var(--warm-charcoal)]/60 leading-relaxed mb-3 line-clamp-3 flex-1">{item.description}</p>}
-                      {item.instructor_name && <p className="text-[11px] text-[var(--saffron)] mb-3">👤 {item.instructor_name}</p>}
+                      {item.instructor_name && <p className="text-[11px] text-[var(--saffron)] mb-3">ðŸ‘¤ {item.instructor_name}</p>}
                       {item.badge_text && (
                         <span className="self-start text-[10px] px-2 py-0.5 rounded-full font-semibold mb-3" style={{ background: `${item.badge_color || '#D4A017'}20`, color: item.badge_color || '#D4A017' }}>
                           {item.badge_text}
@@ -189,16 +189,16 @@ export default function CoursesPage() {
                       <div className="flex items-center justify-between pt-3 border-t border-[var(--outline-variant)]/20">
                         {item.price ? (
                           <div className="flex items-baseline gap-1.5">
-                            <span className="font-bold text-[var(--terracotta)]">₹{item.price.toLocaleString('en-IN')}</span>
-                            {item.original_price && <span className="text-[11px] line-through text-[var(--warm-charcoal)]/30">₹{item.original_price.toLocaleString('en-IN')}</span>}
+                            <span className="font-bold text-[var(--terracotta)]">â‚¹{item.price.toLocaleString('en-IN')}</span>
+                            {item.original_price && <span className="text-[11px] line-through text-[var(--warm-charcoal)]/30">â‚¹{item.original_price.toLocaleString('en-IN')}</span>}
                           </div>
                         ) : <span className="text-xs text-emerald-600 font-semibold">Free</span>}
                         {enrolled.has(item.id) ? (
-                          <span className="text-[11px] px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 font-semibold">✓ Enrolled</span>
+                          <span className="text-[11px] px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 font-semibold">âœ“ Enrolled</span>
                         ) : (
                           <button onClick={() => enroll(item)} disabled={enrolling === item.id || !item.is_bookable}
                             className="btn-divine text-xs px-4 py-2 disabled:opacity-40 disabled:cursor-not-allowed">
-                            {enrolling === item.id ? 'Enrolling…' : item.is_bookable ? 'Enroll' : 'Notify Me'}
+                            {enrolling === item.id ? 'Enrollingâ€¦' : item.is_bookable ? 'Enroll' : 'Notify Me'}
                           </button>
                         )}
                       </div>

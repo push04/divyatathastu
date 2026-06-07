@@ -46,8 +46,8 @@ export default function AdminServicesPage() {
   async function loadAll() {
     setLoading(true)
     const [{ data: its }, { data: bks }] = await Promise.all([
-      supabase.from('service_items').select('*').order('category').order('display_order'),
-      supabase.from('service_bookings')
+      (supabase as any).from('service_items').select('*').order('category').order('display_order'),
+      (supabase as any).from('service_bookings')
         .select('*, service_items(title,category), profiles(full_name,email)')
         .order('created_at', { ascending: false })
         .limit(200),
@@ -87,10 +87,10 @@ export default function AdminServicesPage() {
     }
     let err
     if (editing) {
-      const res = await supabase.from('service_items').update(payload).eq('id', editing.id)
+      const res = await (supabase as any).from('service_items').update(payload).eq('id', editing.id)
       err = res.error
     } else {
-      const res = await supabase.from('service_items').insert(payload)
+      const res = await (supabase as any).from('service_items').insert(payload)
       err = res.error
     }
     if (err) { toast.error(err.message); setSaving(false); return }
@@ -103,19 +103,19 @@ export default function AdminServicesPage() {
   async function deleteItem(id: string) {
     if (!confirm('Delete this item? This cannot be undone.')) return
     setDeleting(id)
-    const { error } = await supabase.from('service_items').delete().eq('id', id)
+    const { error } = await (supabase as any).from('service_items').delete().eq('id', id)
     if (error) toast.error(error.message)
     else { toast.success('Deleted'); await loadAll() }
     setDeleting(null)
   }
 
   async function toggleActive(item: ServiceItem) {
-    await supabase.from('service_items').update({ is_active: !item.is_active }).eq('id', item.id)
+    await (supabase as any).from('service_items').update({ is_active: !item.is_active }).eq('id', item.id)
     await loadAll()
   }
 
   async function updateBookingStatus(bookingId: string, status: string) {
-    const { error } = await supabase.from('service_bookings').update({ status }).eq('id', bookingId)
+    const { error } = await (supabase as any).from('service_bookings').update({ status }).eq('id', bookingId)
     if (error) toast.error(error.message)
     else { toast.success('Status updated'); await loadAll() }
   }

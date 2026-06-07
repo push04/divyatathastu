@@ -213,7 +213,7 @@ function TathastuConsultRoom({ userName, onLeave }: { userName: string; onLeave:
                   <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12 }}>Camera off</p>
                 </div>
               ) : (
-                <VideoTrack trackRef={track} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                <VideoTrack trackRef={track as any} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               )}
 
               {/* Name badge */}

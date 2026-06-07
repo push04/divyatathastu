@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -7,17 +7,17 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
 const SADHANA_PILLARS = [
-  { icon: '🔱', title: 'Mantra Deeksha', desc: 'Receive a personalized beej mantra determined by your birth nakshatra, ruling planet, and current dasha. A mantra given in proper initiation carries 1000× the power.' },
-  { icon: '🪔', title: 'Dhyana (Meditation)', desc: 'Learn chakra-based visualization techniques combined with pranayama — specific to your planetary constitution from the birth chart.' },
-  { icon: '📿', title: 'Japa Sadhana', desc: 'Structured daily japa practice with a personal mala energized during auspicious muhurta. Includes mantras for each day of the week by ruling planet.' },
-  { icon: '🌙', title: 'Nakshatric Timing', desc: 'Each sadhana is timed to begin on the most auspicious nakshatra for your chart — maximizing cosmic resonance and spiritual upliftment.' },
+  { icon: 'ðŸ”±', title: 'Mantra Deeksha', desc: 'Receive a personalized beej mantra determined by your birth nakshatra, ruling planet, and current dasha. A mantra given in proper initiation carries 1000Ã— the power.' },
+  { icon: 'ðŸª”', title: 'Dhyana (Meditation)', desc: 'Learn chakra-based visualization techniques combined with pranayama â€” specific to your planetary constitution from the birth chart.' },
+  { icon: 'ðŸ“¿', title: 'Japa Sadhana', desc: 'Structured daily japa practice with a personal mala energized during auspicious muhurta. Includes mantras for each day of the week by ruling planet.' },
+  { icon: 'ðŸŒ™', title: 'Nakshatric Timing', desc: 'Each sadhana is timed to begin on the most auspicious nakshatra for your chart â€” maximizing cosmic resonance and spiritual upliftment.' },
 ]
 
 const SADHANA_JOURNEY = [
   { day: 'Day 1', title: 'Sankalpa & Initiation', desc: 'Take the formal vow (sankalpa) with a witness and receive your personalized mantra and practice plan.' },
-  { day: 'Days 2–7', title: 'Foundation Practice', desc: 'Establish the daily routine: 108 japa each morning, pranayama, and brief meditation. Build the habit.' },
-  { day: 'Days 8–14', title: 'Deepening', desc: 'Increase to 216 japa. Add visualization of the ruling deity. Energy begins to stabilize.' },
-  { day: 'Days 15–20', title: 'Purification', desc: 'The sadhana enters a purification phase — old patterns and mental impressions surface and dissolve.' },
+  { day: 'Days 2â€“7', title: 'Foundation Practice', desc: 'Establish the daily routine: 108 japa each morning, pranayama, and brief meditation. Build the habit.' },
+  { day: 'Days 8â€“14', title: 'Deepening', desc: 'Increase to 216 japa. Add visualization of the ruling deity. Energy begins to stabilize.' },
+  { day: 'Days 15â€“20', title: 'Purification', desc: 'The sadhana enters a purification phase â€” old patterns and mental impressions surface and dissolve.' },
   { day: 'Day 21', title: 'Purnabhishek', desc: 'Completion ritual with Havan/Homa offering 1/10th of the total japa count into sacred fire.' },
 ]
 
@@ -31,7 +31,7 @@ export default function SadhanaPage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { toast.error('Please login to book'); return }
     setBooking(item.id)
-    const { error } = await supabase.from('service_bookings').insert({
+    const { error } = await (supabase as any).from('service_bookings').insert({
       service_item_id: item.id, user_id: user.id,
       status: 'pending', amount: item.price ?? 0, payment_status: 'pending',
     })
@@ -49,14 +49,14 @@ export default function SadhanaPage() {
       {/* Hero */}
       <div style={{ background: 'linear-gradient(160deg, #fdf6e3 0%, #fef3c7 50%, #fde68a 100%)', borderBottom: '2px solid rgba(217,119,6,0.3)' }}>
         <div className="max-w-5xl mx-auto px-6 py-16 text-center">
-          <div className="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-6 shadow-xl" style={{ background: 'linear-gradient(135deg, #78350f, #92400e)' }}>🙏</div>
-          <p className="text-xs text-[#92400e] tracking-[0.4em] uppercase mb-3" style={{ fontFamily: "'Sora', sans-serif" }}>Divine Practice • Inner Transformation</p>
+          <div className="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-6 shadow-xl" style={{ background: 'linear-gradient(135deg, #78350f, #92400e)' }}>ðŸ™</div>
+          <p className="text-xs text-[#92400e] tracking-[0.4em] uppercase mb-3" style={{ fontFamily: "'Sora', sans-serif" }}>Divine Practice â€¢ Inner Transformation</p>
           <h1 className="text-5xl font-black text-[#1c1917] mb-3 tracking-wide" style={{ fontFamily: "'Playfair Display', serif" }}>SAADHANA</h1>
           <p className="text-sm text-[#78350f] tracking-[0.2em] uppercase mb-6" style={{ fontFamily: "'Sora', sans-serif" }}>
-            सा धनं यस्मिन् लक्ष्मीः स्थिरा — "Wealth is stable in one whose practice is firm"
+            à¤¸à¤¾ à¤§à¤¨à¤‚ à¤¯à¤¸à¥à¤®à¤¿à¤¨à¥ à¤²à¤•à¥à¤·à¥à¤®à¥€à¤ƒ à¤¸à¥à¤¥à¤¿à¤°à¤¾ â€” "Wealth is stable in one whose practice is firm"
           </p>
           <p className="text-base text-[var(--warm-charcoal)]/70 max-w-2xl mx-auto leading-relaxed">
-            Personalized Vedic spiritual practices — mantra deeksha, guided sadhana programs, and japa siddhi — tailored to your birth chart, nakshatra, and current planetary period. Transform karma through disciplined daily practice.
+            Personalized Vedic spiritual practices â€” mantra deeksha, guided sadhana programs, and japa siddhi â€” tailored to your birth chart, nakshatra, and current planetary period. Transform karma through disciplined daily practice.
           </p>
           <div className="mt-8 flex gap-3 justify-center flex-wrap">
             <a href="#programs" className="btn-divine px-8 py-3 inline-flex items-center gap-2">
@@ -121,7 +121,7 @@ export default function SadhanaPage() {
                   )}
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex gap-1.5 flex-wrap">
-                      {item.is_live && <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-semibold">🔴 Live</span>}
+                      {item.is_live && <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-semibold">ðŸ”´ Live</span>}
                       {item.badge_text && <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold" style={{ background: `${item.badge_color || '#D4A017'}20`, color: item.badge_color || '#D4A017' }}>{item.badge_text}</span>}
                     </div>
                     {item.duration && <span className="text-[11px] text-[var(--warm-charcoal)]/40" style={{ fontFamily: "'Sora', sans-serif" }}>{item.duration}</span>}
@@ -129,20 +129,20 @@ export default function SadhanaPage() {
                   <h3 className="font-bold text-[var(--indigo-deep)] mb-2 flex-1" style={{ fontFamily: "'Playfair Display', serif" }}>{item.title}</h3>
                   {item.subtitle && <p className="text-xs text-[var(--saffron)] font-semibold mb-2">{item.subtitle}</p>}
                   {item.description && <p className="text-sm text-[var(--warm-charcoal)]/60 leading-relaxed mb-4 flex-1">{item.description}</p>}
-                  {item.instructor_name && <p className="text-xs text-[var(--warm-charcoal)]/50 mb-4">👤 Guided by {item.instructor_name}</p>}
+                  {item.instructor_name && <p className="text-xs text-[var(--warm-charcoal)]/50 mb-4">ðŸ‘¤ Guided by {item.instructor_name}</p>}
                   <div className="flex items-center justify-between mt-auto pt-4 border-t border-[var(--outline-variant)]/20">
                     {item.price ? (
                       <div className="flex items-baseline gap-1.5">
-                        <span className="font-bold text-[var(--terracotta)] text-lg">₹{item.price.toLocaleString('en-IN')}</span>
-                        {item.original_price && <span className="text-xs line-through text-[var(--warm-charcoal)]/30">₹{item.original_price.toLocaleString('en-IN')}</span>}
+                        <span className="font-bold text-[var(--terracotta)] text-lg">â‚¹{item.price.toLocaleString('en-IN')}</span>
+                        {item.original_price && <span className="text-xs line-through text-[var(--warm-charcoal)]/30">â‚¹{item.original_price.toLocaleString('en-IN')}</span>}
                       </div>
                     ) : <span className="text-sm text-emerald-600 font-semibold">Free</span>}
                     {booked.has(item.id) ? (
-                      <span className="text-xs px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 font-semibold">✓ Booked</span>
+                      <span className="text-xs px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 font-semibold">âœ“ Booked</span>
                     ) : (
                       <button onClick={() => bookService(item)} disabled={booking === item.id || !item.is_bookable}
                         className="btn-divine text-sm px-5 py-2 disabled:opacity-40">
-                        {booking === item.id ? 'Booking…' : item.is_bookable ? 'Book Now' : 'Notify Me'}
+                        {booking === item.id ? 'Bookingâ€¦' : item.is_bookable ? 'Book Now' : 'Notify Me'}
                       </button>
                     )}
                   </div>
@@ -155,7 +155,7 @@ export default function SadhanaPage() {
         {/* 21-Day Journey */}
         <section style={{ background: 'linear-gradient(135deg, #fdf6e3, #fef9c3)', borderRadius: 20, padding: '40px', border: '1px solid rgba(217,119,6,0.3)' }}>
           <div className="text-center mb-8">
-            <div className="text-3xl mb-2 text-[#D4A017]" style={{ fontFamily: "'Playfair Display', serif" }}>ॐ</div>
+            <div className="text-3xl mb-2 text-[#D4A017]" style={{ fontFamily: "'Playfair Display', serif" }}>à¥</div>
             <h2 className="text-2xl font-bold text-[#1c1917]" style={{ fontFamily: "'Playfair Display', serif" }}>The 21-Day Sadhana Arc</h2>
             <p className="text-sm text-[#78350f]/70 mt-1">Every powerful sadhana follows this ancient structure</p>
           </div>

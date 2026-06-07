@@ -1,0 +1,182 @@
+▲ Next.js 16.2.6 (Turbopack)
+- Local:         http://localhost:3001
+- Network:       http://10.47.84.168:3001
+- Environments: .env.local
+✓ Ready in 894ms
+⚠ Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\pushp\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\Users\pushp\Downloads\DIVYATATHASTU\divya-tathastu\package-lock.json
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+
+ POST /api/noxatra 401 in 494ms (next.js: 308ms, proxy.ts: 133ms, application-code: 53ms)
+ GET / 200 in 902ms (next.js: 308ms, proxy.ts: 8ms, application-code: 586ms)
+ GET /register?redirect=%2Freports%2Fgenerate 200 in 830ms (next.js: 177ms, proxy.ts: 23ms, application-code: 629ms)
+ GET / 200 in 912ms (next.js: 35ms, proxy.ts: 34ms, application-code: 843ms)
+[browser] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <SegmentViewNode type="page" pagePath="(public)/p...">
+      <SegmentTrieNode>
+      <HomePage>
+        <HeroSection>
+          <section className="relative b...">
+            <div>
+            <div>
+            <div>
+            <div>
+            <div className="relative z...">
+              <div className="grid grid-...">
+                <motion.div>
+                <motion.div initial={{opacity:0}} animate={{opacity:1}} transition={{duration:0.9, ...}} ...>
+                  <div className="relative f..." style={{opacity:0}} ref={function useMotionRef.useCallback}>
+                    <div>
+                    <div className="relative w...">
+                      <MandalaSVG>
+                        <svg viewBox="0 0 480 480" xmlns="http://www..." className="w-full max..." aria-hidden="true">
+                          <g style={{...}}>
+                            <circle>
+                            <circle>
+                            <line>
+                            <line>
+                            <line>
+                            <line>
+                            <line>
+                            <line>
+                            <line>
+                            <line>
+                            <line>
+                            <line>
+                            <line>
+                            <line>
+                            <line>
+                            <line>
+                            <line>
+                            <line>
+                            <line
++                             x1={94.50773216421436}
+-                             x1="94.50773216421433"
+                              y1={324.00000000000006}
++                             x2={86.71350353015441}
+-                             x2="86.71350353015438"
+                              y2={328.5000000000001}
+                              stroke="#D4A043"
+                              strokeWidth="0.8"
+                              opacity="0.14"
+                            >
+                            ...
+                          ...
+              ...
+        ...
+    ...
+ 
+ GET /api/product-price?slug=full-tathastu-bundle 200 in 1942ms (next.js: 1105ms, proxy.ts: 17ms, application-code: 820ms)
+○ Compiling /api/product-price ...
+ GET /api/panchang?lat=25.590507124940583&lng=85.1218293794113&date=2026-06-05 200 in 240ms (next.js: 157ms, proxy.ts: 61ms, application-code: 22ms)
+ GET /api/panchang?lat=25.590507124940583&lng=85.1218293794113&date=2026-06-05 200 in 74ms (next.js: 32ms, proxy.ts: 25ms, application-code: 17ms)
+ GET /login 200 in 3.5s (next.js: 3.1s, proxy.ts: 38ms, application-code: 289ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+✓ Finished filesystem cache database compaction in 21.6s
+ GET /admin 200 in 4.0s (next.js: 2.3s, proxy.ts: 938ms, application-code: 729ms)
+ GET /admin 200 in 1088ms (next.js: 211ms, proxy.ts: 701ms, application-code: 175ms)
+○ Compiling /dashboard ...
+ GET /dashboard 200 in 23.0s (next.js: 12.0s, proxy.ts: 887ms, application-code: 10.1s)
+ GET /api/product-price?slug=full-tathastu-bundle 200 in 3.6s (next.js: 1836ms, proxy.ts: 612ms, application-code: 1188ms)
+ GET /api/panchang?lat=28.6139&lng=77.209&date=2026-06-05 200 in 1557ms (next.js: 610ms, proxy.ts: 797ms, application-code: 149ms)
+ GET /reports/generate 200 in 2.8s (next.js: 850ms, proxy.ts: 665ms, application-code: 1312ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+○ Compiling /family/add ...
+✓ Finished filesystem cache database compaction in 16.0s
+ GET /family/add 200 in 9.3s (next.js: 8.4s, proxy.ts: 677ms, application-code: 234ms)
+○ Compiling /reports ...
+ GET /reports/generate 200 in 3.3s (next.js: 511ms, proxy.ts: 902ms, application-code: 1918ms)
+ GET /reports 200 in 17.4s (next.js: 15.9s, proxy.ts: 643ms, application-code: 800ms)
+ GET /family 200 in 12.4s (next.js: 10.7s, proxy.ts: 1284ms, application-code: 466ms)
+✓ Finished filesystem cache database compaction in 22.8s
+ GET /family/add 200 in 1267ms (next.js: 21ms, proxy.ts: 1062ms, application-code: 184ms)
+ GET /family/0358f254-5340-4793-bdfe-6854e82e833c 200 in 4.5s (next.js: 3.5s, proxy.ts: 805ms, application-code: 186ms)
+ GET /reports/generate?member=0358f254-5340-4793-bdfe-6854e82e833c 200 in 583ms (next.js: 17ms, proxy.ts: 427ms, application-code: 139ms)
+ POST /api/noxatra 200 in 2.9s (next.js: 225ms, proxy.ts: 715ms, application-code: 1980ms)
+ GET /reports/7a9669fb-d07c-47c8-90a7-ca5b9032b490 200 in 4.2s (next.js: 3.7s, proxy.ts: 359ms, application-code: 139ms)
+ GET /reports 200 in 810ms (next.js: 17ms, proxy.ts: 645ms, application-code: 147ms)
+ GET /reports/7a9669fb-d07c-47c8-90a7-ca5b9032b490 200 in 538ms (next.js: 53ms, proxy.ts: 406ms, application-code: 79ms)
+ GET /reports 200 in 1271ms (next.js: 82ms, proxy.ts: 705ms, application-code: 484ms)
+ GET /reports/7a9669fb-d07c-47c8-90a7-ca5b9032b490 200 in 1527ms (next.js: 207ms, proxy.ts: 796ms, application-code: 524ms)
+ GET /reports 200 in 1311ms (next.js: 195ms, proxy.ts: 504ms, application-code: 612ms)
+ GET /reports/generate 200 in 1136ms (next.js: 47ms, proxy.ts: 410ms, application-code: 679ms)
+ POST /api/noxatra 200 in 2.5s (next.js: 16ms, proxy.ts: 585ms, application-code: 1932ms)
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 534ms (next.js: 65ms, proxy.ts: 351ms, application-code: 118ms)
+ GET /reports 200 in 715ms (next.js: 27ms, proxy.ts: 570ms, application-code: 118ms)
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 582ms (next.js: 72ms, proxy.ts: 402ms, application-code: 108ms)
+✓ Compiled in 223ms
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 1077ms (next.js: 185ms, proxy.ts: 795ms, application-code: 97ms)
+ GET /reports 200 in 1089ms (next.js: 96ms, proxy.ts: 803ms, application-code: 190ms)
+ GET /reports/7a9669fb-d07c-47c8-90a7-ca5b9032b490 200 in 663ms (next.js: 71ms, proxy.ts: 398ms, application-code: 194ms)
+ GET /reports 200 in 594ms (next.js: 21ms, proxy.ts: 483ms, application-code: 90ms)
+ GET /reports/generate 200 in 584ms (next.js: 82ms, proxy.ts: 357ms, application-code: 144ms)
+ GET /family/add 200 in 534ms (next.js: 78ms, proxy.ts: 307ms, application-code: 150ms)
+ POST /api/noxatra 200 in 3.0s (next.js: 422ms, proxy.ts: 677ms, application-code: 1946ms)
+ GET /reports/9b79ee7b-582c-45d7-bb7a-8130325b7b04 200 in 475ms (next.js: 70ms, proxy.ts: 294ms, application-code: 111ms)
+✓ Compiled in 322ms
+ GET /reports/9b79ee7b-582c-45d7-bb7a-8130325b7b04 200 in 1505ms (next.js: 204ms, proxy.ts: 1054ms, application-code: 247ms)
+✓ Compiled in 172ms
+ GET /reports/9b79ee7b-582c-45d7-bb7a-8130325b7b04 200 in 1010ms (next.js: 173ms, proxy.ts: 740ms, application-code: 97ms)
+ GET /reports 200 in 574ms (next.js: 93ms, proxy.ts: 331ms, application-code: 150ms)
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 406ms (next.js: 65ms, proxy.ts: 242ms, application-code: 98ms)
+ GET /reports 200 in 987ms (next.js: 34ms, proxy.ts: 809ms, application-code: 144ms)
+ GET /reports/generate 200 in 822ms (next.js: 88ms, proxy.ts: 577ms, application-code: 156ms)
+ POST /api/noxatra 200 in 2.8s (next.js: 567ms, proxy.ts: 563ms, application-code: 1678ms)
+ GET /reports/2761a663-3f0d-4e7d-8cbb-1de5b359a3a4 200 in 582ms (next.js: 77ms, proxy.ts: 363ms, application-code: 142ms)
+ GET /reports 200 in 1063ms (next.js: 27ms, proxy.ts: 704ms, application-code: 333ms)
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 474ms (next.js: 71ms, proxy.ts: 270ms, application-code: 133ms)
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 5.6s (next.js: 2.7s, proxy.ts: 926ms, application-code: 1957ms)
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 6.5s (next.js: 2.6s, proxy.ts: 1550ms, application-code: 2.4s)
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 3.6s (next.js: 1507ms, proxy.ts: 920ms, application-code: 1175ms)
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 2.6s (next.js: 1002ms, proxy.ts: 822ms, application-code: 762ms)
+✓ Compiled in 3.7s
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 5.1s (next.js: 1615ms, proxy.ts: 1731ms, application-code: 1728ms)
+✓ Compiled in 1529ms
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 4.3s (next.js: 2.5s, proxy.ts: 967ms, application-code: 866ms)
+✓ Compiled in 2s
+✓ Compiled in 1838ms
+✓ Finished filesystem cache database compaction in 11.4s
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 3.8s (next.js: 1080ms, proxy.ts: 979ms, application-code: 1738ms)
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 2.1s (next.js: 254ms, proxy.ts: 562ms, application-code: 1330ms)
+✓ Compiled in 1108ms
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 3.3s (next.js: 1078ms, proxy.ts: 912ms, application-code: 1285ms)
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 10.5s (next.js: 2.6s, proxy.ts: 1397ms, application-code: 6.5s)
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 3.7s (next.js: 1647ms, proxy.ts: 838ms, application-code: 1217ms)
+✓ Compiled in 2.3s
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 4.9s (next.js: 1920ms, proxy.ts: 974ms, application-code: 2.0s)
+✓ Compiled in 446ms
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 1652ms (next.js: 373ms, proxy.ts: 902ms, application-code: 378ms)
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 2.4s (next.js: 434ms, proxy.ts: 633ms, application-code: 1314ms)
+✓ Compiled in 160ms
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 1620ms (next.js: 264ms, proxy.ts: 901ms, application-code: 455ms)
+✓ Compiled in 296ms
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 4.4s (next.js: 781ms, proxy.ts: 1356ms, application-code: 2.3s)
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 18.2s (next.js: 12.8s, proxy.ts: 1900ms, application-code: 3.5s)
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 2.1s (next.js: 595ms, proxy.ts: 987ms, application-code: 519ms)
+✓ Compiled in 1883ms
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 11.0s (next.js: 7.9s, proxy.ts: 1865ms, application-code: 1214ms)
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 1907ms (next.js: 242ms, proxy.ts: 1436ms, application-code: 229ms)
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 1454ms (next.js: 483ms, proxy.ts: 611ms, application-code: 360ms)
+✓ Compiled in 886ms
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 1521ms (next.js: 729ms, proxy.ts: 446ms, application-code: 346ms)
+✓ Compiled in 1934ms
+ GET /reports/6309306b-a843-4b5e-b310-797dfbcf7636 200 in 7.9s (next.js: 2.3s, proxy.ts: 994ms, application-code: 4.6s)
+✓ Finished filesystem cache database compaction in 17.2s
+✓ Finished writing to filesystem cache in 36.0s

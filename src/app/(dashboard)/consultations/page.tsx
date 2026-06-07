@@ -22,8 +22,8 @@ interface Booking {
   slot_id: string
   status: string
   booked_at: string
-  meet_link: string | null
-  call_mode: string
+  meeting_link: string | null
+  call_mode: string | null
   consultation_slots: { expert_id: string; date: string; start_time: string; end_time: string } | null
 }
 
@@ -56,7 +56,7 @@ export default function ConsultationsPage() {
       if (slotsRes.data) setSlots(slotsRes.data)
 
       if (user) {
-        const { data: bks } = await supabase.from('consultation_bookings').select('id,slot_id,status,booked_at,meet_link,call_mode,consultation_slots(expert_id,date,start_time,end_time)').eq('user_id', user.id).order('booked_at', { ascending: false })
+        const { data: bks } = await supabase.from('consultation_bookings').select('id,slot_id,status,booked_at,meeting_link,call_mode,consultation_slots(expert_id,date,start_time,end_time)').eq('user_id', user.id).order('booked_at', { ascending: false })
         if (bks) setBookings(bks as unknown as Booking[])
       }
       setLoading(false)
@@ -174,9 +174,9 @@ export default function ConsultationsPage() {
                     </div>
                     <div className="flex items-center gap-2 flex-wrap justify-end">
                       <span className={`text-xs px-3 py-1 rounded-full font-medium ${b.status === 'confirmed' ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>{b.status}</span>
-                      {b.status === 'confirmed' && b.meet_link && (
+                      {b.status === 'confirmed' && b.meeting_link && (
                         <a
-                          href={b.meet_link}
+                          href={b.meeting_link}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-all"
@@ -198,7 +198,7 @@ export default function ConsultationsPage() {
                       )}
                     </div>
                   </div>
-                  {b.meet_link && b.status === 'confirmed' && (
+                  {b.meeting_link && b.status === 'confirmed' && (
                     <div className="px-4 pb-3 pt-0">
                       <div className="flex items-center gap-2 bg-blue-50 rounded-xl px-3 py-2 border border-blue-100">
                         <span className="material-symbols-outlined text-blue-400 text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>info</span>

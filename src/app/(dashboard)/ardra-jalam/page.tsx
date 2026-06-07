@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useServiceItems } from '@/lib/hooks/useServiceItems'
@@ -6,27 +6,27 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
 const NAKSHATRA_INFO = [
-  { title: 'Ardra Nakshatra', desc: 'The 6th of 27 nakshatras, ruled by Rudra (Shiva). Symbolized by a teardrop — the tear of transformation, renewal, and cosmic dissolution.' },
-  { title: 'Ruling Deity', desc: 'Lord Rudra — the fierce and compassionate form of Shiva who destroys ignorance and grants deep healing.' },
-  { title: 'Element', desc: 'Jala (Water) — the most receptive element, capable of holding and transmitting vibrational frequencies.' },
-  { title: 'Shakti', desc: 'Yatna Shakti — the power of effort, striving, and achieving through challenge. Water charged at this time carries this quality.' },
+  { title: 'Ardra Nakshatra', desc: 'The 6th of 27 nakshatras, ruled by Rudra (Shiva). Symbolized by a teardrop â€” the tear of transformation, renewal, and cosmic dissolution.' },
+  { title: 'Ruling Deity', desc: 'Lord Rudra â€” the fierce and compassionate form of Shiva who destroys ignorance and grants deep healing.' },
+  { title: 'Element', desc: 'Jala (Water) â€” the most receptive element, capable of holding and transmitting vibrational frequencies.' },
+  { title: 'Shakti', desc: 'Yatna Shakti â€” the power of effort, striving, and achieving through challenge. Water charged at this time carries this quality.' },
 ]
 
 const HOW_TO_USE = [
-  { step: '01', title: 'Morning Ritual', desc: 'Drink 2–3 sips on an empty stomach while reciting "ॐ नमः शिवाय" 3 times. Pause, feel the intention.' },
-  { step: '02', title: 'Space Purification', desc: 'Sprinkle drops in the corners of each room while chanting "ॐ" to clear stagnant energy from your home.' },
+  { step: '01', title: 'Morning Ritual', desc: 'Drink 2â€“3 sips on an empty stomach while reciting "à¥ à¤¨à¤®à¤ƒ à¤¶à¤¿à¤µà¤¾à¤¯" 3 times. Pause, feel the intention.' },
+  { step: '02', title: 'Space Purification', desc: 'Sprinkle drops in the corners of each room while chanting "à¥" to clear stagnant energy from your home.' },
   { step: '03', title: 'Deity Abhishek', desc: 'Use for ritual bathing of your deity idol or Shivalinga on Mondays or during Rudrabhishek.' },
   { step: '04', title: 'Meditation Activation', desc: 'Apply a single drop to the Ajna chakra (third eye) before meditation to deepen inner clarity.' },
   { step: '05', title: 'Plant & Earth Offering', desc: 'Offer a few drops to your Tulsi plant or into running water as a gratitude offering to nature.' },
 ]
 
 const BENEFITS = [
-  { icon: '🔥', title: 'Karma Dissolution', desc: 'Dissolves accumulated negative karma accumulated over lifetimes through consistent use' },
-  { icon: '🧘', title: 'Meditation Deepening', desc: 'Measurably deepens meditation experiences and enhances mantra siddhi over 21-day sadhana' },
-  { icon: '🏠', title: 'Space Healing', desc: 'Clears Vastu doshas and negative energetic imprints from your home and workspace' },
-  { icon: '💊', title: 'Complementary Healing', desc: 'Supports recovery and healing alongside medical treatment (not a replacement)' },
-  { icon: '🌊', title: 'Emotional Clarity', desc: 'Releases emotional blockages, grief, and suppressed traumas stored in the energy body' },
-  { icon: '✨', title: 'Mantra Amplification', desc: 'Amplifies the potency of your daily japa and sadhana practice when used before practice' },
+  { icon: 'ðŸ”¥', title: 'Karma Dissolution', desc: 'Dissolves accumulated negative karma accumulated over lifetimes through consistent use' },
+  { icon: 'ðŸ§˜', title: 'Meditation Deepening', desc: 'Measurably deepens meditation experiences and enhances mantra siddhi over 21-day sadhana' },
+  { icon: 'ðŸ ', title: 'Space Healing', desc: 'Clears Vastu doshas and negative energetic imprints from your home and workspace' },
+  { icon: 'ðŸ’Š', title: 'Complementary Healing', desc: 'Supports recovery and healing alongside medical treatment (not a replacement)' },
+  { icon: 'ðŸŒŠ', title: 'Emotional Clarity', desc: 'Releases emotional blockages, grief, and suppressed traumas stored in the energy body' },
+  { icon: 'âœ¨', title: 'Mantra Amplification', desc: 'Amplifies the potency of your daily japa and sadhana practice when used before practice' },
 ]
 
 export default function ArdraJalamPage() {
@@ -43,7 +43,7 @@ export default function ArdraJalamPage() {
     if (!user) { toast.error('Please login to order'); return }
 
     setOrdering(true)
-    const { error } = await supabase.from('service_bookings').insert({
+    const { error } = await (supabase as any).from('service_bookings').insert({
       service_item_id: product?.id,
       user_id: user.id,
       status: 'pending',
@@ -60,14 +60,14 @@ export default function ArdraJalamPage() {
   return (
     <div className="min-h-screen bg-[var(--kutch-white)]">
 
-      {/* Hero — water-inspired parchment gradient */}
+      {/* Hero â€” water-inspired parchment gradient */}
       <div style={{ background: 'linear-gradient(160deg, #ecfdf5 0%, #d1fae5 40%, #a7f3d0 100%)', borderBottom: '2px solid rgba(16,185,129,0.3)' }}>
         <div className="max-w-5xl mx-auto px-6 py-14">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
             {/* Left text */}
             <div>
               <div className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-full mb-4 bg-emerald-100 text-emerald-800 uppercase tracking-widest">
-                <span>💧</span> Sacred Product · Limited Batches
+                <span>ðŸ’§</span> Sacred Product Â· Limited Batches
               </div>
               <h1 className="text-4xl font-black text-[#065f46] mb-3 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
                 Ardra Jalam
@@ -76,7 +76,7 @@ export default function ArdraJalamPage() {
                 Sacred Healing Water
               </p>
               <p className="text-sm text-[#065f46]/60 mb-6 leading-relaxed">
-                Charged under the divine frequencies of <strong>Ardra Nakshatra</strong> — the star of transformation ruled by Lord Rudra. Each batch is prepared through specific Vedic rituals, mantras, and cosmic alignment. Available only once every 27 days.
+                Charged under the divine frequencies of <strong>Ardra Nakshatra</strong> â€” the star of transformation ruled by Lord Rudra. Each batch is prepared through specific Vedic rituals, mantras, and cosmic alignment. Available only once every 27 days.
               </p>
               {/* Price */}
               <div className="flex items-center gap-4 mb-6">
@@ -86,10 +86,10 @@ export default function ArdraJalamPage() {
                   ) : (
                     <div className="flex items-baseline gap-2">
                       <span className="text-3xl font-black text-[var(--terracotta)]" style={{ fontFamily: "'Playfair Display', serif" }}>
-                        ₹{(product?.price ?? 499).toLocaleString('en-IN')}
+                        â‚¹{(product?.price ?? 499).toLocaleString('en-IN')}
                       </span>
                       {product?.original_price && (
-                        <span className="text-sm text-[var(--warm-charcoal)]/40 line-through">₹{product.original_price.toLocaleString('en-IN')}</span>
+                        <span className="text-sm text-[var(--warm-charcoal)]/40 line-through">â‚¹{product.original_price.toLocaleString('en-IN')}</span>
                       )}
                       <span className="text-xs text-[#065f46]/50">per bottle (500ml)</span>
                     </div>
@@ -100,15 +100,15 @@ export default function ArdraJalamPage() {
               {!booked ? (
                 <div className="flex items-center gap-3 flex-wrap">
                   <div className="flex items-center gap-2 bg-white rounded-xl border border-emerald-200 p-1">
-                    <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-8 h-8 rounded-lg bg-[var(--warm-sand)] flex items-center justify-center font-bold text-[var(--indigo-deep)] hover:bg-emerald-100">−</button>
+                    <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-8 h-8 rounded-lg bg-[var(--warm-sand)] flex items-center justify-center font-bold text-[var(--indigo-deep)] hover:bg-emerald-100">âˆ’</button>
                     <span className="w-8 text-center font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{qty}</span>
                     <button onClick={() => setQty(q => Math.min(10, q + 1))} className="w-8 h-8 rounded-lg bg-[var(--warm-sand)] flex items-center justify-center font-bold text-[var(--indigo-deep)] hover:bg-emerald-100">+</button>
                   </div>
                   <button onClick={handleOrder} disabled={ordering || loading} className="flex-1 sm:flex-none btn-divine px-8 py-3 font-semibold disabled:opacity-50 inline-flex items-center justify-center gap-2">
                     {ordering ? (
-                      <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Placing Order…</>
+                      <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Placing Orderâ€¦</>
                     ) : (
-                      <><span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span> Order Now · ₹{((product?.price ?? 499) * qty).toLocaleString('en-IN')}</>
+                      <><span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span> Order Now Â· â‚¹{((product?.price ?? 499) * qty).toLocaleString('en-IN')}</>
                     )}
                   </button>
                 </div>
@@ -122,14 +122,14 @@ export default function ArdraJalamPage() {
                 </div>
               )}
             </div>
-            {/* Right — visual */}
+            {/* Right â€” visual */}
             <div className="flex justify-center">
               <div className="relative">
                 {/* Bottle visual */}
                 <div className="w-48 h-64 bg-gradient-to-b from-[#a7f3d0] via-[#6ee7b7] to-[#34d399] rounded-[40px] flex items-center justify-center shadow-2xl relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent" style={{ clipPath: 'polygon(0 0, 30% 0, 30% 100%, 0 100%)' }} />
                   <div className="text-center text-white relative z-10">
-                    <div className="text-5xl mb-2">💧</div>
+                    <div className="text-5xl mb-2">ðŸ’§</div>
                     <div className="text-sm font-bold tracking-widest">ARDRA</div>
                     <div className="text-xs opacity-80 tracking-widest">JALAM</div>
                     <div className="text-[10px] opacity-60 mt-2">500ml</div>
@@ -142,7 +142,7 @@ export default function ArdraJalamPage() {
                   Limited
                 </div>
                 {/* Om watermark */}
-                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-3xl text-emerald-300 font-black" style={{ fontFamily: "'Playfair Display', serif" }}>ॐ</div>
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-3xl text-emerald-300 font-black" style={{ fontFamily: "'Playfair Display', serif" }}>à¥</div>
               </div>
             </div>
           </div>
@@ -160,7 +160,7 @@ export default function ArdraJalamPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {NAKSHATRA_INFO.map(n => (
               <div key={n.title} className="bento-card p-5 flex gap-4">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-lg shrink-0">💧</div>
+                <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-lg shrink-0">ðŸ’§</div>
                 <div>
                   <h3 className="font-bold text-[var(--indigo-deep)] mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>{n.title}</h3>
                   <p className="text-sm text-[var(--warm-charcoal)]/60 leading-relaxed">{n.desc}</p>
@@ -221,21 +221,21 @@ export default function ArdraJalamPage() {
 
         {/* Order CTA */}
         <section className="text-center py-8" style={{ background: 'linear-gradient(135deg, #ecfdf5, #d1fae5)', borderRadius: 20 }}>
-          <div className="text-4xl mb-3" style={{ fontFamily: "'Playfair Display', serif", color: '#065f46' }}>ॐ</div>
+          <div className="text-4xl mb-3" style={{ fontFamily: "'Playfair Display', serif", color: '#065f46' }}>à¥</div>
           <h2 className="text-2xl font-bold text-[#065f46] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Ready to Begin?</h2>
-          <p className="text-sm text-[#065f46]/60 mb-6 max-w-md mx-auto">Each batch is prepared only during Ardra Nakshatra — approximately once every 27 days. Order now to secure your bottle from the next batch.</p>
+          <p className="text-sm text-[#065f46]/60 mb-6 max-w-md mx-auto">Each batch is prepared only during Ardra Nakshatra â€” approximately once every 27 days. Order now to secure your bottle from the next batch.</p>
           {!booked ? (
             <button onClick={handleOrder} disabled={ordering || loading} className="btn-divine px-10 py-3.5 text-base font-semibold disabled:opacity-50 inline-flex items-center gap-2">
               <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span>
-              Order Ardra Jalam · ₹{(product?.price ?? 499).toLocaleString('en-IN')}
+              Order Ardra Jalam Â· â‚¹{(product?.price ?? 499).toLocaleString('en-IN')}
             </button>
           ) : (
             <div className="inline-flex items-center gap-3 bg-white text-emerald-700 rounded-full px-6 py-3 font-semibold shadow-md">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-              Order Placed — We'll Contact You Soon
+              Order Placed â€” We'll Contact You Soon
             </div>
           )}
-          <p className="text-xs text-[#065f46]/40 mt-4">Contact: 9858784784 · levitatelabs.online@gmail.com</p>
+          <p className="text-xs text-[#065f46]/40 mt-4">Contact: 9858784784 Â· levitatelabs.online@gmail.com</p>
         </section>
       </div>
     </div>

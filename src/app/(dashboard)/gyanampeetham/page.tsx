@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -22,7 +22,7 @@ export default function GyanampeethamPage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { toast.error('Please login to enroll'); return }
     setEnrolling(item.id)
-    const { error } = await supabase.from('service_bookings').insert({
+    const { error } = await (supabase as any).from('service_bookings').insert({
       service_item_id: item.id, user_id: user.id,
       status: 'pending', amount: item.price ?? 0, payment_status: 'pending',
     })
@@ -44,7 +44,7 @@ export default function GyanampeethamPage() {
           </p>
           <div className="mt-4 inline-flex items-center gap-4 text-xs text-[var(--warm-charcoal)]/40 uppercase tracking-widest">
             <span>An Initiative of Anushthaan India</span>
-            <span>·</span>
+            <span>Â·</span>
             <span>Educating Society with Wisdom</span>
           </div>
         </div>
@@ -79,24 +79,24 @@ export default function GyanampeethamPage() {
                     <div className="flex items-start justify-between mb-3">
                       <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold" style={{ background: lc.bg, color: lc.text }}>{item.level || 'Open'}</span>
                       <div className="flex items-center gap-1.5">
-                        {item.is_live && <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-semibold">🔴 Live</span>}
+                        {item.is_live && <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-semibold">ðŸ”´ Live</span>}
                         {item.badge_text && <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold" style={{ background: `${item.badge_color || '#D4A017'}20`, color: item.badge_color || '#D4A017' }}>{item.badge_text}</span>}
                       </div>
                     </div>
                     {item.duration && <p className="text-[11px] text-[var(--warm-charcoal)]/40 mb-1" style={{ fontFamily: "'Sora', sans-serif" }}>{item.duration}</p>}
                     <h3 className="font-bold text-[var(--indigo-deep)] mb-2 text-sm flex-1" style={{ fontFamily: "'Playfair Display', serif" }}>{item.title}</h3>
                     {item.description && <p className="text-xs text-[var(--warm-charcoal)]/60 leading-relaxed mb-3 flex-1">{item.description}</p>}
-                    {item.instructor_name && <p className="text-[11px] text-[var(--saffron)] mb-3">👤 {item.instructor_name}</p>}
+                    {item.instructor_name && <p className="text-[11px] text-[var(--saffron)] mb-3">ðŸ‘¤ {item.instructor_name}</p>}
                     <div className="flex items-center justify-between mt-auto pt-3 border-t border-[var(--outline-variant)]/20">
                       {item.price ? (
                         <div className="flex items-baseline gap-1.5">
-                          <span className="font-bold text-[var(--terracotta)]">₹{item.price.toLocaleString('en-IN')}</span>
-                          {item.original_price && <span className="text-[11px] line-through text-[var(--warm-charcoal)]/30">₹{item.original_price.toLocaleString('en-IN')}</span>}
+                          <span className="font-bold text-[var(--terracotta)]">â‚¹{item.price.toLocaleString('en-IN')}</span>
+                          {item.original_price && <span className="text-[11px] line-through text-[var(--warm-charcoal)]/30">â‚¹{item.original_price.toLocaleString('en-IN')}</span>}
                         </div>
                       ) : <span className="text-xs text-emerald-600 font-semibold">Free</span>}
                       <button onClick={() => enroll(item)} disabled={enrolling === item.id || !item.is_bookable}
                         className="btn-divine text-xs px-4 py-2 disabled:opacity-40 disabled:cursor-not-allowed">
-                        {enrolling === item.id ? 'Enrolling…' : item.is_bookable ? 'Enroll' : 'Notify Me'}
+                        {enrolling === item.id ? 'Enrollingâ€¦' : item.is_bookable ? 'Enroll' : 'Notify Me'}
                       </button>
                     </div>
                   </div>
@@ -109,13 +109,13 @@ export default function GyanampeethamPage() {
         {/* 18 Acharyas */}
         <section style={{ background: 'linear-gradient(135deg, #fdf6e3, #fef9ed)', borderRadius: 20, padding: '40px', border: '1px solid rgba(212,160,23,0.3)' }}>
           <div className="text-center mb-6">
-            <div className="text-3xl mb-2 text-[#D4A017]" style={{ fontFamily: "'Playfair Display', serif" }}>ॐ</div>
-            <h2 className="text-xl font-bold text-[#2c1a0e]" style={{ fontFamily: "'Playfair Display', serif" }}>ज्योतिष शास्त्र के 18 आचार्य</h2>
+            <div className="text-3xl mb-2 text-[#D4A017]" style={{ fontFamily: "'Playfair Display', serif" }}>à¥</div>
+            <h2 className="text-xl font-bold text-[#2c1a0e]" style={{ fontFamily: "'Playfair Display', serif" }}>à¤œà¥à¤¯à¥‹à¤¤à¤¿à¤· à¤¶à¤¾à¤¸à¥à¤¤à¥à¤° à¤•à¥‡ 18 à¤†à¤šà¤¾à¤°à¥à¤¯</h2>
             <p className="text-sm text-[#6b3a2a]/70 mt-1">Our teaching lineage flows from the 18 great sages of Vedic Jyotish</p>
           </div>
           <p className="text-sm text-center text-[#cc2200] font-semibold leading-relaxed">
-            सूर्य, पितामह (ब्रह्मा), व्यास, वशिष्ठ, अत्रि, पराशर, कश्यप, नारद, गर्ग,<br />
-            मरीचि, मनु, अंगिरा, लोमश, पौलिश, च्यवन, यवन, भृगु और शौनक
+            à¤¸à¥‚à¤°à¥à¤¯, à¤ªà¤¿à¤¤à¤¾à¤®à¤¹ (à¤¬à¥à¤°à¤¹à¥à¤®à¤¾), à¤µà¥à¤¯à¤¾à¤¸, à¤µà¤¶à¤¿à¤·à¥à¤ , à¤…à¤¤à¥à¤°à¤¿, à¤ªà¤°à¤¾à¤¶à¤°, à¤•à¤¶à¥à¤¯à¤ª, à¤¨à¤¾à¤°à¤¦, à¤—à¤°à¥à¤—,<br />
+            à¤®à¤°à¥€à¤šà¤¿, à¤®à¤¨à¥, à¤…à¤‚à¤—à¤¿à¤°à¤¾, à¤²à¥‹à¤®à¤¶, à¤ªà¥Œà¤²à¤¿à¤¶, à¤šà¥à¤¯à¤µà¤¨, à¤¯à¤µà¤¨, à¤­à¥ƒà¤—à¥ à¤”à¤° à¤¶à¥Œà¤¨à¤•
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 text-center">
             {[{ n: '500+', l: 'Students' }, { n: '18+', l: 'Courses' }, { n: '50+', l: 'Gurus' }, { n: '15+', l: 'Years' }].map(s => (
