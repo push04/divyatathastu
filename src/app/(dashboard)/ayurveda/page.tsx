@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -8,19 +8,19 @@ import { toast } from 'sonner'
 
 const DOSHAS = [
   {
-    name: 'Vata', sanskrit: 'à¤µà¤¾à¤¤', element: 'Air + Ether', planet: 'Rahu / Saturn',
+    name: 'Vata', sanskrit: 'वात', element: 'Air + Ether', planet: 'Rahu / Saturn',
     qualities: 'Mobile, dry, cold, subtle, rough', color: '#7c3aed',
     imbalance: 'Anxiety, dryness, constipation, insomnia, joint pain',
     balance: 'Warm oils, routine, grounding foods, Ashwagandha',
   },
   {
-    name: 'Pitta', sanskrit: 'à¤ªà¤¿à¤¤à¥à¤¤', element: 'Fire + Water', planet: 'Sun / Mars',
+    name: 'Pitta', sanskrit: 'पित्त', element: 'Fire + Water', planet: 'Sun / Mars',
     qualities: 'Hot, sharp, penetrating, oily, liquid', color: '#dc2626',
     imbalance: 'Inflammation, anger, acid reflux, skin issues, perfectionism',
     balance: 'Cooling foods, moonbathing, Shatavari, avoiding midday sun',
   },
   {
-    name: 'Kapha', sanskrit: 'à¤•à¤«', element: 'Earth + Water', planet: 'Moon / Jupiter',
+    name: 'Kapha', sanskrit: 'कफ', element: 'Earth + Water', planet: 'Moon / Jupiter',
     qualities: 'Heavy, slow, cool, oily, smooth, stable', color: '#059669',
     imbalance: 'Weight gain, congestion, lethargy, attachment, depression',
     balance: 'Exercise, fasting, Trikatu, stimulating herbs, warmth',
@@ -29,7 +29,7 @@ const DOSHAS = [
 
 const MEDICAL_ASTRO_HOUSES = [
   { house: '1st', title: 'Constitution & Overall Vitality', desc: 'Lagna and Lagna lord reveal the fundamental body type, immunity, and life force.' },
-  { house: '6th', title: 'Disease & Chronic Conditions', desc: 'The house of illness â€” its lord and occupants show the type and nature of health challenges.' },
+  { house: '6th', title: 'Disease & Chronic Conditions', desc: 'The house of illness — its lord and occupants show the type and nature of health challenges.' },
   { house: '8th', title: 'Chronic & Transformative Illness', desc: 'Longevity, accidents, surgeries, and deep transformative health events.' },
   { house: '12th', title: 'Hospitalization & Hidden Ailments', desc: 'Hidden diseases, foreign travel for medical care, and spiritual causes of illness.' },
 ]
@@ -65,7 +65,7 @@ export default function AyurvedaPage() {
       {/* Hero */}
       <div style={{ background: 'linear-gradient(160deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%)', borderBottom: '2px solid rgba(5,150,105,0.3)' }}>
         <div className="max-w-5xl mx-auto px-6 py-16 text-center">
-          <div className="w-20 h-20 rounded-full flex items-center justify-center text-4xl mx-auto mb-6 shadow-xl" style={{ background: 'linear-gradient(135deg, #065f46, #047857)' }}>ðŸŒ¿</div>
+          <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl" style={{ background: 'linear-gradient(135deg, #065f46, #047857)' }}><span className="material-symbols-outlined text-white" style={{ fontSize: '36px', fontVariationSettings: "'FILL' 1" }}>spa</span></div>
           <p className="text-xs text-[#065f46] tracking-[0.4em] uppercase mb-3" style={{ fontFamily: "'Sora', sans-serif" }}>Ancient Science of Life & Healing</p>
           <h1 className="text-5xl font-black text-[#052e16] mb-3 tracking-wide" style={{ fontFamily: "'Playfair Display', serif" }}>AYURVEDA</h1>
           <p className="text-sm text-[#065f46] tracking-[0.15em] uppercase mb-2" style={{ fontFamily: "'Sora', sans-serif" }}>& Medical Astrology</p>
@@ -148,20 +148,20 @@ export default function AyurvedaPage() {
                   <h3 className="font-bold text-[var(--indigo-deep)] mb-2 text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>{item.title}</h3>
                   {item.subtitle && <p className="text-sm text-emerald-700 font-semibold mb-2">{item.subtitle}</p>}
                   {item.description && <p className="text-sm text-[var(--warm-charcoal)]/60 leading-relaxed mb-4 flex-1">{item.description}</p>}
-                  {item.instructor_name && <p className="text-xs text-[var(--warm-charcoal)]/50 mb-4">ðŸ‘¤ {item.instructor_name}</p>}
+                  {item.instructor_name && <p className="text-xs text-[var(--warm-charcoal)]/50 mb-4">👤 {item.instructor_name}</p>}
                   <div className="flex items-center justify-between mt-auto pt-4 border-t border-[var(--outline-variant)]/20">
                     {item.price ? (
                       <div>
-                        <span className="font-bold text-[var(--terracotta)] text-xl">â‚¹{item.price.toLocaleString('en-IN')}</span>
-                        {item.original_price && <span className="text-xs line-through text-[var(--warm-charcoal)]/30 ml-2">â‚¹{item.original_price.toLocaleString('en-IN')}</span>}
+                        <span className="font-bold text-[var(--terracotta)] text-xl">₹{item.price.toLocaleString('en-IN')}</span>
+                        {item.original_price && <span className="text-xs line-through text-[var(--warm-charcoal)]/30 ml-2">₹{item.original_price.toLocaleString('en-IN')}</span>}
                       </div>
                     ) : <span className="text-sm text-emerald-600 font-semibold">Free</span>}
                     {booked.has(item.id) ? (
-                      <span className="text-sm px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 font-semibold">âœ“ Booked</span>
+                      <span className="text-sm px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 font-semibold">✓ Booked</span>
                     ) : (
                       <button onClick={() => bookService(item)} disabled={booking === item.id || !item.is_bookable}
                         className="btn-divine px-5 py-2 disabled:opacity-40 text-sm inline-flex items-center gap-1.5">
-                        {booking === item.id ? 'Bookingâ€¦' : item.is_bookable ? (
+                        {booking === item.id ? 'Booking…' : item.is_bookable ? (
                           <><span className="material-symbols-outlined text-[15px]">event</span>Book Now</>
                         ) : 'Notify Me'}
                       </button>
@@ -176,8 +176,8 @@ export default function AyurvedaPage() {
         {/* Medical Astrology */}
         <section style={{ background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', borderRadius: 20, padding: '40px', border: '1px solid rgba(5,150,105,0.2)' }}>
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-[#052e16]" style={{ fontFamily: "'Playfair Display', serif" }}>Medical Astrology â€” Reading Health in the Stars</h2>
-            <p className="text-sm text-[#065f46]/70 mt-2">Jyotish reveals the karmic basis of health conditions â€” and the planetary remedies</p>
+            <h2 className="text-2xl font-bold text-[#052e16]" style={{ fontFamily: "'Playfair Display', serif" }}>Medical Astrology — Reading Health in the Stars</h2>
+            <p className="text-sm text-[#065f46]/70 mt-2">Jyotish reveals the karmic basis of health conditions — and the planetary remedies</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {MEDICAL_ASTRO_HOUSES.map(h => (
@@ -191,7 +191,7 @@ export default function AyurvedaPage() {
             ))}
           </div>
           <p className="text-center text-sm text-[#065f46]/60 mt-6 max-w-2xl mx-auto">
-            A combined Ayurvedic-Jyotish consultation identifies not just the physical symptoms but the karmic root â€” enabling deeper, lasting healing through planetary remedies, herbs, and lifestyle corrections.
+            A combined Ayurvedic-Jyotish consultation identifies not just the physical symptoms but the karmic root — enabling deeper, lasting healing through planetary remedies, herbs, and lifestyle corrections.
           </p>
         </section>
 

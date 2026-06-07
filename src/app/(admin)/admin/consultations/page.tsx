@@ -61,14 +61,17 @@ export default function AdminConsultationsPage() {
         .order('date').order('start_time'),
       supabase.from('profiles').select('id,full_name').eq('role', 'expert'),
       supabase.from('consultation_bookings')
-        .select('id,slot_id,status,booked_at,meeting_link,call_mode,profiles!user_id(full_name,email),consultation_slots(date,start_time,end_time)')
+        .select('*, profiles!user_id(full_name,email), consultation_slots(date,start_time,end_time)')
         .order('booked_at', { ascending: false })
         .limit(100),
       (supabase as any).from('platform_settings').select('value').eq('key', 'livekit_mode').single(),
     ])
     setSlots((slotsRes.data || []) as unknown as Slot[])
     setExperts(expertsRes.data || [])
-    if (bookingsRes.error) console.error('Bookings query error:', bookingsRes.error)
+    if (bookingsRes.error) {
+      console.error('Bookings query error:', bookingsRes.error)
+      toast.error('Bookings error: ' + bookingsRes.error.message + ' — Run migrations 014/015 in Supabase then refresh schema cache.')
+    }
     setBookings((bookingsRes.data || []) as unknown as Booking[])
     if (modeRes.data?.value) setLivekitMode(modeRes.data.value as 'production' | 'sandbox')
     setLoading(false)
