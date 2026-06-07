@@ -7,7 +7,7 @@ import {
   useLocalParticipant,
   RoomAudioRenderer,
   VideoTrack,
-  useParticipants,
+  useRemoteParticipants,
 } from '@livekit/components-react'
 import { Track } from 'livekit-client'
 import { useState, useCallback, useEffect } from 'react'
@@ -18,6 +18,7 @@ interface ConsultationRoomProps {
   onLeave?: () => void
   slotDate?: string
   slotTime?: string
+  isExpert?: boolean
 }
 
 // ── Session timer ──────────────────────────────────────────────────
@@ -31,17 +32,26 @@ function useTimer() {
 }
 
 // ── In-call room (inside LiveKitRoom context) ─────────────────────
-function TathastuConsultRoom({ userName, onLeave }: { userName: string; onLeave: () => void }) {
+function TathastuConsultRoom({ userName, onLeave, isExpert }: { userName: string; onLeave: () => void; isExpert?: boolean }) {
   const { localParticipant, isMicrophoneEnabled, isCameraEnabled } = useLocalParticipant()
-  const participants = useParticipants()
+  const remoteParticipants = useRemoteParticipants()
   const timer = useTimer()
+  const [everHadRemote, setEverHadRemote] = useState(false)
+
+  useEffect(() => {
+    if (remoteParticipants.length > 0) setEverHadRemote(true)
+  }, [remoteParticipants])
 
   const cameraTracks = useTracks(
     [{ source: Track.Source.Camera, withPlaceholder: true }],
     { onlySubscribed: false }
   )
 
-  const isWaiting = participants.filter(p => !p.isLocal).length === 0
+  const isWaiting = !everHadRemote && remoteParticipants.length === 0
+  const waitingMessage = isExpert
+    ? 'Waiting for client to join…'
+    : 'Waiting for your Vedic expert to join. Please stay connected.'
+  const totalCount = remoteParticipants.length + 1
 
   return (
     <div style={{
@@ -87,7 +97,7 @@ function TathastuConsultRoom({ userName, onLeave }: { userName: string; onLeave:
               background: isWaiting ? '#f59e0b' : '#10b981',
             }} />
             <span style={{ fontSize: 10, fontWeight: 600, color: isWaiting ? '#f59e0b' : '#10b981', whiteSpace: 'nowrap' }}>
-              {isWaiting ? 'Awaiting Expert' : `${participants.length} in session`}
+              {isWaiting ? (isExpert ? 'Awaiting Client' : 'Awaiting Expert') : `${totalCount} in session`}
             </span>
           </div>
           <span style={{
@@ -143,7 +153,7 @@ function TathastuConsultRoom({ userName, onLeave }: { userName: string; onLeave:
               Your room is ready
             </p>
             <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, textAlign: 'center', maxWidth: 240, lineHeight: 1.6 }}>
-              Waiting for your Vedic expert to join. Please stay connected.
+              {waitingMessage}
             </p>
             <div style={{ display: 'flex', gap: 6, marginTop: 18 }}>
               {[0, 1, 2].map(i => (
@@ -294,7 +304,7 @@ function ControlBtn({ active, icon, label, onClick, danger }: {
 }
 
 // ── Pre-join screen + main exported component ─────────────────────
-export default function ConsultationRoom({ bookingId, userName, onLeave, slotDate, slotTime }: ConsultationRoomProps) {
+export default function ConsultationRoom({ bookingId, userName, onLeave, slotDate, slotTime, isExpert }: ConsultationRoomProps) {
   const [token, setToken] = useState<string | null>(null)
   const [wsUrl, setWsUrl] = useState<string | null>(null)
   const [tokenMode, setTokenMode] = useState<'production' | 'sandbox' | null>(null)
@@ -347,7 +357,7 @@ export default function ConsultationRoom({ bookingId, userName, onLeave, slotDat
           onDisconnected={handleLeave}
           style={{ height: '100%' }}
         >
-          <TathastuConsultRoom userName={userName} onLeave={handleLeave} />
+          <TathastuConsultRoom userName={userName} onLeave={handleLeave} isExpert={isExpert} />
         </LiveKitRoom>
       </>
     )

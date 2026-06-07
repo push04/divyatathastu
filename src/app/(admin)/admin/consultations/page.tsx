@@ -362,6 +362,7 @@ export default function AdminConsultationsPage() {
                         <ConsultationRoom
                           bookingId={b.id}
                           userName={adminName}
+                          isExpert={true}
                           onLeave={() => setActiveCallBookingId(null)}
                         />
                       </div>
