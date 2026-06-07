@@ -16,9 +16,11 @@ interface ConsultationRoomProps {
   bookingId: string
   userName: string
   onLeave?: () => void
+  slotDate?: string
+  slotTime?: string
 }
 
-// ── Session timer (inside LiveKitRoom context) ─────────────────────
+// ── Session timer ──────────────────────────────────────────────────
 function useTimer() {
   const [s, setS] = useState(0)
   useEffect(() => {
@@ -28,7 +30,7 @@ function useTimer() {
   return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
 }
 
-// ── Branded inner room (must render inside <LiveKitRoom>) ──────────
+// ── In-call room (inside LiveKitRoom context) ─────────────────────
 function TathastuConsultRoom({ userName, onLeave }: { userName: string; onLeave: () => void }) {
   const { localParticipant, isMicrophoneEnabled, isCameraEnabled } = useLocalParticipant()
   const participants = useParticipants()
@@ -43,130 +45,111 @@ function TathastuConsultRoom({ userName, onLeave }: { userName: string; onLeave:
 
   return (
     <div style={{
-      display: 'flex', flexDirection: 'column', borderRadius: 20, overflow: 'hidden',
-      height: 580, background: '#080611',
-      border: '1px solid rgba(212,160,23,0.35)',
-      boxShadow: '0 30px 60px rgba(0,0,0,0.6), inset 0 1px 0 rgba(212,160,23,0.15)',
+      display: 'flex', flexDirection: 'column', borderRadius: 16, overflow: 'hidden',
+      height: 'min(600px, calc(100svh - 100px))',
+      background: '#0c0a18',
+      border: '1px solid rgba(255,255,255,0.08)',
+      boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
       fontFamily: "'Sora', system-ui, sans-serif",
     }}>
       <RoomAudioRenderer />
 
-      {/* ══ TOP BAR ══ */}
+      {/* Top bar */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '11px 18px', flexShrink: 0,
-        background: 'linear-gradient(90deg, #160920 0%, #0e0b1c 100%)',
-        borderBottom: '1px solid rgba(212,160,23,0.2)',
+        padding: '10px 14px', flexShrink: 0,
+        background: '#13101f',
+        borderBottom: '1px solid rgba(255,255,255,0.07)',
+        gap: 8,
       }}>
-        {/* Brand */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <div style={{
-            width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
-            background: 'linear-gradient(135deg, #D4A017 0%, #b8860b 100%)',
+            width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+            background: 'var(--indigo-deep, #2d1b69)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 18, fontWeight: 900, color: '#1a0e2e',
-            boxShadow: '0 0 14px rgba(212,160,23,0.55)',
+            fontSize: 14, fontWeight: 900, color: '#fff',
             fontFamily: 'Georgia, serif',
           }}>ॐ</div>
-          <div>
-            <div style={{ fontSize: 12, fontWeight: 800, color: '#D4A017', letterSpacing: '0.1em' }}>
-              MahaTathastu
-            </div>
-            <div style={{ fontSize: 8.5, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.35em', textTransform: 'uppercase', marginTop: 1 }}>
-              Vedic Consultation · Private
-            </div>
-          </div>
+          <span style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.7)', letterSpacing: '0.06em' }}>
+            MahaTathastu
+          </span>
         </div>
 
-        {/* Live status + timer */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
           <div style={{
-            display: 'flex', alignItems: 'center', gap: 7,
-            padding: '5px 13px', borderRadius: 20,
-            background: isWaiting ? 'rgba(245,158,11,0.08)' : 'rgba(16,185,129,0.08)',
-            border: `1px solid ${isWaiting ? 'rgba(245,158,11,0.35)' : 'rgba(16,185,129,0.35)'}`,
+            display: 'flex', alignItems: 'center', gap: 5,
+            padding: '4px 10px', borderRadius: 20,
+            background: isWaiting ? 'rgba(245,158,11,0.1)' : 'rgba(16,185,129,0.1)',
+            border: `1px solid ${isWaiting ? 'rgba(245,158,11,0.3)' : 'rgba(16,185,129,0.3)'}`,
           }}>
             <div className={isWaiting ? 'animate-pulse' : ''} style={{
-              width: 7, height: 7, borderRadius: '50%',
+              width: 6, height: 6, borderRadius: '50%',
               background: isWaiting ? '#f59e0b' : '#10b981',
-              boxShadow: `0 0 8px ${isWaiting ? '#f59e0b' : '#10b981'}`,
             }} />
-            <span style={{ fontSize: 11, fontWeight: 600, color: isWaiting ? '#f59e0b' : '#10b981' }}>
+            <span style={{ fontSize: 10, fontWeight: 600, color: isWaiting ? '#f59e0b' : '#10b981', whiteSpace: 'nowrap' }}>
               {isWaiting ? 'Awaiting Expert' : `${participants.length} in session`}
             </span>
           </div>
-          <div style={{
+          <span style={{
             fontFamily: "'JetBrains Mono', monospace",
-            fontSize: 12, color: '#D4A017', fontWeight: 700,
-            padding: '5px 13px', borderRadius: 20,
-            background: 'rgba(212,160,23,0.07)',
-            border: '1px solid rgba(212,160,23,0.25)',
-            letterSpacing: '0.1em',
-          }}>{timer}</div>
+            fontSize: 11, color: 'rgba(255,255,255,0.5)', fontWeight: 600,
+            padding: '4px 10px', borderRadius: 20,
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.1)',
+          }}>{timer}</span>
+          <button
+            onClick={onLeave}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 5,
+              padding: '6px 12px', borderRadius: 20, cursor: 'pointer',
+              background: 'rgba(220,38,38,0.15)',
+              border: '1px solid rgba(220,38,38,0.4)',
+              color: '#fca5a5', fontSize: 11, fontWeight: 700,
+              fontFamily: "'Sora', system-ui, sans-serif",
+              whiteSpace: 'nowrap',
+            }}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: 14, fontVariationSettings: "'FILL' 1" }}>call_end</span>
+            <span className="hidden sm:inline">End</span>
+          </button>
         </div>
-
-        {/* End button */}
-        <button
-          onClick={onLeave}
-          style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            padding: '7px 16px', borderRadius: 20, cursor: 'pointer',
-            background: 'rgba(220,38,38,0.12)',
-            border: '1px solid rgba(220,38,38,0.45)',
-            color: '#fca5a5', fontSize: 12, fontWeight: 700,
-            transition: 'all 0.2s', fontFamily: "'Sora', system-ui, sans-serif",
-          }}
-        >
-          <span className="material-symbols-outlined" style={{ fontSize: 15, fontVariationSettings: "'FILL' 1" }}>call_end</span>
-          End Session
-        </button>
       </div>
 
-      {/* ══ VIDEO AREA ══ */}
+      {/* Video area */}
       <div style={{
         flex: 1, position: 'relative', display: 'flex',
         alignItems: 'center', justifyContent: 'center',
-        gap: 12, padding: 14, overflow: 'hidden',
-        background: 'radial-gradient(ellipse at 50% 40%, #1e0e38 0%, #0a0714 65%)',
+        flexWrap: 'wrap', gap: 10, padding: 12, overflow: 'hidden',
+        background: '#0c0a18',
       }}>
-        {/* Subtle mandala watermark */}
-        <div style={{
-          position: 'absolute', inset: 0, display: 'flex',
-          alignItems: 'center', justifyContent: 'center',
-          pointerEvents: 'none', opacity: 0.04,
-          fontSize: 340, color: '#D4A017',
-          fontFamily: 'Georgia, serif', lineHeight: 1,
-          userSelect: 'none',
-        }}>ॐ</div>
-
         {/* Waiting overlay */}
         {isWaiting && (
           <div style={{
             position: 'absolute', inset: 0, zIndex: 6,
             display: 'flex', flexDirection: 'column',
             alignItems: 'center', justifyContent: 'center',
-            background: 'rgba(8,6,17,0.88)',
+            background: 'rgba(12,10,24,0.92)',
           }}>
             <div style={{
-              width: 80, height: 80, borderRadius: '50%',
-              background: 'linear-gradient(135deg, rgba(212,160,23,0.2), rgba(212,160,23,0.05))',
-              border: '2px solid rgba(212,160,23,0.35)',
+              width: 64, height: 64, borderRadius: '50%',
+              background: 'rgba(255,255,255,0.04)',
+              border: '1.5px solid rgba(255,255,255,0.12)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 36, marginBottom: 18,
-              boxShadow: '0 0 30px rgba(212,160,23,0.15)',
-            }}>🙏</div>
-            <p style={{
-              color: '#D4A017', fontSize: 18, fontWeight: 700, marginBottom: 8,
-              fontFamily: 'Georgia, serif',
-            }}>Sacred Space is Ready</p>
-            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 12, textAlign: 'center', maxWidth: 260, lineHeight: 1.7 }}>
-              Waiting for your Vedic expert to join.<br />Please remain connected — they will arrive shortly.
+              marginBottom: 16,
+            }}>
+              <span className="material-symbols-outlined animate-pulse" style={{ fontSize: 28, color: 'rgba(255,255,255,0.4)', fontVariationSettings: "'FILL' 1" }}>person</span>
+            </div>
+            <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: 15, fontWeight: 600, marginBottom: 6 }}>
+              Your room is ready
             </p>
-            <div style={{ display: 'flex', gap: 7, marginTop: 22 }}>
+            <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, textAlign: 'center', maxWidth: 240, lineHeight: 1.6 }}>
+              Waiting for your Vedic expert to join. Please stay connected.
+            </p>
+            <div style={{ display: 'flex', gap: 6, marginTop: 18 }}>
               {[0, 1, 2].map(i => (
                 <div key={i} className="animate-bounce" style={{
-                  width: 7, height: 7, borderRadius: '50%',
-                  background: '#D4A017', opacity: 0.7,
+                  width: 6, height: 6, borderRadius: '50%',
+                  background: 'rgba(255,255,255,0.3)',
                   animationDelay: `${i * 0.15}s`,
                 }} />
               ))}
@@ -185,32 +168,30 @@ function TathastuConsultRoom({ userName, onLeave }: { userName: string; onLeave:
           return (
             <div key={p?.identity ?? idx} style={{
               position: 'relative',
-              width: isSolo ? '100%' : 'calc(50% - 6px)',
-              maxWidth: isSolo ? 580 : 340,
+              width: isSolo ? '100%' : 'calc(50% - 5px)',
+              maxWidth: isSolo ? 560 : 320,
               aspectRatio: '16/9',
-              borderRadius: 14, overflow: 'hidden',
-              background: '#160920',
-              border: `2px solid ${isLocal ? 'rgba(212,160,23,0.25)' : 'rgba(212,160,23,0.65)'}`,
-              boxShadow: isLocal ? 'none' : '0 0 28px rgba(212,160,23,0.18), inset 0 1px 0 rgba(212,160,23,0.1)',
+              borderRadius: 12, overflow: 'hidden',
+              background: '#1a1628',
+              border: `1.5px solid ${isLocal ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.18)'}`,
               flexShrink: 0,
             }}>
               {isVideoOff ? (
-                /* Camera-off avatar */
                 <div style={{
                   width: '100%', height: '100%',
                   display: 'flex', flexDirection: 'column',
                   alignItems: 'center', justifyContent: 'center',
-                  background: 'linear-gradient(160deg, #1e0e38 0%, #0e0920 100%)',
+                  background: 'linear-gradient(160deg, #1a1628 0%, #0c0a18 100%)',
                 }}>
                   <div style={{
-                    width: 64, height: 64, borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #D4A017, #b8860b)',
+                    width: 52, height: 52, borderRadius: '50%',
+                    background: isLocal ? 'rgba(255,255,255,0.06)' : 'var(--indigo-deep, #2d1b69)',
+                    border: '1.5px solid rgba(255,255,255,0.12)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 26, fontWeight: 900, color: '#1a0e2e',
-                    boxShadow: '0 0 20px rgba(212,160,23,0.4)',
-                    marginBottom: 10, fontFamily: 'Georgia, serif',
+                    fontSize: 22, fontWeight: 700, color: 'rgba(255,255,255,0.7)',
+                    marginBottom: 8,
                   }}>{name.charAt(0).toUpperCase()}</div>
-                  <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12 }}>Camera off</p>
+                  <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 11 }}>Camera off</p>
                 </div>
               ) : (
                 <VideoTrack trackRef={track as any} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -218,42 +199,38 @@ function TathastuConsultRoom({ userName, onLeave }: { userName: string; onLeave:
 
               {/* Name badge */}
               <div style={{
-                position: 'absolute', bottom: 10, left: 10,
-                background: 'rgba(0,0,0,0.7)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(10px)',
-                padding: '4px 11px 4px 9px',
-                borderRadius: 20, display: 'flex', alignItems: 'center', gap: 5,
-                border: '1px solid rgba(212,160,23,0.3)',
+                position: 'absolute', bottom: 8, left: 8,
+                background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(8px)',
+                padding: '3px 9px', borderRadius: 20,
+                display: 'flex', alignItems: 'center', gap: 4,
               }}>
-                <span style={{ fontSize: 9, color: '#D4A017' }}>✦</span>
-                <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.92)', fontWeight: 600 }}>
+                <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.75)', fontWeight: 600 }}>
                   {isLocal ? `${name} (You)` : name}
                 </span>
               </div>
 
-              {/* Expert / You role badge */}
-              <div style={{
-                position: 'absolute', top: 10, right: 10,
-                padding: '3px 10px', borderRadius: 20,
-                background: isLocal ? 'rgba(99,102,241,0.15)' : 'rgba(212,160,23,0.15)',
-                border: `1px solid ${isLocal ? 'rgba(99,102,241,0.4)' : 'rgba(212,160,23,0.45)'}`,
-                fontSize: 9, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase',
-                color: isLocal ? 'rgba(165,180,252,0.9)' : '#D4A017',
-              }}>{isLocal ? 'You' : 'Expert'}</div>
+              {!isLocal && (
+                <div style={{
+                  position: 'absolute', top: 8, right: 8,
+                  padding: '2px 8px', borderRadius: 20,
+                  background: 'rgba(255,255,255,0.08)',
+                  border: '1px solid rgba(255,255,255,0.15)',
+                  fontSize: 9, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
+                  color: 'rgba(255,255,255,0.5)',
+                }}>Expert</div>
+              )}
             </div>
           )
         })}
       </div>
 
-      {/* ══ CONTROLS BAR ══ */}
+      {/* Controls */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '13px 24px', gap: 12, flexShrink: 0,
-        background: 'linear-gradient(0deg, #160920 0%, #0e0b1c 100%)',
-        borderTop: '1px solid rgba(212,160,23,0.15)',
+        padding: '12px 16px', gap: 10, flexShrink: 0,
+        background: '#13101f',
+        borderTop: '1px solid rgba(255,255,255,0.07)',
       }}>
-        {/* Mic */}
         <ControlBtn
           active={isMicrophoneEnabled}
           icon={isMicrophoneEnabled ? 'mic' : 'mic_off'}
@@ -261,8 +238,6 @@ function TathastuConsultRoom({ userName, onLeave }: { userName: string; onLeave:
           onClick={() => localParticipant.setMicrophoneEnabled(!isMicrophoneEnabled)}
           danger={!isMicrophoneEnabled}
         />
-
-        {/* Camera */}
         <ControlBtn
           active={isCameraEnabled}
           icon={isCameraEnabled ? 'videocam' : 'videocam_off'}
@@ -271,71 +246,28 @@ function TathastuConsultRoom({ userName, onLeave }: { userName: string; onLeave:
           danger={!isCameraEnabled}
         />
 
-        {/* Divider */}
-        <div style={{ width: 1, height: 30, background: 'rgba(255,255,255,0.08)', margin: '0 2px' }} />
+        <div style={{ width: 1, height: 28, background: 'rgba(255,255,255,0.07)', margin: '0 4px' }} />
 
-        {/* Participants count */}
-        <div style={{
-          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
-          padding: '0 8px',
-        }}>
-          <div style={{
-            width: 44, height: 44, borderRadius: 14,
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.1)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'rgba(255,255,255,0.5)', fontVariationSettings: "'FILL' 1" }}>group</span>
-          </div>
-          <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.05em' }}>
-            {participants.length} / 2
-          </span>
-        </div>
-
-        {/* Divider */}
-        <div style={{ width: 1, height: 30, background: 'rgba(255,255,255,0.08)', margin: '0 2px' }} />
-
-        {/* End Session */}
         <button
           onClick={onLeave}
           style={{
-            display: 'flex', alignItems: 'center', gap: 8,
-            padding: '0 26px', height: 50, borderRadius: 25, cursor: 'pointer',
-            background: 'linear-gradient(135deg, #dc2626, #b91c1c)',
-            border: '1px solid rgba(239,68,68,0.5)', color: 'white',
-            fontWeight: 800, fontSize: 13, transition: 'all 0.2s',
-            boxShadow: '0 4px 18px rgba(220,38,38,0.4)',
-            fontFamily: "'Sora', system-ui, sans-serif",
-            letterSpacing: '0.02em',
+            display: 'flex', alignItems: 'center', gap: 6,
+            padding: '0 20px', height: 44, borderRadius: 22, cursor: 'pointer',
+            background: '#dc2626', border: 'none', color: 'white',
+            fontWeight: 700, fontSize: 12, fontFamily: "'Sora', system-ui, sans-serif",
+            boxShadow: '0 3px 12px rgba(220,38,38,0.4)',
           }}
         >
-          <span className="material-symbols-outlined" style={{ fontSize: 18, fontVariationSettings: "'FILL' 1" }}>call_end</span>
+          <span className="material-symbols-outlined" style={{ fontSize: 16, fontVariationSettings: "'FILL' 1" }}>call_end</span>
           End Session
         </button>
-      </div>
-
-      {/* Branding footer strip */}
-      <div style={{
-        padding: '6px 18px', flexShrink: 0,
-        background: '#0a0613',
-        borderTop: '1px solid rgba(212,160,23,0.1)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-      }}>
-        <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.18)', letterSpacing: '0.25em', textTransform: 'uppercase' }}>
-          Powered by
-        </span>
-        <span style={{ fontSize: 9, color: 'rgba(212,160,23,0.5)', fontWeight: 700, letterSpacing: '0.2em' }}>
-          ॐ MahaTathastu · Anushthaan India
-        </span>
       </div>
     </div>
   )
 }
 
-// ── Reusable control button ───────────────────────────────────────
-function ControlBtn({
-  active, icon, label, onClick, danger,
-}: {
+// ── Control button ────────────────────────────────────────────────
+function ControlBtn({ active, icon, label, onClick, danger }: {
   active: boolean; icon: string; label: string; onClick: () => void; danger?: boolean
 }) {
   return (
@@ -343,29 +275,26 @@ function ControlBtn({
       onClick={onClick}
       title={label}
       style={{
-        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
-        background: 'transparent', border: 'none', cursor: 'pointer', padding: '0 4px',
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+        background: 'transparent', border: 'none', cursor: 'pointer', padding: '0 6px',
       }}
     >
       <div style={{
-        width: 46, height: 46, borderRadius: 14,
-        background: danger ? 'rgba(220,38,38,0.18)' : 'rgba(212,160,23,0.08)',
-        border: `1.5px solid ${danger ? 'rgba(220,38,38,0.5)' : 'rgba(212,160,23,0.3)'}`,
+        width: 44, height: 44, borderRadius: 12,
+        background: danger ? 'rgba(220,38,38,0.15)' : 'rgba(255,255,255,0.05)',
+        border: `1px solid ${danger ? 'rgba(220,38,38,0.4)' : 'rgba(255,255,255,0.1)'}`,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        transition: 'all 0.2s',
-        color: danger ? '#fca5a5' : '#D4A017',
+        color: danger ? '#fca5a5' : 'rgba(255,255,255,0.6)',
       }}>
-        <span className="material-symbols-outlined" style={{ fontSize: 21, fontVariationSettings: "'FILL' 1" }}>{icon}</span>
+        <span className="material-symbols-outlined" style={{ fontSize: 19, fontVariationSettings: "'FILL' 1" }}>{icon}</span>
       </div>
-      <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>
-        {label}
-      </span>
+      <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.25)', whiteSpace: 'nowrap' }}>{label}</span>
     </button>
   )
 }
 
-// ── Pre-join / main exported component ───────────────────────────
-export default function ConsultationRoom({ bookingId, userName, onLeave }: ConsultationRoomProps) {
+// ── Pre-join screen + main exported component ─────────────────────
+export default function ConsultationRoom({ bookingId, userName, onLeave, slotDate, slotTime }: ConsultationRoomProps) {
   const [token, setToken] = useState<string | null>(null)
   const [wsUrl, setWsUrl] = useState<string | null>(null)
   const [tokenMode, setTokenMode] = useState<'production' | 'sandbox' | null>(null)
@@ -388,9 +317,7 @@ export default function ConsultationRoom({ bookingId, userName, onLeave }: Consu
         throw new Error(msg || 'Failed to obtain access token')
       }
       const { token: t, wsUrl: url, mode } = await res.json()
-      setToken(t)
-      setWsUrl(url)
-      setTokenMode(mode)
+      setToken(t); setWsUrl(url); setTokenMode(mode)
     } catch (e: any) {
       setError(e.message || 'Connection failed. Please try again.')
     } finally {
@@ -399,9 +326,7 @@ export default function ConsultationRoom({ bookingId, userName, onLeave }: Consu
   }, [roomName, userName])
 
   const handleLeave = useCallback(() => {
-    setToken(null)
-    setWsUrl(null)
-    setTokenMode(null)
+    setToken(null); setWsUrl(null); setTokenMode(null)
     onLeave?.()
   }, [onLeave])
 
@@ -410,21 +335,15 @@ export default function ConsultationRoom({ bookingId, userName, onLeave }: Consu
     return (
       <>
         {tokenMode === 'sandbox' && (
-          <div style={{
-            marginBottom: 8, padding: '6px 14px', borderRadius: 10,
-            background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.35)',
-            fontSize: 11, color: '#f59e0b', display: 'flex', alignItems: 'center', gap: 6,
-          }}>
-            <span style={{ fontSize: 14 }}>⚠️</span>
-            Running in <strong>Sandbox mode</strong> — for development only. Switch to Production in Admin → Consultations → LiveKit Plan.
+          <div className="mb-2 px-4 py-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-xs flex items-center gap-2">
+            <span className="material-symbols-outlined text-[15px]">warning</span>
+            Sandbox mode — for testing only. Switch to Production in Admin panel.
           </div>
         )}
         <LiveKitRoom
           token={token}
           serverUrl={wsUrl}
-          connect
-          video
-          audio
+          connect video audio
           onDisconnected={handleLeave}
           style={{ height: '100%' }}
         >
@@ -436,143 +355,94 @@ export default function ConsultationRoom({ bookingId, userName, onLeave }: Consu
 
   // ── Pre-join screen ──
   return (
-    <div style={{
-      borderRadius: 20, overflow: 'hidden', position: 'relative',
-      background: 'linear-gradient(160deg, #0f0920 0%, #1a0e2e 45%, #080611 100%)',
-      border: '1px solid rgba(212,160,23,0.3)',
-      boxShadow: '0 24px 48px rgba(0,0,0,0.5)',
-      padding: '44px 36px 36px',
-      display: 'flex', flexDirection: 'column', alignItems: 'center',
-      textAlign: 'center', fontFamily: "'Sora', system-ui, sans-serif",
-    }}>
-      {/* Corner ornaments */}
-      {[
-        { top: 0, left: 0, borderTop: '2px solid rgba(212,160,23,0.4)', borderLeft: '2px solid rgba(212,160,23,0.4)', borderTopLeftRadius: 20 },
-        { top: 0, right: 0, borderTop: '2px solid rgba(212,160,23,0.4)', borderRight: '2px solid rgba(212,160,23,0.4)', borderTopRightRadius: 20 },
-        { bottom: 0, left: 0, borderBottom: '2px solid rgba(212,160,23,0.4)', borderLeft: '2px solid rgba(212,160,23,0.4)', borderBottomLeftRadius: 20 },
-        { bottom: 0, right: 0, borderBottom: '2px solid rgba(212,160,23,0.4)', borderRight: '2px solid rgba(212,160,23,0.4)', borderBottomRightRadius: 20 },
-      ].map((s, i) => (
-        <div key={i} style={{ position: 'absolute', width: 28, height: 28, ...s }} />
-      ))}
-
-      {/* Glow */}
-      <div style={{
-        position: 'absolute', width: 350, height: 350, borderRadius: '50%',
-        background: 'radial-gradient(circle, rgba(212,160,23,0.07) 0%, transparent 70%)',
-        top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-        pointerEvents: 'none',
-      }} />
-
-      {/* OM symbol */}
-      <div style={{
-        width: 76, height: 76, borderRadius: '50%',
-        background: 'linear-gradient(135deg, #D4A017 0%, #b8860b 100%)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontSize: 36, fontWeight: 900, color: '#1a0e2e',
-        boxShadow: '0 0 36px rgba(212,160,23,0.6), 0 0 70px rgba(212,160,23,0.2)',
-        marginBottom: 22, fontFamily: 'Georgia, serif',
-        position: 'relative', zIndex: 1,
-      }}>ॐ</div>
-
-      <div style={{ position: 'relative', zIndex: 1, width: '100%' }}>
-        <p style={{ fontSize: 10, color: '#D4A017', letterSpacing: '0.45em', textTransform: 'uppercase', marginBottom: 10, fontWeight: 700 }}>
-          MahaTathastu · Anushthaan India
-        </p>
-        <h3 style={{
-          fontSize: 24, fontWeight: 700, color: 'white', marginBottom: 8,
-          fontFamily: 'Georgia, serif', letterSpacing: '0.04em',
-        }}>
-          1-on-1 Vedic Consultation
-        </h3>
-        <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 28, lineHeight: 1.7, maxWidth: 320, margin: '0 auto 28px' }}>
-          A private sacred space for your consultation with our Vedic expert. Your session is confidential and secure.
-        </p>
-
-        {/* Room ID pill */}
-        <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 28,
-          background: 'rgba(255,255,255,0.04)',
-          border: '1px solid rgba(212,160,23,0.22)',
-          borderRadius: 20, padding: '7px 16px',
-        }}>
-          <span className="material-symbols-outlined" style={{ fontSize: 14, color: '#D4A017', fontVariationSettings: "'FILL' 1" }}>meeting_room</span>
-          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', fontFamily: 'monospace', letterSpacing: '0.05em' }}>
-            {roomName}
-          </span>
+    <div className="bg-white border border-[var(--outline-variant)]/40 rounded-2xl overflow-hidden shadow-sm w-full max-w-lg mx-auto">
+      {/* Header */}
+      <div className="px-5 py-4 border-b border-[var(--outline-variant)]/30 flex items-center gap-3">
+        <div className="w-8 h-8 rounded-full bg-[var(--indigo-deep)] flex items-center justify-center flex-shrink-0">
+          <span className="text-white font-bold text-sm" style={{ fontFamily: 'Georgia, serif' }}>ॐ</span>
         </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-semibold text-[var(--indigo-deep)] tracking-[0.12em] uppercase" style={{ fontFamily: "'Sora', sans-serif" }}>MahaTathastu</p>
+          <p className="text-[10px] text-[var(--warm-charcoal)]/40 tracking-widest uppercase">Vedic Consultation</p>
+        </div>
+        <span className="inline-flex items-center gap-1.5 text-[10px] text-emerald-600 bg-emerald-50 border border-emerald-200/60 px-2.5 py-1 rounded-full font-semibold flex-shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block" />
+          Room Ready
+        </span>
+      </div>
 
-        {/* Features */}
-        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginBottom: 32, flexWrap: 'wrap' }}>
-          {[
-            { icon: 'lock', label: 'End-to-End Secure' },
-            { icon: 'hd', label: 'HD Video' },
-            { icon: 'mic', label: 'Crystal Audio' },
-            { icon: 'shield', label: 'Private Room' },
-          ].map(f => (
-            <div key={f.label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
-              <div style={{
-                width: 40, height: 40, borderRadius: 13,
-                background: 'rgba(212,160,23,0.07)',
-                border: '1px solid rgba(212,160,23,0.22)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>
-                <span className="material-symbols-outlined" style={{ fontSize: 18, color: '#D4A017', fontVariationSettings: "'FILL' 1" }}>{f.icon}</span>
+      {/* Body */}
+      <div className="p-5">
+        {/* Info row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+          {/* Participant card */}
+          <div className="bg-[var(--warm-sand)] rounded-xl p-4">
+            <p className="text-[9px] uppercase tracking-widest text-[var(--warm-charcoal)]/40 mb-3 font-semibold" style={{ fontFamily: "'Sora', sans-serif" }}>Joining as</p>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[var(--indigo-deep)] flex items-center justify-center text-white font-bold text-base flex-shrink-0">
+                {userName.charAt(0).toUpperCase()}
               </div>
-              <span style={{ fontSize: 9.5, color: 'rgba(255,255,255,0.3)', textAlign: 'center', maxWidth: 72, lineHeight: 1.4 }}>{f.label}</span>
+              <p className="font-semibold text-[var(--indigo-deep)] text-sm truncate">{userName}</p>
             </div>
-          ))}
+          </div>
+
+          {/* Session card */}
+          <div className="bg-[var(--warm-sand)] rounded-xl p-4">
+            <p className="text-[9px] uppercase tracking-widest text-[var(--warm-charcoal)]/40 mb-3 font-semibold" style={{ fontFamily: "'Sora', sans-serif" }}>
+              {slotDate ? 'Your session' : 'This session'}
+            </p>
+            {slotDate && (
+              <div className="flex items-center gap-2 mb-2">
+                <span className="material-symbols-outlined text-[14px] text-[var(--terracotta)]">calendar_today</span>
+                <span className="text-xs font-semibold text-[var(--indigo-deep)]">
+                  {new Date(slotDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                  {slotTime && ` · ${slotTime}`}
+                </span>
+              </div>
+            )}
+            <div className="space-y-1.5">
+              {[
+                { icon: 'lock', label: 'End-to-end encrypted' },
+                { icon: 'hd', label: 'HD video & audio' },
+                { icon: 'group', label: 'Private 1-on-1 room' },
+              ].map(f => (
+                <div key={f.icon} className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[13px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>{f.icon}</span>
+                  <span className="text-[11px] text-[var(--warm-charcoal)]/60">{f.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {error && (
-          <div style={{
-            marginBottom: 18, padding: '10px 16px',
-            background: 'rgba(220,38,38,0.1)',
-            border: '1px solid rgba(220,38,38,0.35)',
-            borderRadius: 12, color: '#fca5a5', fontSize: 12,
-          }}>{error}</div>
+          <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600 flex items-start gap-2">
+            <span className="material-symbols-outlined text-[16px] flex-shrink-0 mt-0.5">error</span>
+            <span>{error}</span>
+          </div>
         )}
 
-        {/* Join button */}
         <button
           onClick={joinRoom}
           disabled={connecting}
-          style={{
-            background: connecting
-              ? 'rgba(212,160,23,0.4)'
-              : 'linear-gradient(135deg, #D4A017 0%, #b8860b 100%)',
-            color: '#1a0e2e', border: 'none', borderRadius: 30,
-            padding: '15px 44px', cursor: connecting ? 'wait' : 'pointer',
-            fontSize: 15, fontWeight: 800,
-            display: 'inline-flex', alignItems: 'center', gap: 10,
-            boxShadow: connecting ? 'none' : '0 6px 24px rgba(212,160,23,0.45)',
-            transition: 'all 0.25s', letterSpacing: '0.02em',
-            fontFamily: "'Sora', system-ui, sans-serif",
-          }}
+          className="btn-divine w-full py-3.5 text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {connecting ? (
             <>
-              <div className="w-4 h-4 border-2 border-t-transparent rounded-full animate-spin"
-                style={{ borderColor: 'rgba(26,14,46,0.3)', borderTopColor: '#1a0e2e' }} />
+              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin flex-shrink-0" />
               Connecting…
             </>
           ) : (
             <>
-              <span className="material-symbols-outlined" style={{ fontSize: 20, fontVariationSettings: "'FILL' 1" }}>videocam</span>
-              Enter Sacred Space
+              <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>videocam</span>
+              Join Consultation
             </>
           )}
         </button>
 
-        <p style={{ marginTop: 14, fontSize: 10, color: 'rgba(255,255,255,0.2)', letterSpacing: '0.08em' }}>
-          Your camera & microphone will be requested upon joining
+        <p className="text-center text-[10px] text-[var(--warm-charcoal)]/35 mt-3 leading-relaxed">
+          Camera &amp; microphone access required · Session is private and confidential
         </p>
-
-        {/* Brand footer */}
-        <div style={{ marginTop: 28, paddingTop: 18, borderTop: '1px solid rgba(212,160,23,0.12)' }}>
-          <p style={{ fontSize: 9, color: 'rgba(212,160,23,0.35)', letterSpacing: '0.25em', textTransform: 'uppercase', fontWeight: 600 }}>
-            Powered by MahaTathastu · Anushthaan India
-          </p>
-        </div>
       </div>
     </div>
   )

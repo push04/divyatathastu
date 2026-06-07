@@ -56,7 +56,7 @@ export default function ConsultationsPage() {
       if (slotsRes.data) setSlots(slotsRes.data)
 
       if (user) {
-        const { data: bks } = await supabase.from('consultation_bookings').select('id,slot_id,status,booked_at,meeting_link,call_mode,consultation_slots(expert_id,date,start_time,end_time)').eq('user_id', user.id).order('booked_at', { ascending: false })
+        const { data: bks } = await supabase.from('consultation_bookings').select('*, consultation_slots(expert_id,date,start_time,end_time)').eq('user_id', user.id).order('booked_at', { ascending: false })
         if (bks) setBookings(bks as unknown as Booking[])
       }
       setLoading(false)
@@ -211,6 +211,8 @@ export default function ConsultationsPage() {
                       <ConsultationRoom
                         bookingId={b.id}
                         userName={profile?.full_name || 'User'}
+                        slotDate={slot?.date}
+                        slotTime={slot?.start_time}
                         onLeave={() => setActiveCallBookingId(null)}
                       />
                     </div>

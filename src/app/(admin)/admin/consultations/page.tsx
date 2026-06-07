@@ -15,7 +15,7 @@ interface Slot {
 interface Booking {
   id: string; slot_id: string; status: string; booked_at: string
   meeting_link: string | null; call_mode: string
-  profiles: { full_name: string; email: string } | null
+  profiles: { full_name: string } | null
   consultation_slots: { date: string; start_time: string; end_time: string } | null
 }
 
@@ -61,7 +61,7 @@ export default function AdminConsultationsPage() {
         .order('date').order('start_time'),
       supabase.from('profiles').select('id,full_name').eq('role', 'expert'),
       supabase.from('consultation_bookings')
-        .select('*, profiles!user_id(full_name,email), consultation_slots(date,start_time,end_time)')
+        .select('*, profiles!user_id(full_name), consultation_slots(date,start_time,end_time)')
         .order('booked_at', { ascending: false })
         .limit(100),
       (supabase as any).from('platform_settings').select('value').eq('key', 'livekit_mode').single(),
@@ -311,7 +311,7 @@ export default function AdminConsultationsPage() {
                         </div>
                         <div className="min-w-0">
                           <p className="font-semibold text-[var(--indigo-deep)] text-sm">{b.profiles?.full_name || 'Unknown'}</p>
-                          <p className="text-xs text-[var(--warm-charcoal)]/50">{b.profiles?.email}</p>
+                          <p className="text-xs text-[var(--warm-charcoal)]/50">User booking</p>
                           <p className="text-xs text-[var(--warm-charcoal)]/40 mt-0.5">
                             {slot ? `${slot.date} · ${slot.start_time?.slice(0,5)} – ${slot.end_time?.slice(0,5)}` : new Date(b.booked_at).toLocaleDateString('en-IN')}
                           </p>
