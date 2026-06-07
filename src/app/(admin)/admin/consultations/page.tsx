@@ -1,6 +1,7 @@
 'use client'
 
 import SudarshanLoader from '@/components/SudarshanLoader'
+import ConsultationRoom from '@/components/consultation/ConsultationRoom'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
@@ -49,6 +50,8 @@ export default function AdminConsultationsPage() {
   const [savingMeet, setSavingMeet] = useState(false)
   const [livekitMode, setLivekitMode] = useState<'production' | 'sandbox'>('production')
   const [savingMode, setSavingMode] = useState(false)
+  const [activeCallBookingId, setActiveCallBookingId] = useState<string | null>(null)
+  const [adminName, setAdminName] = useState('Expert')
 
   async function loadAll() {
     setLoading(true)
@@ -78,7 +81,13 @@ export default function AdminConsultationsPage() {
     setSavingMode(false)
   }
 
-  useEffect(() => { loadAll() }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    loadAll()
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) supabase.from('profiles').select('full_name').eq('id', user.id).single()
+        .then(({ data }) => { if (data?.full_name) setAdminName(data.full_name) })
+    })
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function addSlot() {
     if (!form.expert_id || !form.date) { toast.error('Select expert and date'); return }
@@ -319,13 +328,43 @@ export default function AdminConsultationsPage() {
                             <option key={s} value={s}>{s}</option>
                           ))}
                         </select>
+                        {/* Join Call — LiveKit */}
+                        {b.status === 'confirmed' && b.call_mode !== 'google_meet' && (
+                          <button
+                            onClick={() => setActiveCallBookingId(activeCallBookingId === b.id ? null : b.id)}
+                            className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-all inline-flex items-center gap-1 ${activeCallBookingId === b.id ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-[var(--indigo-deep)] text-white hover:opacity-90'}`}>
+                            <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                              {activeCallBookingId === b.id ? 'call_end' : 'videocam'}
+                            </span>
+                            {activeCallBookingId === b.id ? 'Leave Call' : 'Join Call'}
+                          </button>
+                        )}
+                        {/* Open Google Meet */}
+                        {b.status === 'confirmed' && b.call_mode === 'google_meet' && b.meeting_link && (
+                          <a href={b.meeting_link} target="_blank" rel="noopener noreferrer"
+                            className="text-xs px-3 py-1.5 rounded-lg font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-all inline-flex items-center gap-1">
+                            <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>meeting_room</span>
+                            Open Meet
+                          </a>
+                        )}
                         <button onClick={() => isEditing ? setMeetLinkEditing(null) : openMeetEdit(b)}
-                          className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-all inline-flex items-center gap-1 ${isEditing ? 'bg-[var(--warm-sand)]' : 'bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200'}`}>
+                          className={`text-xs px-3 py-1.5 rounded-lg font-semibold transition-all inline-flex items-center gap-1 ${isEditing ? 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]' : 'bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200'}`}>
                           <span className="material-symbols-outlined text-[14px]">video_call</span>
                           {isEditing ? 'Cancel' : 'Set Meet Link'}
                         </button>
                       </div>
                     </div>
+
+                    {/* Inline LiveKit room for admin/expert */}
+                    {activeCallBookingId === b.id && b.call_mode !== 'google_meet' && (
+                      <div className="px-4 pb-4 pt-2 border-t border-[var(--warm-sand)]/60">
+                        <ConsultationRoom
+                          bookingId={b.id}
+                          userName={adminName}
+                          onLeave={() => setActiveCallBookingId(null)}
+                        />
+                      </div>
+                    )}
 
                     {/* Meet link editor */}
                     {isEditing && (
