@@ -320,7 +320,6 @@ function GenerateReportContent() {
     const doneSections = sections.filter(s => s.status === 'done').length
     const totalSections = sections.length
     const progressPct = totalSections > 0 ? Math.round((doneSections / totalSections) * 100) : 0
-    const activeSec = sections.find(s => s.status === 'active')
 
     return (
       <div className="p-6 max-w-2xl mx-auto">
@@ -357,22 +356,6 @@ function GenerateReportContent() {
               />
             </div>
           </div>
-
-          {/* Active section banner */}
-          {activeSec && !allDone && (
-            <div className="mx-6 mt-4 flex items-center gap-3 px-4 py-3 bg-[var(--warm-sand)] rounded-xl border border-[var(--saffron)]/30">
-              <div className="w-5 h-5 flex-shrink-0">
-                <SudarshanLoader size="sm" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-[var(--indigo-deep)] truncate">
-                  {isHindi ? activeSec.nameHi : activeSec.name}
-                </p>
-                <p className="text-[10px] text-[var(--warm-charcoal)]/50">{SECTION_SANSKRIT[activeSec.sectionType] || ''}</p>
-              </div>
-              <span className="text-[10px] text-[var(--saffron)] font-bold animate-pulse">{isHindi ? 'गणना हो रही है' : 'calculating...'}</span>
-            </div>
-          )}
 
           {/* Section list */}
           <div className="p-6 space-y-2">
