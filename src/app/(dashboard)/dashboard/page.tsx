@@ -32,7 +32,7 @@ const DIVINE_SERVICES = [
     href: '/gyanampeetham',
     label: 'Gyanampeetham',
     desc: 'Discover the Divine Within',
-    emoji: '🕉️',
+    icon: 'school',
     bg: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
     badge: null,
     color: '#92400e',
@@ -41,7 +41,7 @@ const DIVINE_SERVICES = [
     href: '/shop?category=vastu-paintings',
     label: 'Vastu Paintings',
     desc: 'Sacred art for home harmony',
-    emoji: '🖼️',
+    icon: 'palette',
     bg: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)',
     badge: null,
     color: '#1e40af',
@@ -50,7 +50,7 @@ const DIVINE_SERVICES = [
     href: '/sadhana',
     label: 'Saadhana',
     desc: 'Guided spiritual practices',
-    emoji: '🙏',
+    icon: 'self_improvement',
     bg: 'linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%)',
     badge: 'Book',
     color: '#6b21a8',
@@ -59,7 +59,7 @@ const DIVINE_SERVICES = [
     href: '/mahaganpati',
     label: 'Mahaganpati',
     desc: 'Ganesh puja & divine blessings',
-    emoji: '🐘',
+    icon: 'brightness_5',
     bg: 'linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%)',
     badge: 'Book',
     color: '#9d174d',
@@ -68,7 +68,7 @@ const DIVINE_SERVICES = [
     href: '/puja',
     label: 'Pooja & Rituals',
     desc: 'Vedic ceremonies & rituals',
-    emoji: '🪔',
+    icon: 'local_fire_department',
     bg: 'linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%)',
     badge: 'Book',
     color: '#9a3412',
@@ -77,7 +77,7 @@ const DIVINE_SERVICES = [
     href: '/ardra-jalam',
     label: 'Ardra Jalam',
     desc: 'Sacred healing water — special product',
-    emoji: '💧',
+    icon: 'water_drop',
     bg: 'linear-gradient(135deg, #ecfdf5 0%, #a7f3d0 100%)',
     badge: 'Special',
     color: '#065f46',
@@ -86,7 +86,7 @@ const DIVINE_SERVICES = [
     href: '/ayurveda',
     label: 'Ayurveda & Med Astro',
     desc: 'Holistic health & planetary healing',
-    emoji: '🌿',
+    icon: 'spa',
     bg: 'linear-gradient(135deg, #f0fdf4 0%, #bbf7d0 100%)',
     badge: null,
     color: '#166534',
@@ -95,7 +95,7 @@ const DIVINE_SERVICES = [
     href: '/courses',
     label: 'Learning Courses',
     desc: 'Live & recorded Vedic lectures',
-    emoji: '📚',
+    icon: 'menu_book',
     bg: 'linear-gradient(135deg, #eff6ff 0%, #bfdbfe 100%)',
     badge: 'New',
     color: '#1e3a8a',
@@ -317,10 +317,10 @@ export default function DashboardPage() {
                 className="bento-card p-4 flex flex-col items-center text-center hover:shadow-lg hover:-translate-y-0.5 group transition-all duration-200 relative overflow-hidden"
               >
                 <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 text-2xl group-hover:scale-110 transition-transform shadow-sm"
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-sm"
                   style={{ background: s.bg }}
                 >
-                  {s.emoji}
+                  <span className="material-symbols-outlined text-[22px]" style={{ color: s.color, fontVariationSettings: "'FILL' 1" }}>{s.icon}</span>
                 </div>
                 <p className="text-[13px] font-semibold text-[var(--indigo-deep)] mb-1 leading-tight" style={{ fontFamily: "'Sora', sans-serif" }}>
                   {s.label}
