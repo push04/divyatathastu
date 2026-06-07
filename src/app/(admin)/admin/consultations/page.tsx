@@ -411,7 +411,7 @@ export default function AdminConsultationsPage() {
                     onClick={() => m !== livekitMode && saveLivekitMode(m)}
                     className={`px-5 py-2 rounded-xl text-sm font-bold capitalize transition-all disabled:opacity-60 ${livekitMode === m ? (m === 'sandbox' ? 'bg-amber-500 text-white shadow-sm' : 'bg-[var(--indigo-deep)] text-white shadow-sm') : 'text-[var(--warm-charcoal)]/50 hover:text-[var(--indigo-deep)]'}`}
                   >
-                    {m === 'production' ? '🔐 Production' : '🧪 Sandbox'}
+                    {m === 'production' ? 'Production' : 'Sandbox'}
                   </button>
                 ))}
               </div>
