@@ -47,10 +47,12 @@ export default function AdminConsultationsPage() {
   const [meetLinkEditing, setMeetLinkEditing] = useState<string | null>(null)
   const [meetLinkValue, setMeetLinkValue] = useState('')
   const [savingMeet, setSavingMeet] = useState(false)
+  const [livekitMode, setLivekitMode] = useState<'production' | 'sandbox'>('production')
+  const [savingMode, setSavingMode] = useState(false)
 
   async function loadAll() {
     setLoading(true)
-    const [slotsRes, expertsRes, bookingsRes] = await Promise.all([
+    const [slotsRes, expertsRes, bookingsRes, modeRes] = await Promise.all([
       supabase.from('consultation_slots')
         .select('id,expert_id,date,start_time,end_time,is_booked,is_blocked,created_at,profiles!expert_id(full_name)')
         .order('date').order('start_time'),
@@ -59,11 +61,21 @@ export default function AdminConsultationsPage() {
         .select('id,slot_id,status,booked_at,meet_link,call_mode,profiles!user_id(full_name,email),consultation_slots(date,start_time,end_time,profiles!expert_id(full_name))')
         .order('booked_at', { ascending: false })
         .limit(100),
+      supabase.from('platform_settings').select('value').eq('key', 'livekit_mode').single(),
     ])
     setSlots((slotsRes.data || []) as unknown as Slot[])
     setExperts(expertsRes.data || [])
     setBookings((bookingsRes.data || []) as unknown as Booking[])
+    if (modeRes.data?.value) setLivekitMode(modeRes.data.value as 'production' | 'sandbox')
     setLoading(false)
+  }
+
+  async function saveLivekitMode(newMode: 'production' | 'sandbox') {
+    setSavingMode(true)
+    const { error } = await supabase.from('platform_settings').upsert({ key: 'livekit_mode', value: newMode, updated_at: new Date().toISOString() })
+    if (error) toast.error('Failed to save: ' + error.message)
+    else { setLivekitMode(newMode); toast.success(newMode === 'sandbox' ? 'Switched to Sandbox mode — dev only' : 'Switched to Production mode') }
+    setSavingMode(false)
   }
 
   useEffect(() => { loadAll() }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -374,6 +386,61 @@ export default function AdminConsultationsPage() {
       {/* ── LIVEKIT PLAN TAB ── */}
       {tab === 'livekit' && (
         <div className="space-y-5">
+
+          {/* ── TOKEN MODE TOGGLE ── */}
+          <div className="bento-card p-5">
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div>
+                <h3 className="font-bold text-[var(--indigo-deep)] flex items-center gap-2 mb-1">
+                  <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>token</span>
+                  Token Mode
+                </h3>
+                <p className="text-xs text-[var(--warm-charcoal)]/50 max-w-sm leading-relaxed">
+                  Controls how LiveKit access tokens are generated for video calls.
+                  {livekitMode === 'sandbox'
+                    ? ' Sandbox uses LiveKit\'s free test token server — no API key needed, but sessions are ephemeral and not production-grade.'
+                    : ' Production uses your API key+secret to mint signed JWTs — secure, rate-limited, and billed against your Build plan.'}
+                </p>
+              </div>
+              {/* Toggle pills */}
+              <div className="flex gap-2 rounded-2xl p-1 shrink-0" style={{ background: 'var(--warm-sand)' }}>
+                {(['production', 'sandbox'] as const).map(m => (
+                  <button
+                    key={m}
+                    disabled={savingMode}
+                    onClick={() => m !== livekitMode && saveLivekitMode(m)}
+                    className={`px-5 py-2 rounded-xl text-sm font-bold capitalize transition-all disabled:opacity-60 ${livekitMode === m ? (m === 'sandbox' ? 'bg-amber-500 text-white shadow-sm' : 'bg-[var(--indigo-deep)] text-white shadow-sm') : 'text-[var(--warm-charcoal)]/50 hover:text-[var(--indigo-deep)]'}`}
+                  >
+                    {m === 'production' ? '🔐 Production' : '🧪 Sandbox'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Status badge row */}
+            <div className="mt-4 pt-4 border-t border-[var(--warm-sand)] flex flex-wrap gap-3 items-center">
+              <span className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full font-bold ${livekitMode === 'sandbox' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${livekitMode === 'sandbox' ? 'bg-amber-500' : 'bg-emerald-500'}`} />
+                {livekitMode === 'sandbox' ? 'Sandbox Active' : 'Production Active'}
+              </span>
+              {livekitMode === 'production' && (
+                <span className="text-xs text-[var(--warm-charcoal)]/40">Token endpoint: <code className="text-[var(--indigo-deep)] bg-[var(--warm-sand)] px-1.5 py-0.5 rounded">/api/get-livekit-token</code> → JWT via API key</span>
+              )}
+              {livekitMode === 'sandbox' && (
+                <span className="text-xs text-amber-700/70">Token endpoint: <code className="bg-amber-50 px-1.5 py-0.5 rounded">mahatathastu-2hw6kd.sandbox.livekit.io/token</code></span>
+              )}
+            </div>
+
+            {livekitMode === 'sandbox' && (
+              <div className="mt-3 flex items-start gap-2 p-3 rounded-xl bg-amber-50 border border-amber-200">
+                <span className="material-symbols-outlined text-amber-600 text-[16px] mt-0.5 shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
+                <p className="text-xs text-amber-700 leading-relaxed">
+                  <strong>Dev only:</strong> Sandbox tokens are publicly accessible and may be rate-limited. All users on this platform will connect via the sandbox — switch back to Production before going live.
+                </p>
+              </div>
+            )}
+          </div>
+
           {/* Plan header */}
           <div className="bento-card p-5" style={{ background: 'linear-gradient(135deg, #0f0920, #1a0e2e)', border: '1px solid rgba(212,160,23,0.35)' }}>
             <div className="flex items-start gap-4">

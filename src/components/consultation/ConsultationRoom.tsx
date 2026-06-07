@@ -367,11 +367,12 @@ function ControlBtn({
 // ── Pre-join / main exported component ───────────────────────────
 export default function ConsultationRoom({ bookingId, userName, onLeave }: ConsultationRoomProps) {
   const [token, setToken] = useState<string | null>(null)
+  const [wsUrl, setWsUrl] = useState<string | null>(null)
+  const [tokenMode, setTokenMode] = useState<'production' | 'sandbox' | null>(null)
   const [connecting, setConnecting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const roomName = `consult-${bookingId}`
-  const livekitUrl = process.env.NEXT_PUBLIC_LIVEKIT_URL
 
   const joinRoom = useCallback(async () => {
     setConnecting(true)
@@ -382,9 +383,14 @@ export default function ConsultationRoom({ bookingId, userName, onLeave }: Consu
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ roomName, userName }),
       })
-      if (!res.ok) throw new Error('Failed to obtain access token')
-      const { token: t } = await res.json()
+      if (!res.ok) {
+        const { error: msg } = await res.json().catch(() => ({}))
+        throw new Error(msg || 'Failed to obtain access token')
+      }
+      const { token: t, wsUrl: url, mode } = await res.json()
       setToken(t)
+      setWsUrl(url)
+      setTokenMode(mode)
     } catch (e: any) {
       setError(e.message || 'Connection failed. Please try again.')
     } finally {
@@ -394,37 +400,37 @@ export default function ConsultationRoom({ bookingId, userName, onLeave }: Consu
 
   const handleLeave = useCallback(() => {
     setToken(null)
+    setWsUrl(null)
+    setTokenMode(null)
     onLeave?.()
   }, [onLeave])
 
-  // ── Env not configured ──
-  if (!livekitUrl) {
-    return (
-      <div style={{
-        borderRadius: 16, padding: 20,
-        background: 'rgba(220,38,38,0.08)',
-        border: '1px solid rgba(220,38,38,0.3)',
-        color: '#fca5a5', fontSize: 13, lineHeight: 1.6,
-      }}>
-        ⚠️ LiveKit not configured. Add <code>NEXT_PUBLIC_LIVEKIT_URL</code> to your environment variables.
-      </div>
-    )
-  }
-
   // ── Active room ──
-  if (token) {
+  if (token && wsUrl) {
     return (
-      <LiveKitRoom
-        token={token}
-        serverUrl={livekitUrl}
-        connect
-        video
-        audio
-        onDisconnected={handleLeave}
-        style={{ height: '100%' }}
-      >
-        <TathastuConsultRoom userName={userName} onLeave={handleLeave} />
-      </LiveKitRoom>
+      <>
+        {tokenMode === 'sandbox' && (
+          <div style={{
+            marginBottom: 8, padding: '6px 14px', borderRadius: 10,
+            background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.35)',
+            fontSize: 11, color: '#f59e0b', display: 'flex', alignItems: 'center', gap: 6,
+          }}>
+            <span style={{ fontSize: 14 }}>⚠️</span>
+            Running in <strong>Sandbox mode</strong> — for development only. Switch to Production in Admin → Consultations → LiveKit Plan.
+          </div>
+        )}
+        <LiveKitRoom
+          token={token}
+          serverUrl={wsUrl}
+          connect
+          video
+          audio
+          onDisconnected={handleLeave}
+          style={{ height: '100%' }}
+        >
+          <TathastuConsultRoom userName={userName} onLeave={handleLeave} />
+        </LiveKitRoom>
+      </>
     )
   }
 

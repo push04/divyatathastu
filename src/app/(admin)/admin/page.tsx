@@ -104,6 +104,78 @@ export default function AdminOverviewPage() {
           {recent.length === 0 && <p className="text-sm text-[var(--warm-charcoal)]/40">No activity yet</p>}
         </div>
       </div>
+
+      {/* ── PLATFORM UPDATES / CHANGELOG ── */}
+      <div className="card-divine overflow-hidden">
+        <div className="px-5 pt-5 pb-3 flex items-center justify-between border-b border-[var(--warm-sand)]">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-[20px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>new_releases</span>
+            <h2 className="font-bold text-[var(--indigo-deep)]">Platform Updates</h2>
+            <span className="text-[10px] bg-[var(--saffron)] text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Latest</span>
+          </div>
+          <span className="text-xs text-[var(--warm-charcoal)]/40">June 2026 · v2.0</span>
+        </div>
+        <div className="divide-y divide-[var(--warm-sand)]/60">
+          {[
+            {
+              icon: 'videocam', color: 'bg-violet-600', tag: 'New Feature',
+              title: 'LiveKit 1-on-1 Video Consultations',
+              desc: 'Real-time video calling integrated directly into the platform. Custom MahaTathastu-branded room with dark cosmic UI, OM glyph, session timer, HD video tiles, and mic/camera controls.',
+              sub: 'Go to Consultations → Bookings → "Join Call"',
+            },
+            {
+              icon: 'token', color: 'bg-amber-600', tag: 'New Feature',
+              title: 'LiveKit Sandbox / Production Toggle',
+              desc: 'Admin can switch between sandbox mode (LiveKit\'s free test token server) and production mode (signed JWT via your API key). Sandbox is for dev; production is for live users.',
+              sub: 'Go to Consultations → LiveKit Plan → Token Mode',
+            },
+            {
+              icon: 'meeting_room', color: 'bg-blue-600', tag: 'New Feature',
+              title: 'Google Meet Fallback for Video Calls',
+              desc: 'Admin can paste a Google Meet or Zoom link per booking. Users see a "Join via Google Meet" button instead of the LiveKit room. Useful when LiveKit limits are approached or as a backup.',
+              sub: 'Go to Consultations → Bookings → "Set Meet Link"',
+            },
+            {
+              icon: 'spa', color: 'bg-emerald-600', tag: 'New Pages',
+              title: '8 Divine Service Pages',
+              desc: 'Full service pages live on the dashboard: Sadhana, Mahaganpati Puja, Ayurveda, Courses, Ardra Jalam, Gyanampeetham, Yagya/Havan, Kundali Reports — all DB-driven with booking support.',
+              sub: 'Dashboard homepage → Divine Services section',
+            },
+            {
+              icon: 'manage_accounts', color: 'bg-[var(--indigo-deep)]', tag: 'Admin',
+              title: 'Divine Services CRUD Admin Panel',
+              desc: 'Full admin control over all 8 service categories: add/edit/delete items, toggle active, set bookable flag, manage orders and enrollments. Bookings table with status updates.',
+              sub: 'Admin → Divine Services',
+            },
+            {
+              icon: 'picture_as_pdf', color: 'bg-[var(--terracotta)]', tag: 'Enhancement',
+              title: 'Parchment-Style Jyotish Reports',
+              desc: 'Report PDF redesigned to match the Tathastu book aesthetic: parchment background, Sanskrit red headings, royal blue body text, gold borders, devanagari typography, and print-optimised layout.',
+              sub: 'Dashboard → Reports → any report → Print PDF',
+            },
+            {
+              icon: 'settings', color: 'bg-slate-600', tag: 'Infrastructure',
+              title: 'Platform Settings Table',
+              desc: 'New platform_settings table for admin-controlled config (livekit_mode, maintenance_mode, etc). Admin-write, public-read via RLS. Base for future feature flags.',
+              sub: 'Migration 015_platform_settings.sql',
+            },
+          ].map((item, i) => (
+            <div key={i} className="px-5 py-4 flex gap-4">
+              <div className={`w-9 h-9 rounded-xl ${item.color} flex items-center justify-center text-white shrink-0 mt-0.5`}>
+                <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>{item.icon}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                  <span className="font-semibold text-[var(--indigo-deep)] text-sm">{item.title}</span>
+                  <span className="text-[9px] uppercase tracking-widest font-bold px-2 py-0.5 rounded-full bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60">{item.tag}</span>
+                </div>
+                <p className="text-xs text-[var(--warm-charcoal)]/60 leading-relaxed">{item.desc}</p>
+                <p className="text-[10px] text-[var(--indigo-deep)]/50 mt-1 font-mono">{item.sub}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
