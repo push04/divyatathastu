@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import SudarshanLoader from '@/components/SudarshanLoader'
 
 const footerLinks = {
   Services: [
@@ -32,7 +33,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2.5 mb-5 group w-fit">
-              <div className="w-9 h-9 rounded-full gradient-saffron flex items-center justify-center text-white font-bold shadow-md group-hover:scale-110 transition-transform">ॐ</div>
+              <div className="w-9 h-9 flex-shrink-0 group-hover:scale-110 transition-transform"><SudarshanLoader px={36} /></div>
               <span className="font-bold text-xl text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>MahaTathastu</span>
             </Link>
             <p className="text-[var(--indigo-deep)]/55 text-sm leading-relaxed mb-6 max-w-xs">

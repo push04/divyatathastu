@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils/cn'
 import { createClient } from '@/lib/supabase/client'
+import SudarshanLoader from '@/components/SudarshanLoader'
 
 const navLinks = [
   { href: '/services', label: 'Services' },
@@ -85,9 +86,8 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-            <div className="relative w-8 h-8 rounded-full gradient-saffron flex items-center justify-center text-white font-bold text-sm shadow-md group-hover:scale-110 transition-transform duration-300 animate-glow">
-              <span className="absolute inset-0 rounded-full gradient-saffron opacity-50 animate-ping-slow" />
-              ॐ
+            <div className="relative w-8 h-8 flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+              <SudarshanLoader px={32} />
             </div>
             <span
               className="text-[var(--indigo-deep)] font-bold text-lg leading-none tracking-tight"

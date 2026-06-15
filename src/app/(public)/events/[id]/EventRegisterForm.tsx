@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { toast } from 'sonner'
+import SudarshanLoader from '@/components/SudarshanLoader'
 
 export default function EventRegisterForm({ eventId, eventTitle, price }: { eventId: string; eventTitle: string; price: number }) {
   const [name, setName] = useState('')
@@ -14,10 +15,62 @@ export default function EventRegisterForm({ eventId, eventTitle, price }: { even
     e.preventDefault()
     if (!name || !email) return
     setLoading(true)
-    await new Promise(r => setTimeout(r, 1200))
-    setLoading(false)
-    setDone(true)
-    toast.success('Registration confirmed! Check your email.')
+
+    try {
+      if (price === 0) {
+        // Free event — register directly
+        const res = await fetch('/api/events/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ eventId, name, email, phone }),
+        })
+        if (res.ok) {
+          setDone(true)
+          toast.success('Registration confirmed! Check your email.')
+        } else {
+          toast.error('Registration failed. Please try again.')
+        }
+      } else {
+        // Paid event — Razorpay checkout
+        const orderRes = await fetch('/api/events/payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ eventId, name, email, phone, amount: price }),
+        })
+        const orderData = await orderRes.json()
+        if (!orderRes.ok) throw new Error(orderData.error || 'Order creation failed')
+
+        const script = document.createElement('script')
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+        document.head.appendChild(script)
+        await new Promise(resolve => { script.onload = resolve })
+
+        const rzp = new (window as any).Razorpay({
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+          amount: price * 100,
+          currency: 'INR',
+          order_id: orderData.order_id,
+          name: 'MahaTathastu',
+          description: eventTitle,
+          prefill: { name, email, contact: phone },
+          theme: { color: '#2F2A44' },
+          handler: async (response: any) => {
+            await fetch('/api/events/payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ action: 'verify', eventId, name, email, phone, ...response }),
+            })
+            setDone(true)
+            toast.success('Payment successful! You are registered.')
+          },
+        })
+        rzp.open()
+      }
+    } catch (err: any) {
+      toast.error(err.message || 'Something went wrong')
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (done) {
@@ -58,9 +111,13 @@ export default function EventRegisterForm({ eventId, eventTitle, price }: { even
       <button
         type="submit"
         disabled={loading}
-        className="btn-divine w-full py-3 text-sm disabled:opacity-60"
+        className="btn-divine w-full py-3 text-sm disabled:opacity-60 inline-flex items-center justify-center gap-2"
       >
-        {loading ? 'Processing...' : price === 0 ? 'Register Free' : `Pay ₹${price.toLocaleString('en-IN')} & Register`}
+        {loading
+          ? <><SudarshanLoader px={18} /><span>Processing…</span></>
+          : price === 0
+            ? 'Register Free'
+            : `Pay ₹${price.toLocaleString('en-IN')} & Register`}
       </button>
     </form>
   )

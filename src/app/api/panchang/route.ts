@@ -94,7 +94,8 @@ const YOGAS = [
 ]
 const KARANAS = ['Bava','Balava','Kaulava','Taitila','Garija','Vanija','Vishti','Shakuni','Chatushpada','Naga','Kimstughna']
 const RASHIS  = ['Mesha','Vrishabha','Mithuna','Karka','Simha','Kanya','Tula','Vrishchika','Dhanu','Makara','Kumbha','Meena']
-const RAHU_SEG_MAP = [7, 1, 6, 4, 5, 3, 2] // Sun=8th, Mon=2nd, Tue=7th, Wed=5th, Thu=6th, Fri=4th, Sat=3rd (0-based)
+const RAHU_SEG_MAP = [7, 1, 6, 4, 5, 3, 2]
+
 function rahuKaalDynamic(srH: number, ssH: number, dow: number): string {
   const segment = (ssH - srH) / 8
   const start   = srH + RAHU_SEG_MAP[dow] * segment
@@ -117,6 +118,97 @@ function festivals(tithiNum: number): { name: string; days: number }[] {
   ].sort((a, b) => a.days - b.days)
 }
 
+// ── Hora ──────────────────────────────────────────────────────────────
+// Chaldean order: Sun, Venus, Mercury, Moon, Saturn, Jupiter, Mars
+const HORA_PLANETS = ['Sun', 'Venus', 'Mercury', 'Moon', 'Saturn', 'Jupiter', 'Mars']
+const HORA_PLANET_COLOR: Record<string, string> = {
+  Sun: '#f59e0b', Venus: '#ec4899', Mercury: '#10b981',
+  Moon: '#94a3b8', Saturn: '#6366f1', Jupiter: '#f97316', Mars: '#ef4444',
+}
+// First hora (from sunrise) is ruled by the day's planet:
+// Sun=0, Mon=3, Tue=6, Wed=2, Thu=5, Fri=1, Sat=4
+const HORA_DAY_START = [0, 3, 6, 2, 5, 1, 4]
+
+function getHoras(srH: number, ssH: number, dow: number) {
+  const dayDur = ssH - srH
+  const nightDur = 24 - dayDur
+  const dayHoraDur  = dayDur  / 12
+  const nightHoraDur = nightDur / 12
+  const startIdx = HORA_DAY_START[dow]
+  const horas: { planet: string; color: string; start: string; end: string; startH: number; endH: number; isDay: boolean }[] = []
+  for (let i = 0; i < 12; i++) {
+    const planet = HORA_PLANETS[(startIdx + i) % 7]
+    const startH = srH + i * dayHoraDur
+    horas.push({ planet, color: HORA_PLANET_COLOR[planet], start: fmt(startH), end: fmt(startH + dayHoraDur), startH, endH: startH + dayHoraDur, isDay: true })
+  }
+  for (let i = 0; i < 12; i++) {
+    const planet = HORA_PLANETS[(startIdx + 12 + i) % 7]
+    const startH = ssH + i * nightHoraDur
+    horas.push({ planet, color: HORA_PLANET_COLOR[planet], start: fmt(startH), end: fmt(startH + nightHoraDur), startH, endH: startH + nightHoraDur, isDay: false })
+  }
+  return horas
+}
+
+// ── Choghadiya ────────────────────────────────────────────────────────
+const DAY_CHOG = [
+  ['Udveg','Char','Labh','Amrit','Kaal','Shubh','Rog','Udveg'],   // Sun
+  ['Amrit','Kaal','Shubh','Rog','Udveg','Char','Labh','Amrit'],   // Mon
+  ['Rog','Udveg','Char','Labh','Amrit','Kaal','Shubh','Rog'],     // Tue
+  ['Labh','Amrit','Kaal','Shubh','Rog','Udveg','Char','Labh'],    // Wed
+  ['Shubh','Rog','Udveg','Char','Labh','Amrit','Kaal','Shubh'],   // Thu
+  ['Char','Labh','Amrit','Kaal','Shubh','Rog','Udveg','Char'],    // Fri
+  ['Kaal','Shubh','Rog','Udveg','Char','Labh','Amrit','Kaal'],    // Sat
+]
+const NIGHT_CHOG = [
+  ['Shubh','Amrit','Char','Rog','Kaal','Labh','Udveg','Shubh'],   // Sun
+  ['Char','Rog','Kaal','Labh','Udveg','Shubh','Amrit','Char'],    // Mon
+  ['Kaal','Labh','Udveg','Shubh','Amrit','Char','Rog','Kaal'],    // Tue
+  ['Udveg','Shubh','Amrit','Char','Rog','Kaal','Labh','Udveg'],   // Wed
+  ['Amrit','Char','Rog','Kaal','Labh','Udveg','Shubh','Amrit'],   // Thu
+  ['Labh','Udveg','Shubh','Amrit','Char','Rog','Kaal','Labh'],    // Fri
+  ['Rog','Kaal','Labh','Udveg','Shubh','Amrit','Char','Rog'],     // Sat
+]
+const CHOG_QUALITY: Record<string, string> = {
+  Amrit: 'excellent', Shubh: 'good', Labh: 'good', Char: 'neutral',
+  Udveg: 'bad', Rog: 'bad', Kaal: 'bad',
+}
+const CHOG_COLOR: Record<string, string> = {
+  Amrit: '#10b981', Shubh: '#3b82f6', Labh: '#22c55e', Char: '#f59e0b',
+  Udveg: '#ef4444', Rog: '#dc2626', Kaal: '#6b7280',
+}
+
+function getChoghadiya(srH: number, ssH: number, dow: number) {
+  const dayDur = ssH - srH
+  const nightDur = 24 - dayDur
+  const dayChogDur   = dayDur   / 8
+  const nightChogDur = nightDur / 8
+  const day = DAY_CHOG[dow].map((name, i) => {
+    const startH = srH + i * dayChogDur
+    return { name, quality: CHOG_QUALITY[name], color: CHOG_COLOR[name], start: fmt(startH), end: fmt(startH + dayChogDur), startH, endH: startH + dayChogDur, period: 'day' as const }
+  })
+  const night = NIGHT_CHOG[dow].map((name, i) => {
+    const startH = ssH + i * nightChogDur
+    return { name, quality: CHOG_QUALITY[name], color: CHOG_COLOR[name], start: fmt(startH), end: fmt(startH + nightChogDur), startH, endH: startH + nightChogDur, period: 'night' as const }
+  })
+  return [...day, ...night]
+}
+
+// ── Do Ghati Muhurt ───────────────────────────────────────────────────
+// 1 ghati = 24 min → Do ghati = 48 min (0.8 h)
+// Best 48-min window is the first 48 min of each Amrit / Shubh choghadiya
+function getDoGhatiMuhurt(choghadiya: ReturnType<typeof getChoghadiya>) {
+  return choghadiya
+    .filter(c => ['Amrit', 'Shubh'].includes(c.name))
+    .map(c => ({
+      name: `${c.name} Muhurt`,
+      start: c.start,
+      end: fmt(c.startH + 0.8),
+      quality: c.quality,
+      color: c.color,
+      period: c.period,
+    }))
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const lat  = parseFloat(searchParams.get('lat')  || '28.6139')
@@ -126,32 +218,33 @@ export async function GET(req: NextRequest) {
   const [y, m, d] = date.split('-').map(Number)
   const J = jd(y, m, d)
 
-  // Lahiri ayanamsa (sidereal offset)
   const ayanamsa = 23.85 + (y - 2000) * 0.0139
   const sLon = ((sunLon(J)  - ayanamsa + 360) % 360)
   const mLon = ((moonLon(J) - ayanamsa + 360) % 360)
 
-  const elongation  = ((mLon - sLon) + 360) % 360
-  const tithiNum    = Math.floor(elongation / 12) % 30
+  const elongation   = ((mLon - sLon) + 360) % 360
+  const tithiNum     = Math.floor(elongation / 12) % 30
   const nakshatraNum = Math.floor(mLon / (360 / 27)) % 27
-  const yogaNum     = Math.floor(((sLon + mLon) % 360) / (360 / 27)) % 27
-  const karanaNum   = Math.floor(elongation / 6) % 11
+  const yogaNum      = Math.floor(((sLon + mLon) % 360) / (360 / 27)) % 27
+  const karanaNum    = Math.floor(elongation / 6) % 11
 
   const srUTC = sunriseUTC(J, lat, lng, true)
   const ssUTC = sunriseUTC(J, lat, lng, false)
   const srIST = fmt(srUTC + 5.5)
   const ssIST = fmt(ssUTC + 5.5)
 
-  const srH   = parseH(srIST)
-  const ssH   = parseH(ssIST)
-  const noon  = (srH + ssH) / 2
+  const srH    = parseH(srIST)
+  const ssH    = parseH(ssIST)
+  const noon   = (srH + ssH) / 2
   const dayDur = ssH - srH
-  const muhuraDur = dayDur / 30 // half of 1/15th of day
-  const abhijit = `${fmt(noon - muhuraDur)} – ${fmt(noon + muhuraDur)}`
-  // Brahma Muhurta: 96–48 minutes before sunrise
-  const brahma  = `${fmt(srH - 1.6)} – ${fmt(srH - 0.8)}`
+  const muhuraDur = dayDur / 30
+  const abhijit   = `${fmt(noon - muhuraDur)} – ${fmt(noon + muhuraDur)}`
+  const brahma    = `${fmt(srH - 1.6)} – ${fmt(srH - 0.8)}`
 
   const dow = new Date(y, m - 1, d).getDay()
+
+  const choghadiya   = getChoghadiya(srH, ssH, dow)
+  const doGhatiMuhurt = getDoGhatiMuhurt(choghadiya)
 
   return NextResponse.json({
     success: true,
@@ -172,6 +265,9 @@ export async function GET(req: NextRequest) {
       brahmaHour:     brahma,
       moonPhase:      moonPhase(tithiNum),
       festivals:      festivals(tithiNum),
+      hora:           getHoras(srH, ssH, dow),
+      choghadiya,
+      doGhatiMuhurt,
     },
-  }, { headers: { 'Cache-Control': 's-maxage=3600, stale-while-revalidate' } })
+  }, { headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate' } })
 }

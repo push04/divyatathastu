@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import EventRegisterForm from './EventRegisterForm'
+import SudarshanLoader from '@/components/SudarshanLoader'
 
 const FALLBACK_EVENTS: Record<string, any> = {
   '1': { id: '1', title: 'Navratri Special: Devi Sahasranam Chanting', type: 'online', start_date: '2025-10-02', start_time: '06:00', duration_minutes: 120, price: 0, max_participants: 500, current_participants: 347, description: 'Join 500+ devotees for a live Devi Sahasranam chanting session with Pt. Suresh Mishra. Free for all. Experience the divine vibrations of 1000 names of Goddess Durga in a collective virtual space.', category: 'Spiritual', location: 'Zoom + YouTube Live', host: 'Pt. Suresh Mishra', requirements: 'Zoom/YouTube app, quiet space', includes: ['Live recording access for 7 days', 'PDF of Devi Sahasranam text', 'Certificate of participation'] },
@@ -60,7 +61,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
       {/* Hero */}
       <div className="relative h-56 overflow-hidden" style={{ background: 'linear-gradient(135deg, var(--indigo-deep) 0%, var(--plum) 55%, #1a0a2e 100%)' }}>
         <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.05) 1.5px, transparent 1.5px)', backgroundSize: '24px 24px' }} />
-        <div className="absolute right-[-40px] top-1/2 -translate-y-1/2 text-[220px] leading-none text-white/[0.03] select-none pointer-events-none" style={{ fontFamily: 'serif' }}>ॐ</div>
+        <div className="absolute right-[-60px] top-1/2 -translate-y-1/2 opacity-[0.04] select-none pointer-events-none"><SudarshanLoader px={220} spin={false} /></div>
         <div className="relative z-10 h-full flex items-center justify-center">
           <div className="icon-divine w-24 h-24 rounded-3xl shadow-2xl shadow-[var(--terracotta)]/30">
             <span className="material-symbols-outlined text-[52px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{categoryIcon}</span>

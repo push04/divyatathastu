@@ -4,6 +4,7 @@ import SudarshanLoader from '@/components/SudarshanLoader'
 import KundliWheel from '@/components/charts/KundliWheel'
 import NumerologyGrid from '@/components/charts/NumerologyGrid'
 import ChakraChart from '@/components/charts/ChakraChart'
+import { NorthIndianKundli, NavamshaChart, DashaTimeline } from '@/components/charts/VedicCharts'
 
 import { useEffect, useState, useRef } from 'react'
 import { useParams } from 'next/navigation'
@@ -42,7 +43,7 @@ const REPORT_TITLES_HI: Record<string, string> = {
 function Section({ title, icon, children, printAlwaysOpen }: { title: string; icon?: string; children: React.ReactNode; printAlwaysOpen?: boolean }) {
   const [open, setOpen] = useState(true)
   return (
-    <div className="card-divine overflow-hidden print:shadow-none print:border print:border-gray-200 print:break-inside-avoid-page">
+    <div className="card-divine overflow-hidden print:overflow-visible print:shadow-none print:border print:border-gray-200 print:break-inside-avoid-page">
       <button
         onClick={() => setOpen(o => !o)}
         className="w-full flex items-center justify-between p-5 text-left print:pointer-events-none"
@@ -117,7 +118,7 @@ function InfoCard({ label, value, large }: { label: string; value: string | numb
   )
 }
 
-function KundliSection({ data }: { data: any }) {
+function KundliSection({ data, birthDate }: { data: any; birthDate?: string }) {
   if (!data) return null
   const k = data.kundli || data
   const analysis = data.analysis
@@ -133,6 +134,37 @@ function KundliSection({ data }: { data: any }) {
         <InfoCard label="Antardasha" value={k.currentAntardasha} />
         <InfoCard label="Dasha Lord" value={k.dashaLord} />
       </div>
+
+      {/* Indian Chart Grids */}
+      {k.planets?.length > 0 && k.ascendant && (
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div>
+            <h3 className="text-sm font-bold text-[var(--indigo-deep)] mb-3 flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-[15px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>grid_4x4</span>
+              North Indian Kundli (D-1)
+            </h3>
+            <NorthIndianKundli kundli={k} />
+          </div>
+          <div>
+            <h3 className="text-sm font-bold text-[var(--indigo-deep)] mb-3 flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-[15px] text-[var(--plum)]" style={{ fontVariationSettings: "'FILL' 1" }}>grid_4x4</span>
+              Navamsha Chart (D-9)
+            </h3>
+            <NavamshaChart kundli={k} />
+          </div>
+        </div>
+      )}
+
+      {/* Vimshottari Dasha Timeline */}
+      {k.dashaLord && (
+        <div className="mt-6">
+          <h3 className="text-sm font-bold text-[var(--indigo-deep)] mb-3 flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-[15px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>timeline</span>
+            Vimshottari Dasha Sequence
+          </h3>
+          <DashaTimeline kundli={k} birthDate={birthDate} />
+        </div>
+      )}
 
       {k.planets?.length > 0 && (
         <div className="mt-5">
@@ -320,13 +352,13 @@ function ChakraSection({ data }: { data: any }) {
   const chakras = Array.isArray(data) ? data : (data.chakras || data)
   if (!chakras?.length) return null
   const CD = [
-    { color: '#DC2626', from: 'from-red-100',    to: 'to-red-50',    border: 'border-red-200' },
-    { color: '#EA580C', from: 'from-orange-100',  to: 'to-orange-50', border: 'border-orange-200' },
-    { color: '#CA8A04', from: 'from-yellow-100',  to: 'to-yellow-50', border: 'border-yellow-200' },
-    { color: '#16A34A', from: 'from-green-100',   to: 'to-green-50',  border: 'border-green-200' },
-    { color: '#0284C7', from: 'from-sky-100',     to: 'to-sky-50',    border: 'border-sky-200' },
-    { color: '#4F46E5', from: 'from-indigo-100',  to: 'to-indigo-50', border: 'border-indigo-200' },
-    { color: '#7C3AED', from: 'from-violet-100',  to: 'to-violet-50', border: 'border-violet-200' },
+    { color: '#DC2626', bgFrom: '#fca5a5', bgTo: '#fee2e2', borderHex: '#f87171' },
+    { color: '#C2410C', bgFrom: '#fed7aa', bgTo: '#fff7ed', borderHex: '#fb923c' },
+    { color: '#B45309', bgFrom: '#fde68a', bgTo: '#fef9c3', borderHex: '#fcd34d' },
+    { color: '#15803D', bgFrom: '#bbf7d0', bgTo: '#dcfce7', borderHex: '#86efac' },
+    { color: '#0369A1', bgFrom: '#bae6fd', bgTo: '#e0f2fe', borderHex: '#7dd3fc' },
+    { color: '#4338CA', bgFrom: '#c7d2fe', bgTo: '#eef2ff', borderHex: '#a5b4fc' },
+    { color: '#6D28D9', bgFrom: '#ddd6fe', bgTo: '#f5f3ff', borderHex: '#c4b5fd' },
   ]
   return (
     <Section title="Shakti Chakra Analysis" icon="local_florist">
@@ -344,11 +376,11 @@ function ChakraSection({ data }: { data: any }) {
 
       <div className="space-y-3">
         {chakras.map((c: any, i: number) => {
-          const cd = CD[i] || { color: '#9ca3af', from: 'from-gray-100', to: 'to-gray-50', border: 'border-gray-200' }
+          const cd = CD[i] || { color: '#9ca3af', bgFrom: '#f3f4f6', bgTo: '#f9fafb', borderHex: '#d1d5db' }
           const isBalanced = c.status === 'balanced'
           const isBlocked = c.status === 'blocked'
           return (
-            <div key={c.name || i} className={`rounded-2xl bg-gradient-to-r ${cd.from} ${cd.to} border ${cd.border} p-4`}>
+            <div key={c.name || i} className="rounded-2xl p-4" style={{ background: `linear-gradient(135deg, ${cd.bgFrom}, ${cd.bgTo})`, border: `1.5px solid ${cd.borderHex}` }}>
               <div className="flex items-start gap-4">
                 {/* Glowing chakra circle */}
                 <div
@@ -1324,7 +1356,7 @@ function BookViewer({ chapters }: { chapters: BookChapter[] }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <span style={{ fontSize: 20, color: '#D4A017', fontFamily: 'Georgia, serif' }}>ॐ</span>
           <div>
-            <p style={{ fontSize: 9, color: '#B8860B', letterSpacing: '0.2em', textTransform: 'uppercase', margin: 0, fontWeight: 600 }}>DivyaTathastu · Noxatra</p>
+            <p style={{ fontSize: 9, color: '#B8860B', letterSpacing: '0.2em', textTransform: 'uppercase', margin: 0, fontWeight: 600 }}>MahaTathastu · Tathastu</p>
             <p style={{ fontSize: 13, fontWeight: 700, color: '#2F2A44', margin: 0, fontFamily: "'Playfair Display', serif" }}>{cur.title}</p>
           </div>
         </div>
@@ -1477,7 +1509,7 @@ export default function ReportDetailPage() {
     {
       id: 'astrology', number: 'I', title: 'Kundli & Birth Chart', sanskrit: 'ग्रह ज्योतिष',
       leftPanel: d.kundli ? <KundliWheel kundli={d.kundli} /> : <OmMandala size={175} />,
-      content: <KundliSection data={d} />,
+      content: <KundliSection data={d} birthDate={member?.date_of_birth} />,
       show: (report.report_type === 'astrology' || isFull) && !!d.kundli,
     },
     {
@@ -2009,13 +2041,13 @@ export default function ReportDetailPage() {
 
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: 11, fontWeight: 700, color: '#2c1a0e' }}>~AN INITIATIVE OF ANUSHTHAAN INDIA~</div>
-                  <div style={{ fontSize: 9, color: '#666', marginTop: 3 }}>Contents are copyright protected and owned by DivyaTathastu</div>
+                  <div style={{ fontSize: 9, color: '#666', marginTop: 3 }}>Contents are copyright protected and owned by MahaTathastu</div>
                 </div>
               </div>
             </div>
             {/* Bottom bar */}
             <div style={{ textAlign: 'center', padding: '10px 0 20px', color: '#888', fontSize: 9 }}>
-              9858784784 · www.divyatathastu.com · levitatelabs.online@gmail.com
+              9858784784 · www.mahatathastu.com · info@mahatathastu.com
             </div>
           </div>
 
@@ -2080,7 +2112,7 @@ export default function ReportDetailPage() {
                   <div style={{ marginTop: 12, textAlign: 'center', background: '#f5ede0', borderRadius: 6, padding: '8px 12px' }}>
                     <div style={{ fontSize: 9, color: '#1a1a1a', marginBottom: 4 }}>✓ Hurry! Life Time Report Support &nbsp; ✓ Complete Guidance & Remedies</div>
                     <div style={{ fontSize: 11, fontWeight: 700, color: '#1a1a1a' }}>With Remedies Contact:</div>
-                    <div style={{ fontSize: 15, fontWeight: 900, color: '#cc2200', marginTop: 2 }}>📞 9858784784</div>
+                    <div style={{ fontSize: 15, fontWeight: 900, color: '#cc2200', marginTop: 2 }}>9858784784</div>
                   </div>
                 </div>
               </div>
@@ -2095,7 +2127,7 @@ export default function ReportDetailPage() {
             </div>
             {[
               { label: 'Cover', desc: 'Report Identity & Date' },
-              { label: 'Preface', desc: 'Understanding Your Report & About DivyaTathastu' },
+              { label: 'Preface', desc: 'Understanding Your Report & About MahaTathastu' },
               ...visibleChapters.map(c => ({ label: `Chapter ${c.number}`, desc: `${c.title} · ${c.sanskrit}` })),
               { label: 'Appendix', desc: 'Disclaimer, Guidance Notes & Closing' },
             ].map((item, i) => (
@@ -2109,11 +2141,11 @@ export default function ReportDetailPage() {
 
           {/* CHAPTER PAGES */}
           {visibleChapters.map((c) => (
-            <div key={c.id} style={{ pageBreakBefore: 'always', background: '#f5ede0', minHeight: '29.7cm', position: 'relative', fontFamily: 'Georgia, serif' }}>
+            <div key={c.id} style={{ pageBreakBefore: 'always', background: '#f5ede0', position: 'relative', fontFamily: 'Georgia, serif' }}>
               {/* Chapter decorative border */}
-              <div style={{ position: 'absolute', inset: 8, border: '1px solid #c8922a', opacity: 0.4, pointerEvents: 'none' }} />
-              {/* Chapter header — blue/gold style like Tathastu book */}
-              <div style={{ padding: '24px 44px 18px', borderBottom: '2px solid #c8922a', background: '#f5ede0' }}>
+              <div style={{ position: 'absolute', inset: 8, border: '1px solid #c8922a', opacity: 0.4, pointerEvents: 'none', zIndex: 0 }} />
+              {/* Chapter header */}
+              <div style={{ padding: '20px 44px 14px', borderBottom: '2px solid #c8922a', background: '#f5ede0', position: 'relative', zIndex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                   <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#1a3a8c', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 14, fontWeight: 700, flexShrink: 0, fontFamily: 'Georgia, serif' }}>
                     {c.number}
@@ -2126,7 +2158,15 @@ export default function ReportDetailPage() {
                   <div style={{ marginLeft: 'auto', fontSize: 28, color: '#c8922a', opacity: 0.5 }}>ॐ</div>
                 </div>
               </div>
-              <div style={{ padding: '20px 44px 36px', background: '#f5ede0' }}>
+              {/* Visual chart (KundliWheel / ChakraChart / etc.) — included in PDF */}
+              {c.leftPanel && (
+                <div style={{ background: '#f5ede0', padding: '14px 44px 6px', display: 'flex', justifyContent: 'center', position: 'relative', zIndex: 1 }}>
+                  <div style={{ maxWidth: 360, width: '100%' }}>
+                    {c.leftPanel}
+                  </div>
+                </div>
+              )}
+              <div style={{ padding: '12px 44px 32px', background: '#f5ede0', position: 'relative', zIndex: 1 }}>
                 {c.content}
               </div>
             </div>
@@ -2162,9 +2202,9 @@ export default function ReportDetailPage() {
                   May this report guide you on your path to self-knowledge and dharmic living.<br />
                   Follow the remedies with faith, patience and devotion for 90 days minimum.
                 </p>
-                <p style={{ fontSize: 11, color: '#1a3a8c', fontWeight: 700, marginBottom: 3 }}>— DivyaTathastu · Tathastu Report System</p>
-                <p style={{ fontSize: 9, color: '#888' }}>www.divyatathastu.com · 9858784784</p>
-                <p style={{ fontSize: 8, color: '#aaa', marginTop: 8 }}>Contents of this product/report are copyright protected and owned by DivyaTathastu / Abhishek Pandey</p>
+                <p style={{ fontSize: 11, color: '#1a3a8c', fontWeight: 700, marginBottom: 3 }}>— MahaTathastu · Tathastu Report System</p>
+                <p style={{ fontSize: 9, color: '#888' }}>www.mahatathastu.com · 9858784784</p>
+                <p style={{ fontSize: 8, color: '#aaa', marginTop: 8 }}>Contents of this product/report are copyright protected and owned by MahaTathastu</p>
               </div>
             </div>
           </div>

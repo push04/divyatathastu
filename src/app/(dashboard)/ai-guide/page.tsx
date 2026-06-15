@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { toast } from 'sonner'
+import SudarshanLoader from '@/components/SudarshanLoader'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -170,7 +171,7 @@ export default function AIGuidePage() {
     <div className="flex flex-col h-[calc(100vh-56px)] lg:h-screen">
       {/* Header */}
       <div className="px-6 py-4 bg-[var(--indigo-deep)] text-white flex items-center gap-3 flex-shrink-0">
-        <div className="w-10 h-10 rounded-full gradient-saffron flex items-center justify-center text-xl font-bold">ॐ</div>
+        <div className="w-10 h-10 flex-shrink-0"><SudarshanLoader px={40} /></div>
         <div>
           <h1 className="font-bold">{isHindi ? 'AI आध्यात्मिक मार्गदर्शक' : 'AI Spiritual Guide'}</h1>
           <p className="text-xs text-white/60">{isHindi ? 'वैदिक ज्ञान · AI द्वारा संचालित' : 'Vedic Wisdom · Powered by AI'}</p>
@@ -203,7 +204,7 @@ export default function AIGuidePage() {
         {messages.map((m, i) => (
           <div key={i} className={`flex gap-3 ${m.role === 'user' ? 'flex-row-reverse' : ''}`}>
             <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold ${m.role === 'assistant' ? 'gradient-saffron text-white' : 'bg-[var(--indigo-deep)] text-white'}`}>
-              {m.role === 'assistant' ? 'ॐ' : 'U'}
+              {m.role === 'assistant' ? <SudarshanLoader px={32} /> : 'U'}
             </div>
             <div className={`max-w-[82%] sm:max-w-[68%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${m.role === 'assistant' ? 'bg-white border border-[var(--warm-sand)] text-[var(--warm-charcoal)] rounded-tl-sm' : 'bg-[var(--indigo-deep)] text-white rounded-tr-sm'}`}>
               {m.content === '' && streaming && i === messages.length - 1 ? (

@@ -1,6 +1,7 @@
 'use client'
 
 import { FileText, Star } from 'lucide-react'
+import SudarshanLoader from '@/components/SudarshanLoader'
 
 const CAT_BG: Record<string, string> = {
   Spiritual: '#2A1A0E',
@@ -70,11 +71,7 @@ function CoverIllustration({ title }: { title: string }) {
       </svg>
     )
   }
-  return (
-    <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '80px', color: 'rgba(255,255,255,0.08)', lineHeight: 1, userSelect: 'none' }}>
-      ॐ
-    </span>
-  )
+  return <SudarshanLoader px={64} spin={false} className="opacity-30" />
 }
 
 function EbookCover({ book }: { book: any }) {

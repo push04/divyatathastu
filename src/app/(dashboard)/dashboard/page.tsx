@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { getUserLocation } from '@/lib/utils/getLocation'
 import { useBundlePrice } from '@/lib/hooks/useBundlePrice'
+import SudarshanLoader from '@/components/SudarshanLoader'
 
 interface Profile { id: string; full_name: string; email: string }
 interface FamilyMember { id: string; full_name: string; relation: string; date_of_birth?: string }
@@ -163,8 +164,8 @@ export default function DashboardPage() {
     return (
       <div className="flex items-center justify-center min-h-[60vh] bg-[var(--kutch-white)]">
         <div className="text-center">
-          <div className="text-5xl mb-4 animate-divine-pulse" style={{ fontFamily: "'Playfair Display', serif" }}>ॐ</div>
-          <p className="text-[var(--indigo-deep)]/50 text-sm" style={{ fontFamily: "'Sora', sans-serif" }}>Loading your sanctuary...</p>
+          <SudarshanLoader size="lg" />
+          <p className="text-[var(--indigo-deep)]/50 text-sm mt-4" style={{ fontFamily: "'Sora', sans-serif" }}>Loading your sanctuary...</p>
         </div>
       </div>
     )

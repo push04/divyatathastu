@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import { CheckCircle, Shield, Users, Clock } from 'lucide-react'
+import SudarshanLoader from '@/components/SudarshanLoader'
 
 const CROSS_HATCH = `url("data:image/svg+xml,%3Csvg width='12' height='12' viewBox='0 0 12 12' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 12L12 0M-3 3L3 -3M9 15L15 9' stroke='white' stroke-width='0.5' stroke-opacity='0.04'/%3E%3C/svg%3E")`
 
@@ -109,7 +110,7 @@ export default function RegisterPage() {
       >
         {/* Mobile: compact header */}
         <div className="lg:hidden flex items-center gap-3 p-6" style={{ minHeight: '80px' }}>
-          <div className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0" style={{ background: 'var(--terracotta)' }}>ॐ</div>
+          <div className="w-8 h-8 flex-shrink-0"><SudarshanLoader px={32} /></div>
           <span style={{ fontFamily: "'Playfair Display', serif", color: 'white', fontWeight: 700, fontSize: '16px' }}>MahaTathastu</span>
           <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '12px', color: 'rgba(255,255,255,0.45)', marginLeft: 'auto' }}>India's holistic platform</span>
         </div>
@@ -118,7 +119,7 @@ export default function RegisterPage() {
         <div className="hidden lg:flex flex-col h-full p-10">
           {/* Wordmark */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold" style={{ background: 'var(--terracotta)', fontSize: '14px' }}>ॐ</div>
+            <div className="w-9 h-9 flex-shrink-0"><SudarshanLoader px={36} /></div>
             <span style={{ fontFamily: "'Playfair Display', serif", color: 'white', fontWeight: 700, fontSize: '18px' }}>MahaTathastu</span>
           </div>
 
@@ -128,7 +129,7 @@ export default function RegisterPage() {
               className="mb-5"
               style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: '21px', color: 'rgba(255,255,255,0.8)', maxWidth: '300px', lineHeight: 1.55 }}
             >
-              ॐ तत् सत् — That is Truth. Know thyself fully.
+              तत् सत् — That is Truth. Know thyself fully.
             </p>
             <div className="mb-7" style={{ height: '1px', width: '60px', background: 'rgba(212,160,67,0.3)' }} />
 

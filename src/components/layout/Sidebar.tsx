@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils/cn'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
+import SudarshanLoader from '@/components/SudarshanLoader'
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
@@ -33,7 +34,7 @@ function NavContent({ pathname, onClose, onSignOut }: { pathname: string; onClos
       {/* Logo */}
       <div className="px-6 py-5 border-b border-[var(--outline-variant)]/30 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-full gradient-saffron flex items-center justify-center text-white font-bold text-sm shadow-md group-hover:scale-110 transition-transform">ॐ</div>
+          <div className="w-8 h-8 flex-shrink-0 group-hover:scale-110 transition-transform"><SudarshanLoader px={32} /></div>
           <div>
             <div className="text-[var(--indigo-deep)] font-bold text-sm leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>MahaTathastu</div>
             <div className="text-[var(--terracotta)] text-[9px] tracking-[0.15em] uppercase" style={{ fontFamily: "'Sora', sans-serif" }}>My Sanctuary</div>
@@ -123,7 +124,7 @@ export default function Sidebar() {
       {/* Mobile top bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 h-14 bg-[var(--kutch-white)] border-b border-[var(--outline-variant)]/30 flex items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-full gradient-saffron flex items-center justify-center text-white font-bold text-xs">ॐ</div>
+          <div className="w-7 h-7 flex-shrink-0"><SudarshanLoader px={28} /></div>
           <span className="font-bold text-sm text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>MahaTathastu</span>
         </Link>
         <button

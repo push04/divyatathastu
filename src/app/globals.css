@@ -521,17 +521,8 @@ body {
   pointer-events: none;
 }
 .page-banner::after {
-  content: 'ॐ';
-  position: absolute;
-  right: -60px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 320px;
-  line-height: 1;
-  color: rgba(255,255,255,0.025);
-  font-family: serif;
-  pointer-events: none;
-  user-select: none;
+  content: '';
+  display: none;
 }
 .page-banner-inner { position: relative; z-index: 1; }
 

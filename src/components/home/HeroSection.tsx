@@ -45,19 +45,19 @@ function MandalaSVG() {
     <svg viewBox="0 0 480 480" xmlns="http://www.w3.org/2000/svg" className="w-full max-w-[480px] select-none" aria-hidden="true">
       {/* ── Slowly rotating outer ring group ── */}
       <g style={{ transformOrigin: '240px 240px', animation: 'orbit-cw 40s linear infinite' }}>
-        <circle cx={cx} cy={cy} r="222" fill="none" stroke="#C67D53" strokeWidth="0.6" opacity="0.13" />
-        <circle cx={cx} cy={cy} r="210" fill="none" stroke="#C67D53" strokeWidth="0.4" opacity="0.07" strokeDasharray="4 8" />
+        <circle cx={cx} cy={cy} r="222" fill="none" stroke="#C67D53" strokeWidth="1.2" opacity="0.32" />
+        <circle cx={cx} cy={cy} r="210" fill="none" stroke="#C67D53" strokeWidth="0.8" opacity="0.18" strokeDasharray="4 8" />
         {marks.map((m, i) => (
-          <line key={`rm${i}`} x1={m.x1} y1={m.y1} x2={m.x2} y2={m.y2} stroke="#D4A043" strokeWidth="0.8" opacity="0.14" />
+          <line key={`rm${i}`} x1={m.x1} y1={m.y1} x2={m.x2} y2={m.y2} stroke="#D4A043" strokeWidth="1.2" opacity="0.28" />
         ))}
       </g>
 
       {/* ── Counter-rotating lotus ring ── */}
       <g style={{ transformOrigin: '240px 240px', animation: 'orbit-ccw 28s linear infinite' }}>
-        <circle cx={cx} cy={cy} r="174" fill="none" stroke="#D4A043" strokeWidth="0.4" opacity="0.09" />
+        <circle cx={cx} cy={cy} r="174" fill="none" stroke="#D4A043" strokeWidth="0.8" opacity="0.22" />
         {Array.from({ length: 16 }, (_, i) => (
           <ellipse key={`op${i}`} cx={cx} cy={75} rx={13} ry={29}
-            fill="#C67D53" fillOpacity="0.055" stroke="#C67D53" strokeWidth="0.5" strokeOpacity="0.11"
+            fill="#C67D53" fillOpacity="0.12" stroke="#C67D53" strokeWidth="1" strokeOpacity="0.26"
             transform={`rotate(${i * 22.5} ${cx} ${cy})`} />
         ))}
       </g>
@@ -66,28 +66,28 @@ function MandalaSVG() {
       <g style={{ transformOrigin: '240px 240px', animation: 'orbit-cw 18s linear infinite' }}>
         {Array.from({ length: 8 }, (_, i) => (
           <ellipse key={`ip${i}`} cx={cx} cy={112} rx={10} ry={20}
-            fill="#D4A043" fillOpacity="0.05" stroke="#D4A043" strokeWidth="0.5" strokeOpacity="0.11"
+            fill="#D4A043" fillOpacity="0.11" stroke="#D4A043" strokeWidth="1" strokeOpacity="0.28"
             transform={`rotate(${i * 45} ${cx} ${cy})`} />
         ))}
       </g>
 
       {/* ── Static triangles (Sri Yantra core — stable) ── */}
-      <polygon points={dn(145)} fill="#1C1E4A" fillOpacity="0.04" stroke="#1C1E4A" strokeWidth="0.9" strokeOpacity="0.18" />
-      <polygon points={up(145)} fill="#C67D53" fillOpacity="0.03" stroke="#C67D53" strokeWidth="0.9" strokeOpacity="0.18" />
-      <polygon points={dn(100)} fill="#1C1E4A" fillOpacity="0.04" stroke="#1C1E4A" strokeWidth="0.7" strokeOpacity="0.13" />
-      <polygon points={up(100)} fill="#D4A043" fillOpacity="0.03" stroke="#D4A043" strokeWidth="0.7" strokeOpacity="0.13" />
-      <polygon points={up(58)} fill="#C67D53" fillOpacity="0.045" stroke="#C67D53" strokeWidth="0.65" strokeOpacity="0.22" />
-      <polygon points={dn(36)} fill="#1C1E4A" fillOpacity="0.06" stroke="#1C1E4A" strokeWidth="0.65" strokeOpacity="0.22" />
+      <polygon points={dn(145)} fill="#1C1E4A" fillOpacity="0.18" stroke="#1C1E4A" strokeWidth="1.6" strokeOpacity="0.42" />
+      <polygon points={up(145)} fill="#C67D53" fillOpacity="0.16" stroke="#C67D53" strokeWidth="1.6" strokeOpacity="0.42" />
+      <polygon points={dn(100)} fill="#1C1E4A" fillOpacity="0.16" stroke="#1C1E4A" strokeWidth="1.4" strokeOpacity="0.38" />
+      <polygon points={up(100)} fill="#D4A043" fillOpacity="0.16" stroke="#D4A043" strokeWidth="1.4" strokeOpacity="0.38" />
+      <polygon points={up(58)} fill="#C67D53" fillOpacity="0.20" stroke="#C67D53" strokeWidth="1.2" strokeOpacity="0.46" />
+      <polygon points={dn(36)} fill="#1C1E4A" fillOpacity="0.22" stroke="#1C1E4A" strokeWidth="1.2" strokeOpacity="0.46" />
 
       {/* ── Breathing inner circles ── */}
-      <circle cx={cx} cy={cy} r="48" fill="none" stroke="#D4A043" strokeWidth="0.5"
-        style={{ animation: 'divine-pulse 4s ease-in-out infinite', opacity: 0.17 }} />
-      <circle cx={cx} cy={cy} r="22" fill="none" stroke="#C67D53" strokeWidth="0.65" opacity="0.22" />
+      <circle cx={cx} cy={cy} r="48" fill="none" stroke="#D4A043" strokeWidth="1.2"
+        style={{ animation: 'divine-pulse 4s ease-in-out infinite', opacity: 0.34 }} />
+      <circle cx={cx} cy={cy} r="22" fill="none" stroke="#C67D53" strokeWidth="1.2" opacity="0.38" />
 
       {/* Bindu */}
-      <circle cx={cx} cy={cy} r="5" fill="#C67D53"
-        style={{ animation: 'divine-pulse 3s ease-in-out infinite', opacity: 0.45 }} />
-      <circle cx={cx} cy={cy} r="2" fill="#D4A043" opacity="0.75" />
+      <circle cx={cx} cy={cy} r="6" fill="#C67D53"
+        style={{ animation: 'divine-pulse 3s ease-in-out infinite', opacity: 0.55 }} />
+      <circle cx={cx} cy={cy} r="2.5" fill="#D4A043" opacity="0.75" />
     </svg>
   )
 }

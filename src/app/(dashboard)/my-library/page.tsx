@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import SudarshanLoader from '@/components/SudarshanLoader'
 
 interface Purchase {
   id: string
@@ -38,6 +40,7 @@ export default function MyLibraryPage() {
   const [active, setActive] = useState<Purchase | null>(null)
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
+  const router = useRouter()
 
   useEffect(() => {
     async function load() {
@@ -56,25 +59,14 @@ export default function MyLibraryPage() {
     load()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  async function download(purchase: Purchase) {
-    if (!purchase.ebooks) return
-    if (purchase.download_count >= purchase.max_downloads) {
-      alert(`Download limit reached (${purchase.max_downloads} downloads used). Contact support to increase your limit.`)
-      return
-    }
-    await supabase
-      .from('ebook_purchases')
-      .update({ download_count: purchase.download_count + 1 })
-      .eq('id', purchase.id)
-    setPurchases(prev => prev.map(p => p.id === purchase.id ? { ...p, download_count: p.download_count + 1 } : p))
-    if (active?.id === purchase.id) setActive(a => a ? { ...a, download_count: a.download_count + 1 } : a)
-    window.open(purchase.ebooks.file_url, '_blank')
+  function openReader(ebookId: string) {
+    router.push(`/my-library/${ebookId}`)
   }
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-5xl animate-pulse" style={{ fontFamily: "'Playfair Display', serif", color: 'var(--terracotta)' }}>ॐ</div>
+        <SudarshanLoader size="lg" />
       </div>
     )
   }
@@ -114,7 +106,6 @@ export default function MyLibraryPage() {
             if (!ebook) return null
             const tags: string[] = Array.isArray(ebook.tags) ? ebook.tags : []
             const icon = coverIcon(tags)
-            const downloadsLeft = p.max_downloads - p.download_count
             return (
               <button
                 key={p.id}
@@ -128,8 +119,9 @@ export default function MyLibraryPage() {
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-sm text-[var(--indigo-deep)] leading-snug line-clamp-2">{ebook.title}</p>
                     <p className="text-xs text-[var(--warm-charcoal)]/50 mt-0.5">{ebook.author || 'MahaTathastu'}</p>
-                    <p className="text-xs mt-1.5" style={{ color: downloadsLeft === 0 ? 'var(--terracotta)' : 'rgba(28,30,74,0.4)' }}>
-                      {downloadsLeft > 0 ? `${downloadsLeft} download${downloadsLeft !== 1 ? 's' : ''} left` : 'Limit reached'}
+                    <p className="text-xs mt-1.5 flex items-center gap-1" style={{ color: 'rgba(28,30,74,0.4)' }}>
+                      <span className="material-symbols-outlined text-[11px]">lock</span>
+                      View-only
                     </p>
                   </div>
                 </div>
@@ -145,7 +137,6 @@ export default function MyLibraryPage() {
               const ebook = active.ebooks!
               const tags: string[] = Array.isArray(ebook.tags) ? ebook.tags : []
               const icon = coverIcon(tags)
-              const downloadsLeft = active.max_downloads - active.download_count
               return (
                 <>
                   <div className="flex items-center gap-4 mb-6">
@@ -165,18 +156,14 @@ export default function MyLibraryPage() {
                     <p className="text-sm text-[var(--warm-charcoal)]/60 leading-relaxed mb-6">{ebook.description}</p>
                   )}
 
-                  <div className="grid grid-cols-3 gap-4 mb-6">
-                    <div className="text-center p-3 bg-[var(--kutch-white)] rounded-lg">
-                      <p className="text-2xl font-bold text-[var(--indigo-deep)]">{active.download_count}</p>
-                      <p className="text-xs text-[var(--warm-charcoal)]/50">Downloads Used</p>
-                    </div>
-                    <div className="text-center p-3 bg-[var(--kutch-white)] rounded-lg">
-                      <p className="text-2xl font-bold text-[var(--terracotta)]">{downloadsLeft}</p>
-                      <p className="text-xs text-[var(--warm-charcoal)]/50">Remaining</p>
-                    </div>
+                  <div className="grid grid-cols-2 gap-4 mb-6">
                     <div className="text-center p-3 bg-[var(--kutch-white)] rounded-lg">
                       <p className="text-sm font-bold text-[var(--indigo-deep)]">{new Date(active.purchased_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
-                      <p className="text-xs text-[var(--warm-charcoal)]/50">Purchased</p>
+                      <p className="text-xs text-[var(--warm-charcoal)]/50">Purchased On</p>
+                    </div>
+                    <div className="text-center p-3 bg-[var(--kutch-white)] rounded-lg">
+                      <p className="text-2xl font-bold text-[var(--indigo-deep)]">{active.download_count}</p>
+                      <p className="text-xs text-[var(--warm-charcoal)]/50">Sessions</p>
                     </div>
                   </div>
 
@@ -189,18 +176,16 @@ export default function MyLibraryPage() {
                   )}
 
                   <button
-                    onClick={() => download(active)}
-                    disabled={downloadsLeft === 0}
-                    className="btn-divine w-full py-3 disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+                    onClick={() => openReader(ebook.id)}
+                    className="btn-divine w-full py-3 inline-flex items-center justify-center gap-2"
                   >
-                    <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>download</span>
-                    {downloadsLeft === 0 ? 'Download Limit Reached' : 'Download PDF'}
+                    <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_stories</span>
+                    Read Book
                   </button>
-                  {downloadsLeft === 0 && (
-                    <p className="text-xs text-center text-[var(--warm-charcoal)]/40 mt-2">
-                      Contact <a href="mailto:support@mahatathastu.com" className="text-[var(--terracotta)] hover:underline">support@mahatathastu.com</a> to get more downloads.
-                    </p>
-                  )}
+                  <p className="text-xs text-center text-[var(--warm-charcoal)]/40 mt-2 flex items-center justify-center gap-1">
+                    <span className="material-symbols-outlined text-[12px]">lock</span>
+                    View-only · No download · Protected
+                  </p>
                 </>
               )
             })()}

@@ -23,6 +23,7 @@ const adminNav = [
   { href: '/admin/handwritten-reports', label: 'Handwritten Reports', icon: 'draw' },
   { href: '/admin/services', label: 'Divine Services', icon: 'spa' },
   { href: '/admin/coupons', label: 'Coupons', icon: 'redeem' },
+  { href: '/admin/report-pricing', label: 'Report Pricing', icon: 'price_change' },
   { href: '/admin/notifications', label: 'Notifications', icon: 'notifications' },
 ]
 
@@ -31,9 +32,12 @@ function AdminSidebarContent({ onClose }: { onClose?: () => void }) {
   return (
     <>
       <div className="px-4 py-5 border-b border-white/10 flex items-center justify-between">
-        <div>
-          <div className="text-sm font-bold text-white/80">ॐ MahaTathastu</div>
-          <div className="text-xs text-white/40 mt-0.5">Admin Panel</div>
+        <div className="flex items-center gap-2.5">
+          <SudarshanLoader px={28} />
+          <div>
+            <div className="text-sm font-bold text-white/80">MahaTathastu</div>
+            <div className="text-xs text-white/40 mt-0.5">Admin Panel</div>
+          </div>
         </div>
         {onClose && (
           <button onClick={onClose} className="lg:hidden text-white/50 hover:text-white p-1">
@@ -111,7 +115,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* Mobile top bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 h-14 bg-[var(--indigo-deep)] text-white flex items-center justify-between px-4">
-        <div className="text-sm font-bold text-white/80">ॐ Admin</div>
+        <div className="flex items-center gap-2">
+          <SudarshanLoader px={22} />
+          <span className="text-sm font-bold text-white/80">MahaTathastu</span>
+        </div>
         <button onClick={() => setMobileOpen(true)} className="text-white/70 hover:text-white p-1">
           <span className="material-symbols-outlined text-[22px]">menu</span>
         </button>

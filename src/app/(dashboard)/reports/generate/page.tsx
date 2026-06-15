@@ -175,6 +175,7 @@ function GenerateReportContent() {
   const [lang, setLang] = useState<'en' | 'hi'>('en')
   const [step, setStep] = useState(0)
   const [members, setMembers] = useState<FamilyMember[]>([])
+  const [reportPrices, setReportPrices] = useState<Record<string, number>>({})
   const [selectedMember, setSelectedMember] = useState<string>(searchParams.get('member') || '')
   const [selectedReport, setSelectedReport] = useState<string>('')
   const [vastuData, setVastuData] = useState({ homeDirection: '', sleepDirection: 'south' })
@@ -186,6 +187,7 @@ function GenerateReportContent() {
   const [sections, setSections] = useState<SectionProgress[]>([])
   const [secondsLeft, setSecondsLeft] = useState(0)
   const [allDone, setAllDone] = useState(false)
+  const [paymentProcessing, setPaymentProcessing] = useState(false)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const t = T[lang]
@@ -199,6 +201,10 @@ function GenerateReportContent() {
       if (!family) return
       const { data } = await supabase.from('family_members').select('id,full_name,relation,date_of_birth,time_of_birth,place_of_birth,birth_latitude,birth_longitude,birth_timezone').eq('family_id', family.id)
       if (data) setMembers(data)
+      try {
+        const pr = await fetch('/api/report-pricing').then(r => r.json())
+        if (pr && Object.keys(pr).length > 0) setReportPrices(pr)
+      } catch {}
     }
     load()
     if (searchParams.get('member')) setStep(1)
@@ -213,11 +219,7 @@ function GenerateReportContent() {
     return () => { if (timerRef.current) clearInterval(timerRef.current) }
   }, [generating, allDone])
 
-  async function handleGenerate() {
-    if (!selectedMember || !selectedReport) {
-      toast.error(isHindi ? 'सदस्य और रिपोर्ट प्रकार चुनें' : 'Select member and report type')
-      return
-    }
+  async function doGenerate() {
     setLastError(null)
     setGenerating(true)
 
@@ -304,6 +306,60 @@ function GenerateReportContent() {
     }
   }
 
+  async function handleGenerate() {
+    if (!selectedMember || !selectedReport) {
+      toast.error(isHindi ? 'सदस्य और रिपोर्ट प्रकार चुनें' : 'Select member and report type')
+      return
+    }
+    const price = selectedReportInfo?.price || 0
+    if (price > 0) {
+      setPaymentProcessing(true)
+      try {
+        const res = await fetch('/api/payment?action=create', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            items: [{ id: selectedReport, name: selectedReportInfo?.label, price, quantity: 1, product_type: 'report' }],
+          }),
+        })
+        const orderData = await res.json()
+        if (!res.ok) throw new Error(orderData.error)
+
+        const script = document.createElement('script')
+        script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+        document.head.appendChild(script)
+        await new Promise(resolve => { script.onload = resolve })
+
+        const rzp = new (window as any).Razorpay({
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+          amount: orderData.amount,
+          currency: 'INR',
+          order_id: orderData.order_id,
+          name: 'MahaTathastu',
+          description: `${isHindi ? selectedReportInfo?.labelHi : selectedReportInfo?.label} Report`,
+          theme: { color: '#2F2A44' },
+          handler: async (response: any) => {
+            await fetch('/api/payment?action=verify', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ ...response, db_order_id: orderData.db_order_id }),
+            })
+            setPaymentProcessing(false)
+            toast.success(isHindi ? 'भुगतान सफल! रिपोर्ट बन रही है…' : 'Payment successful! Generating report…')
+            doGenerate()
+          },
+          modal: { ondismiss: () => setPaymentProcessing(false) },
+        })
+        rzp.open()
+      } catch (err: any) {
+        toast.error(err.message || 'Payment failed')
+        setPaymentProcessing(false)
+      }
+      return
+    }
+    doGenerate()
+  }
+
   const canProceed = [
     selectedMember !== '',
     selectedReport !== '',
@@ -311,7 +367,10 @@ function GenerateReportContent() {
     true,
   ]
 
-  const selectedReportInfo = REPORT_TYPES.find(r => r.id === selectedReport)
+  const selectedReportInfoBase = REPORT_TYPES.find(r => r.id === selectedReport)
+  const selectedReportInfo = selectedReportInfoBase
+    ? { ...selectedReportInfoBase, price: reportPrices[selectedReportInfoBase.id] ?? selectedReportInfoBase.price }
+    : undefined
   const selectedMemberInfo = members.find(m => m.id === selectedMember)
   const totalEstSeconds = selectedReport === 'full_tathastu' ? 47 : (SINGLE_SECTIONS[selectedReport]?.[0]?.estSeconds || 10)
 
@@ -579,6 +638,12 @@ function GenerateReportContent() {
               <span className="text-[var(--warm-charcoal)]/60">{t.estTime}</span>
               <span className="font-medium text-[var(--indigo-deep)]">~{totalEstSeconds}s</span>
             </div>
+            {(selectedReportInfo?.price || 0) > 0 && (
+              <div className="flex justify-between text-sm border-t border-[var(--warm-sand)] pt-2 mt-1">
+                <span className="font-bold text-[var(--indigo-deep)]">{isHindi ? 'मूल्य' : 'Price'}</span>
+                <span className="font-bold text-[var(--terracotta)]">₹{(selectedReportInfo?.price || 0).toLocaleString('en-IN')}</span>
+              </div>
+            )}
           </div>
 
           {lastError && (
@@ -591,10 +656,27 @@ function GenerateReportContent() {
             </div>
           )}
 
-          <button onClick={handleGenerate} className="btn-divine w-full py-4 text-base font-bold inline-flex items-center justify-center gap-2">
-            <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
-            {lastError ? t.retry : t.generate}
+          <button
+            onClick={handleGenerate}
+            disabled={paymentProcessing}
+            className="btn-divine w-full py-4 text-base font-bold inline-flex items-center justify-center gap-2 disabled:opacity-60"
+          >
+            {paymentProcessing ? (
+              <><SudarshanLoader px={20} /><span>{isHindi ? 'भुगतान हो रहा है…' : 'Processing payment…'}</span></>
+            ) : (selectedReportInfo?.price || 0) > 0 ? (
+              <><span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>credit_card</span>
+              {lastError ? t.retry : `${isHindi ? 'भुगतान करें' : 'Pay'} ₹${(selectedReportInfo?.price || 0).toLocaleString('en-IN')} & ${isHindi ? 'बनाएं' : 'Generate'}`}</>
+            ) : (
+              <><span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+              {lastError ? t.retry : t.generate}</>
+            )}
           </button>
+          {(selectedReportInfo?.price || 0) > 0 && !paymentProcessing && (
+            <p className="text-center text-xs text-[var(--warm-charcoal)]/40 mt-1 flex items-center justify-center gap-1">
+              <span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'FILL' 1" }}>lock</span>
+              Secured by Razorpay · 256-bit SSL
+            </p>
+          )}
         </div>
       )}
 

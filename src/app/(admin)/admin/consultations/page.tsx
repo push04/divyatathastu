@@ -489,9 +489,8 @@ export default function AdminConsultationsPage() {
                 width: 48, height: 48, borderRadius: '50%',
                 background: 'linear-gradient(135deg, #D4A017, #b8860b)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 22, fontWeight: 900, color: '#1a0e2e', flexShrink: 0,
-                fontFamily: 'Georgia, serif',
-              }}>ॐ</div>
+                flexShrink: 0,
+              }}><span className="material-symbols-outlined text-[#1a0e2e] text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>brightness_7</span></div>
               <div className="flex-1">
                 <div className="flex items-center gap-3 flex-wrap">
                   <h2 className="text-lg font-bold text-white" style={{ fontFamily: "'Playfair Display', serif" }}>

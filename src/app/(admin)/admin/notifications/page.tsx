@@ -102,7 +102,7 @@ export default function AdminNotificationsPage() {
           <div className="border border-[var(--warm-sand)] rounded-xl p-4 bg-[var(--warm-sand)]/20">
             <p className="text-xs text-[var(--warm-charcoal)]/50 mb-2 uppercase tracking-wide font-semibold">Preview</p>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full icon-divine flex items-center justify-center text-white font-bold text-xs flex-shrink-0">ॐ</div>
+              <div className="w-8 h-8 rounded-full icon-divine flex items-center justify-center flex-shrink-0"><span className="material-symbols-outlined text-white text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>notifications</span></div>
               <div>
                 <p className="text-[var(--indigo-deep)] text-sm font-semibold">{form.title}</p>
                 <p className="text-[var(--warm-charcoal)]/60 text-xs mt-0.5">{form.message}</p>

@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import SudarshanLoader from '@/components/SudarshanLoader'
 
 interface Product {
   id: string
@@ -157,7 +158,7 @@ export default function ShopPage() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-[60vh]">
-      <div className="text-5xl animate-pulse" style={{ fontFamily: "'Playfair Display', serif", color: 'var(--terracotta)' }}>ॐ</div>
+      <SudarshanLoader size="lg" />
     </div>
   )
 

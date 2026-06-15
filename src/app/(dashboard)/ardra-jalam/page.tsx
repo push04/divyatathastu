@@ -141,8 +141,7 @@ export default function ArdraJalamPage() {
                 <div className="absolute -top-3 -right-3 bg-[var(--terracotta)] text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg uppercase tracking-widest">
                   Limited
                 </div>
-                {/* Om watermark */}
-                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-3xl text-emerald-300 font-black" style={{ fontFamily: "'Playfair Display', serif" }}>ॐ</div>
+                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2"><span className="material-symbols-outlined text-emerald-300 text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>water_drop</span></div>
               </div>
             </div>
           </div>
@@ -221,7 +220,7 @@ export default function ArdraJalamPage() {
 
         {/* Order CTA */}
         <section className="text-center py-8" style={{ background: 'linear-gradient(135deg, #ecfdf5, #d1fae5)', borderRadius: 20 }}>
-          <div className="text-4xl mb-3" style={{ fontFamily: "'Playfair Display', serif", color: '#065f46' }}>ॐ</div>
+          <div className="mb-3 flex justify-center"><span className="material-symbols-outlined text-4xl" style={{ color: '#065f46', fontVariationSettings: "'FILL' 1" }}>water_drop</span></div>
           <h2 className="text-2xl font-bold text-[#065f46] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Ready to Begin?</h2>
           <p className="text-sm text-[#065f46]/60 mb-6 max-w-md mx-auto">Each batch is prepared only during Ardra Nakshatra — approximately once every 27 days. Order now to secure your bottle from the next batch.</p>
           {!booked ? (

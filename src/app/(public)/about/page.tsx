@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import SudarshanLoader from '@/components/SudarshanLoader'
 
 export const metadata: Metadata = {
   title: 'About Us | MahaTathastu',
@@ -19,7 +20,7 @@ export default function AboutPage() {
       {/* Hero */}
       <section className="page-banner" style={{ paddingTop: '6rem', paddingBottom: '6rem' }}>
         <div className="page-banner-inner max-w-3xl mx-auto">
-          <div className="w-20 h-20 rounded-full gradient-saffron flex items-center justify-center text-white text-4xl mx-auto mb-6 shadow-xl shadow-[var(--terracotta)]/30" style={{ fontFamily: 'serif' }}>ॐ</div>
+          <div className="w-20 h-20 mx-auto mb-6"><SudarshanLoader px={80} /></div>
           <p className="text-[var(--saffron)] text-xs font-bold tracking-[0.2em] uppercase mb-4" style={{ fontFamily: "'Sora', sans-serif" }}>Our Story</p>
           <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>About MahaTathastu</h1>
           <div className="ornate-divider">

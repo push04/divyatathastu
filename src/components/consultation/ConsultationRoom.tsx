@@ -77,9 +77,7 @@ function TathastuConsultRoom({ userName, onLeave, isExpert }: { userName: string
             width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
             background: 'var(--indigo-deep, #2d1b69)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 14, fontWeight: 900, color: '#fff',
-            fontFamily: 'Georgia, serif',
-          }}>ॐ</div>
+          }}><span className="material-symbols-outlined text-white text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>brightness_7</span></div>
           <span style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.7)', letterSpacing: '0.06em' }}>
             MahaTathastu
           </span>
@@ -369,7 +367,7 @@ export default function ConsultationRoom({ bookingId, userName, onLeave, slotDat
       {/* Header */}
       <div className="px-5 py-4 border-b border-[var(--outline-variant)]/30 flex items-center gap-3">
         <div className="w-8 h-8 rounded-full bg-[var(--indigo-deep)] flex items-center justify-center flex-shrink-0">
-          <span className="text-white font-bold text-sm" style={{ fontFamily: 'Georgia, serif' }}>ॐ</span>
+          <span className="material-symbols-outlined text-white text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>brightness_7</span>
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-xs font-semibold text-[var(--indigo-deep)] tracking-[0.12em] uppercase" style={{ fontFamily: "'Sora', sans-serif" }}>MahaTathastu</p>
