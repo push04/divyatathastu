@@ -19,7 +19,7 @@ const footerLinks = {
   Company: [
     { href: '/about', label: 'About Us' },
     { href: '/blog', label: 'Blog' },
-    { href: '/in-media', label: 'In Media' },
+    { href: '/newsletter', label: 'Newsletter' },
     { href: '/privacy-policy', label: 'Privacy Policy' },
     { href: '/terms', label: 'Terms of Service' },
   ],
