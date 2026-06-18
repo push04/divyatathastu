@@ -14,8 +14,8 @@ function BookGlow() {
   return (
     <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
       <div style={{
-        width: '55%', height: '70%',
-        background: 'radial-gradient(ellipse, rgba(212,160,23,0.07) 0%, transparent 65%)',
+        width: '70%', height: '80%',
+        background: 'radial-gradient(ellipse, rgba(212,160,23,0.06) 0%, transparent 65%)',
       }} />
     </div>
   )
@@ -23,29 +23,30 @@ function BookGlow() {
 
 function PageCornerFold() {
   return (
-    <div className="absolute bottom-0 right-0 w-10 h-10 pointer-events-none" style={{
-      background: 'linear-gradient(225deg, rgba(0,0,0,0.18) 45%, transparent 55%)',
+    <div className="absolute bottom-0 right-0 w-9 h-9 pointer-events-none" style={{
+      background: 'linear-gradient(225deg, rgba(0,0,0,0.16) 42%, transparent 55%)',
     }} />
   )
 }
 
-const flipVariants = {
+// Book-spread flip animation
+const spreadVariants = {
   enter: (dir: number) => ({
-    x: dir > 0 ? '22%' : '-22%',
-    rotateY: dir > 0 ? 18 : -18,
+    x: dir > 0 ? '14%' : '-14%',
+    rotateY: dir > 0 ? 9 : -9,
     opacity: 0,
-    scale: 0.97,
-    filter: 'brightness(0.5)',
+    scale: 0.965,
+    filter: 'brightness(0.55)',
   }),
   center: {
     x: 0, rotateY: 0, opacity: 1, scale: 1, filter: 'brightness(1)',
   },
   exit: (dir: number) => ({
-    x: dir > 0 ? '-14%' : '14%',
-    rotateY: dir > 0 ? -12 : 12,
+    x: dir > 0 ? '-9%' : '9%',
+    rotateY: dir > 0 ? -7 : 7,
     opacity: 0,
-    scale: 0.97,
-    filter: 'brightness(0.4)',
+    scale: 0.965,
+    filter: 'brightness(0.45)',
   }),
 }
 
@@ -64,10 +65,19 @@ export default function EbookReaderPage() {
   const [userEmail, setUserEmail] = useState('')
   const [showUI, setShowUI] = useState(true)
   const [pageInput, setPageInput] = useState('1')
+  const [isTwoPage, setIsTwoPage] = useState(false)
   const uiTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const renderingSet = useRef<Set<number>>(new Set())
 
-  // ── Load PDF ──────────────────────────────────────────────────────────
+  // Detect desktop vs mobile
+  useEffect(() => {
+    const check = () => setIsTwoPage(window.innerWidth >= 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
+  // Load PDF
   useEffect(() => {
     let alive = true
     async function init() {
@@ -101,7 +111,7 @@ export default function EbookReaderPage() {
     return () => { alive = false }
   }, [ebookId]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Render a single page to dataURL ──────────────────────────────────
+  // Render a single PDF page to dataURL with clean watermark
   const renderPage = useCallback(async (doc: any, num: number, email: string) => {
     if (num < 1 || num > doc.numPages) return
     if (renderingSet.current.has(num)) return
@@ -109,7 +119,7 @@ export default function EbookReaderPage() {
     try {
       const pdfPage = await doc.getPage(num)
       const dpr = typeof window !== 'undefined' ? Math.min(window.devicePixelRatio || 1, 2) : 1.5
-      const viewport = pdfPage.getViewport({ scale: dpr * 1.2 })
+      const viewport = pdfPage.getViewport({ scale: dpr * 1.3 })
       const canvas = document.createElement('canvas')
       canvas.width = viewport.width
       canvas.height = viewport.height
@@ -117,43 +127,54 @@ export default function EbookReaderPage() {
 
       await pdfPage.render({ canvasContext: ctx, viewport }).promise
 
-      // Watermark tile
+      // Clean sparse diagonal watermark — 3×3 grid, barely visible
       ctx.save()
-      ctx.globalAlpha = 0.03
-      ctx.fillStyle = '#000'
-      ctx.font = `bold ${Math.max(12, Math.round(viewport.width / 30))}px sans-serif`
+      ctx.globalAlpha = 0.055
+      ctx.fillStyle = '#555'
+      ctx.font = `${Math.round(viewport.width / 22)}px Arial, sans-serif`
       ctx.rotate(-Math.PI / 6)
-      const wm = email || 'MahaTathastu'
-      for (let y = -viewport.height; y < viewport.height * 2; y += 90) {
-        for (let x = -viewport.width; x < viewport.width * 2; x += 260) {
-          ctx.fillText(wm, x, y)
+      const wm = 'MahaTathastu.com'
+      const stepX = viewport.width * 1.1
+      const stepY = viewport.height * 0.88
+      for (let row = 0; row < 4; row++) {
+        for (let col = 0; col < 3; col++) {
+          ctx.fillText(wm, -viewport.width * 0.4 + col * stepX, -viewport.height * 0.25 + row * stepY)
         }
       }
       ctx.restore()
 
-      const dataUrl = canvas.toDataURL('image/jpeg', 0.93)
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.94)
       setRendered(prev => ({ ...prev, [num]: dataUrl }))
     } catch { renderingSet.current.delete(num) }
   }, [])
 
-  // Pre-render current ± 2 pages
+  // Pre-render current spread + one ahead
   useEffect(() => {
     if (!pdfRef) return
     const cur = page.num
-    ;[cur, cur + 1, cur + 2, cur - 1].filter(n => n >= 1 && n <= totalPages).forEach(n => {
+    const pagesToLoad = [cur, cur - 1, cur + 1, cur + 2, cur + 3]
+      .filter(n => n >= 1 && n <= totalPages)
+    pagesToLoad.forEach(n => {
       if (!rendered[n]) renderPage(pdfRef, n, userEmail)
     })
     setPageInput(String(cur))
   }, [pdfRef, page.num, totalPages, userEmail, renderPage]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // ── Navigation ────────────────────────────────────────────────────────
+  // Navigation
   const goto = useCallback((n: number, dir: number) => {
     if (n < 1 || n > totalPages) return
     setPage({ num: n, dir })
   }, [totalPages])
 
-  const goNext = useCallback(() => goto(page.num + 1, 1), [page.num, goto])
-  const goPrev = useCallback(() => goto(page.num - 1, -1), [page.num, goto])
+  const goNext = useCallback(() => {
+    const step = isTwoPage ? 2 : 1
+    goto(Math.min(page.num + step, totalPages), 1)
+  }, [page.num, isTwoPage, totalPages, goto])
+
+  const goPrev = useCallback(() => {
+    const step = isTwoPage ? 2 : 1
+    goto(Math.max(page.num - step, 1), -1)
+  }, [page.num, isTwoPage, goto])
 
   // Keyboard
   useEffect(() => {
@@ -175,7 +196,7 @@ export default function EbookReaderPage() {
     else if (dx > 50) goPrev()
   }
 
-  // Auto-hide UI after 3 s of inactivity
+  // Auto-hide UI
   const resetUITimer = useCallback(() => {
     setShowUI(true)
     if (uiTimerRef.current) clearTimeout(uiTimerRef.current)
@@ -209,8 +230,12 @@ export default function EbookReaderPage() {
     return () => clearInterval(id)
   }, [ebookId, pdfRef])
 
+  // page.num = right page; left = page.num - 1 (if two-page and > 1)
+  const rightNum = page.num
+  const leftNum = isTwoPage && page.num > 1 ? page.num - 1 : null
+  const rightImg = rendered[rightNum]
+  const leftImg = leftNum ? rendered[leftNum] : null
   const progress = totalPages > 1 ? ((page.num - 1) / (totalPages - 1)) * 100 : 100
-  const img = rendered[page.num]
 
   // ── Loading ───────────────────────────────────────────────────────────
   if (status === 'loading') return (
@@ -252,7 +277,7 @@ export default function EbookReaderPage() {
         <motion.div
           animate={{ opacity: showUI ? 1 : 0, y: showUI ? 0 : -52 }}
           transition={{ duration: 0.3, ease: 'easeInOut' }}
-          className="flex items-center justify-between px-5 h-13 flex-shrink-0 z-20 border-b"
+          className="flex items-center justify-between px-5 flex-shrink-0 z-20 border-b"
           style={{ background: 'rgba(18,16,38,0.92)', borderColor: 'rgba(255,255,255,0.05)', backdropFilter: 'blur(16px)', height: 52 }}
         >
           <button
@@ -263,7 +288,7 @@ export default function EbookReaderPage() {
             Library
           </button>
 
-          <div className="text-center absolute left-1/2 -translate-x-1/2 max-w-xs hidden sm:block">
+          <div className="text-center absolute left-1/2 -translate-x-1/2 max-w-sm hidden sm:block">
             <p className="text-white/75 text-[13px] font-semibold truncate" style={{ fontFamily: "'Playfair Display', serif" }}>
               {meta?.title}
             </p>
@@ -279,17 +304,17 @@ export default function EbookReaderPage() {
         </motion.div>
 
         {/* ── Reading area ── */}
-        <div className="flex-1 relative overflow-hidden" style={{ perspective: '2200px' }}>
+        <div className="flex-1 relative overflow-hidden" style={{ perspective: '2800px' }}>
           <BookGlow />
 
           {/* Nav arrows */}
           <motion.button
             onClick={goPrev}
-            animate={{ opacity: showUI ? (page.num > 1 ? 0.8 : 0.15) : 0 }}
-            whileHover={{ scale: 1.1, opacity: 1 }}
-            whileTap={{ scale: 0.92 }}
+            animate={{ opacity: showUI ? (page.num > 1 ? 0.85 : 0.12) : 0 }}
+            whileHover={{ scale: 1.12, opacity: 1 }}
+            whileTap={{ scale: 0.9 }}
             disabled={page.num <= 1}
-            className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full flex items-center justify-center text-white transition-colors"
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full flex items-center justify-center text-white"
             style={{ background: 'rgba(255,255,255,0.07)' }}
           >
             <span className="material-symbols-outlined text-[22px]">chevron_left</span>
@@ -297,76 +322,163 @@ export default function EbookReaderPage() {
 
           <motion.button
             onClick={goNext}
-            animate={{ opacity: showUI ? (page.num < totalPages ? 0.8 : 0.15) : 0 }}
-            whileHover={{ scale: 1.1, opacity: 1 }}
-            whileTap={{ scale: 0.92 }}
+            animate={{ opacity: showUI ? (page.num < totalPages ? 0.85 : 0.12) : 0 }}
+            whileHover={{ scale: 1.12, opacity: 1 }}
+            whileTap={{ scale: 0.9 }}
             disabled={page.num >= totalPages}
-            className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full flex items-center justify-center text-white transition-colors"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full flex items-center justify-center text-white"
             style={{ background: 'rgba(255,255,255,0.07)' }}
           >
             <span className="material-symbols-outlined text-[22px]">chevron_right</span>
           </motion.button>
 
-          {/* Page display */}
-          <div className="absolute inset-0 flex items-center justify-center px-16 py-6">
+          {/* ── Book display ── */}
+          <div className="absolute inset-0 flex items-center justify-center" style={{ padding: '16px 52px' }}>
             <AnimatePresence initial={false} custom={page.dir} mode="wait">
               <motion.div
                 key={page.num}
                 custom={page.dir}
-                variants={flipVariants}
+                variants={spreadVariants}
                 initial="enter"
                 animate="center"
                 exit="exit"
-                transition={{ duration: 0.52, ease: [0.25, 0.46, 0.45, 0.94] }}
-                className="relative h-full"
+                transition={{ duration: 0.42, ease: [0.25, 0.46, 0.45, 0.94] }}
                 style={{
                   transformStyle: 'preserve-3d',
-                  maxHeight: 'calc(100vh - 130px)',
-                  aspectRatio: '0.707 / 1',
-                  maxWidth: 'min(78vw, 680px)',
+                  display: 'flex',
+                  alignItems: 'stretch',
+                  height: 'min(calc(100vh - 140px), 88vh)',
+                  boxShadow: [
+                    '0 48px 96px rgba(0,0,0,0.78)',
+                    '0 20px 40px rgba(0,0,0,0.55)',
+                    '6px 0 20px rgba(0,0,0,0.35)',
+                    '-6px 0 20px rgba(0,0,0,0.25)',
+                  ].join(', '),
+                  borderRadius: 4,
                 }}
               >
-                {/* Book shadow layers */}
-                <div className="absolute inset-0 rounded-[3px]" style={{
-                  boxShadow: [
-                    '0 40px 80px rgba(0,0,0,0.8)',
-                    '0 16px 32px rgba(0,0,0,0.6)',
-                    '4px 0 16px rgba(0,0,0,0.4)',
-                    '-4px 0 16px rgba(0,0,0,0.25)',
-                    'inset 4px 0 12px rgba(0,0,0,0.15)',
-                  ].join(', '),
-                }} />
+                {isTwoPage ? (
+                  /* ── Two-page book spread (desktop) ── */
+                  <>
+                    {/* Left page */}
+                    <div style={{
+                      height: '100%',
+                      aspectRatio: '0.707 / 1',
+                      maxWidth: 'min(41vw, 530px)',
+                      flexShrink: 0,
+                      position: 'relative',
+                      overflow: 'hidden',
+                      borderRadius: '4px 0 0 4px',
+                      background: PAPER_BG,
+                    }}>
+                      {leftNum && leftImg ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={leftImg}
+                          alt={`Page ${leftNum}`}
+                          draggable={false}
+                          style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+                        />
+                      ) : leftNum ? (
+                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <SudarshanLoader size="sm" />
+                        </div>
+                      ) : (
+                        /* Blank/cover left page */
+                        <div style={{
+                          width: '100%', height: '100%',
+                          background: 'linear-gradient(to right, #E5DCC8, #EDE5D2)',
+                        }} />
+                      )}
+                      {/* Right-edge spine shadow on left page */}
+                      <div style={{
+                        position: 'absolute', top: 0, right: 0, bottom: 0, width: 28,
+                        background: 'linear-gradient(to left, rgba(0,0,0,0.2), transparent)',
+                        pointerEvents: 'none',
+                      }} />
+                    </div>
 
-                {/* Page itself */}
-                {img ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={img}
-                    alt={`Page ${page.num}`}
-                    draggable={false}
-                    className="w-full h-full object-contain rounded-[3px] block"
-                    style={{ imageRendering: 'crisp-edges' }}
-                  />
+                    {/* Spine */}
+                    <div style={{
+                      width: 12,
+                      flexShrink: 0,
+                      background: 'linear-gradient(to right, rgba(0,0,0,0.3) 0%, rgba(20,14,40,0.55) 50%, rgba(0,0,0,0.28) 100%)',
+                    }} />
+
+                    {/* Right page */}
+                    <div style={{
+                      height: '100%',
+                      aspectRatio: '0.707 / 1',
+                      maxWidth: 'min(41vw, 530px)',
+                      flexShrink: 0,
+                      position: 'relative',
+                      overflow: 'hidden',
+                      borderRadius: '0 4px 4px 0',
+                      background: PAPER_BG,
+                    }}>
+                      {rightImg ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={rightImg}
+                          alt={`Page ${rightNum}`}
+                          draggable={false}
+                          style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+                        />
+                      ) : (
+                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <SudarshanLoader size="sm" />
+                        </div>
+                      )}
+                      {/* Left-edge spine shadow on right page */}
+                      <div style={{
+                        position: 'absolute', top: 0, left: 0, bottom: 0, width: 28,
+                        background: 'linear-gradient(to right, rgba(0,0,0,0.18), transparent)',
+                        pointerEvents: 'none',
+                      }} />
+                      {/* Page texture overlay */}
+                      <div style={{
+                        position: 'absolute', inset: 0,
+                        background: 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%, rgba(0,0,0,0.03) 100%)',
+                        mixBlendMode: 'overlay',
+                        pointerEvents: 'none',
+                      }} />
+                      <PageCornerFold />
+                    </div>
+                  </>
                 ) : (
-                  <div className="w-full h-full rounded-[3px] flex flex-col items-center justify-center gap-3" style={{ background: PAPER_BG }}>
-                    <SudarshanLoader size="sm" />
-                    <p className="text-[var(--indigo-deep)]/40 text-xs">Loading page…</p>
+                  /* ── Single page (mobile) ── */
+                  <div style={{
+                    height: '100%',
+                    aspectRatio: '0.707 / 1',
+                    maxWidth: 'min(86vw, 500px)',
+                    flexShrink: 0,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    borderRadius: 4,
+                    background: PAPER_BG,
+                  }}>
+                    {rightImg ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={rightImg}
+                        alt={`Page ${rightNum}`}
+                        draggable={false}
+                        style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
+                      />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <SudarshanLoader size="sm" />
+                      </div>
+                    )}
+                    <div style={{
+                      position: 'absolute', top: 0, left: 0, bottom: 0, width: 10,
+                      background: 'linear-gradient(to right, rgba(0,0,0,0.22), transparent)',
+                      pointerEvents: 'none',
+                      borderRadius: '4px 0 0 4px',
+                    }} />
+                    <PageCornerFold />
                   </div>
                 )}
-
-                {/* Spine gradient (left edge) */}
-                <div className="absolute top-0 left-0 bottom-0 w-3 rounded-l-[3px] pointer-events-none" style={{
-                  background: 'linear-gradient(to right, rgba(0,0,0,0.25), transparent)',
-                }} />
-
-                {/* Page curl (bottom-right) */}
-                <PageCornerFold />
-
-                {/* Subtle page texture overlay */}
-                <div className="absolute inset-0 rounded-[3px] pointer-events-none" style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 50%, rgba(0,0,0,0.04) 100%)',
-                  mixBlendMode: 'overlay',
-                }} />
               </motion.div>
             </AnimatePresence>
           </div>
