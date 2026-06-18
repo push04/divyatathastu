@@ -19,6 +19,7 @@ interface Product {
   id: string
   name: string
   price: number
+  sale_price: number | null
   product_type: string | null
 }
 
@@ -59,12 +60,12 @@ export default function CheckoutPage() {
       if (!cartMap.length) { router.push('/shop'); return }
 
       const ids = cartMap.map(([id]) => id)
-      const { data: products } = await supabase.from('products').select('id,name,price,product_type').in('id', ids)
+      const { data: products } = await supabase.from('products').select('id,name,price,sale_price,product_type').in('id', ids)
 
       if (products) {
         const cartItems = cartMap.map(([id, qty]) => {
           const p = products.find((pr: Product) => pr.id === id)
-          return p ? { id, name: p.name, price: p.price, product_type: p.product_type, quantity: qty } : null
+          return p ? { id, name: p.name, price: p.sale_price ?? p.price, product_type: p.product_type, quantity: qty } : null
         }).filter(Boolean) as CartItem[]
         setItems(cartItems)
       }
