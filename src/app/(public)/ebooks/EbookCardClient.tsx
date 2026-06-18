@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { FileText, Star } from 'lucide-react'
 import SudarshanLoader from '@/components/SudarshanLoader'
 
@@ -77,11 +78,17 @@ function CoverIllustration({ title }: { title: string }) {
 function EbookCover({ book }: { book: any }) {
   const bg = CAT_BG[book.category] || '#0D1229'
   const isFree = book.price === 0 || book.free
+  const coverImg = Array.isArray(book.images) && book.images[0]?.url ? book.images[0].url : null
   return (
     <div className="relative overflow-hidden" style={{ aspectRatio: '3/2', background: bg, backgroundImage: NOISE }}>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <CoverIllustration title={book.title} />
-      </div>
+      {coverImg ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={coverImg} alt={book.title} className="absolute inset-0 w-full h-full object-cover" />
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <CoverIllustration title={book.title} />
+        </div>
+      )}
       <div
         className="absolute bottom-0 left-0 right-0 flex items-center pl-3"
         style={{ height: '28px', background: `${bg}99` }}
@@ -125,31 +132,34 @@ export function EbookCard({ book }: { book: any }) {
         <h3 className="mt-2 font-semibold leading-snug line-clamp-2" style={{ fontFamily: "'Playfair Display', serif", fontSize: '16px', color: 'var(--indigo-deep)' }}>
           {book.title}
         </h3>
-        <p className="mt-1" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '13px', color: 'rgba(28,30,74,0.45)' }}>
-          by {book.author}
-        </p>
+        {book.author && (
+          <p className="mt-1" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '13px', color: 'rgba(28,30,74,0.45)' }}>
+            by {book.author}
+          </p>
+        )}
         <p className="mt-2 line-clamp-2 flex-1" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '13px', color: 'rgba(28,30,74,0.55)' }}>
           {book.description}
         </p>
-        <div className="flex items-center gap-3 mt-3" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '12px', color: 'rgba(28,30,74,0.45)' }}>
-          <span className="flex items-center gap-1"><FileText size={12} />{book.pages} pages</span>
-          <span className="flex items-center gap-1"><Star size={12} color="var(--saffron)" fill="var(--saffron)" />{book.rating} ({(book.reviews || 0).toLocaleString()})</span>
-        </div>
-        <div className="flex items-end justify-between mt-4 gap-3">
-          <div>
-            {isFree ? (
-              <span className="font-bold text-sm" style={{ fontFamily: "'Sora', sans-serif", color: 'var(--terracotta)' }}>FREE</span>
-            ) : (
-              <div className="flex items-baseline gap-1.5">
-                <span className="font-bold" style={{ fontFamily: "'Playfair Display', serif", fontSize: '18px', color: 'var(--indigo-deep)' }}>₹{book.price}</span>
-                {book.original_price > 0 && <span style={{ fontSize: '13px', color: 'rgba(28,30,74,0.3)', textDecoration: 'line-through' }}>₹{book.original_price}</span>}
-                {save > 0 && <span style={{ fontSize: '11px', color: 'rgba(198,125,83,0.8)', fontFamily: "'DM Sans', sans-serif" }}>Save ₹{save}</span>}
-              </div>
-            )}
+        {(book.pages || book.rating) && (
+          <div className="flex items-center gap-3 mt-3" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '12px', color: 'rgba(28,30,74,0.45)' }}>
+            {book.pages && <span className="flex items-center gap-1"><FileText size={12} />{book.pages} pages</span>}
+            {book.rating && <span className="flex items-center gap-1"><Star size={12} color="var(--saffron)" fill="var(--saffron)" />{book.rating}{book.reviews ? ` (${book.reviews.toLocaleString()})` : ''}</span>}
           </div>
+        )}
+        <div className="mt-4">
+          {isFree ? (
+            <span className="font-bold text-sm" style={{ fontFamily: "'Sora', sans-serif", color: 'var(--terracotta)' }}>FREE</span>
+          ) : (
+            <div className="flex items-baseline gap-1.5">
+              <span className="font-bold" style={{ fontFamily: "'Playfair Display', serif", fontSize: '18px', color: 'var(--indigo-deep)' }}>&#8377;{book.price.toLocaleString('en-IN')}</span>
+              {book.original_price > 0 && <span style={{ fontSize: '13px', color: 'rgba(28,30,74,0.3)', textDecoration: 'line-through' }}>&#8377;{book.original_price.toLocaleString('en-IN')}</span>}
+              {save > 0 && <span style={{ fontSize: '11px', color: 'rgba(198,125,83,0.8)', fontFamily: "'DM Sans', sans-serif" }}>Save &#8377;{save}</span>}
+            </div>
+          )}
         </div>
-        <button
-          className="mt-3 w-full font-semibold transition-colors"
+        <Link
+          href="/shop"
+          className="mt-3 w-full font-semibold transition-colors text-center block"
           style={{
             fontFamily: "'DM Sans', sans-serif",
             fontSize: '14px',
@@ -158,11 +168,9 @@ export function EbookCard({ book }: { book: any }) {
             borderRadius: '8px',
             padding: '10px',
           }}
-          onMouseEnter={e => (e.currentTarget.style.background = 'var(--terracotta)')}
-          onMouseLeave={e => (e.currentTarget.style.background = 'var(--indigo-deep)')}
         >
           {isFree ? 'Download Free' : 'Get This Book'}
-        </button>
+        </Link>
       </div>
     </div>
   )
