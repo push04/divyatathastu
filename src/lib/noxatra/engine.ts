@@ -720,11 +720,13 @@ function generateDmitReport(kundli: any, dob: string) {
     'Shravana': { linguistic: 85, logical: 70, spatial: 65, kinesthetic: 55, musical: 80, interpersonal: 75, intrapersonal: 75, naturalistic: 60 },
   }
 
-  const seed = Object.keys(NAKSHATRA_INTEL).indexOf(kundli.nakshatra)
+  // Hash nakshatra name to a stable positive seed (avoids -1 from indexOf for unlisted nakshatras)
+  const nakshatraHash = kundli.nakshatra.split('').reduce((acc: number, c: string) => acc + c.charCodeAt(0), 0)
+  const seed = nakshatraHash % 37
   const base = NAKSHATRA_INTEL[kundli.nakshatra] || {
-    linguistic: 50 + seed % 40, logical: 55 + seed % 35, spatial: 45 + seed % 45,
-    kinesthetic: 60 + seed % 30, musical: 50 + seed % 40, interpersonal: 55 + seed % 35,
-    intrapersonal: 60 + seed % 30, naturalistic: 50 + seed % 35,
+    linguistic: 50 + seed % 30, logical: 55 + seed % 28, spatial: 48 + seed % 32,
+    kinesthetic: 60 + seed % 25, musical: 52 + seed % 30, interpersonal: 57 + seed % 28,
+    intrapersonal: 58 + seed % 25, naturalistic: 53 + seed % 28,
   }
 
   const intelligences = Object.entries(base).map(([type, score]) => ({
@@ -1377,7 +1379,7 @@ export function generateMuhurtaGuide(kundli: any, numerology: any) {
     forTravel: TRAVEL_TIMING[lagna] || 'Thursday is universally favorable for long journeys',
     forCareer: CAREER_TIMING[lagna] || 'Thursday mornings for career initiatives, Jupiter hora',
     forPropertyPurchase: `${['Cancer','Taurus','Capricorn','Scorpio'].includes(lagna) ? 'Highly favorable' : 'Proceed with care'} for property. Best day: Saturday (Saturn blesses permanent structures). Avoid during Rahu/Ketu periods.`,
-    forNameCeremony: 'Pushya Nakshatra or the nakshatra of the ${moonSign} Moon are ideal for naming ceremonies',
+    forNameCeremony: `Pushya Nakshatra or the nakshatra of the ${moonSign} Moon are ideal for naming ceremonies`,
     specialDates: SPECIAL_DATES,
     personalLuckyNumbers: numerology.luckyNumbers,
     personalLuckyDays: numerology.luckyDays,

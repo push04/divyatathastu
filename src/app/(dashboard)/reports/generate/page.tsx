@@ -339,11 +339,21 @@ function GenerateReportContent() {
           description: `${isHindi ? selectedReportInfo?.labelHi : selectedReportInfo?.label} Report`,
           theme: { color: '#2F2A44' },
           handler: async (response: any) => {
-            await fetch('/api/payment?action=verify', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ ...response, db_order_id: orderData.db_order_id }),
-            })
+            try {
+              const verifyRes = await fetch('/api/payment?action=verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...response, db_order_id: orderData.db_order_id }),
+              })
+              const verifyData = await verifyRes.json()
+              if (!verifyRes.ok || !verifyData.verified) {
+                throw new Error(verifyData.error || 'Payment verification failed')
+              }
+            } catch (err: any) {
+              setPaymentProcessing(false)
+              toast.error(err.message || 'Payment verification failed. Contact support.')
+              return
+            }
             setPaymentProcessing(false)
             toast.success(isHindi ? 'भुगतान सफल! रिपोर्ट बन रही है…' : 'Payment successful! Generating report…')
             doGenerate()

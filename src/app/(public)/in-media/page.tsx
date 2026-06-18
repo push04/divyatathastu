@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description: 'MahaTathastu featured in leading Indian media outlets — Times of India, NDTV, Hindustan Times and more.',
 }
 
-const PRESS_FEATURES = [
+const PRESS_FEATURES: { id: number; outlet: string; logo: string; date: string; headline: string; excerpt: string; category: string; color: string; url?: string }[] = [
   { id: 1, outlet: 'Times of India', logo: 'TOI', date: '2025-08-15', headline: '"MahaTathastu Is Bringing Ancient Vedic Sciences Into the Digital Age"', excerpt: 'The platform has quietly become one of India\'s most comprehensive spiritual technology platforms, offering AI-powered astrological reports that rival traditional consultations.', category: 'Feature', color: 'bg-red-600' },
   { id: 2, outlet: 'NDTV', logo: 'NDTV', date: '2025-07-22', headline: 'How This Startup Is Making Astrology Accessible to Millions of Indians', excerpt: 'With over 50,000 reports generated in its first year, MahaTathastu is proving that spirituality and technology can coexist beautifully.', category: 'Startup', color: 'bg-red-700' },
   { id: 3, outlet: 'Hindustan Times', logo: 'HT', date: '2025-06-10', headline: 'The AI That Reads Your Kundli: Inside India\'s First 360° Spiritual Platform', excerpt: 'Nakshatra, the AI engine powering MahaTathastu\'s reports, combines 14 different Vedic sciences into a single comprehensive life analysis.', category: 'Technology', color: 'bg-teal-700' },
@@ -15,19 +15,7 @@ const PRESS_FEATURES = [
   { id: 6, outlet: 'YourStory', logo: 'YS', date: '2025-03-05', headline: 'From Zero to 50K Users: The MahaTathastu Story', excerpt: 'Founder\'s vision to democratize Vedic knowledge has resonated deeply with India\'s growing wellness-conscious middle class.', category: 'Startup', color: 'bg-emerald-700' },
 ]
 
-const AWARDS = [
-  { year: '2025', title: 'Best Spiritual Tech Platform', org: 'India Digital Innovation Awards', icon: 'emoji_events' },
-  { year: '2025', title: 'Top 10 Wellness Apps', org: 'Google Play India', icon: 'military_tech' },
-  { year: '2025', title: 'Best AI Application — Lifestyle', org: 'Startup India Awards', icon: 'workspace_premium' },
-  { year: '2024', title: 'Most Innovative EdTech Startup', org: 'TiE Delhi-NCR', icon: 'star' },
-]
-
-const STATS = [
-  { label: 'Press Mentions', value: '150+' },
-  { label: 'Media Outlets', value: '45+' },
-  { label: 'Countries Covered', value: '12' },
-  { label: 'TV Appearances', value: '8' },
-]
+const AWARDS: { year: string; title: string; org: string; icon: string }[] = []
 
 export default function InMediaPage() {
   return (
@@ -44,17 +32,6 @@ export default function InMediaPage() {
         </div>
       </section>
 
-      {/* Stats bar */}
-      <section className="bg-white border-b border-[var(--warm-sand)] py-6 px-6">
-        <div className="max-w-4xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-6 text-center">
-          {STATS.map(s => (
-            <div key={s.label}>
-              <p className="text-3xl font-bold text-[var(--indigo-deep)]">{s.value}</p>
-              <p className="text-xs text-[var(--warm-charcoal)]/60 mt-0.5">{s.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
 
       {/* Featured press */}
       <section className="py-12 px-6 bg-[var(--kutch-white)]">
@@ -75,31 +52,37 @@ export default function InMediaPage() {
                 </div>
                 <h3 className="font-semibold text-[var(--indigo-deep)] leading-snug text-sm">{item.headline}</h3>
                 <p className="text-xs text-[var(--warm-charcoal)]/60 leading-relaxed">{item.excerpt}</p>
-                <button className="text-xs text-[var(--indigo-deep)] font-medium hover:underline text-left mt-auto">Read full article <span className="material-symbols-outlined text-[12px]" style={{ verticalAlign: 'middle' }}>arrow_forward</span></button>
+                {item.url && (
+                  <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-xs text-[var(--indigo-deep)] font-medium hover:underline text-left mt-auto flex items-center gap-1">
+                    Read full article <span className="material-symbols-outlined text-[12px]" style={{ verticalAlign: 'middle' }}>arrow_forward</span>
+                  </a>
+                )}
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Awards */}
-      <section className="py-12 px-6 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl font-bold text-[var(--indigo-deep)] mb-6 text-center">Awards & Recognition</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {AWARDS.map((a, i) => (
-              <div key={i} className="flex items-center gap-4 p-4 border border-[var(--warm-sand)] rounded-xl bg-[var(--kutch-white)]">
-                <span className="material-symbols-outlined text-[36px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>{a.icon}</span>
-                <div>
-                  <p className="font-bold text-[var(--indigo-deep)]">{a.title}</p>
-                  <p className="text-sm text-[var(--warm-charcoal)]/60">{a.org}</p>
-                  <p className="text-xs text-[var(--warm-charcoal)]/40 mt-0.5">{a.year}</p>
+      {/* Awards — only rendered when AWARDS array has entries */}
+      {AWARDS.length > 0 && (
+        <section className="py-12 px-6 bg-white">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-2xl font-bold text-[var(--indigo-deep)] mb-6 text-center">Awards & Recognition</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {AWARDS.map((a, i) => (
+                <div key={i} className="flex items-center gap-4 p-4 border border-[var(--warm-sand)] rounded-xl bg-[var(--kutch-white)]">
+                  <span className="material-symbols-outlined text-[36px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>{a.icon}</span>
+                  <div>
+                    <p className="font-bold text-[var(--indigo-deep)]">{a.title}</p>
+                    <p className="text-sm text-[var(--warm-charcoal)]/60">{a.org}</p>
+                    <p className="text-xs text-[var(--warm-charcoal)]/40 mt-0.5">{a.year}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Press kit CTA */}
       <section className="py-12 px-6 bg-[var(--indigo-deep)] text-center">
