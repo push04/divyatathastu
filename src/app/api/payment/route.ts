@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import crypto from 'crypto'
+import { sendOrderConfirmation } from '@/lib/email'
 
 // Lazy import to avoid crash when credentials not set
 function getRazorpay() {
@@ -132,7 +133,7 @@ export async function POST(req: NextRequest) {
     }).eq('id', db_order_id)
 
     // Fulfil ebook purchases — sync ebooks table + ebook_purchases for each ebook item
-    const { data: orderRow } = await supabase.from('orders').select('items,user_id').eq('id', db_order_id).single()
+    const { data: orderRow } = await supabase.from('orders').select('items,user_id,order_number,subtotal,discount,total').eq('id', db_order_id).single()
     const orderItems: any[] = (orderRow?.items as any[]) || []
     const ebookItems = orderItems.filter((i: any) => i.product_type === 'ebook')
     for (const item of ebookItems) {
@@ -168,6 +169,26 @@ export async function POST(req: NextRequest) {
           purchased_at: new Date().toISOString(),
         } as any)
       }
+    }
+
+    // Send order confirmation email — fire and forget
+    try {
+      const name = (user.user_metadata?.full_name as string) || (user.email?.split('@')[0] ?? 'Seeker')
+      await sendOrderConfirmation(user.email!, name, {
+        orderNumber: orderRow?.order_number ?? `#${db_order_id}`,
+        items: orderItems.map((i: any) => ({
+          name: i.name ?? i.id,
+          price: i.price ?? 0,
+          quantity: i.quantity ?? 1,
+          product_type: i.product_type,
+        })),
+        subtotal: (orderRow as any)?.subtotal ?? 0,
+        discount: (orderRow as any)?.discount ?? 0,
+        total: (orderRow as any)?.total ?? 0,
+        paymentId: razorpay_payment_id,
+      })
+    } catch (emailErr: any) {
+      console.warn('[Payment] Order email failed:', emailErr.message)
     }
 
     return NextResponse.json({ success: true, verified: true })

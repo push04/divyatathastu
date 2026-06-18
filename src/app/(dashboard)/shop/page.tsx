@@ -5,7 +5,6 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import SudarshanLoader from '@/components/SudarshanLoader'
 
 interface Product {
   id: string
@@ -91,14 +90,21 @@ export default function ShopPage() {
 
   useEffect(() => {
     async function load() {
-      const { data } = await supabase.from('products').select('*').eq('is_active', true)
-      if (data) setProducts(data)
+      // Read localStorage synchronously before any async work
       const stored = localStorage.getItem('dt_cart')
       if (stored) {
         try { setCart(new Map(JSON.parse(stored))) } catch {}
       }
-      const { data: { user: u } } = await supabase.auth.getUser()
-      setUser(u)
+      // Parallelize both network calls — halves load time
+      const [productsRes, authRes] = await Promise.all([
+        supabase
+          .from('products')
+          .select('id,name,description,price,sale_price,product_type,images,stock_count,is_active,slug')
+          .eq('is_active', true),
+        supabase.auth.getUser(),
+      ])
+      if (productsRes.data) setProducts(productsRes.data)
+      setUser(authRes.data.user)
       setLoading(false)
     }
     load()
@@ -157,8 +163,31 @@ export default function ShopPage() {
   const cartTotal = cartItems.reduce((s, { product: p, qty }) => s + (p.sale_price ?? p.price) * qty, 0)
 
   if (loading) return (
-    <div className="flex items-center justify-center h-[60vh]">
-      <SudarshanLoader size="lg" />
+    <div className="min-h-screen" style={{ background: 'var(--kutch-white)' }}>
+      {/* Hero skeleton */}
+      <div className="h-40" style={{ background: 'linear-gradient(135deg, var(--indigo-deep) 0%, #460B2F 100%)' }} />
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Category chips skeleton */}
+        <div className="flex gap-2 mb-5 overflow-hidden">
+          {Array.from({ length: 7 }).map((_, i) => (
+            <div key={i} className="h-8 w-20 rounded-full animate-pulse flex-shrink-0" style={{ background: 'rgba(47,42,68,0.08)' }} />
+          ))}
+        </div>
+        {/* Product grid skeleton */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid var(--warm-sand)' }}>
+              <div className="h-44 animate-pulse" style={{ background: 'rgba(47,42,68,0.06)' }} />
+              <div className="p-4 space-y-2">
+                <div className="h-4 rounded-lg animate-pulse" style={{ background: 'rgba(47,42,68,0.06)' }} />
+                <div className="h-3 rounded-lg animate-pulse w-3/4" style={{ background: 'rgba(47,42,68,0.04)' }} />
+                <div className="h-3 rounded-lg animate-pulse w-1/2" style={{ background: 'rgba(47,42,68,0.04)' }} />
+                <div className="h-9 rounded-xl animate-pulse mt-3" style={{ background: 'rgba(47,42,68,0.06)' }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   )
 

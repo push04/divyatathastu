@@ -87,6 +87,12 @@ export default function RegisterPage() {
     if (error) {
       toast.error(error.message)
     } else {
+      // Fire welcome email — non-blocking, don't await
+      fetch('/api/email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'welcome', to: form.email, name: form.name }),
+      }).catch(() => {})
       router.push('/dashboard')
     }
     setLoading(false)

@@ -8,6 +8,13 @@
   "functions": {
     "src/app/api/noxatra/route.ts": { "maxDuration": 60 },
     "src/app/api/groq/route.ts": { "maxDuration": 60 },
-    "src/app/api/itinerary/route.ts": { "maxDuration": 60 }
-  }
+    "src/app/api/itinerary/route.ts": { "maxDuration": 60 },
+    "src/app/api/cron/spiritual-digest/route.ts": { "maxDuration": 60 }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/spiritual-digest",
+      "schedule": "0 6 */3 * *"
+    }
+  ]
 }
