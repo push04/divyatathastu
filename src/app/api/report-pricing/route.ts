@@ -26,6 +26,15 @@ export async function POST(req: NextRequest) {
     const prices = await req.json()
     const { error } = await (supabase as any).from('settings').upsert({ key: SETTINGS_KEY, value: prices, updated_at: new Date().toISOString() } as any)
     if (error) throw new Error(error.message || 'DB upsert failed — ensure the settings table exists')
+
+    // Sync prices to products table for any report-type product whose slug matches a pricing key
+    for (const [slug, price] of Object.entries(prices) as [string, number][]) {
+      await supabase.from('products')
+        .update({ price, updated_at: new Date().toISOString() } as any)
+        .eq('slug', slug)
+        .eq('product_type', 'report')
+    }
+
     return NextResponse.json({ success: true })
   } catch (e: any) {
     return NextResponse.json({ error: e.message || 'Failed to save' }, { status: 500 })

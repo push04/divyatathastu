@@ -23,7 +23,22 @@ export async function POST(req: NextRequest) {
   if (action === 'create') {
     const { items, couponCode } = await req.json()
 
-    const subtotal = items.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0)
+    // Fetch authoritative report prices from settings — prevents client price tampering
+    let reportPrices: Record<string, number> = {}
+    try {
+      const { data: setting } = await (supabase as any).from('settings').select('value').eq('key', 'report_pricing').single()
+      if (setting?.value) reportPrices = setting.value
+    } catch {}
+
+    // Override price for report items with server-side authoritative price
+    const authoritative = items.map((item: any) => {
+      if (item.product_type === 'report' && reportPrices[item.id] !== undefined) {
+        return { ...item, price: reportPrices[item.id] }
+      }
+      return item
+    })
+
+    const subtotal = authoritative.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0)
     let discount = 0
 
     // Validate coupon
@@ -50,7 +65,7 @@ export async function POST(req: NextRequest) {
       const { data: order } = await supabase.from('orders').insert({
         user_id: user.id,
         order_number: orderNumber,
-        items,
+        items: authoritative,
         subtotal,
         discount,
         coupon_code: couponCode || null,
