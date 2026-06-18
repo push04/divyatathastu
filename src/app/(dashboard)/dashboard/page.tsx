@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { getUserLocation } from '@/lib/utils/getLocation'
 import { useBundlePrice } from '@/lib/hooks/useBundlePrice'
 import SudarshanLoader from '@/components/SudarshanLoader'
+import NewsletterStrip from '@/components/layout/NewsletterStrip'
 
 interface Profile { id: string; full_name: string; email: string }
 interface FamilyMember { id: string; full_name: string; relation: string; date_of_birth?: string }
@@ -444,6 +445,7 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
+      <NewsletterStrip />
     </div>
   )
 }

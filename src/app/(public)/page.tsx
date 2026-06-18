@@ -8,6 +8,7 @@ import MandirTeaser from '@/components/home/MandirTeaser'
 import TathastuCTA from '@/components/home/TathastuCTA'
 import FeaturedProducts from '@/components/home/FeaturedProducts'
 import DivineServicesSection from '@/components/home/DivineServicesSection'
+import NewsletterStrip from '@/components/layout/NewsletterStrip'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -28,6 +29,7 @@ export default function HomePage() {
       <MandirTeaser />
       <Testimonials />
       <InMediaSection />
+      <NewsletterStrip />
     </>
   )
 }

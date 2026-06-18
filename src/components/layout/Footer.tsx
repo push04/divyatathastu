@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import SudarshanLoader from '@/components/SudarshanLoader'
-import NewsletterStrip from './NewsletterStrip'
 
 const footerLinks = {
   Services: [
@@ -29,7 +28,6 @@ const footerLinks = {
 export default function Footer() {
   return (
     <footer className="bg-[var(--kutch-white)] border-t border-[var(--outline-variant)]/30">
-      <NewsletterStrip />
       <div className="max-w-7xl mx-auto px-6 lg:px-12 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Brand */}
