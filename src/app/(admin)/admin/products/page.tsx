@@ -10,16 +10,13 @@ interface Product {
   id: string; name: string; slug: string; description: string | null
   price: number; sale_price: number | null; stock_count: number
   is_active: boolean; is_featured: boolean; product_type: string | null; created_at: string
-  images: any; ebook_id?: string | null
+  images: any
 }
 
 interface ProductForm {
   name: string; description: string; product_type: string
   price: string; sale_price: string; stock_count: string
-  ebook_id: string
 }
-
-interface EbookOption { id: string; title: string; author: string | null }
 
 const PRODUCT_TYPES = ['report','ebook','consultation','yantra','gemstone','course','bundle','physical','herbal']
 const TYPE_ICON: Record<string, string> = {
@@ -35,7 +32,7 @@ const TYPE_GRADIENT: Record<string, string> = {
   herbal: 'from-green-600 to-emerald-800',
 }
 
-const emptyForm: ProductForm = { name: '', description: '', product_type: 'physical', price: '', sale_price: '', stock_count: '-1', ebook_id: '' }
+const emptyForm: ProductForm = { name: '', description: '', product_type: 'physical', price: '', sale_price: '', stock_count: '-1' }
 
 const inputCls = 'w-full px-3 py-2.5 rounded-lg border border-[var(--warm-sand)] text-sm focus:outline-none focus:border-[var(--saffron)] bg-white text-[var(--warm-charcoal)] transition-colors'
 
@@ -59,7 +56,6 @@ export default function AdminProductsPage() {
   const fileRef = useRef<HTMLInputElement>(null)
 
   const [products, setProducts] = useState<Product[]>([])
-  const [ebooks, setEbooks] = useState<EbookOption[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [typeFilter, setTypeFilter] = useState('all')
@@ -75,19 +71,12 @@ export default function AdminProductsPage() {
   const [uploading, setUploading] = useState(false)
 
   async function load() {
-    const [productsRes, ebooksRes] = await Promise.all([
-      supabase
-        .from('products')
-        .select('id,name,slug,description,price,sale_price,stock_count,is_active,is_featured,product_type,created_at,images,ebook_id')
-        .order('created_at', { ascending: false }),
-      supabase
-        .from('ebooks')
-        .select('id,title,author')
-        .order('title', { ascending: true }),
-    ])
-    if (productsRes.error) toast.error('Failed to load products')
-    else setProducts(productsRes.data || [])
-    setEbooks((ebooksRes.data || []) as EbookOption[])
+    const { data, error } = await supabase
+      .from('products')
+      .select('id,name,slug,description,price,sale_price,stock_count,is_active,is_featured,product_type,created_at,images')
+      .order('created_at', { ascending: false })
+    if (error) toast.error('Failed to load products')
+    else setProducts(data || [])
     setLoading(false)
   }
 
@@ -107,7 +96,6 @@ export default function AdminProductsPage() {
       price: String(p.price),
       sale_price: p.sale_price ? String(p.sale_price) : '',
       stock_count: String(p.stock_count),
-      ebook_id: p.ebook_id || '',
     })
     setImages(getImages(p.images))
     setEditProduct(p)
@@ -152,7 +140,7 @@ export default function AdminProductsPage() {
     if (!form.price || isNaN(Number(form.price))) { toast.error('Valid price is required'); return }
     setSaving(true)
 
-    const payload: Record<string, any> = {
+    const payload = {
       name: form.name.trim(),
       description: form.description.trim() || null,
       product_type: form.product_type as any,
@@ -161,7 +149,6 @@ export default function AdminProductsPage() {
       stock_count: Number(form.stock_count) || -1,
       images: images,
       is_active: true,
-      ebook_id: form.product_type === 'ebook' && form.ebook_id ? form.ebook_id : null,
     }
 
     if (modal === 'create') {
@@ -401,39 +388,10 @@ export default function AdminProductsPage() {
                   className={inputCls + ' resize-none'} rows={3} placeholder="Detailed product description..." />
               </div>
 
-              {/* Ebook Link — only shown when product_type is 'ebook' */}
               {form.product_type === 'ebook' && (
-                <div>
-                  <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1.5 uppercase tracking-wide">
-                    Link to Ebook *
-                  </label>
-                  <select
-                    value={form.ebook_id}
-                    onChange={e => setForm(f => ({ ...f, ebook_id: e.target.value }))}
-                    className={inputCls}
-                  >
-                    <option value="">— Select ebook from library —</option>
-                    {ebooks.map(eb => (
-                      <option key={eb.id} value={eb.id}>
-                        {eb.title}{eb.author ? ` — ${eb.author}` : ''}
-                      </option>
-                    ))}
-                  </select>
-                  <p className="text-[10px] text-[var(--warm-charcoal)]/40 mt-1">
-                    Choose the ebook (uploaded in Admin → Ebooks) that this product unlocks after purchase.
-                  </p>
-                  {form.ebook_id && (
-                    <p className="text-[10px] text-emerald-600 font-medium mt-1 flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[12px]">check_circle</span>
-                      Ebook linked — buyers will see it in My Ebooks after payment.
-                    </p>
-                  )}
-                  {!form.ebook_id && (
-                    <p className="text-[10px] text-amber-600 font-medium mt-1 flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[12px]">warning</span>
-                      No ebook linked — buyers will not receive access after purchase.
-                    </p>
-                  )}
+                <div className="p-3 rounded-xl text-xs text-amber-700 bg-amber-50 border border-amber-200 flex items-start gap-2">
+                  <span className="material-symbols-outlined text-[16px] flex-shrink-0 mt-0.5">info</span>
+                  <span>To manage ebook PDFs and cover images, go to <strong>Admin → Ebooks</strong>. Ebook products are created and edited there to ensure the PDF is properly linked for buyers.</span>
                 </div>
               )}
 

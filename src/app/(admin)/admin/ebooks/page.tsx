@@ -179,18 +179,21 @@ export default function AdminEbooksPage() {
       await supabase.from('products').update({ ebook_file_url: externalUrl }).eq('id', targetId!)
     }
 
-    // Keep ebooks table in sync so my-library can find this ebook
+    // Sync ebooks table so my-library can find this ebook after purchase
     const finalFileUrl = pdfUrl ?? externalUrl ?? (editingId ? ebooks.find(e => e.id === editingId)?.ebook_file_url : null)
     if (finalFileUrl) {
-      await supabase.from('ebooks').upsert({
+      const { error: ebErr } = await (supabase as any).from('ebooks').upsert({
         id: targetId!,
-        title: form.name,
+        title: form.name.trim(),
+        slug: slug,
         file_url: finalFileUrl,
-        description: form.description || null,
+        price: Number(form.price),
+        description: form.description?.trim() || null,
         author: form.author.trim() || 'MahaTathastu',
-        language: null,
+        language: 'Hindi',
         tags: [],
-      } as any, { onConflict: 'id' })
+      }, { onConflict: 'id' })
+      if (ebErr) toast.error('Ebook library sync failed: ' + ebErr.message)
     }
 
     setUploadProgress(100)
