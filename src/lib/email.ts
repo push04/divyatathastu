@@ -405,6 +405,135 @@ export async function sendSpiritualDigest(
   )
 }
 
+// ─── Event Registration Email ─────────────────────────────────────────────────
+
+export function eventRegistrationHtml(name: string, eventTitle: string, eventDate: string, isPaid: boolean, paymentId?: string): string {
+  const header = hdr('Event Registered')
+  const formattedDate = eventDate
+    ? (() => { try { return new Date(eventDate).toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) } catch { return eventDate } })()
+    : ''
+
+  const body = `
+    <h1 style="font-family:Georgia,serif;font-size:26px;color:#1A1535;font-weight:bold;margin:0 0 5px;line-height:1.25">
+      You&rsquo;re Registered, ${escHtml(name)}!
+    </h1>
+    <p style="font-size:14px;color:#9A96AA;margin:0 0 26px;font-family:Arial,sans-serif;line-height:1.6">
+      ${isPaid ? 'Your payment was received and your spot is confirmed.' : 'Your spot is confirmed &mdash; we look forward to seeing you!'}
+    </p>
+
+    <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" style="background:#F5F0FF;border:1px solid #DDD5F5;border-radius:12px;padding:22px 24px;margin-bottom:24px">
+      <tr><td>
+        <div style="font-size:10px;color:#7C3AED;letter-spacing:.14em;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:6px">Event</div>
+        <div style="font-size:18px;font-weight:bold;color:#2F2A44;font-family:Georgia,serif;margin-bottom:${formattedDate ? '12px' : '0'}">${escHtml(eventTitle)}</div>
+        ${formattedDate ? `<div style="font-size:10px;color:#7C3AED;letter-spacing:.14em;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:3px">Date</div><div style="font-size:14px;color:#4A4060;font-family:Arial,sans-serif">${escHtml(formattedDate)}</div>` : ''}
+      </td></tr>
+    </table>
+
+    ${isPaid && paymentId ? `<p style="font-size:11px;color:#C0B8CC;margin-bottom:22px;font-family:Arial,sans-serif">Payment reference: <span style="font-family:monospace;color:#8A8098">${escHtml(paymentId)}</span></p>` : ''}
+
+    <p style="font-size:14px;color:#4A4060;line-height:1.8;margin-bottom:28px;font-family:Georgia,serif;font-style:italic;border-left:3px solid #7C3AED;padding-left:16px">
+      Joining instructions and further details will be sent closer to the event. Check your inbox and WhatsApp.
+    </p>
+
+    <hr style="border:none;border-top:1px solid #EDE6DC;margin:6px 0 28px">
+
+    <div style="text-align:center">
+      <a href="${APP}/events" style="display:inline-block;background:#7C3AED;color:#ffffff;padding:16px 44px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:15px;font-family:Arial,sans-serif;letter-spacing:.02em">
+        Browse More Events
+      </a>
+    </div>
+
+    <p style="font-size:12px;color:#C0B8CC;text-align:center;line-height:1.65;margin:18px 0 0;font-family:Arial,sans-serif">
+      Questions? <a href="https://wa.me/919858784784" style="color:#7C3AED;text-decoration:none">WhatsApp +91 98587 84784</a>
+    </p>
+  `
+  return layout('#7C3AED', header, body)
+}
+
+export async function sendEventRegistrationEmail(
+  to: string,
+  name: string,
+  eventTitle: string,
+  eventDate: string,
+  isPaid: boolean,
+  paymentId?: string,
+): Promise<void> {
+  await sendEmail(
+    to,
+    `You&rsquo;re Registered &mdash; ${eventTitle} | MahaTathastu`,
+    eventRegistrationHtml(name, eventTitle, eventDate, isPaid, paymentId),
+  )
+}
+
+// ─── Course Enrollment Email ─────────────────────────────────────────────────
+
+export function courseEnrollmentHtml(name: string, courseTitle: string, price: number, instructor?: string): string {
+  const header = hdr('Course Enrolled')
+
+  const body = `
+    <h1 style="font-family:Georgia,serif;font-size:26px;color:#1A1535;font-weight:bold;margin:0 0 5px;line-height:1.25">
+      Welcome to the Course, ${escHtml(name)}!
+    </h1>
+    <p style="font-size:14px;color:#9A96AA;margin:0 0 26px;font-family:Arial,sans-serif;line-height:1.6">
+      You are now enrolled in <strong style="color:#2F2A44">${escHtml(courseTitle)}</strong>.${instructor ? ` Your instructor is ${escHtml(instructor)}.` : ''}
+    </p>
+
+    <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" style="background:#F0FFF4;border:1px solid #BBF7D0;border-radius:12px;padding:22px 24px;margin-bottom:24px">
+      <tr><td>
+        <div style="font-size:10px;color:#059669;letter-spacing:.14em;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:6px">Course</div>
+        <div style="font-size:18px;font-weight:bold;color:#2F2A44;font-family:Georgia,serif;margin-bottom:${instructor ? '10px' : '0'}">${escHtml(courseTitle)}</div>
+        ${instructor ? `<div style="font-size:13px;color:#6A8A7A;font-family:Arial,sans-serif">Instructor: ${escHtml(instructor)}</div>` : ''}
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid #BBF7D0">
+          <div style="font-size:10px;color:#059669;letter-spacing:.14em;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:2px">Amount Paid</div>
+          <div style="font-size:16px;font-weight:bold;color:#059669;font-family:Georgia,serif">${price > 0 ? `&#8377;${price.toLocaleString('en-IN')}` : 'FREE'}</div>
+        </div>
+      </td></tr>
+    </table>
+
+    <p style="font-size:11px;color:#B9986B;font-family:Arial,sans-serif;letter-spacing:.16em;text-transform:uppercase;margin-bottom:14px">What Happens Next</p>
+    <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" style="margin-bottom:28px">
+      ${[
+        'Our team will send your <strong>course access details within 24 hours</strong> to this email.',
+        'You&rsquo;ll be added to the <strong>student WhatsApp group</strong> for community support.',
+        'Download <strong>study materials and class schedules</strong> from your dashboard once access is granted.',
+      ].map((step, i) => `
+      <tr><td style="padding:11px 0;border-bottom:1px solid #F0EAE0">
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr>
+          <td style="width:24px;font-size:13px;color:#E36414;font-family:Arial,sans-serif;line-height:1;padding-top:2px;font-weight:bold">${i + 1}</td>
+          <td style="padding-left:10px;font-size:14px;color:#2F2A44;line-height:1.65;font-family:Georgia,serif">${step}</td>
+        </tr></table>
+      </td></tr>`).join('')}
+    </table>
+
+    <hr style="border:none;border-top:1px solid #EDE6DC;margin:6px 0 28px">
+
+    <div style="text-align:center">
+      <a href="${APP}/dashboard" style="display:inline-block;background:#2F2A44;color:#ffffff;padding:16px 44px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:15px;font-family:Arial,sans-serif;letter-spacing:.02em">
+        Go to Your Dashboard
+      </a>
+    </div>
+
+    <p style="font-size:12px;color:#C0B8CC;text-align:center;line-height:1.65;margin:18px 0 0;font-family:Arial,sans-serif">
+      Questions? <a href="https://wa.me/919858784784" style="color:#C67D53;text-decoration:none">WhatsApp +91 98587 84784</a>
+    </p>
+  `
+  return layout('#059669', header, body)
+}
+
+export async function sendCourseEnrollmentEmail(
+  to: string,
+  name: string,
+  courseTitle: string,
+  price: number,
+  instructor?: string,
+): Promise<void> {
+  await sendEmail(
+    to,
+    `Enrolled in ${courseTitle} — MahaTathastu`,
+    courseEnrollmentHtml(name, courseTitle, price, instructor),
+  )
+}
+
 // ─── Utility ─────────────────────────────────────────────────────────────────
 
 function escHtml(str: string): string {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import crypto from 'crypto'
+import { sendEventRegistrationEmail } from '@/lib/email'
 
 function getRazorpay() {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -42,6 +43,12 @@ export async function POST(req: NextRequest) {
     if (regError) {
       console.error('[events/payment] Registration insert failed:', regError.message)
       return NextResponse.json({ error: 'Payment verified but registration record failed. Contact support.' }, { status: 500 })
+    }
+
+    try {
+      await sendEventRegistrationEmail(email, name, body.eventTitle || 'MahaTathastu Event', body.eventDate || '', true, razorpay_payment_id)
+    } catch (e: any) {
+      console.warn('[events/payment] Email failed:', e.message)
     }
 
     return NextResponse.json({ success: true })

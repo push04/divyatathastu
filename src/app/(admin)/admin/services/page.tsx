@@ -428,17 +428,24 @@ export default function AdminServicesPage() {
               </div>
 
               {/* Image & Video URL */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Image URL</label>
-                  <input value={form.image_url || ''} onChange={e => setForm(f => ({ ...f, image_url: e.target.value }))}
-                    className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" placeholder="https://…" />
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Video URL</label>
-                  <input value={form.video_url || ''} onChange={e => setForm(f => ({ ...f, video_url: e.target.value }))}
-                    className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" placeholder="https://youtube.com/…" />
-                </div>
+              <div>
+                <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Image URL</label>
+                <input value={form.image_url || ''} onChange={e => setForm(f => ({ ...f, image_url: e.target.value }))}
+                  className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" placeholder="https://…" />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">YouTube Unlisted Video URL</label>
+                <input value={form.video_url || ''} onChange={e => setForm(f => ({ ...f, video_url: e.target.value }))}
+                  className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" placeholder="https://www.youtube.com/watch?v=… or https://youtu.be/…" />
+                <p className="text-[11px] text-[var(--warm-charcoal)]/40 mt-1.5">
+                  Paste a YouTube unlisted link. Students can only watch this after enrolling in the course.
+                </p>
+                {form.video_url && (
+                  <p className="text-[11px] text-emerald-600 mt-1 flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[13px]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                    Video URL saved — students will see a Watch button after enrollment.
+                  </p>
+                )}
               </div>
 
               {/* Badge & Order */}

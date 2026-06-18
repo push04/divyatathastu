@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { sendEventRegistrationEmail } from '@/lib/email'
 
 export async function POST(req: NextRequest) {
-  const { eventId, name, email, phone } = await req.json()
+  const { eventId, name, email, phone, eventTitle, eventDate } = await req.json()
   if (!eventId || !name || !email) {
     return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
   }
@@ -15,5 +16,12 @@ export async function POST(req: NextRequest) {
     paid: false,
   } as any)
   if (error) return NextResponse.json({ error: 'Registration failed: ' + error.message }, { status: 500 })
+
+  try {
+    await sendEventRegistrationEmail(email, name, eventTitle || 'MahaTathastu Event', eventDate || '', false)
+  } catch (e: any) {
+    console.warn('[events/register] Email failed:', e.message)
+  }
+
   return NextResponse.json({ success: true })
 }

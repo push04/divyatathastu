@@ -144,7 +144,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
             </div>
 
             {spotsLeft > 0 ? (
-              <EventRegisterForm eventId={event.id} eventTitle={event.title} price={event.price} />
+              <EventRegisterForm eventId={event.id} eventTitle={event.title} eventDate={event.start_date} price={event.price} />
             ) : (
               <div className="text-center py-3 bg-red-50 rounded-lg text-red-600 text-sm font-medium">Event Full — Join Waitlist</div>
             )}

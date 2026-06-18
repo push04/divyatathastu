@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import SudarshanLoader from '@/components/SudarshanLoader'
 
-export default function EventRegisterForm({ eventId, eventTitle, price }: { eventId: string; eventTitle: string; price: number }) {
+export default function EventRegisterForm({ eventId, eventTitle, eventDate, price }: { eventId: string; eventTitle: string; eventDate?: string; price: number }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
@@ -22,7 +22,7 @@ export default function EventRegisterForm({ eventId, eventTitle, price }: { even
         const res = await fetch('/api/events/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ eventId, name, email, phone }),
+          body: JSON.stringify({ eventId, name, email, phone, eventTitle, eventDate }),
         })
         if (res.ok) {
           setDone(true)
@@ -58,7 +58,7 @@ export default function EventRegisterForm({ eventId, eventTitle, price }: { even
             await fetch('/api/events/payment', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ action: 'verify', eventId, name, email, phone, ...response }),
+              body: JSON.stringify({ action: 'verify', eventId, name, email, phone, eventTitle, eventDate, ...response }),
             })
             setDone(true)
             toast.success('Payment successful! You are registered.')
