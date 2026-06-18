@@ -1,10 +1,10 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { EbookCard } from './EbookCardClient'
 
 export const metadata: Metadata = {
-  title: 'Ebooks | MahaTathastu — Vedic Wisdom Library',
+  title: 'Ebooks | MahaTathastu - Vedic Wisdom Library',
   description: 'Download premium ebooks on Vedic astrology, numerology, Vastu, meditation and spiritual sciences.',
 }
 export const revalidate = 3600

@@ -1,4 +1,4 @@
-import HeroSection from '@/components/home/HeroSection'
+﻿import HeroSection from '@/components/home/HeroSection'
 import PanchangWidget from '@/components/home/PanchangWidget'
 import ServicesGrid from '@/components/home/ServicesGrid'
 import HowItWorks from '@/components/home/HowItWorks'
@@ -11,8 +11,8 @@ import DivineServicesSection from '@/components/home/DivineServicesSection'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: "MahaTathastu — India's First 360° Holistic Life Report Platform",
-  description: "14 personalized holistic life reports for your entire family — Vedic astrology, numerology, chakra, Vastu, Prakriti & more. Powered by Nakshatra AI.",
+  title: "MahaTathastu - India's First 360° Holistic Life Report Platform",
+  description: "14 personalized holistic life reports for your entire family - Vedic astrology, numerology, chakra, Vastu, Prakriti & more. Powered by Nakshatra AI.",
 }
 
 export default function HomePage() {

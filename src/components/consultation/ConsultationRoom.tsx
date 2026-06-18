@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import '@livekit/components-styles'
 import {
@@ -345,7 +345,7 @@ export default function ConsultationRoom({ bookingId, userName, onLeave, slotDat
         {tokenMode === 'sandbox' && (
           <div className="mb-2 px-4 py-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-xs flex items-center gap-2">
             <span className="material-symbols-outlined text-[15px]">warning</span>
-            Sandbox mode — for testing only. Switch to Production in Admin panel.
+            Sandbox mode - for testing only. Switch to Production in Admin panel.
           </div>
         )}
         <LiveKitRoom

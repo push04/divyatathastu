@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import SudarshanLoader from '@/components/SudarshanLoader'
 
@@ -261,7 +261,7 @@ export default function AdminProductsPage() {
                       </td>
                       <td className="px-4 py-3">
                         <span className="text-xs px-2 py-0.5 rounded-full capitalize font-medium" style={{ background: 'var(--warm-sand)', color: 'rgba(61,52,80,0.7)' }}>
-                          {p.product_type || '—'}
+                          {p.product_type || '-'}
                         </span>
                       </td>
                       <td className="px-4 py-3">

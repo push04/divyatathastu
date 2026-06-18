@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -29,7 +29,7 @@ const DOSHAS = [
 
 const MEDICAL_ASTRO_HOUSES = [
   { house: '1st', title: 'Constitution & Overall Vitality', desc: 'Lagna and Lagna lord reveal the fundamental body type, immunity, and life force.' },
-  { house: '6th', title: 'Disease & Chronic Conditions', desc: 'The house of illness — its lord and occupants show the type and nature of health challenges.' },
+  { house: '6th', title: 'Disease & Chronic Conditions', desc: 'The house of illness - its lord and occupants show the type and nature of health challenges.' },
   { house: '8th', title: 'Chronic & Transformative Illness', desc: 'Longevity, accidents, surgeries, and deep transformative health events.' },
   { house: '12th', title: 'Hospitalization & Hidden Ailments', desc: 'Hidden diseases, foreign travel for medical care, and spiritual causes of illness.' },
 ]
@@ -176,8 +176,8 @@ export default function AyurvedaPage() {
         {/* Medical Astrology */}
         <section style={{ background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', borderRadius: 20, padding: '40px', border: '1px solid rgba(5,150,105,0.2)' }}>
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-[#052e16]" style={{ fontFamily: "'Playfair Display', serif" }}>Medical Astrology — Reading Health in the Stars</h2>
-            <p className="text-sm text-[#065f46]/70 mt-2">Jyotish reveals the karmic basis of health conditions — and the planetary remedies</p>
+            <h2 className="text-2xl font-bold text-[#052e16]" style={{ fontFamily: "'Playfair Display', serif" }}>Medical Astrology - Reading Health in the Stars</h2>
+            <p className="text-sm text-[#065f46]/70 mt-2">Jyotish reveals the karmic basis of health conditions - and the planetary remedies</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {MEDICAL_ASTRO_HOUSES.map(h => (
@@ -191,7 +191,7 @@ export default function AyurvedaPage() {
             ))}
           </div>
           <p className="text-center text-sm text-[#065f46]/60 mt-6 max-w-2xl mx-auto">
-            A combined Ayurvedic-Jyotish consultation identifies not just the physical symptoms but the karmic root — enabling deeper, lasting healing through planetary remedies, herbs, and lifestyle corrections.
+            A combined Ayurvedic-Jyotish consultation identifies not just the physical symptoms but the karmic root - enabling deeper, lasting healing through planetary remedies, herbs, and lifestyle corrections.
           </p>
         </section>
 

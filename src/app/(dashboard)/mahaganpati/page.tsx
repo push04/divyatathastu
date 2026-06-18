@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -14,10 +14,10 @@ const GANESH_ATTRIBUTES = [
 ]
 
 const PUJA_BENEFITS = [
-  { icon: 'rocket_launch', title: 'New Beginnings', desc: 'Start any venture — business, marriage, home, education — under Ganesh\'s divine protection.' },
+  { icon: 'rocket_launch', title: 'New Beginnings', desc: 'Start any venture - business, marriage, home, education - under Ganesh\'s divine protection.' },
   { icon: 'lock_open', title: 'Remove Blockages', desc: 'Dissolve obstacles in career, finances, relationships, and spiritual progress.' },
   { icon: 'menu_book', title: 'Enhanced Learning', desc: 'Students receive Ganesh\'s special blessings for clarity, retention, and exam success.' },
-  { icon: 'work', title: 'Business Prosperity', desc: 'Invite Riddhi (wealth) and Siddhi (success) — Ganesh\'s consorts — into your ventures.' },
+  { icon: 'work', title: 'Business Prosperity', desc: 'Invite Riddhi (wealth) and Siddhi (success) - Ganesh\'s consorts - into your ventures.' },
   { icon: 'home', title: 'Vastu Harmony', desc: 'Ganesh puja in the northeast (Ishaan corner) of your home amplifies positive Vastu energy.' },
   { icon: 'volunteer_activism', title: 'Spiritual Progress', desc: 'As the first deity worshipped in all Hindu rituals, Ganesh opens the path to higher realms.' },
 ]
@@ -37,7 +37,7 @@ export default function MahaganpatiPage() {
       service_item_id: item.id, user_id: user.id,
       status: 'pending', amount: item.price ?? 0, payment_status: 'pending',
       preferred_date: preferred[item.id] || null,
-      notes: `Puja: ${item.title}${preferred[item.id] ? ` — Preferred date: ${preferred[item.id]}` : ''}`,
+      notes: `Puja: ${item.title}${preferred[item.id] ? ` - Preferred date: ${preferred[item.id]}` : ''}`,
     })
     if (error) toast.error('Booking failed. Try again.')
     else {
@@ -63,7 +63,7 @@ export default function MahaganpatiPage() {
                 वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ
               </p>
               <p className="text-sm text-[#7c2d12]/70 mb-8 leading-relaxed">
-                Invoke the blessings of Mahaganpati — the supreme form of Lord Ganesha — through authentic Vedic puja performed by trained priests. Remove every obstacle from your path and invite divine grace into your life, business, and home.
+                Invoke the blessings of Mahaganpati - the supreme form of Lord Ganesha - through authentic Vedic puja performed by trained priests. Remove every obstacle from your path and invite divine grace into your life, business, and home.
               </p>
               <div className="flex gap-3 flex-wrap">
                 <a href="#pujas" className="btn-divine px-7 py-3 inline-flex items-center gap-2">
@@ -205,7 +205,7 @@ export default function MahaganpatiPage() {
         {/* Chaturthi callout */}
         <section className="text-center py-10 rounded-2xl" style={{ background: 'linear-gradient(135deg, #fff7ed, #ffedd5)', border: '2px solid rgba(234,88,12,0.2)' }}>
           <div className="text-5xl mb-3 font-black text-[#9a3412]" style={{ fontFamily: "'Playfair Display', serif" }}>ॐ</div>
-          <h2 className="text-2xl font-bold text-[#431407] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Chaturthi — The Auspicious Day</h2>
+          <h2 className="text-2xl font-bold text-[#431407] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Chaturthi - The Auspicious Day</h2>
           <p className="text-sm text-[#7c2d12]/70 mb-6 max-w-lg mx-auto">
             Every Chaturthi tithi (4th lunar day) is sacred to Ganesha. Book your puja on a Chaturthi for maximum divine blessings. Our pandits are available for home visits and online guided pujas.
           </p>

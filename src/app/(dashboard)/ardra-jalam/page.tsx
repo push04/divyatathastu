@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useServiceItems } from '@/lib/hooks/useServiceItems'
@@ -6,10 +6,10 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
 const NAKSHATRA_INFO = [
-  { title: 'Ardra Nakshatra', desc: 'The 6th of 27 nakshatras, ruled by Rudra (Shiva). Symbolized by a teardrop — the tear of transformation, renewal, and cosmic dissolution.' },
-  { title: 'Ruling Deity', desc: 'Lord Rudra — the fierce and compassionate form of Shiva who destroys ignorance and grants deep healing.' },
-  { title: 'Element', desc: 'Jala (Water) — the most receptive element, capable of holding and transmitting vibrational frequencies.' },
-  { title: 'Shakti', desc: 'Yatna Shakti — the power of effort, striving, and achieving through challenge. Water charged at this time carries this quality.' },
+  { title: 'Ardra Nakshatra', desc: 'The 6th of 27 nakshatras, ruled by Rudra (Shiva). Symbolized by a teardrop - the tear of transformation, renewal, and cosmic dissolution.' },
+  { title: 'Ruling Deity', desc: 'Lord Rudra - the fierce and compassionate form of Shiva who destroys ignorance and grants deep healing.' },
+  { title: 'Element', desc: 'Jala (Water) - the most receptive element, capable of holding and transmitting vibrational frequencies.' },
+  { title: 'Shakti', desc: 'Yatna Shakti - the power of effort, striving, and achieving through challenge. Water charged at this time carries this quality.' },
 ]
 
 const HOW_TO_USE = [
@@ -60,7 +60,7 @@ export default function ArdraJalamPage() {
   return (
     <div className="min-h-screen bg-[var(--kutch-white)]">
 
-      {/* Hero — water-inspired parchment gradient */}
+      {/* Hero - water-inspired parchment gradient */}
       <div style={{ background: 'linear-gradient(160deg, #ecfdf5 0%, #d1fae5 40%, #a7f3d0 100%)', borderBottom: '2px solid rgba(16,185,129,0.3)' }}>
         <div className="max-w-5xl mx-auto px-6 py-14">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
@@ -76,7 +76,7 @@ export default function ArdraJalamPage() {
                 Sacred Healing Water
               </p>
               <p className="text-sm text-[#065f46]/60 mb-6 leading-relaxed">
-                Charged under the divine frequencies of <strong>Ardra Nakshatra</strong> — the star of transformation ruled by Lord Rudra. Each batch is prepared through specific Vedic rituals, mantras, and cosmic alignment. Available only once every 27 days.
+                Charged under the divine frequencies of <strong>Ardra Nakshatra</strong> - the star of transformation ruled by Lord Rudra. Each batch is prepared through specific Vedic rituals, mantras, and cosmic alignment. Available only once every 27 days.
               </p>
               {/* Price */}
               <div className="flex items-center gap-4 mb-6">
@@ -122,7 +122,7 @@ export default function ArdraJalamPage() {
                 </div>
               )}
             </div>
-            {/* Right — visual */}
+            {/* Right - visual */}
             <div className="flex justify-center">
               <div className="relative">
                 {/* Bottle visual */}
@@ -222,7 +222,7 @@ export default function ArdraJalamPage() {
         <section className="text-center py-8" style={{ background: 'linear-gradient(135deg, #ecfdf5, #d1fae5)', borderRadius: 20 }}>
           <div className="mb-3 flex justify-center"><span className="material-symbols-outlined text-4xl" style={{ color: '#065f46', fontVariationSettings: "'FILL' 1" }}>water_drop</span></div>
           <h2 className="text-2xl font-bold text-[#065f46] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Ready to Begin?</h2>
-          <p className="text-sm text-[#065f46]/60 mb-6 max-w-md mx-auto">Each batch is prepared only during Ardra Nakshatra — approximately once every 27 days. Order now to secure your bottle from the next batch.</p>
+          <p className="text-sm text-[#065f46]/60 mb-6 max-w-md mx-auto">Each batch is prepared only during Ardra Nakshatra - approximately once every 27 days. Order now to secure your bottle from the next batch.</p>
           {!booked ? (
             <button onClick={handleOrder} disabled={ordering || loading} className="btn-divine px-10 py-3.5 text-base font-semibold disabled:opacity-50 inline-flex items-center gap-2">
               <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span>
@@ -231,7 +231,7 @@ export default function ArdraJalamPage() {
           ) : (
             <div className="inline-flex items-center gap-3 bg-white text-emerald-700 rounded-full px-6 py-3 font-semibold shadow-md">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-              Order Placed — We'll Contact You Soon
+              Order Placed - We'll Contact You Soon
             </div>
           )}
           <p className="text-xs text-[#065f46]/40 mt-4">Contact: 9858784784 · levitatelabs.online@gmail.com</p>

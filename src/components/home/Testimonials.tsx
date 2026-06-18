@@ -1,9 +1,9 @@
-'use client'
+﻿'use client'
 
 import { motion } from 'framer-motion'
 
 const testimonials = [
-  { name: 'Priya Sharma', location: 'Mumbai', avatar: 'PS', report: 'Full Bundle', text: "The Full Tathastu bundle completely changed how I understand my family. The child development report for my son was spot-on — identified his talent for music that we had been ignoring." },
+  { name: 'Priya Sharma', location: 'Mumbai', avatar: 'PS', report: 'Full Bundle', text: "The Full Tathastu bundle completely changed how I understand my family. The child development report for my son was spot-on - identified his talent for music that we had been ignoring." },
   { name: 'Rajesh Gupta', location: 'Delhi', avatar: 'RG', report: 'Astro-Vastu', text: "Astro-Vastu report helped us rearrange our office. Within a month, business improved noticeably. The remedies were practical and specific, not generic advice." },
   { name: 'Anita Verma', location: 'Bangalore', avatar: 'AV', report: 'Numerology', text: "My numerology and psychology reports gave me such clarity about my career change. I finally understood why certain paths felt wrong. Best investment I've made this year." },
   { name: 'Suresh Patel', location: 'Ahmedabad', avatar: 'SP', report: 'Shakti Chakra', text: "The Shakti Chakra report identified my root chakra blockage perfectly. The healing mantras and crystal suggestions have made a real difference in my energy levels." },
@@ -112,7 +112,7 @@ export default function Testimonials() {
         </div>
       </div>
 
-      {/* Row 1 — scrolls left */}
+      {/* Row 1 - scrolls left */}
       <div className="mb-4 overflow-hidden">
         <div
           className="dt-marquee flex gap-4"
@@ -126,7 +126,7 @@ export default function Testimonials() {
         </div>
       </div>
 
-      {/* Row 2 — scrolls right */}
+      {/* Row 2 - scrolls right */}
       <div className="overflow-hidden">
         <div
           className="dt-marquee flex gap-4"

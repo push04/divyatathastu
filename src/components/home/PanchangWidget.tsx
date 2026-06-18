@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
@@ -62,7 +62,7 @@ export default function PanchangWidget() {
         <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm p-6">
           <div className="grid grid-cols-1 md:grid-cols-[3fr_5fr_2fr] divide-y md:divide-y-0 md:divide-x divide-white/10 gap-0">
 
-            {/* Left — date block */}
+            {/* Left - date block */}
             <div className="flex items-start gap-4 pb-5 md:pb-0 md:pr-6">
               <div className="w-0.5 self-stretch bg-[var(--terracotta)] rounded-full opacity-70 flex-shrink-0" />
               <div>
@@ -81,7 +81,7 @@ export default function PanchangWidget() {
               </div>
             </div>
 
-            {/* Center — 3×2 grid */}
+            {/* Center - 3×2 grid */}
             <div className="py-5 md:py-0 md:px-6">
               <div className="grid grid-cols-3">
                 {cells.map(({ label, value }, i) => (
@@ -110,7 +110,7 @@ export default function PanchangWidget() {
               </div>
             </div>
 
-            {/* Right — CTA + rahu note */}
+            {/* Right - CTA + rahu note */}
             <div className="flex flex-col justify-between gap-4 pt-5 md:pt-0 md:pl-6">
               <Link
                 href="/panchang"
@@ -128,7 +128,7 @@ export default function PanchangWidget() {
                   color: 'rgba(255,255,255,0.3)',
                 }}
               >
-                Rahu Kaal {p.rahuKaal} — avoid auspicious work
+                Rahu Kaal {p.rahuKaal} - avoid auspicious work
               </p>
             </div>
 

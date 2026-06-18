@@ -1,10 +1,10 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import Link from 'next/link'
 import SudarshanLoader from '@/components/SudarshanLoader'
 
 export const metadata: Metadata = {
   title: 'About Us | MahaTathastu',
-  description: "India's First 360° Holistic Life Platform — combining Vedic astrology, numerology, Ayurveda, and spiritual guidance.",
+  description: "India's First 360° Holistic Life Platform - combining Vedic astrology, numerology, Ayurveda, and spiritual guidance.",
 }
 
 const TEAM = [
@@ -26,7 +26,7 @@ export default function AboutPage() {
           <div className="ornate-divider">
             <span className="material-symbols-outlined text-[14px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
           </div>
-          <p className="text-white/65 text-lg leading-relaxed">India's First 360° Holistic Life Platform — bridging ancient Vedic wisdom with modern AI technology to illuminate every soul's divine path.</p>
+          <p className="text-white/65 text-lg leading-relaxed">India's First 360° Holistic Life Platform - bridging ancient Vedic wisdom with modern AI technology to illuminate every soul's divine path.</p>
         </div>
       </section>
 
@@ -37,7 +37,7 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               { icon: 'my_location', title: 'Accuracy', desc: 'Our Nakshatra AI engine combines Vedic calculations with machine learning for unparalleled accuracy in astrology reports.' },
-              { icon: 'public', title: 'Accessibility', desc: 'Making 5,000 years of Vedic wisdom accessible to every Indian family — in their language, at their budget.' },
+              { icon: 'public', title: 'Accessibility', desc: 'Making 5,000 years of Vedic wisdom accessible to every Indian family - in their language, at their budget.' },
               { icon: 'favorite', title: 'Authenticity', desc: 'Every recommendation is validated by our panel of expert astrologers, Ayurvedic doctors, and Vastu consultants.' },
             ].map(v => (
               <div key={v.title} className="card-divine p-6 text-center">

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
@@ -49,12 +49,12 @@ function BundleSVG() {
         })}
       </g>
 
-      {/* Center orbit ring — counter-rotating */}
+      {/* Center orbit ring - counter-rotating */}
       <circle cx={cx} cy={cy} r={R} stroke="#D4A043" strokeOpacity="0.4" strokeWidth="1.5" fill="none"
         style={{ transformOrigin: `${cx}px ${cy}px`, animation: 'orbit-ccw 20s linear infinite' }} />
       <circle cx={cx} cy={cy} r={R - 12} stroke="white" strokeOpacity="0.05" strokeWidth="0.5" fill="none" />
 
-      {/* Center text — static */}
+      {/* Center text - static */}
       <text x={cx} y={cy + 2} textAnchor="middle" dominantBaseline="middle"
         fill="#D4A043" fontSize="48" fontFamily="'Playfair Display', serif" fontWeight="700">14</text>
       <text x={cx} y={cy + 36} textAnchor="middle" dominantBaseline="middle"
@@ -176,7 +176,7 @@ export default function TathastuCTA() {
               </svg>
             </div>
 
-            {/* Glass card overlay — floats */}
+            {/* Glass card overlay - floats */}
             <div
               className="absolute bottom-4 right-4 lg:bottom-8 lg:right-0 rounded-xl p-4 backdrop-blur-sm animate-float"
               style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', minWidth: '180px', animationDelay: '1s' }}

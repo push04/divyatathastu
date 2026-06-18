@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import SudarshanLoader from '@/components/SudarshanLoader'
@@ -8,17 +8,17 @@ const BENEFITS = [
   {
     icon: 'auto_awesome',
     title: 'Adhyatmic Digest Every 3 Days',
-    desc: 'AI-powered spiritual insights on Vedic Astrology, Nakshatra Wisdom, Vastu, Ayurveda, Mantra Science, and more — rotating themes so every digest is fresh.',
+    desc: 'AI-powered spiritual insights on Vedic Astrology, Nakshatra Wisdom, Vastu, Ayurveda, Mantra Science, and more - rotating themes so every digest is fresh.',
   },
   {
     icon: 'self_improvement',
     title: 'Daily Mantra & Practical Tip',
-    desc: 'A Sanskrit mantra with transliteration and meaning, plus one actionable spiritual practice you can do today — no app required.',
+    desc: 'A Sanskrit mantra with transliteration and meaning, plus one actionable spiritual practice you can do today - no app required.',
   },
   {
     icon: 'calendar_month',
     title: 'Exclusive Panchang Alerts',
-    desc: 'Notified about powerful muhurtas, eclipse windows, and rare planetary alignments before they happen — so you can prepare spiritually.',
+    desc: 'Notified about powerful muhurtas, eclipse windows, and rare planetary alignments before they happen - so you can prepare spiritually.',
   },
 ]
 
@@ -119,7 +119,7 @@ export default function NewsletterPage() {
             Your Adhyatmic Digest
           </h1>
           <p className="text-white/65 text-lg leading-relaxed max-w-xl mx-auto mb-8">
-            Ancient Vedic wisdom delivered to your inbox every 3 days — mantras, insights, and practical guidance for modern seekers.
+            Ancient Vedic wisdom delivered to your inbox every 3 days - mantras, insights, and practical guidance for modern seekers.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-white/50">
             <span className="flex items-center gap-1.5">
@@ -145,7 +145,7 @@ export default function NewsletterPage() {
             <h2 className="text-xl font-bold text-[var(--indigo-deep)] mb-2 text-center" style={{ fontFamily: "'Playfair Display', serif" }}>
               Join the Sacred Circle
             </h2>
-            <p className="text-sm text-[var(--warm-charcoal)]/55 text-center mb-8">Subscribe free — no account needed</p>
+            <p className="text-sm text-[var(--warm-charcoal)]/55 text-center mb-8">Subscribe free - no account needed</p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -246,7 +246,7 @@ export default function NewsletterPage() {
       <section className="py-14 px-6">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold text-[var(--indigo-deep)] text-center mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>Sample Digest Topics</h2>
-          <p className="text-sm text-center text-[var(--warm-charcoal)]/50 mb-8">Each digest covers a rotating theme — new insight every 3 days</p>
+          <p className="text-sm text-center text-[var(--warm-charcoal)]/50 mb-8">Each digest covers a rotating theme - new insight every 3 days</p>
           <div className="flex flex-wrap gap-3 justify-center">
             {SAMPLE_TOPICS.map(topic => (
               <span key={topic} className="px-4 py-2 rounded-full text-sm font-medium"
@@ -274,7 +274,7 @@ export default function NewsletterPage() {
                   <p className="text-[10px] text-[var(--warm-charcoal)]/40">info@mahatathastu.com</p>
                 </div>
               </div>
-              <p className="text-sm font-semibold text-[var(--indigo-deep)] mt-2">Your Adhyatmic Digest — Nakshatra Insights | MahaTathastu</p>
+              <p className="text-sm font-semibold text-[var(--indigo-deep)] mt-2">Your Adhyatmic Digest - Nakshatra Insights | MahaTathastu</p>
             </div>
             <div className="p-6 space-y-4">
               <div className="inline-block px-3 py-1 rounded-full text-xs font-semibold" style={{ background: 'var(--kutch-white)', border: '1px solid var(--warm-sand)', color: 'var(--warm-charcoal)' }}>
@@ -282,14 +282,14 @@ export default function NewsletterPage() {
               </div>
               <p className="text-sm text-[var(--warm-charcoal)]/80 leading-relaxed">
                 <strong className="text-[var(--indigo-deep)]">Namaste, Priya,</strong><br /><br />
-                The 27 Nakshatras are not merely star clusters — they are living cosmic intelligences that shape your personality, dharma, and destiny from the moment of birth. Today, we explore how understanding your birth nakshatra can transform your daily decisions...
+                The 27 Nakshatras are not merely star clusters - they are living cosmic intelligences that shape your personality, dharma, and destiny from the moment of birth. Today, we explore how understanding your birth nakshatra can transform your daily decisions...
               </p>
               <div className="rounded-xl p-4" style={{ background: 'linear-gradient(135deg, #FFFCF0, #FFF8E1)', border: '1px solid #E8D5A0' }}>
                 <p className="text-[10px] font-bold tracking-widest uppercase mb-2" style={{ color: '#B9986B' }}>Today&apos;s Mantra</p>
                 <p className="text-base font-bold text-[var(--indigo-deep)] italic mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
                   Om Nakshatra Devataabhyo Namah
                 </p>
-                <p className="text-xs text-[var(--warm-charcoal)]/60">I bow to the divine intelligences of the 27 star clusters — a mantra of cosmic alignment.</p>
+                <p className="text-xs text-[var(--warm-charcoal)]/60">I bow to the divine intelligences of the 27 star clusters - a mantra of cosmic alignment.</p>
               </div>
               <div className="rounded-xl p-4" style={{ background: '#FFF8F3', borderLeft: '3px solid var(--terracotta)' }}>
                 <p className="text-[10px] font-bold tracking-widest uppercase mb-2" style={{ color: 'var(--terracotta)' }}>Practical Tip</p>

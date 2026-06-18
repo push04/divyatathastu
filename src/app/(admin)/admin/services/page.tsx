@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -293,14 +293,14 @@ export default function AdminServicesPage() {
                       <p className="text-[11px] text-[var(--warm-charcoal)]/40">{b.profiles?.email}</p>
                     </td>
                     <td className="px-4 py-3 max-w-[160px]">
-                      <p className="text-xs font-medium text-[var(--indigo-deep)] truncate">{b.service_items?.title || '—'}</p>
+                      <p className="text-xs font-medium text-[var(--indigo-deep)] truncate">{b.service_items?.title || '-'}</p>
                       <p className="text-[11px] text-[var(--warm-charcoal)]/40 capitalize">{(b.service_items?.category || '').replace(/_/g, ' ')}</p>
                     </td>
                     <td className="px-4 py-3 text-xs text-[var(--warm-charcoal)]/60 whitespace-nowrap">
                       {new Date(b.preferred_date || b.created_at).toLocaleDateString('en-IN')}
                     </td>
                     <td className="px-4 py-3 text-xs font-bold text-[var(--terracotta)] whitespace-nowrap">
-                      {b.amount ? `₹${Number(b.amount).toLocaleString('en-IN')}` : '—'}
+                      {b.amount ? `₹${Number(b.amount).toLocaleString('en-IN')}` : '-'}
                     </td>
                     <td className="px-4 py-3">
                       <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${b.payment_status === 'paid' ? 'bg-emerald-100 text-emerald-700' : b.payment_status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
@@ -316,7 +316,7 @@ export default function AdminServicesPage() {
                       </select>
                     </td>
                     <td className="px-4 py-3 max-w-[140px]">
-                      <p className="text-[11px] text-[var(--warm-charcoal)]/50 truncate">{b.notes || '—'}</p>
+                      <p className="text-[11px] text-[var(--warm-charcoal)]/50 truncate">{b.notes || '-'}</p>
                     </td>
                     <td className="px-4 py-3">
                       <button onClick={() => navigator.clipboard.writeText(b.id)}
@@ -409,7 +409,7 @@ export default function AdminServicesPage() {
                   <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Level</label>
                   <select value={form.level || ''} onChange={e => setForm(f => ({ ...f, level: e.target.value || undefined }))}
                     className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)] bg-white">
-                    <option value="">— None —</option>
+                    <option value="">- None -</option>
                     {['Beginner','Intermediate','Advanced','All Levels'].map(l => <option key={l} value={l}>{l}</option>)}
                   </select>
                 </div>

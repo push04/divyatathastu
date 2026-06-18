@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
@@ -13,7 +13,7 @@ const MANDIRS = [
   { name: 'Meenakshi Amman', city: 'Madurai', deity: 'Goddess Meenakshi', Icon: Gem },
 ]
 
-/* Simplified India map outline — approximate path, stroke-only watermark */
+/* Simplified India map outline - approximate path, stroke-only watermark */
 function IndiaWatermark() {
   return (
     <svg

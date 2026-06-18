@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import SudarshanLoader from '@/components/SudarshanLoader'
 
@@ -207,7 +207,7 @@ export default function AdminReportsPage() {
               <div className="text-xs space-y-1">
                 <div className="flex justify-between">
                   <span className="text-[var(--warm-charcoal)]/50">Member</span>
-                  <span className="font-medium text-[var(--indigo-deep)]">{selectedReport.family_members?.full_name || '—'}</span>
+                  <span className="font-medium text-[var(--indigo-deep)]">{selectedReport.family_members?.full_name || '-'}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[var(--warm-charcoal)]/50">Status</span>

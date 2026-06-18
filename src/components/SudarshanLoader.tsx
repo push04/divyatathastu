@@ -1,4 +1,4 @@
-export default function SudarshanLoader({
+﻿export default function SudarshanLoader({
   size = 'md',
   px,
   spin = true,
@@ -32,7 +32,7 @@ export default function SudarshanLoader({
         fill="#E36414"
       />
 
-      {/* Warm cream disc — no dark blue showing between spokes */}
+      {/* Warm cream disc - no dark blue showing between spokes */}
       <circle cx="100" cy="100" r="82" fill="#FEF5EC" />
 
       {/* Outer saffron ring */}
@@ -96,7 +96,7 @@ export default function SudarshanLoader({
         />
       ))}
 
-      {/* Center hub — dark with gold ring */}
+      {/* Center hub - dark with gold ring */}
       <circle cx="100" cy="100" r="27" fill="#2F2A44" />
       <circle cx="100" cy="100" r="25" fill="none" stroke="#D4A017" strokeWidth="1.5" />
 

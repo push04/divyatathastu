@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import SudarshanLoader from '@/components/SudarshanLoader'
 
@@ -207,7 +207,7 @@ export default function AdminUsersPage() {
                   >
                     <td className="px-4 py-3">
                       <p className="font-medium text-[var(--indigo-deep)]">{u.full_name}</p>
-                      <p className="text-[var(--warm-charcoal)]/40 text-xs">{u.phone || '—'}</p>
+                      <p className="text-[var(--warm-charcoal)]/40 text-xs">{u.phone || '-'}</p>
                     </td>
                     <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
                       <button onClick={() => toggleActive(u.id, u.is_active)}

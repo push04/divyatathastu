@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | MahaTathastu',
@@ -53,11 +53,11 @@ Birth data (date, time, place) is treated with special care as sensitive persona
     title: '4. Third-Party Services',
     content: `We use the following trusted third-party services, each with their own privacy policies:
 
-**Supabase** — Database and authentication infrastructure (supabase.com)
-**Razorpay** — Payment processing; handles all payment card data (razorpay.com)
-**Google** — Optional Google Sign-In authentication (policies.google.com)
-**Groq** — AI inference for report generation; inputs are anonymized (groq.com)
-**Hostinger** — Email delivery infrastructure (hostinger.com)
+**Supabase** - Database and authentication infrastructure (supabase.com)
+**Razorpay** - Payment processing; handles all payment card data (razorpay.com)
+**Google** - Optional Google Sign-In authentication (policies.google.com)
+**Groq** - AI inference for report generation; inputs are anonymized (groq.com)
+**Hostinger** - Email delivery infrastructure (hostinger.com)
 
 No third party receives your birth chart data, family information, or personally identifiable information except as strictly necessary to provide the service.`,
   },
@@ -87,7 +87,7 @@ We do not use advertising cookies, tracking pixels, or cross-site tracking techn
   {
     id: 'children',
     title: '7. Children\'s Privacy',
-    content: `MahaTathastu is intended for users aged 13 and above. We allow parents to add birth details of their minor children to generate child development reports — this data is entered by the parent/guardian and used solely for generating the requested report.
+    content: `MahaTathastu is intended for users aged 13 and above. We allow parents to add birth details of their minor children to generate child development reports - this data is entered by the parent/guardian and used solely for generating the requested report.
 
 If you believe we have inadvertently collected personal data from a child without proper parental consent, please contact us immediately at privacy@mahatathastu.com.`,
   },
@@ -133,7 +133,7 @@ export default function PrivacyPolicyPage() {
           {/* Intro */}
           <div className="card-divine p-6 mb-10" style={{ background: 'linear-gradient(135deg, #FEF5EC, #FFF8E1)', borderColor: '#E8D5A0' }}>
             <p className="text-[var(--warm-charcoal)]/80 leading-relaxed text-sm">
-              MahaTathastu respects your privacy deeply. Your birth data and family information are sacred — we handle them with the same reverence that Vedic tradition applies to personal charts. This policy explains exactly what we collect, why, and how we protect it.
+              MahaTathastu respects your privacy deeply. Your birth data and family information are sacred - we handle them with the same reverence that Vedic tradition applies to personal charts. This policy explains exactly what we collect, why, and how we protect it.
             </p>
           </div>
 

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
@@ -77,7 +77,7 @@ const DIVINE_SERVICES = [
   {
     href: '/ardra-jalam',
     label: 'Ardra Jalam',
-    desc: 'Sacred healing water — special product',
+    desc: 'Sacred healing water - special product',
     icon: 'water_drop',
     bg: 'linear-gradient(135deg, #ecfdf5 0%, #a7f3d0 100%)',
     badge: 'Special',
@@ -206,7 +206,7 @@ export default function DashboardPage() {
       {/* ── Bento Grid ── */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
 
-        {/* Primary Profile Card — 8 cols */}
+        {/* Primary Profile Card - 8 cols */}
         <div className="bento-card md:col-span-8 flex flex-col md:flex-row gap-6 p-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-56 h-56 bg-[var(--terracotta)]/5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
           <div className="w-full md:w-1/3 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-[var(--outline-variant)]/20 pb-5 md:pb-0 md:pr-5">
@@ -245,7 +245,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Panchang Card — 4 cols */}
+        {/* Panchang Card - 4 cols */}
         <div className="bento-card md:col-span-4 p-5">
           <h3
             className="text-[var(--indigo-deep)] mb-4 flex items-center gap-2 text-sm font-semibold"
@@ -281,7 +281,7 @@ export default function DashboardPage() {
           </Link>
         </div>
 
-        {/* Quick Actions — 12 cols */}
+        {/* Quick Actions - 12 cols */}
         <div className="md:col-span-12">
           <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--indigo-deep)]/50 mb-3" style={{ fontFamily: "'Sora', sans-serif" }}>
             Quick Actions
@@ -339,7 +339,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Family Members — 6 cols */}
+        {/* Family Members - 6 cols */}
         <div className="md:col-span-6">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--indigo-deep)]/50" style={{ fontFamily: "'Sora', sans-serif" }}>Connected Energy Vectors</h2>
@@ -367,7 +367,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Recent Reports — 6 cols */}
+        {/* Recent Reports - 6 cols */}
         <div className="md:col-span-6">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--indigo-deep)]/50" style={{ fontFamily: "'Sora', sans-serif" }}>Recent Illuminations</h2>
@@ -403,7 +403,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Notifications — 6 cols */}
+        {/* Notifications - 6 cols */}
         <div className="md:col-span-6">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--indigo-deep)]/50" style={{ fontFamily: "'Sora', sans-serif" }}>
@@ -423,13 +423,13 @@ export default function DashboardPage() {
             )) : (
               <div className="bento-card p-6 text-center">
                 <span className="material-symbols-outlined text-[var(--outline-variant)] text-[40px] mb-2 block">notifications_none</span>
-                <p className="text-sm text-[var(--indigo-deep)]/50">All caught up — no new notifications</p>
+                <p className="text-sm text-[var(--indigo-deep)]/50">All caught up - no new notifications</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Upgrade banner — 6 cols */}
+        {/* Upgrade banner - 6 cols */}
         {planType === 'free' && (
           <div className="md:col-span-6">
             <div className="rounded-xl p-6 bg-gradient-to-br from-[var(--indigo-deep)] to-[var(--plum)] text-white relative overflow-hidden">
@@ -438,7 +438,7 @@ export default function DashboardPage() {
               <h3 className="text-xl text-white mb-1 relative z-10" style={{ fontFamily: "'Playfair Display', serif" }}>Full Tathastu Bundle</h3>
               <p className="text-white/60 text-sm mb-5 relative z-10">All 14 reports + lifetime access for your entire family</p>
               <Link href="/shop" className="relative z-10 inline-flex items-center gap-2 bg-[var(--terracotta)] text-white text-xs px-5 py-2.5 rounded-full font-semibold hover:bg-[var(--terracotta-vivid)] transition-colors shadow-lg" style={{ fontFamily: "'Sora', sans-serif" }}>
-                Upgrade — ₹{(bundleSalePrice ?? bundlePrice ?? 2999).toLocaleString('en-IN')}
+                Upgrade - ₹{(bundleSalePrice ?? bundlePrice ?? 2999).toLocaleString('en-IN')}
               </Link>
             </div>
           </div>

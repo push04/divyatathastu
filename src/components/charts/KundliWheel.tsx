@@ -217,7 +217,7 @@ export default function KundliWheel({ kundli }: { kundli: KundliData }) {
         {kundli.planets.map(p => (
           <div key={p.name} className="flex items-center gap-1.5 text-xs">
             <span style={{ color: PLANET_COLORS[p.name] || '#c4a882', fontSize: 14 }}>
-              {PLANET_SYMBOLS[p.name] || '‚óè'}
+              {PLANET_SYMBOLS[p.name] || '‚-è'}
             </span>
             <span className="text-[var(--warm-charcoal)]/70 font-medium">{p.name}</span>
             {p.retrograde && <span className="text-[var(--terracotta)] text-[9px]">R</span>}

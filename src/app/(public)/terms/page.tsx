@@ -1,8 +1,8 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Terms of Service | MahaTathastu',
-  description: 'Terms and conditions for using MahaTathastu — India\'s 360° Holistic Life Platform.',
+  description: 'Terms and conditions for using MahaTathastu - India\'s 360° Holistic Life Platform.',
 }
 
 const SECTIONS = [
@@ -43,7 +43,7 @@ MahaTathastu is operated by Levitate Labs ("we", "us", "our"). These terms const
 
 **Payment Processing:** All payments are processed by Razorpay, a PCI-DSS compliant payment gateway. We do not store your payment card details.
 
-**Digital Products — No Refund Policy:** Since Vedic reports are generated immediately upon purchase and you receive instant access to the digital content, we generally do not offer refunds for completed report purchases.
+**Digital Products - No Refund Policy:** Since Vedic reports are generated immediately upon purchase and you receive instant access to the digital content, we generally do not offer refunds for completed report purchases.
 
 **Exceptions:** We will provide a full refund if:
 - The report was not generated due to a technical error on our side
@@ -57,7 +57,7 @@ To request a refund, contact support@mahatathastu.com within 48 hours of purchas
   {
     id: 'ip',
     title: '5. Intellectual Property',
-    content: `**Our Content:** All content on MahaTathastu — including AI-generated reports, software, design, text, graphics, and brand materials — is the intellectual property of Levitate Labs and is protected under Indian copyright law.
+    content: `**Our Content:** All content on MahaTathastu - including AI-generated reports, software, design, text, graphics, and brand materials - is the intellectual property of Levitate Labs and is protected under Indian copyright law.
 
 **Your Reports:** The Vedic reports generated for your birth data are licensed to you for personal use. You may download and share your own reports. You may not resell, redistribute, or create derivative works from our reports without written permission.
 

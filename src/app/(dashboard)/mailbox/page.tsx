@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -72,7 +72,7 @@ export default function MailboxPage() {
       setMessages(data)
       setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100)
     }
-    // Mark as read — update last_message_at to keep thread active
+    // Mark as read - update last_message_at to keep thread active
     await supabase.from('mail_messages').update({ is_read: true }).eq('thread_id', threadId)
   }
 

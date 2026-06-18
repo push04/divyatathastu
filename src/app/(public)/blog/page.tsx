@@ -1,9 +1,9 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Blog | MahaTathastu — Vedic Wisdom & Spiritual Guidance',
+  title: 'Blog | MahaTathastu - Vedic Wisdom & Spiritual Guidance',
   description: 'Read articles on Vedic astrology, numerology, yoga, Ayurveda, and spiritual practices.',
 }
 export const revalidate = 3600
@@ -37,7 +37,7 @@ export default async function BlogPage() {
           <div className="ornate-divider">
             <span className="material-symbols-outlined text-[14px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
           </div>
-          <p className="text-white/65 text-lg leading-relaxed">Ancient insights for modern life — astrology, numerology, Ayurveda, and spiritual practices explained clearly.</p>
+          <p className="text-white/65 text-lg leading-relaxed">Ancient insights for modern life - astrology, numerology, Ayurveda, and spiritual practices explained clearly.</p>
         </div>
       </section>
 

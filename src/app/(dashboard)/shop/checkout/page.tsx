@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -214,7 +214,7 @@ export default function CheckoutPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
-          {/* LEFT — Items + Coupon */}
+          {/* LEFT - Items + Coupon */}
           <div className="lg:col-span-3 space-y-4">
 
             {/* Order items card */}
@@ -304,14 +304,14 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          {/* RIGHT — Summary + Pay */}
+          {/* RIGHT - Summary + Pay */}
           <div className="lg:col-span-2 space-y-4">
 
             {/* Order total card */}
             <div className="rounded-2xl overflow-hidden sticky top-6"
               style={{ border: '1.5px solid var(--warm-sand)', background: 'white' }}>
 
-              {/* Card header — sacred saffron gradient */}
+              {/* Card header - sacred saffron gradient */}
               <div className="px-5 py-5 text-center"
                 style={{ background: 'linear-gradient(160deg, #2F2A44 0%, var(--terracotta) 100%)' }}>
                 <div className="flex justify-center mb-2">

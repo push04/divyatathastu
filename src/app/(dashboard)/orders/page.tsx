@@ -91,7 +91,7 @@ export default function OrdersPage() {
                   <div className="pt-3 space-y-2">
                     {order.items?.map((item, i) => (
                       <div key={i} className="flex justify-between text-sm">
-                        <span className="text-[var(--warm-charcoal)]/70">{item.name} × {item.quantity}</span>
+                        <span className="text-[var(--warm-charcoal)]/70">{item.name} �- {item.quantity}</span>
                         <span className="font-medium text-[var(--indigo-deep)]">₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
                       </div>
                     ))}

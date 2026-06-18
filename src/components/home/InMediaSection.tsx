@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { motion } from 'framer-motion'
 import { ShieldCheck, Lock, Star, Globe } from 'lucide-react'
@@ -68,7 +68,7 @@ export default function InMediaSection() {
             </p>
           </motion.div>
 
-          {/* ── Right column — 2×2 trust badge grid ── */}
+          {/* ── Right column - 2×2 trust badge grid ── */}
           <motion.div
             initial={{ opacity: 0, y: 18 }}
             whileInView={{ opacity: 1, y: 0 }}

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -129,7 +129,7 @@ export default function LoginPage() {
               Welcome back.
             </h2>
             <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: '15px', color: 'rgba(255,255,255,0.5)', maxWidth: '290px', lineHeight: 1.65, marginBottom: '28px' }}>
-              Your karmic journey is preserved. Your family, reports, and sacred path — all waiting for you.
+              Your karmic journey is preserved. Your family, reports, and sacred path - all waiting for you.
             </p>
 
             <div style={{ height: '1px', width: '48px', background: 'rgba(212,160,67,0.35)', marginBottom: '28px' }} />
@@ -151,7 +151,7 @@ export default function LoginPage() {
               I check my family's panchang every morning before leaving home. It has become a ritual.
             </p>
             <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '10px', color: 'rgba(255,255,255,0.28)', marginTop: '8px' }}>
-              — Ramesh T., Ahmedabad
+              - Ramesh T., Ahmedabad
             </p>
           </div>
         </div>

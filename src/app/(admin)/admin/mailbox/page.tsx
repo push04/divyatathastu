@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -64,7 +64,7 @@ export default function AdminMailboxPage() {
 
   return (
     <div className="flex h-[calc(100vh-56px)] lg:h-screen">
-      {/* Sidebar — desktop */}
+      {/* Sidebar - desktop */}
       <div className="w-72 flex-shrink-0 border-r border-[var(--warm-sand)] bg-white flex-col hidden lg:flex">
         <div className="p-3 border-b border-[var(--warm-sand)]"><FilterBar filter={filter} setFilter={setFilter} /></div>
         <div className="flex-1 overflow-y-auto">

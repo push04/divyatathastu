@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import SudarshanLoader from '@/components/SudarshanLoader'
 
@@ -165,7 +165,7 @@ export default function HandwrittenReportPage() {
               onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
               rows={4}
               className={`${inputCls} resize-none`}
-              placeholder="Describe your specific questions or areas of concern — e.g., marriage timing, career change, health concerns..."
+              placeholder="Describe your specific questions or areas of concern - e.g., marriage timing, career change, health concerns..."
             />
           </div>
 

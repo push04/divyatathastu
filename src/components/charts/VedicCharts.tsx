@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 // Vedic astrology charts: North Indian Kundli (D-1), Navamsha (D-9), Dasha Timeline
 
@@ -24,7 +24,7 @@ const DASHA_YEARS: Record<string, number> = {
 }
 const DASHA_ORDER = ['Ketu','Venus','Sun','Moon','Mars','Rahu','Jupiter','Saturn','Mercury']
 
-// 4×4 grid positions for each house (row, col) — 0-indexed
+// 4×4 grid positions for each house (row, col) - 0-indexed
 // Houses fixed: H12=[0,0] H1=[0,1] H2=[0,2] H3=[0,3]
 //               H11=[1,0]          [blank]  H4=[1,3]
 //               H10=[2,0]          [blank]  H5=[2,3]

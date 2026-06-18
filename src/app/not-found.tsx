@@ -1,4 +1,4 @@
-import Link from 'next/link'
+﻿import Link from 'next/link'
 
 export default function NotFound() {
   return (
@@ -16,7 +16,7 @@ export default function NotFound() {
             My Dashboard
           </Link>
         </div>
-        <p className="text-xs text-[var(--warm-charcoal)]/40 mt-8">"The soul which is eternal never goes astray" — Bhagavad Gita</p>
+        <p className="text-xs text-[var(--warm-charcoal)]/40 mt-8">"The soul which is eternal never goes astray" - Bhagavad Gita</p>
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import SudarshanLoader from '@/components/SudarshanLoader'
 
@@ -109,7 +109,7 @@ function getDaysInMonth(date: Date) {
   return days
 }
 
-// ─── Choghadiya Chakra SVG — two-ring dark design ───────────────────
+// ─── Choghadiya Chakra SVG - two-ring dark design ───────────────────
 function ChoghadiyaChakra({ choghadiya, currentH }: { choghadiya: ChogPeriod[]; currentH: number }) {
   if (!choghadiya?.length) return null
 
@@ -223,7 +223,7 @@ export default function PanchangPage() {
   const [rightTab, setRightTab] = useState<'panchang' | 'hora' | 'choghadiya' | 'doghati' | 'guidance'>('panchang')
   const today = new Date()
 
-  // Live clock — update current fractional hour every minute
+  // Live clock - update current fractional hour every minute
   useEffect(() => {
     function tick() {
       const n = new Date()
@@ -299,7 +299,7 @@ export default function PanchangPage() {
       {/* Content */}
       <div className="max-w-5xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-5 gap-6">
 
-        {/* Left column — calendar + moon + festivals */}
+        {/* Left column - calendar + moon + festivals */}
         <div className="lg:col-span-2 space-y-4">
           <div className="bg-white rounded-2xl border border-[var(--warm-sand)] shadow-sm p-5">
             <div className="flex items-center justify-between mb-4">
@@ -391,7 +391,7 @@ export default function PanchangPage() {
           )}
         </div>
 
-        {/* Right column — tabbed features */}
+        {/* Right column - tabbed features */}
         <div className="lg:col-span-3 space-y-4">
 
           {/* Tab bar */}
@@ -489,7 +489,7 @@ export default function PanchangPage() {
                       })}
                     </div>
                     <p className="mt-3 text-[10px] text-[var(--warm-charcoal)]/40" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                      Chaldean order — 12 day horas from sunrise. Each planeta rules activities suited to its nature.
+                      Chaldean order - 12 day horas from sunrise. Each planeta rules activities suited to its nature.
                     </p>
                   </div>
                 )
@@ -505,7 +505,7 @@ export default function PanchangPage() {
                       <div className="mb-4 flex items-center gap-3 rounded-xl px-4 py-2.5" style={{ background: currentChog.color + '15', border: `1.5px solid ${currentChog.color}` }}>
                         <div className="w-3 h-3 rounded-full animate-pulse flex-shrink-0" style={{ background: currentChog.color }} />
                         <div>
-                          <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 12, fontWeight: 700, color: currentChog.color }}>{currentChog.name} — {CHOG_MEANING[currentChog.name]}</span>
+                          <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 12, fontWeight: 700, color: currentChog.color }}>{currentChog.name} - {CHOG_MEANING[currentChog.name]}</span>
                           <span className="block" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: 'rgba(28,30,74,0.6)' }}>{currentChog.start} – {currentChog.end}</span>
                         </div>
                         <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full font-bold text-white" style={{ background: currentChog.color }}>Current</span>
@@ -547,7 +547,7 @@ export default function PanchangPage() {
                 ) : (
                   <div>
                     <p className="text-xs text-[var(--warm-charcoal)]/50 mb-4 leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                      <strong>Do Ghati</strong> = 2 Ghati = 48 minutes. These are the most auspicious first 48 minutes of each Amrit or Shubh choghadiya — ideal for starting new ventures, prayers, business, travel, or important decisions.
+                      <strong>Do Ghati</strong> = 2 Ghati = 48 minutes. These are the most auspicious first 48 minutes of each Amrit or Shubh choghadiya - ideal for starting new ventures, prayers, business, travel, or important decisions.
                     </p>
                     <div className="space-y-3">
                       {panchang.doGhatiMuhurt.map((m, i) => {
@@ -581,12 +581,12 @@ export default function PanchangPage() {
               {rightTab === 'guidance' && (
                 <div className="space-y-3">
                   {[
-                    { icon: 'light_mode',      text: `Begin prayers after sunrise — ${panchang?.sunrise || '—'}` },
+                    { icon: 'light_mode',      text: `Begin prayers after sunrise - ${panchang?.sunrise || '-'}` },
                     { icon: 'bedtime',         text: `Brahma Muhurta (meditation): ${panchang?.brahmaHour || '4:30 – 6:00 AM'}` },
                     { icon: 'schedule',        text: `Abhijit Muhurat (auspicious): ${panchang?.abhijitMuhurat || '11:48 – 12:36 PM'}` },
                     { icon: 'local_florist',   text: 'Abhishek & puja: best performed before noon' },
-                    { icon: 'warning',         text: `Rahu Kaal — avoid new ventures: ${panchang?.rahuKaal || '—'}` },
-                    { icon: 'candle',          text: `Light deepam at sunset — ${panchang?.sunset || '—'}` },
+                    { icon: 'warning',         text: `Rahu Kaal - avoid new ventures: ${panchang?.rahuKaal || '-'}` },
+                    { icon: 'candle',          text: `Light deepam at sunset - ${panchang?.sunset || '-'}` },
                   ].map(({ icon, text }) => (
                     <div key={text} className="flex items-start gap-2.5">
                       <span className="material-symbols-outlined flex-shrink-0 mt-0.5" style={{ fontSize: 14, fontVariationSettings: "'FILL' 1", color: icon === 'warning' ? '#D14343' : 'var(--terracotta)' }}>{icon}</span>

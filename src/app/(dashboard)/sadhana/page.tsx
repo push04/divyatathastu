@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -8,16 +8,16 @@ import { toast } from 'sonner'
 
 const SADHANA_PILLARS = [
   { icon: 'brightness_5', title: 'Mantra Deeksha', desc: 'Receive a personalized beej mantra determined by your birth nakshatra, ruling planet, and current dasha. A mantra given in proper initiation carries 1000× the power.' },
-  { icon: 'air', title: 'Dhyana (Meditation)', desc: 'Learn chakra-based visualization techniques combined with pranayama — specific to your planetary constitution from the birth chart.' },
+  { icon: 'air', title: 'Dhyana (Meditation)', desc: 'Learn chakra-based visualization techniques combined with pranayama - specific to your planetary constitution from the birth chart.' },
   { icon: 'self_improvement', title: 'Japa Sadhana', desc: 'Structured daily japa practice with a personal mala energized during auspicious muhurta. Includes mantras for each day of the week by ruling planet.' },
-  { icon: 'dark_mode', title: 'Nakshatric Timing', desc: 'Each sadhana is timed to begin on the most auspicious nakshatra for your chart — maximizing cosmic resonance and spiritual upliftment.' },
+  { icon: 'dark_mode', title: 'Nakshatric Timing', desc: 'Each sadhana is timed to begin on the most auspicious nakshatra for your chart - maximizing cosmic resonance and spiritual upliftment.' },
 ]
 
 const SADHANA_JOURNEY = [
   { day: 'Day 1', title: 'Sankalpa & Initiation', desc: 'Take the formal vow (sankalpa) with a witness and receive your personalized mantra and practice plan.' },
   { day: 'Days 2–7', title: 'Foundation Practice', desc: 'Establish the daily routine: 108 japa each morning, pranayama, and brief meditation. Build the habit.' },
   { day: 'Days 8–14', title: 'Deepening', desc: 'Increase to 216 japa. Add visualization of the ruling deity. Energy begins to stabilize.' },
-  { day: 'Days 15–20', title: 'Purification', desc: 'The sadhana enters a purification phase — old patterns and mental impressions surface and dissolve.' },
+  { day: 'Days 15–20', title: 'Purification', desc: 'The sadhana enters a purification phase - old patterns and mental impressions surface and dissolve.' },
   { day: 'Day 21', title: 'Purnabhishek', desc: 'Completion ritual with Havan/Homa offering 1/10th of the total japa count into sacred fire.' },
 ]
 
@@ -53,10 +53,10 @@ export default function SadhanaPage() {
           <p className="text-xs text-[#92400e] tracking-[0.4em] uppercase mb-3" style={{ fontFamily: "'Sora', sans-serif" }}>Divine Practice • Inner Transformation</p>
           <h1 className="text-5xl font-black text-[#1c1917] mb-3 tracking-wide" style={{ fontFamily: "'Playfair Display', serif" }}>SAADHANA</h1>
           <p className="text-sm text-[#78350f] tracking-[0.2em] uppercase mb-6" style={{ fontFamily: "'Sora', sans-serif" }}>
-            सा धनं यस्मिन् लक्ष्मीः स्थिरा — "Wealth is stable in one whose practice is firm"
+            सा धनं यस्मिन् लक्ष्मीः स्थिरा - "Wealth is stable in one whose practice is firm"
           </p>
           <p className="text-base text-[var(--warm-charcoal)]/70 max-w-2xl mx-auto leading-relaxed">
-            Personalized Vedic spiritual practices — mantra deeksha, guided sadhana programs, and japa siddhi — tailored to your birth chart, nakshatra, and current planetary period. Transform karma through disciplined daily practice.
+            Personalized Vedic spiritual practices - mantra deeksha, guided sadhana programs, and japa siddhi - tailored to your birth chart, nakshatra, and current planetary period. Transform karma through disciplined daily practice.
           </p>
           <div className="mt-8 flex gap-3 justify-center flex-wrap">
             <a href="#programs" className="btn-divine px-8 py-3 inline-flex items-center gap-2">

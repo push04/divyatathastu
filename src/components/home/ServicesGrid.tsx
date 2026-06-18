@@ -1,9 +1,9 @@
-'use client'
+﻿'use client'
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 
-/* ── Inline SVG glyphs — outer guide circle + inner symbol, terracotta 70% ── */
+/* ── Inline SVG glyphs - outer guide circle + inner symbol, terracotta 70% ── */
 function Glyph({ id, size = 32 }: { id: string; size?: number }) {
   const s = 'rgba(198,125,83,0.7)'
   const sl = 'rgba(198,125,83,0.35)'
@@ -130,7 +130,7 @@ export default function ServicesGrid() {
     <section className="section-padding bg-[var(--kutch-white)]">
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
 
-        {/* ── Section header — two-column ── */}
+        {/* ── Section header - two-column ── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end mb-14">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}>
             <div className="flex items-center gap-3 mb-5">
@@ -158,10 +158,10 @@ export default function ServicesGrid() {
           </motion.p>
         </div>
 
-        {/* ── Bento grid — 12 col ── */}
+        {/* ── Bento grid - 12 col ── */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
 
-          {/* Row 1 — Type A Featured (8) + Type B (4) */}
+          {/* Row 1 - Type A Featured (8) + Type B (4) */}
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
             className="md:col-span-8"
@@ -190,7 +190,7 @@ export default function ServicesGrid() {
                 </span>
               </div>
 
-              {/* Content — left 60% */}
+              {/* Content - left 60% */}
               <div className="relative z-10 w-[60%] flex flex-col h-full justify-between">
                 <div>
                   <span
@@ -213,7 +213,7 @@ export default function ServicesGrid() {
                     Full Tathastu Bundle
                   </h3>
                   <p className="text-[var(--indigo-deep)]/60 text-sm leading-relaxed">
-                    All 14 reports — the complete 360° life guidance system for your entire family.
+                    All 14 reports - the complete 360° life guidance system for your entire family.
                   </p>
                 </div>
 
@@ -240,12 +240,12 @@ export default function ServicesGrid() {
 
           <CardB r={REPORTS[0]} className="md:col-span-4" />
 
-          {/* Row 2 — 3 × Type B */}
+          {/* Row 2 - 3 × Type B */}
           <CardB r={REPORTS[1]} className="md:col-span-4" />
           <CardB r={REPORTS[2]} className="md:col-span-4" />
           <CardB r={REPORTS[3]} className="md:col-span-4" />
 
-          {/* Row 3 — Type C Numerology (8) + Type B (4) */}
+          {/* Row 3 - Type C Numerology (8) + Type B (4) */}
           <motion.div
             initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}
             className="md:col-span-8"
@@ -294,12 +294,12 @@ export default function ServicesGrid() {
 
           <CardB r={REPORTS[4]} className="md:col-span-4" />
 
-          {/* Row 4 — 3 × Type B */}
+          {/* Row 4 - 3 × Type B */}
           <CardB r={REPORTS[5]} className="md:col-span-4" />
           <CardB r={REPORTS[6]} className="md:col-span-4" />
           <CardB r={REPORTS[7]} className="md:col-span-4" />
 
-          {/* Row 5 — Type B (4) + View All CTA (8) */}
+          {/* Row 5 - Type B (4) + View All CTA (8) */}
           <CardB r={REPORTS[8]} className="md:col-span-4" />
 
           <motion.div

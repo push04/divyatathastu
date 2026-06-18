@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import SudarshanLoader from '@/components/SudarshanLoader'
 
@@ -138,7 +138,7 @@ export default function AdminOverviewPage() {
             {
               icon: 'spa', color: 'bg-emerald-600', tag: 'New Pages',
               title: '8 Divine Service Pages',
-              desc: 'Full service pages live on the dashboard: Sadhana, Mahaganpati Puja, Ayurveda, Courses, Ardra Jalam, Gyanampeetham, Yagya/Havan, Kundali Reports — all DB-driven with booking support.',
+              desc: 'Full service pages live on the dashboard: Sadhana, Mahaganpati Puja, Ayurveda, Courses, Ardra Jalam, Gyanampeetham, Yagya/Havan, Kundali Reports - all DB-driven with booking support.',
               sub: 'Dashboard homepage → Divine Services section',
             },
             {

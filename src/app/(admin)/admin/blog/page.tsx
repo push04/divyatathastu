@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import SudarshanLoader from '@/components/SudarshanLoader'
 
@@ -65,7 +65,7 @@ export default function AdminBlogPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           stream: false,
-          system: `You are a Vedic knowledge expert and blog writer for MahaTathastu, India's holistic spiritual platform. Write rich, authentic, well-structured blog content in HTML format. Include practical advice, mantras, and traditional wisdom. Do NOT include any markdown fences or explanatory text — output only the HTML content.`,
+          system: `You are a Vedic knowledge expert and blog writer for MahaTathastu, India's holistic spiritual platform. Write rich, authentic, well-structured blog content in HTML format. Include practical advice, mantras, and traditional wisdom. Do NOT include any markdown fences or explanatory text - output only the HTML content.`,
           messages: [{ role: 'user', content: prompt }],
         }),
       })

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
@@ -48,7 +48,7 @@ const SERVICES = [
   {
     href: '/gyanampeetham',
     label: 'Gyanampeetham',
-    desc: 'Immersive programs to discover the divine within — ancient wisdom decoded for modern seekers.',
+    desc: 'Immersive programs to discover the divine within - ancient wisdom decoded for modern seekers.',
     icon: 'school',
     tag: 'Wisdom',
     accent: '#92400e',
@@ -57,7 +57,7 @@ const SERVICES = [
   {
     href: '/ardra-jalam',
     label: 'Ardra Jalam',
-    desc: 'Sacred healing water consecrated during Ardra Nakshatra — rare, potent and spiritually charged.',
+    desc: 'Sacred healing water consecrated during Ardra Nakshatra - rare, potent and spiritually charged.',
     icon: 'water_drop',
     tag: 'Special',
     accent: '#065f46',
@@ -66,7 +66,7 @@ const SERVICES = [
   {
     href: '/puja',
     label: 'Pooja & Rituals',
-    desc: 'Authentic Vedic ceremonies — havan, yagna, navagraha puja and personalised anushthaan rituals.',
+    desc: 'Authentic Vedic ceremonies - havan, yagna, navagraha puja and personalised anushthaan rituals.',
     icon: 'local_fire_department',
     tag: 'Ceremony',
     accent: '#9a3412',
@@ -106,7 +106,7 @@ export default function DivineServicesSection() {
             className="text-[var(--indigo-deep)]/55 text-sm leading-relaxed md:text-right"
             style={{ fontFamily: "'DM Sans', sans-serif" }}
           >
-            Beyond reports — sacred practices, pujas, healing and learning programs rooted in Vedic tradition.
+            Beyond reports - sacred practices, pujas, healing and learning programs rooted in Vedic tradition.
           </motion.p>
         </div>
 

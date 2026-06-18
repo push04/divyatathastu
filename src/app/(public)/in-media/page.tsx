@@ -1,17 +1,17 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'In the Media | MahaTathastu — Press & Coverage',
-  description: 'MahaTathastu featured in leading Indian media outlets — Times of India, NDTV, Hindustan Times and more.',
+  title: 'In the Media | MahaTathastu - Press & Coverage',
+  description: 'MahaTathastu featured in leading Indian media outlets - Times of India, NDTV, Hindustan Times and more.',
 }
 
 const PRESS_FEATURES: { id: number; outlet: string; logo: string; date: string; headline: string; excerpt: string; category: string; color: string; url?: string }[] = [
   { id: 1, outlet: 'Times of India', logo: 'TOI', date: '2025-08-15', headline: '"MahaTathastu Is Bringing Ancient Vedic Sciences Into the Digital Age"', excerpt: 'The platform has quietly become one of India\'s most comprehensive spiritual technology platforms, offering AI-powered astrological reports that rival traditional consultations.', category: 'Feature', color: 'bg-red-600' },
   { id: 2, outlet: 'NDTV', logo: 'NDTV', date: '2025-07-22', headline: 'How This Startup Is Making Astrology Accessible to Millions of Indians', excerpt: 'With over 50,000 reports generated in its first year, MahaTathastu is proving that spirituality and technology can coexist beautifully.', category: 'Startup', color: 'bg-red-700' },
   { id: 3, outlet: 'Hindustan Times', logo: 'HT', date: '2025-06-10', headline: 'The AI That Reads Your Kundli: Inside India\'s First 360° Spiritual Platform', excerpt: 'Nakshatra, the AI engine powering MahaTathastu\'s reports, combines 14 different Vedic sciences into a single comprehensive life analysis.', category: 'Technology', color: 'bg-teal-700' },
-  { id: 4, outlet: 'Economic Times', logo: 'ET', date: '2025-05-30', headline: 'Spiritual Tech Is a ₹5,000 Crore Opportunity — And MahaTathastu Is Chasing It', excerpt: 'As India\'s spiritual economy booms, platforms like MahaTathastu are finding that combining ancient wisdom with modern UX creates a powerful product.', category: 'Business', color: 'bg-[var(--indigo-deep)]' },
-  { id: 5, outlet: 'The Print', logo: 'TP', date: '2025-04-18', headline: 'Vastu, Numerology and AI: How MahaTathastu Is Reinventing the Jyotishi', excerpt: 'Traditional astrologers typically offer one service. MahaTathastu offers fourteen — all powered by AI and delivered instantly.', category: 'Analysis', color: 'bg-[var(--plum)]' },
+  { id: 4, outlet: 'Economic Times', logo: 'ET', date: '2025-05-30', headline: 'Spiritual Tech Is a ₹5,000 Crore Opportunity - And MahaTathastu Is Chasing It', excerpt: 'As India\'s spiritual economy booms, platforms like MahaTathastu are finding that combining ancient wisdom with modern UX creates a powerful product.', category: 'Business', color: 'bg-[var(--indigo-deep)]' },
+  { id: 5, outlet: 'The Print', logo: 'TP', date: '2025-04-18', headline: 'Vastu, Numerology and AI: How MahaTathastu Is Reinventing the Jyotishi', excerpt: 'Traditional astrologers typically offer one service. MahaTathastu offers fourteen - all powered by AI and delivered instantly.', category: 'Analysis', color: 'bg-[var(--plum)]' },
   { id: 6, outlet: 'YourStory', logo: 'YS', date: '2025-03-05', headline: 'From Zero to 50K Users: The MahaTathastu Story', excerpt: 'Founder\'s vision to democratize Vedic knowledge has resonated deeply with India\'s growing wellness-conscious middle class.', category: 'Startup', color: 'bg-emerald-700' },
 ]
 
@@ -63,7 +63,7 @@ export default function InMediaPage() {
         </div>
       </section>
 
-      {/* Awards — only rendered when AWARDS array has entries */}
+      {/* Awards - only rendered when AWARDS array has entries */}
       {AWARDS.length > 0 && (
         <section className="py-12 px-6 bg-white">
           <div className="max-w-4xl mx-auto">
@@ -87,7 +87,7 @@ export default function InMediaPage() {
       {/* Press kit CTA */}
       <section className="py-12 px-6 bg-[var(--indigo-deep)] text-center">
         <h2 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Media Inquiries</h2>
-        <p className="text-white/70 mb-6 max-w-md mx-auto">Journalists, bloggers and researchers — we'd love to share our story. Download our press kit or reach out directly.</p>
+        <p className="text-white/70 mb-6 max-w-md mx-auto">Journalists, bloggers and researchers - we'd love to share our story. Download our press kit or reach out directly.</p>
         <div className="flex justify-center gap-4 flex-wrap">
           <button className="btn-divine px-6 py-3 flex items-center gap-2"><span className="material-symbols-outlined text-[18px]">folder_open</span>Download Press Kit</button>
           <a href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '9858784784'}?text=Hi%2C%20I%20am%20a%20journalist%20interested%20in%20MahaTathastu`} target="_blank" rel="noopener noreferrer" className="px-6 py-3 rounded-xl border border-white/20 text-white font-medium hover:bg-white/10 transition-colors flex items-center gap-2">

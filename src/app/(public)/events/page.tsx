@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
@@ -10,7 +10,7 @@ export const revalidate = 3600
 
 const FALLBACK_EVENTS = [
   { id: '1', title: 'Navratri Special: Devi Sahasranam Chanting', type: 'online', start_date: '2025-10-02', start_time: '06:00', duration_minutes: 120, price: 0, max_participants: 500, current_participants: 347, description: 'Join 500+ devotees for a live Devi Sahasranam chanting session with Pt. Suresh Mishra. Free for all.', category: 'Spiritual', location: 'Zoom + YouTube Live' },
-  { id: '2', title: 'Kundli Reading Workshop — Beginners', type: 'online', start_date: '2025-10-15', start_time: '10:00', duration_minutes: 180, price: 999, max_participants: 50, current_participants: 32, description: 'Learn to read your own birth chart. Covers Lagna, Rashi, planets and basic dasha system.', category: 'Astrology', location: 'Zoom' },
+  { id: '2', title: 'Kundli Reading Workshop - Beginners', type: 'online', start_date: '2025-10-15', start_time: '10:00', duration_minutes: 180, price: 999, max_participants: 50, current_participants: 32, description: 'Learn to read your own birth chart. Covers Lagna, Rashi, planets and basic dasha system.', category: 'Astrology', location: 'Zoom' },
   { id: '3', title: 'Vastu Walk: Transform Your Home', type: 'offline', start_date: '2025-10-20', start_time: '09:00', duration_minutes: 240, price: 2999, max_participants: 20, current_participants: 8, description: 'Physical Vastu consultation walk through your home/office with our expert. Limited to Mumbai area.', category: 'Vastu', location: 'Mumbai (On-site)' },
   { id: '4', title: 'Numerology & Name Correction Masterclass', type: 'online', start_date: '2025-11-01', start_time: '11:00', duration_minutes: 150, price: 1499, max_participants: 100, current_participants: 67, description: 'Discover how to use numerology for business naming, baby naming and mobile number optimization.', category: 'Numerology', location: 'Zoom' },
   { id: '5', title: 'Chakra Healing Meditation Retreat', type: 'offline', start_date: '2025-11-08', start_time: '07:00', duration_minutes: 480, price: 4999, max_participants: 30, current_participants: 15, description: 'Full-day retreat covering all 7 chakras, kundalini yoga, mantra, crystal healing and Ayurvedic lunch.', category: 'Wellness', location: 'Rishikesh, Uttarakhand' },
@@ -46,7 +46,7 @@ export default async function EventsPage() {
           <div className="ornate-divider">
             <span className="material-symbols-outlined text-[14px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
           </div>
-          <p className="text-white/65 text-lg leading-relaxed">Live workshops, retreats and sacred ceremonies — online and offline</p>
+          <p className="text-white/65 text-lg leading-relaxed">Live workshops, retreats and sacred ceremonies - online and offline</p>
         </div>
       </section>
 

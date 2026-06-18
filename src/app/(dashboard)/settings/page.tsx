@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import SudarshanLoader from '@/components/SudarshanLoader'
 
@@ -141,7 +141,7 @@ export default function SettingsPage() {
             }}
             className="w-full px-3 py-2.5 rounded-lg border border-[var(--warm-sand)] text-sm focus:outline-none focus:border-[var(--saffron)] bg-white text-[var(--warm-charcoal)]"
           >
-            <option value="">— Use device location —</option>
+            <option value="">- Use device location -</option>
             {CITIES.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
           </select>
           {preferredCity && (
@@ -206,7 +206,7 @@ export default function SettingsPage() {
       {/* Account */}
       <div className="card-divine p-6 space-y-3">
         <h2 className="font-bold text-[var(--indigo-deep)]">Account</h2>
-        <p className="text-sm text-[var(--warm-charcoal)]/60">Member since {profile?.created_at ? new Date(profile.created_at).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) : '—'}</p>
+        <p className="text-sm text-[var(--warm-charcoal)]/60">Member since {profile?.created_at ? new Date(profile.created_at).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) : '-'}</p>
         <button onClick={signOut} className="w-full flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[var(--warm-sand)] text-sm text-[var(--warm-charcoal)]/70 hover:border-[var(--indigo-deep)] hover:text-[var(--indigo-deep)] transition-all">
           <span className="material-symbols-outlined text-[18px]">logout</span>
           Sign Out

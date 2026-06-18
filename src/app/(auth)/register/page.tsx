@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -87,7 +87,7 @@ export default function RegisterPage() {
     if (error) {
       toast.error(error.message)
     } else {
-      // Fire welcome email — non-blocking, don't await
+      // Fire welcome email - non-blocking, don't await
       fetch('/api/email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -135,7 +135,7 @@ export default function RegisterPage() {
               className="mb-5"
               style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: '21px', color: 'rgba(255,255,255,0.8)', maxWidth: '300px', lineHeight: 1.55 }}
             >
-              तत् सत् — That is Truth. Know thyself fully.
+              तत् सत् - That is Truth. Know thyself fully.
             </p>
             <div className="mb-7" style={{ height: '1px', width: '60px', background: 'rgba(212,160,67,0.3)' }} />
 
@@ -156,7 +156,7 @@ export default function RegisterPage() {
               The child development report for my son was spot-on. Best investment for our family.
             </p>
             <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '10px', color: 'rgba(255,255,255,0.35)', marginTop: '8px' }}>
-              — Priya S., Mumbai
+              - Priya S., Mumbai
             </p>
           </div>
         </div>
@@ -172,7 +172,7 @@ export default function RegisterPage() {
             Create your account
           </h1>
           <p className="mb-8" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '14px', color: 'rgba(28,30,74,0.5)' }}>
-            Your free Tathastu family account — add unlimited family members.
+            Your free Tathastu family account - add unlimited family members.
           </p>
 
           {/* Google */}

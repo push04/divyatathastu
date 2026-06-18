@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import SudarshanLoader from '@/components/SudarshanLoader'
 
@@ -332,7 +332,7 @@ export default function AdminEbooksPage() {
                     <p className="font-bold text-[var(--indigo-deep)]">₹{(eb.sale_price ?? eb.price).toLocaleString('en-IN')}</p>
                     {eb.sale_price && <p className="text-xs text-[var(--warm-charcoal)]/40 line-through">₹{eb.price.toLocaleString('en-IN')}</p>}
                   </td>
-                  <td className="px-4 py-3 text-[var(--warm-charcoal)]/60 text-sm">{eb.ebook_download_limit ?? '—'} per order</td>
+                  <td className="px-4 py-3 text-[var(--warm-charcoal)]/60 text-sm">{eb.ebook_download_limit ?? '-'} per order</td>
                   <td className="px-4 py-3">
                     <div className="flex flex-col gap-1">
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium w-fit ${eb.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/50'}`}>

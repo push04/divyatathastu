@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -15,11 +15,11 @@ const LEVEL_CONFIG: Record<string, { bg: string; text: string; label: string }> 
 
 const SUBJECTS = [
   { icon: 'stars', title: 'Vedic Astrology (Jyotish)', desc: 'The 12 rashis, 9 grahas, 27 nakshatras, dashas & transits. From lagna reading to advanced prediction techniques.' },
-  { icon: 'home', title: 'Vastu Shastra', desc: 'Ancient science of space energetics — directional balance, Vastu Purusha Mandal, remedies without demolition.' },
+  { icon: 'home', title: 'Vastu Shastra', desc: 'Ancient science of space energetics - directional balance, Vastu Purusha Mandal, remedies without demolition.' },
   { icon: 'tag', title: 'Numerology & Yantra', desc: 'Pythagorean, Chaldean & Lo Shu grid systems. Yantra construction and number magic squares.' },
   { icon: 'spa', title: 'Ayurveda Basics', desc: 'Prakriti assessment, dinacharya (daily routine), seasonal eating, and herbal wisdom for modern life.' },
-  { icon: 'self_improvement', title: 'Mantra & Tantra Shastra', desc: 'The science of sound — beej mantras, mantra siddhi, kavach creation, and protective practices.' },
-  { icon: 'visibility', title: 'Palmistry & Face Reading', desc: 'Samudrika Shastra — reading destiny, character, and health through physical features.' },
+  { icon: 'self_improvement', title: 'Mantra & Tantra Shastra', desc: 'The science of sound - beej mantras, mantra siddhi, kavach creation, and protective practices.' },
+  { icon: 'visibility', title: 'Palmistry & Face Reading', desc: 'Samudrika Shastra - reading destiny, character, and health through physical features.' },
 ]
 
 const FORMAT_FEATURES = [
@@ -79,7 +79,7 @@ export default function CoursesPage() {
             Live · Recorded · Certified
           </p>
           <p className="text-base text-[var(--warm-charcoal)]/70 max-w-2xl mx-auto leading-relaxed">
-            Structured courses in Vedic sciences taught by experienced Acharyas. From beginner foundations to advanced masterclasses — learn astrology, Vastu, numerology, and more at your own pace or in live sessions.
+            Structured courses in Vedic sciences taught by experienced Acharyas. From beginner foundations to advanced masterclasses - learn astrology, Vastu, numerology, and more at your own pace or in live sessions.
           </p>
           {/* Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto mt-10">

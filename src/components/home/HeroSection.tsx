@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
@@ -14,11 +14,11 @@ const SHLOKAS = [
   { shloka: 'यदा यदा हि धर्मस्य ग्लानिर्भवति भारत।\nअभ्युत्थानमधर्मस्य तदात्मानं सृजाम्यहम्॥', meaning: 'जब-जब धर्म की हानि होती है और अधर्म बढ़ता है, तब-तब मैं स्वयं को प्रकट करता हूँ।', source: 'भगवद्गीता ४.७' },
   { shloka: 'सर्वे भवन्तु सुखिनः। सर्वे सन्तु निरामयाः।\nसर्वे भद्राणि पश्यन्तु। मा कश्चिद् दुःखभाग्भवेत्॥', meaning: 'सभी सुखी हों, सभी रोगमुक्त हों, सभी शुभ देखें, कोई भी दुःखी न हो।', source: 'बृहदारण्यक उपनिषद्' },
   { shloka: 'योगः कर्मसु कौशलम्।', meaning: 'कर्मों में कुशलता ही योग है।', source: 'भगवद्गीता २.५०' },
-  { shloka: 'ॐ तत् सत्।', meaning: 'ॐ — वही परम सत्य है।', source: 'भगवद्गीता १७.२३' },
+  { shloka: 'ॐ तत् सत्।', meaning: 'ॐ - वही परम सत्य है।', source: 'भगवद्गीता १७.२३' },
   { shloka: 'तत् त्वम् असि।', meaning: 'वह परम ब्रह्म तुम ही हो।', source: 'छांदोग्य उपनिषद् ६.८.७' },
   { shloka: 'मनः एव मनुष्याणां कारणं बन्धमोक्षयोः।', meaning: 'मन ही मनुष्य के बंधन और मोक्ष का एकमात्र कारण है।', source: 'अमृतबिन्दु उपनिषद् २' },
   { shloka: 'स्वधर्मे निधनं श्रेयः परधर्मो भयावहः।', meaning: 'अपने धर्म में मरना भी श्रेयस्कर है; दूसरे का धर्म भय उत्पन्न करता है।', source: 'भगवद्गीता ३.३५' },
-  { shloka: 'अहम् ब्रह्मास्मि।', meaning: 'मैं स्वयं ब्रह्म हूँ — यह परम ज्ञान ही मुक्ति का द्वार है।', source: 'बृहदारण्यक उपनिषद् १.४.१०' },
+  { shloka: 'अहम् ब्रह्मास्मि।', meaning: 'मैं स्वयं ब्रह्म हूँ - यह परम ज्ञान ही मुक्ति का द्वार है।', source: 'बृहदारण्यक उपनिषद् १.४.१०' },
 ]
 
 const fadeUp = {
@@ -71,7 +71,7 @@ function MandalaSVG() {
         ))}
       </g>
 
-      {/* ── Static triangles (Sri Yantra core — stable) ── */}
+      {/* ── Static triangles (Sri Yantra core - stable) ── */}
       <polygon points={dn(145)} fill="#1C1E4A" fillOpacity="0.18" stroke="#1C1E4A" strokeWidth="1.6" strokeOpacity="0.42" />
       <polygon points={up(145)} fill="#C67D53" fillOpacity="0.16" stroke="#C67D53" strokeWidth="1.6" strokeOpacity="0.42" />
       <polygon points={dn(100)} fill="#1C1E4A" fillOpacity="0.16" stroke="#1C1E4A" strokeWidth="1.4" strokeOpacity="0.38" />
@@ -194,7 +194,7 @@ export default function HeroSection() {
               </Link>
             </motion.div>
 
-            {/* Trust signals — no icons, · separator, monospaced */}
+            {/* Trust signals - no icons, · separator, monospaced */}
             <motion.div variants={fadeUp} custom={4} className="flex flex-wrap items-center gap-x-2 gap-y-1">
               {['Vedic AI Engine', 'Instant Reports', 'Expert Validated'].map((tag, i) => (
                 <span key={tag} className="flex items-center gap-2">
@@ -231,7 +231,7 @@ export default function HeroSection() {
             <div className="relative w-full h-[300px] lg:h-[520px] flex items-center justify-center">
               <MandalaSVG />
 
-              {/* Floating panchang card — lower-left of illustration */}
+              {/* Floating panchang card - lower-left of illustration */}
               {snap && (
                 <div className="absolute bottom-4 left-0 lg:-left-4 hidden sm:block z-10 animate-float">
                   <div
@@ -271,7 +271,7 @@ export default function HeroSection() {
           </motion.div>
         </div>
 
-        {/* ── Shloka carousel — full width below columns ── */}
+        {/* ── Shloka carousel - full width below columns ── */}
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
@@ -302,7 +302,7 @@ export default function HeroSection() {
               className="text-[10px] uppercase tracking-widest"
               style={{ fontFamily: "'Sora', sans-serif", color: 'var(--terracotta)', opacity: 0.75 }}
             >
-              — {SHLOKAS[shlokaIdx].source}
+              - {SHLOKAS[shlokaIdx].source}
             </p>
           </div>
           {/* Progress dots */}

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import SudarshanLoader from '@/components/SudarshanLoader'
 
@@ -168,7 +168,7 @@ export default function AdminOrdersPage() {
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <p className="font-medium text-[var(--warm-charcoal)]">{(o.profiles as any)?.full_name || '—'}</p>
+                      <p className="font-medium text-[var(--warm-charcoal)]">{(o.profiles as any)?.full_name || '-'}</p>
                       <p className="text-xs text-[var(--warm-charcoal)]/40">{(o.profiles as any)?.phone || ''}</p>
                     </td>
                     <td className="px-4 py-3 font-bold text-[var(--indigo-deep)]">₹{o.total?.toLocaleString('en-IN')}</td>

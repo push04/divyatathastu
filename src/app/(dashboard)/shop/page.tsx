@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -95,7 +95,7 @@ export default function ShopPage() {
       if (stored) {
         try { setCart(new Map(JSON.parse(stored))) } catch {}
       }
-      // Parallelize both network calls — halves load time
+      // Parallelize both network calls - halves load time
       const [productsRes, authRes] = await Promise.all([
         supabase
           .from('products')
@@ -508,7 +508,7 @@ export default function ShopPage() {
               {selected.stock_count !== -1 && selected.stock_count > 0 && selected.stock_count <= 5 && (
                 <p className="text-xs font-semibold mt-4 flex items-center gap-1.5" style={{ color: '#d97706' }}>
                   <span className="material-symbols-outlined text-[14px]">warning</span>
-                  Only {selected.stock_count} left in stock — order soon!
+                  Only {selected.stock_count} left in stock - order soon!
                 </p>
               )}
             </div>
@@ -521,7 +521,7 @@ export default function ShopPage() {
                   className="w-full py-3.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-98"
                   style={{ background: 'linear-gradient(135deg, var(--terracotta), #C67D53)' }}>
                   <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>add_shopping_cart</span>
-                  Add to Cart — ₹{(selected.sale_price ?? selected.price).toLocaleString('en-IN')}
+                  Add to Cart - ₹{(selected.sale_price ?? selected.price).toLocaleString('en-IN')}
                 </button>
               )}
             </div>
@@ -530,7 +530,7 @@ export default function ShopPage() {
       )}
 
       {/* ── Floating Cart Bar ── */}
-      {/* Auth Modal — shown when unauthenticated user tries to add to cart */}
+      {/* Auth Modal - shown when unauthenticated user tries to add to cart */}
       {authModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden">

@@ -1,27 +1,27 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
-  title: 'Our Services | MahaTathastu — 14 Vedic Reports',
+  title: 'Our Services | MahaTathastu - 14 Vedic Reports',
   description: 'Explore all 14 Nakshatra reports: Kundli, Numerology, Chakra, Prakriti, Yantra, Mantra, Vastu, DMIT, and more.',
 }
 
 const SERVICES = [
-  { id: 'full_tathastu', icon: 'auto_awesome', label: 'Full Tathastu', price: 2999, badge: 'BEST VALUE', desc: 'The complete spiritual blueprint — all 14 reports in one comprehensive analysis for your entire family.', features: ['Kundli & Birth Chart', 'Numerology', 'Chakra Analysis', 'Prakriti (Ayurveda)', '10+ more reports', 'Lifetime access', 'All family members'] },
+  { id: 'full_tathastu', icon: 'auto_awesome', label: 'Full Tathastu', price: 2999, badge: 'BEST VALUE', desc: 'The complete spiritual blueprint - all 14 reports in one comprehensive analysis for your entire family.', features: ['Kundli & Birth Chart', 'Numerology', 'Chakra Analysis', 'Prakriti (Ayurveda)', '10+ more reports', 'Lifetime access', 'All family members'] },
   { id: 'kundli', icon: 'brightness_7', label: 'Kundli / Horoscope', price: 499, desc: 'Vedic birth chart with planetary positions, 12 houses, dashas, current transits, and predictions.', features: ['Lagna & Rashi', 'Planetary positions', 'Vimshottari Dasha', 'Mahadasha periods', 'Current transits'] },
-  { id: 'numerology', icon: 'tag', label: 'Numerology', price: 299, desc: 'Chaldean & Pythagorean numerology — life path, destiny, mobile number compatibility, lucky numbers.', features: ['Life Path Number', 'Destiny Number', 'Soul Urge Number', 'Mobile compatibility', 'Lucky numbers & colors'] },
-  { id: 'chakra', icon: 'spa', label: 'Chakra Analysis', price: 299, desc: 'All 7 chakras analyzed from your birth chart — balance levels, mantras, crystals, yoga, and foods.', features: ['7 chakra levels', 'Blocked/balanced status', 'Healing mantras', 'Crystals & gemstones', 'Dietary guidance'] },
-  { id: 'prakriti', icon: 'eco', label: 'Prakriti (Ayurveda)', price: 299, desc: 'Your Vata-Pitta-Kapha constitution derived from nakshatra — personalized diet, herbs, yoga & daily routine.', features: ['Dosha percentages', 'Dominant dosha', 'Personalized diet', 'Ayurvedic herbs', 'Daily routine'] },
+  { id: 'numerology', icon: 'tag', label: 'Numerology', price: 299, desc: 'Chaldean & Pythagorean numerology - life path, destiny, mobile number compatibility, lucky numbers.', features: ['Life Path Number', 'Destiny Number', 'Soul Urge Number', 'Mobile compatibility', 'Lucky numbers & colors'] },
+  { id: 'chakra', icon: 'spa', label: 'Chakra Analysis', price: 299, desc: 'All 7 chakras analyzed from your birth chart - balance levels, mantras, crystals, yoga, and foods.', features: ['7 chakra levels', 'Blocked/balanced status', 'Healing mantras', 'Crystals & gemstones', 'Dietary guidance'] },
+  { id: 'prakriti', icon: 'eco', label: 'Prakriti (Ayurveda)', price: 299, desc: 'Your Vata-Pitta-Kapha constitution derived from nakshatra - personalized diet, herbs, yoga & daily routine.', features: ['Dosha percentages', 'Dominant dosha', 'Personalized diet', 'Ayurvedic herbs', 'Daily routine'] },
   { id: 'yantra_colour', icon: 'palette', label: 'Yantra & Colour', price: 299, desc: 'Personal yantra, power colors for success, gemstone recommendation with wearing protocol.', features: ['Personal yantra', 'Deity & mantra', 'Power colors', 'Wealth colors', 'Gemstone guidance'] },
   { id: 'mantra', icon: 'self_improvement', label: 'Mantra Science', price: 299, desc: 'Your personal beej mantra, deity mantra, likhit japa (written mantra) guidance with full protocol.', features: ['Beej mantra', 'Deity mantra', 'Daily count', 'Likhit japa guide', 'Best timing'] },
-  { id: 'annual_prediction', icon: 'event', label: 'Annual Prediction', price: 499, desc: 'Month-by-month predictions for the current year — career, finance, relationships, and health.', features: ['12-month forecast', 'Career timeline', 'Finance calendar', 'Lucky months', 'Cautious periods'] },
+  { id: 'annual_prediction', icon: 'event', label: 'Annual Prediction', price: 499, desc: 'Month-by-month predictions for the current year - career, finance, relationships, and health.', features: ['12-month forecast', 'Career timeline', 'Finance calendar', 'Lucky months', 'Cautious periods'] },
   { id: 'vastu', icon: 'house', label: 'Vastu Report', price: 399, desc: 'Home and office Vastu analysis with direction-based remedies, color suggestions, and zone healing.', features: ['Direction analysis', 'Vastu score', 'Defect identification', 'Easy remedies', 'Zone mapping'] },
   { id: 'child_development', icon: 'child_care', label: 'Child Development', price: 399, desc: 'Learning style, natural talents, ideal career paths, and parenting approach based on nakshatra.', features: ['Learning style', 'Natural talents', 'Career aptitude', 'Parenting tips', 'Education path'] },
   { id: 'dmit', icon: 'psychology', label: 'DMIT Report', price: 499, desc: 'Dermatoglyphics Multiple Intelligence Test mapping based on Howard Gardner\'s 8 intelligences.', features: ['8 intelligences', 'Dominant intelligence', 'Career fit', 'Study methods', 'Leadership style'] },
-  { id: 'colour_therapy', icon: 'colorize', label: 'Colour Therapy', price: 299, desc: 'Vedic color healing — specific colors for health, wealth, relationships, and home based on planets.', features: ['Health colors', 'Wealth colors', 'Love colors', 'Home colors', 'Colors to avoid'] },
+  { id: 'colour_therapy', icon: 'colorize', label: 'Colour Therapy', price: 299, desc: 'Vedic color healing - specific colors for health, wealth, relationships, and home based on planets.', features: ['Health colors', 'Wealth colors', 'Love colors', 'Home colors', 'Colors to avoid'] },
   { id: 'psychology', icon: 'neurology', label: 'Vedic Psychology', price: 399, desc: 'Moon sign personality profile, EQ analysis, shadow work, and relationship compatibility patterns.', features: ['Moon personality', 'Emotional intelligence', 'Shadow work', 'Relationship patterns', 'Growth areas'] },
-  { id: 'remedies', icon: 'healing', label: 'Remedies Summary', price: 299, desc: 'Consolidated remedies — gemstones, mantras, fasting days, deity, charity, and Vedic upaya.', features: ['Gemstone protocol', 'Mantra guidance', 'Fasting days', 'Daan & charity', 'Yantra placement'] },
+  { id: 'remedies', icon: 'healing', label: 'Remedies Summary', price: 299, desc: 'Consolidated remedies - gemstones, mantras, fasting days, deity, charity, and Vedic upaya.', features: ['Gemstone protocol', 'Mantra guidance', 'Fasting days', 'Daan & charity', 'Yantra placement'] },
 ]
 
 export default async function ServicesPage() {
@@ -45,7 +45,7 @@ export default async function ServicesPage() {
           <div className="ornate-divider">
             <span className="material-symbols-outlined text-[14px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
           </div>
-          <p className="text-white/65 text-lg max-w-2xl mx-auto leading-relaxed">14 AI-powered Vedic reports covering every dimension of life — generated in 60 seconds</p>
+          <p className="text-white/65 text-lg max-w-2xl mx-auto leading-relaxed">14 AI-powered Vedic reports covering every dimension of life - generated in 60 seconds</p>
         </div>
       </section>
 

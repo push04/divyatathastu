@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
@@ -8,14 +8,14 @@ const steps = [
     num: '01',
     icon: 'family_restroom',
     title: 'Add Your Family',
-    desc: 'Create your family account and add members with their birth details — name, date, time & place of birth.',
+    desc: 'Create your family account and add members with their birth details - name, date, time & place of birth.',
     color: 'var(--terracotta)',
   },
   {
     num: '02',
     icon: 'auto_awesome',
     title: 'Nakshatra Generates Reports',
-    desc: 'Our Nakshatra engine analyzes the cosmic blueprint using Vedic sciences and AI — all 14 reports auto-generated.',
+    desc: 'Our Nakshatra engine analyzes the cosmic blueprint using Vedic sciences and AI - all 14 reports auto-generated.',
     color: 'var(--saffron)',
   },
   {

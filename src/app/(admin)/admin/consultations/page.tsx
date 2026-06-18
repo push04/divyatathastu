@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import SudarshanLoader from '@/components/SudarshanLoader'
 import ConsultationRoom from '@/components/consultation/ConsultationRoom'
@@ -70,7 +70,7 @@ export default function AdminConsultationsPage() {
     setExperts(expertsRes.data || [])
     if (bookingsRes.error) {
       console.error('Bookings query error:', bookingsRes.error)
-      toast.error('Bookings error: ' + bookingsRes.error.message + ' — Run migrations 014/015 in Supabase then refresh schema cache.')
+      toast.error('Bookings error: ' + bookingsRes.error.message + ' - Run migrations 014/015 in Supabase then refresh schema cache.')
     }
     setBookings((bookingsRes.data || []) as unknown as Booking[])
     if (modeRes.data?.value) setLivekitMode(modeRes.data.value as 'production' | 'sandbox')
@@ -81,7 +81,7 @@ export default function AdminConsultationsPage() {
     setSavingMode(true)
     const { error } = await (supabase as any).from('platform_settings').upsert({ key: 'livekit_mode', value: newMode, updated_at: new Date().toISOString() })
     if (error) toast.error('Failed to save: ' + error.message)
-    else { setLivekitMode(newMode); toast.success(newMode === 'sandbox' ? 'Switched to Sandbox mode — dev only' : 'Switched to Production mode') }
+    else { setLivekitMode(newMode); toast.success(newMode === 'sandbox' ? 'Switched to Sandbox mode - dev only' : 'Switched to Production mode') }
     setSavingMode(false)
   }
 
@@ -130,7 +130,7 @@ export default function AdminConsultationsPage() {
     } as any).eq('id', bookingId)
     if (error) toast.error(error.message)
     else {
-      toast.success(meetLinkValue ? 'Meet link saved — user will see it' : 'Meet link removed — LiveKit will be used')
+      toast.success(meetLinkValue ? 'Meet link saved - user will see it' : 'Meet link removed - LiveKit will be used')
       setBookings(bks => bks.map(b => b.id === bookingId ? { ...b, meeting_link: meetLinkValue || null, call_mode: meetLinkValue ? 'google_meet' : 'livekit' } : b))
       setMeetLinkEditing(null)
     }
@@ -210,7 +210,7 @@ export default function AdminConsultationsPage() {
                   <div>
                     <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1.5 uppercase tracking-wide">Expert *</label>
                     <select value={form.expert_id} onChange={e => setForm(f => ({ ...f, expert_id: e.target.value }))} className={inputCls}>
-                      <option value="">— Select —</option>
+                      <option value="">- Select -</option>
                       {experts.map(e => <option key={e.id} value={e.id}>{e.full_name}</option>)}
                     </select>
                   </div>
@@ -329,7 +329,7 @@ export default function AdminConsultationsPage() {
                             <option key={s} value={s}>{s}</option>
                           ))}
                         </select>
-                        {/* Join Call — LiveKit */}
+                        {/* Join Call - LiveKit */}
                         {b.status === 'confirmed' && b.call_mode !== 'google_meet' && (
                           <button
                             onClick={() => setActiveCallBookingId(activeCallBookingId === b.id ? null : b.id)}
@@ -390,7 +390,7 @@ export default function AdminConsultationsPage() {
                         {meetLinkValue && (
                           <p className="text-xs text-blue-600 mt-2 flex items-center gap-1">
                             <span className="material-symbols-outlined text-[13px]">info</span>
-                            User will see a "Join via Google Meet" button — LiveKit room will be hidden.
+                            User will see a "Join via Google Meet" button - LiveKit room will be hidden.
                           </p>
                         )}
                         {!meetLinkValue && b.meeting_link && (
@@ -439,8 +439,8 @@ export default function AdminConsultationsPage() {
                 <p className="text-xs text-[var(--warm-charcoal)]/50 max-w-sm leading-relaxed">
                   Controls how video call tokens are generated.
                   {livekitMode === 'sandbox'
-                    ? ' Sandbox uses a free test server — no API key needed, but sessions are ephemeral and not production-grade.'
-                    : ' Production uses your private API key to mint signed tokens — secure and fully under your control.'}
+                    ? ' Sandbox uses a free test server - no API key needed, but sessions are ephemeral and not production-grade.'
+                    : ' Production uses your private API key to mint signed tokens - secure and fully under your control.'}
                 </p>
               </div>
               {/* Toggle pills */}
@@ -476,7 +476,7 @@ export default function AdminConsultationsPage() {
               <div className="mt-3 flex items-start gap-2 p-3 rounded-xl bg-amber-50 border border-amber-200">
                 <span className="material-symbols-outlined text-amber-600 text-[16px] mt-0.5 shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
                 <p className="text-xs text-amber-700 leading-relaxed">
-                  <strong>Dev only:</strong> Sandbox tokens are publicly accessible and may be rate-limited. All users on this platform will connect via the sandbox — switch back to Production before going live.
+                  <strong>Dev only:</strong> Sandbox tokens are publicly accessible and may be rate-limited. All users on this platform will connect via the sandbox - switch back to Production before going live.
                 </p>
               </div>
             )}
@@ -494,13 +494,13 @@ export default function AdminConsultationsPage() {
               <div className="flex-1">
                 <div className="flex items-center gap-3 flex-wrap">
                   <h2 className="text-lg font-bold text-white" style={{ fontFamily: "'Playfair Display', serif" }}>
-                    MahaTathastu Video — Build Plan
+                    MahaTathastu Video - Build Plan
                   </h2>
                   <span className="text-[10px] px-2.5 py-1 rounded-full bg-emerald-900/60 text-emerald-400 font-bold border border-emerald-700/40 uppercase tracking-widest">
                     Free · $0/mo
                   </span>
                   <span className="text-[10px] px-2.5 py-1 rounded-full bg-amber-900/60 text-amber-400 font-bold border border-amber-700/40 uppercase tracking-widest">
-                    Hard Caps — No Overage
+                    Hard Caps - No Overage
                   </span>
                 </div>
                 <p className="text-sm text-white/50 mt-1">Server: <span className="text-amber-400/80 font-mono">mahatathastu-chyl883d</span></p>
@@ -533,7 +533,7 @@ export default function AdminConsultationsPage() {
             <div>
               <p className="text-sm font-bold text-amber-800 mb-1">Video Call Capacity Limits</p>
               <p className="text-xs text-amber-700 leading-relaxed">
-                Current plan has <strong>hard caps with no overage</strong> — once limits are hit, calls will fail. Key constraint: <strong>only 100 total concurrent participants</strong> across all rooms. For 1-on-1 sessions that's 50 simultaneous calls max.
+                Current plan has <strong>hard caps with no overage</strong> - once limits are hit, calls will fail. Key constraint: <strong>only 100 total concurrent participants</strong> across all rooms. For 1-on-1 sessions that's 50 simultaneous calls max.
                 Monthly: <strong>5,000 video minutes</strong> (~83 hours of calls).
                 When approaching limits, use the <strong>Google Meet fallback</strong> in the Bookings tab.
               </p>
@@ -544,7 +544,7 @@ export default function AdminConsultationsPage() {
           <div className="bento-card p-4 flex gap-3 items-start border-blue-200" style={{ background: '#eff6ff' }}>
             <span className="material-symbols-outlined text-blue-500 text-[22px] shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>meeting_room</span>
             <div>
-              <p className="text-sm font-bold text-blue-800 mb-1">Google Meet Fallback — How It Works</p>
+              <p className="text-sm font-bold text-blue-800 mb-1">Google Meet Fallback - How It Works</p>
               <ol className="text-xs text-blue-700 leading-relaxed space-y-1 list-decimal list-inside">
                 <li>Create a Google Meet link at <strong>meet.google.com</strong> (or use Zoom)</li>
                 <li>Go to the <strong>Bookings</strong> tab above</li>
@@ -580,7 +580,7 @@ export default function AdminConsultationsPage() {
 
           {/* Upgrade tip */}
           <div className="text-center py-4 text-xs text-[var(--warm-charcoal)]/40">
-            To increase capacity, contact your infrastructure provider — next tier gives 50,000 video minutes + 500 GB bandwidth + unlimited participants
+            To increase capacity, contact your infrastructure provider - next tier gives 50,000 video minutes + 500 GB bandwidth + unlimited participants
           </div>
         </div>
       )}
