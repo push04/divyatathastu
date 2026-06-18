@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
       notes: { user_id: user.id },
     })
 
-    const { data: order } = await supabase.from('orders').insert({
+    const { data: order, error: orderErr } = await supabase.from('orders').insert({
       user_id: user.id,
       order_number: orderNumber,
       items,
@@ -107,12 +107,17 @@ export async function POST(req: NextRequest) {
       razorpay_order_id: razorpayOrder.id,
     }).select().single()
 
+    if (orderErr || !order) {
+      console.error('[payment/create] DB insert failed:', orderErr?.message)
+      return NextResponse.json({ error: 'Order record failed. Please try again.' }, { status: 500 })
+    }
+
     return NextResponse.json({
       success: true,
       order_id: razorpayOrder.id,
       amount: razorpayOrder.amount,
       currency: razorpayOrder.currency,
-      db_order_id: order?.id,
+      db_order_id: order.id,
     })
   }
 

@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid payment signature' }, { status: 400 })
     }
 
-    await (supabase as any).from('event_registrations').insert({
+    const { error: regError } = await (supabase as any).from('event_registrations').insert({
       event_id: eventId,
       name,
       email,
@@ -38,6 +38,11 @@ export async function POST(req: NextRequest) {
       order_id: razorpay_order_id,
       paid: true,
     } as any)
+
+    if (regError) {
+      console.error('[events/payment] Registration insert failed:', regError.message)
+      return NextResponse.json({ error: 'Payment verified but registration record failed. Contact support.' }, { status: 500 })
+    }
 
     return NextResponse.json({ success: true })
   }

@@ -7,12 +7,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Missing fields' }, { status: 400 })
   }
   const supabase = await createClient()
-  await (supabase as any).from('event_registrations').insert({
+  const { error } = await (supabase as any).from('event_registrations').insert({
     event_id: eventId,
     name,
     email,
     phone: phone || null,
     paid: false,
   } as any)
+  if (error) return NextResponse.json({ error: 'Registration failed: ' + error.message }, { status: 500 })
   return NextResponse.json({ success: true })
 }
