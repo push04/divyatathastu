@@ -574,7 +574,7 @@ function GenerateReportContent() {
                 <div className="flex-1 min-w-0 pr-6">
                   <p className="font-semibold text-[var(--indigo-deep)] text-sm">{isHindi ? rt.labelHi : rt.label}</p>
                   <p className="text-xs text-[var(--warm-charcoal)]/60 mt-0.5">{isHindi ? rt.descHi : rt.desc}</p>
-                  <p className="text-xs font-bold text-[var(--terracotta)] mt-1">₹{rt.price.toLocaleString('en-IN')}</p>
+                  <p className="text-xs font-bold text-[var(--terracotta)] mt-1">₹{(reportPrices[rt.id] ?? rt.price).toLocaleString('en-IN')}</p>
                 </div>
                 {selectedReport === rt.id && <span className="material-symbols-outlined text-[20px] text-[var(--terracotta)] ml-auto flex-shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>}
               </button>
