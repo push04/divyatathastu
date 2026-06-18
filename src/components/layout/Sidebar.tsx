@@ -23,6 +23,7 @@ const navItems = [
   { href: '/orders', label: 'Orders', icon: 'package_2' },
   { href: '/consultations', label: 'Consultations', icon: 'event' },
   { href: '/mailbox', label: 'Mailbox', icon: 'mail' },
+  { href: '/my-courses', label: 'My Courses', icon: 'school' },
   { href: '/my-library', label: 'My Ebooks', icon: 'menu_book' },
   { href: '/social', label: 'Social Content', icon: 'share' },
   { href: '/settings', label: 'Settings', icon: 'settings' },

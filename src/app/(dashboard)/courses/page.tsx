@@ -60,12 +60,22 @@ export default function CoursesPage() {
 
   useEffect(() => {
     const supabase = createClient()
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) setCurrentUser({
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) return
+      setCurrentUser({
         id: user.id,
         email: user.email!,
         name: (user.user_metadata?.full_name as string) || user.email?.split('@')[0] || 'Seeker',
       })
+      // Load existing enrollments from DB
+      const { data } = await (supabase as any)
+        .from('service_bookings')
+        .select('service_item_id')
+        .eq('user_id', user.id)
+        .eq('payment_status', 'paid')
+      if (data?.length) {
+        setEnrolled(new Set(data.map((b: any) => b.service_item_id as string)))
+      }
     })
   }, [])
 
@@ -403,6 +413,12 @@ export default function CoursesPage() {
               <h2 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Course Catalog</h2>
               <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">{courses.length} courses available</p>
             </div>
+            {enrolled.size > 0 && (
+              <Link href="/my-courses" className="btn-outline-divine text-xs px-4 py-2 inline-flex items-center gap-1.5 shrink-0">
+                <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
+                My Courses ({enrolled.size})
+              </Link>
+            )}
           </div>
 
           {courses.length > 0 && (
