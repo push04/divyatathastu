@@ -39,16 +39,13 @@ export default function ReportPricingPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
 
-  useEffect(() => {
-    fetch('/api/report-pricing')
-      .then(r => r.json())
-      .then(data => {
-        if (data && Object.keys(data).length > 0) {
-          setPrices({ ...DEFAULT_PRICES, ...data })
-        }
-      })
-      .finally(() => setLoading(false))
-  }, [])
+  async function loadPrices() {
+    const data = await fetch('/api/report-pricing', { cache: 'no-store' }).then(r => r.json()).catch(() => ({}))
+    if (data && Object.keys(data).length > 0) setPrices({ ...DEFAULT_PRICES, ...data })
+    setLoading(false)
+  }
+
+  useEffect(() => { loadPrices() }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function save() {
     setSaving(true)
@@ -59,7 +56,8 @@ export default function ReportPricingPage() {
         body: JSON.stringify(prices),
       })
       const data = await res.json()
-      if (!res.ok) throw new Error(data.error)
+      if (!res.ok) throw new Error(data.error || 'Save failed — check Supabase settings table exists')
+      await loadPrices()
       toast.success('Report prices saved')
     } catch (e: any) {
       toast.error(e.message || 'Save failed')

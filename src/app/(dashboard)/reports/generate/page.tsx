@@ -202,7 +202,7 @@ function GenerateReportContent() {
       const { data } = await supabase.from('family_members').select('id,full_name,relation,date_of_birth,time_of_birth,place_of_birth,birth_latitude,birth_longitude,birth_timezone').eq('family_id', family.id)
       if (data) setMembers(data)
       try {
-        const pr = await fetch('/api/report-pricing').then(r => r.json())
+        const pr = await fetch('/api/report-pricing', { cache: 'no-store' }).then(r => r.json())
         if (pr && Object.keys(pr).length > 0) setReportPrices(pr)
       } catch {}
     }
