@@ -137,42 +137,38 @@ export async function POST(req: NextRequest) {
       razorpay_payment_id,
     }).eq('id', db_order_id)
 
-    // Fulfil ebook purchases — sync ebooks table + ebook_purchases for each ebook item
+    // Fulfil ebook purchases — look up ebook_id on the product and create ebook_purchases
     const { data: orderRow } = await supabase.from('orders').select('items,user_id,order_number,subtotal,discount,total').eq('id', db_order_id).single()
     const orderItems: any[] = (orderRow?.items as any[]) || []
     const ebookItems = orderItems.filter((i: any) => i.product_type === 'ebook')
     for (const item of ebookItems) {
       const { data: product } = await supabase
         .from('products')
-        .select('ebook_file_url,ebook_download_limit,description,name')
+        .select('ebook_id,ebook_download_limit,name')
         .eq('id', item.id)
         .single()
-      if (!product?.ebook_file_url) continue
-      // Ensure ebooks row exists (upsert by product id)
-      await supabase.from('ebooks').upsert({
-        id: item.id,
-        title: product.name,
-        file_url: product.ebook_file_url,
-        description: product.description || null,
-        author: 'MahaTathastu',
-        language: null,
-        tags: [],
-      } as any, { onConflict: 'id' })
-      // Create purchase record (avoid duplicate if retried)
+      if (!product?.ebook_id) {
+        console.warn(`[payment/verify] Product ${item.id} (${item.name}) has no ebook_id — skipping ebook fulfillment. Link the product to an ebook in Admin > Products.`)
+        continue
+      }
+      // Ebook already exists in DB (created via Admin > Ebooks) — just create the purchase record
       const { data: existing } = await supabase
         .from('ebook_purchases')
         .select('id')
         .eq('user_id', orderRow.user_id)
-        .eq('ebook_id', item.id)
+        .eq('ebook_id', product.ebook_id)
         .maybeSingle()
       if (!existing) {
-        await supabase.from('ebook_purchases').insert({
+        const { error: epErr } = await supabase.from('ebook_purchases').insert({
           user_id: orderRow.user_id,
-          ebook_id: item.id,
+          ebook_id: product.ebook_id,
+          order_id: db_order_id,
           download_count: 0,
           max_downloads: product.ebook_download_limit ?? 3,
           purchased_at: new Date().toISOString(),
         } as any)
+        if (epErr) console.error(`[payment/verify] ebook_purchases insert failed for ebook_id=${product.ebook_id}:`, epErr.message)
+        else console.log(`[payment/verify] ebook_purchase created for user=${orderRow.user_id} ebook=${product.ebook_id}`)
       }
     }
 
