@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import SudarshanLoader from '@/components/SudarshanLoader'
 import KundliWheel from '@/components/charts/KundliWheel'
@@ -31,13 +31,13 @@ const REPORT_TITLES: Record<string, string> = {
 }
 
 const REPORT_TITLES_HI: Record<string, string> = {
-  full_tathastu: '????? ??????? ???????', astrology: '?????? ?? ???? ??????',
-  numerology: '?????????? ????????', shakti_chakra: '????? ???? ???????',
-  prakriti: '??????? (????????)', yantra_colour: '????? ?? ??? ????????',
-  mantra_chanting: '????? ?? ??????????', mantra_writing: '????? ?? ??????????',
-  astro_vastu: '??????? ?????? ???????', psychology: '????? ??????????',
-  dmit: 'DMIT ??????????? ????????', colour_therapy: '??? ????????',
-  child_development: '??? ?????', mobile_number: '?????? ???? ????????',
+  full_tathastu: 'पूर्ण तथास्तु रिपोर्ट', astrology: 'कुंडली और जन्म कुंडली',
+  numerology: 'अंकशास्त्र विश्लेषण', shakti_chakra: 'शक्ति चक्र रिपोर्ट',
+  prakriti: 'प्रकृति (आयुर्वेद)', yantra_colour: 'यंत्र और रंग चिकित्सा',
+  mantra_chanting: 'मंत्र जप मार्गदर्शन', mantra_writing: 'लिखित जप मार्गदर्शन',
+  astro_vastu: 'ज्योतिष वास्तु रिपोर्ट', psychology: 'वैदिक मनोविज्ञान',
+  dmit: 'DMIT बुद्धिमत्ता प्रोफाइल', colour_therapy: 'रंग चिकित्सा',
+  child_development: 'बाल विकास', mobile_number: 'मोबाइल नंबर विश्लेषण',
 }
 
 function Section({ title, icon, children, printAlwaysOpen }: { title: string; icon?: string; children: React.ReactNode; printAlwaysOpen?: boolean }) {
@@ -189,7 +189,7 @@ function KundliSection({ data, birthDate }: { data: any; birthDate?: string }) {
                       {p.retrograde && <span className="ml-1 text-xs text-[var(--terracotta)]">(R)</span>}
                     </td>
                     <td className="px-3 py-2 text-[var(--warm-charcoal)]/80">{p.rashi}</td>
-                    <td className="px-3 py-2 text-[var(--warm-charcoal)]/60">{p.degree?.toFixed(2)}�</td>
+                    <td className="px-3 py-2 text-[var(--warm-charcoal)]/60">{p.degree?.toFixed(2)}°</td>
                     <td className="px-3 py-2 text-[var(--warm-charcoal)]/80">{p.house}</td>
                     <td className="px-3 py-2 text-[var(--warm-charcoal)]/70">{p.nakshatra}</td>
                     <td className="px-3 py-2 text-[var(--warm-charcoal)]/60">{p.pada}</td>
@@ -266,7 +266,7 @@ function KundliSection({ data, birthDate }: { data: any; birthDate?: string }) {
             <div className="bg-[var(--warm-sand)] rounded-xl p-4">
               <p className="text-xs font-bold text-[var(--saffron)] uppercase tracking-wider mb-2">Remedies</p>
               {analysis.remedies.map((r: string) => (
-                <p key={r} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">� {r}</p>
+                <p key={r} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {r}</p>
               ))}
             </div>
           )}
@@ -387,7 +387,7 @@ function ChakraSection({ data }: { data: any }) {
                   className="flex-shrink-0 w-14 h-14 rounded-full flex flex-col items-center justify-center text-white shadow-lg"
                   style={{ backgroundColor: cd.color, boxShadow: `0 0 18px ${cd.color}60` }}
                 >
-                  <span className="text-sm font-black leading-none">{c.level ?? '�'}%</span>
+                  <span className="text-sm font-black leading-none">{c.level ?? '–'}%</span>
                 </div>
 
                 <div className="flex-1 min-w-0">
@@ -395,7 +395,7 @@ function ChakraSection({ data }: { data: any }) {
                     <div>
                       <span className="font-bold text-[var(--indigo-deep)]">{c.name}</span>
                       {c.sanskrit && <span className="ml-1.5 text-xs text-[var(--warm-charcoal)]/50 italic">{c.sanskrit}</span>}
-                      {c.element && <span className="ml-1.5 text-[10px] text-[var(--warm-charcoal)]/40">� {c.element}</span>}
+                      {c.element && <span className="ml-1.5 text-[10px] text-[var(--warm-charcoal)]/40">· {c.element}</span>}
                     </div>
                     <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold text-white ${isBalanced ? 'bg-emerald-500' : isBlocked ? 'bg-red-500' : 'bg-amber-500'}`}>
                       {c.status}
@@ -545,7 +545,7 @@ function MantraSection({ data }: { data: any }) {
           <p className="text-xs text-white/50 uppercase tracking-wider mb-2">Your Beej Mantra</p>
           <p className="text-2xl font-bold leading-relaxed">{chanting.beejMantra}</p>
           <p className="text-sm mt-3 text-white/80">Chant <span className="font-bold">{chanting.dailyCount}</span> times daily</p>
-          <p className="text-xs mt-1 text-white/50">Best time: {chanting.bestTime} � Face {chanting.direction} � Mala: {chanting.mala}</p>
+          <p className="text-xs mt-1 text-white/50">Best time: {chanting.bestTime} · Face {chanting.direction} · Mala: {chanting.mala}</p>
         </div>
 
         {namaAkshara && (
@@ -663,7 +663,7 @@ function VastuSection({ data }: { data: any }) {
           <div className="bg-[var(--warm-sand)] rounded-xl p-4">
             <p className="text-xs font-bold text-[var(--terracotta)] uppercase tracking-wider mb-2">Vastu Remedies</p>
             {data.remedies.map((r: string) => (
-              <p key={r} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">� {r}</p>
+              <p key={r} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {r}</p>
             ))}
           </div>
         )}
@@ -768,7 +768,7 @@ function MuhurtaSection({ data }: { data: any }) {
               <div className="bg-emerald-50 rounded-xl p-4">
                 <p className="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-2">Most Favorable Periods</p>
                 {data.specialDates.mostFavorable.map((s: string) => (
-                  <p key={s} className="text-xs text-emerald-800 py-0.5">? {s}</p>
+                  <p key={s} className="text-xs text-emerald-800 py-0.5">✓ {s}</p>
                 ))}
               </div>
             )}
@@ -776,7 +776,7 @@ function MuhurtaSection({ data }: { data: any }) {
               <div className="bg-red-50 rounded-xl p-4">
                 <p className="text-xs font-bold text-red-600 uppercase tracking-wider mb-2">Avoid for New Beginnings</p>
                 {data.specialDates.avoidDays.map((s: string) => (
-                  <p key={s} className="text-xs text-red-700 py-0.5">? {s}</p>
+                  <p key={s} className="text-xs text-red-700 py-0.5">✗ {s}</p>
                 ))}
               </div>
             )}
@@ -840,7 +840,7 @@ function RemediesSection({ data }: { data: any }) {
             </p>
             <div className="space-y-1.5">
               {data.weeklyPractices.map((p: string) => (
-                <p key={p} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">� {p}</p>
+                <p key={p} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {p}</p>
               ))}
             </div>
           </div>
@@ -852,7 +852,7 @@ function RemediesSection({ data }: { data: any }) {
               <div key={g.stone} className={`rounded-xl p-3 text-sm mb-2 ${i === 0 ? 'bg-gradient-to-r from-amber-50 to-[var(--warm-sand)] border border-amber-200' : 'bg-[var(--warm-sand)]'}`}>
                 <p className="font-bold text-[var(--indigo-deep)]">{g.stone}</p>
                 {g.purpose && <p className="text-xs text-[var(--warm-charcoal)]/70 mt-0.5">{g.purpose}</p>}
-                {g.weight && <p className="text-xs text-[var(--warm-charcoal)]/60 mt-0.5">Weight: {g.weight} � Wear on: {g.wearingDay}</p>}
+                {g.weight && <p className="text-xs text-[var(--warm-charcoal)]/60 mt-0.5">Weight: {g.weight} · Wear on: {g.wearingDay}</p>}
               </div>
             ))}
           </div>
@@ -864,7 +864,7 @@ function RemediesSection({ data }: { data: any }) {
               Diet & Food Remedies
             </p>
             {data.dietRecommendations.map((d: string) => (
-              <p key={d} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">� {d}</p>
+              <p key={d} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {d}</p>
             ))}
           </div>
         )}
@@ -872,7 +872,7 @@ function RemediesSection({ data }: { data: any }) {
           <div className="bg-[var(--warm-sand)] rounded-xl p-3">
             <p className="text-xs font-bold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-2">Dana (Charity Items)</p>
             {data.charityItems.map((c: string) => (
-              <p key={c} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">� {c}</p>
+              <p key={c} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {c}</p>
             ))}
           </div>
         )}
@@ -888,7 +888,7 @@ function RemediesSection({ data }: { data: any }) {
           <div>
             <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Yantras</p>
             {data.yantras.map((y: string) => (
-              <p key={y} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">� {y}</p>
+              <p key={y} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {y}</p>
             ))}
           </div>
         )}
@@ -980,7 +980,7 @@ interface BookChapter {
   show: boolean
 }
 
-// --- Decorative left-panel SVG components ------------------
+// ─── Decorative left-panel SVG components ──────────────────
 
 function OmMandala({ size = 180 }: { size?: number }) {
   const cx = size / 2, cy = size / 2, r = size * 0.44
@@ -1004,7 +1004,7 @@ function OmMandala({ size = 180 }: { size?: number }) {
           stroke="#D4A017" strokeWidth="0.4" strokeOpacity="0.22" />
       })}
       <text x={cx} y={cy + size * 0.09} textAnchor="middle" fontSize={size * 0.35}
-        fill="#D4A017" style={{ fontFamily: 'serif', fontWeight: 'bold' }}>?</text>
+        fill="#D4A017" style={{ fontFamily: 'serif', fontWeight: 'bold' }}>ॐ</text>
     </svg>
   )
 }
@@ -1069,7 +1069,7 @@ function VastuCompassPanel({ size = 170 }: { size?: number }) {
       })}
       <circle cx={cx} cy={cy} r={r * 0.26} fill="#2F2A44" fillOpacity="0.08" stroke="#2F2A44" strokeWidth="1" />
       <text x={cx} y={cy - 3} textAnchor="middle" fontSize={9} fill="#2F2A44" fontWeight="bold">VASTU</text>
-      <text x={cx} y={cy + 9} textAnchor="middle" fontSize={8} fill="#2F2A44">?????</text>
+      <text x={cx} y={cy + 9} textAnchor="middle" fontSize={8} fill="#2F2A44">पुरुष</text>
     </svg>
   )
 }
@@ -1080,7 +1080,7 @@ function DoshaPanel({ vata = 33, pitta = 34, kapha = 33 }: { vata?: number; pitt
       <circle cx="90" cy="58" r="47" fill="#bae6fd" fillOpacity="0.6" stroke="#0284c7" strokeWidth="1.5" />
       <circle cx="55" cy="128" r="47" fill="#fed7aa" fillOpacity="0.6" stroke="#ea580c" strokeWidth="1.5" />
       <circle cx="125" cy="128" r="47" fill="#bbf7d0" fillOpacity="0.6" stroke="#16a34a" strokeWidth="1.5" />
-      <text x="90" y="40" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#0284c7">Vata</text>
+      <text x="90" y="40" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#0284c7">Vāta</text>
       <text x="90" y="53" textAnchor="middle" fontSize="13" fontWeight="bold" fill="#0284c7">{vata}%</text>
       <text x="35" y="147" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#ea580c">Pitta</text>
       <text x="35" y="160" textAnchor="middle" fontSize="13" fontWeight="bold" fill="#ea580c">{pitta}%</text>
@@ -1097,9 +1097,9 @@ function MoonArchetypePanel({ archetype }: { archetype?: string }) {
         <circle cx="65" cy="65" r="55" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="2" />
         <ellipse cx="82" cy="65" rx="43" ry="55" fill="#1e293b" fillOpacity="0.88" />
         {[[18, 18], [108, 12], [12, 98], [108, 95], [55, 10]].map(([x, y], i) => (
-          <text key={i} x={x} y={y} textAnchor="middle" fontSize="9" fill="#f59e0b">?</text>
+          <text key={i} x={x} y={y} textAnchor="middle" fontSize="9" fill="#f59e0b">★</text>
         ))}
-        <text x="43" y="73" textAnchor="middle" fontSize="34" fill="#D4A017" style={{ fontFamily: 'serif' }}>?</text>
+        <text x="43" y="73" textAnchor="middle" fontSize="34" fill="#D4A017" style={{ fontFamily: 'serif' }}>☽</text>
       </svg>
       {archetype && (
         <p className="text-center text-xs font-bold text-[var(--indigo-deep)] bg-[var(--warm-sand)] px-3 py-1.5 rounded-full"
@@ -1114,7 +1114,7 @@ function MoonArchetypePanel({ archetype }: { archetype?: string }) {
 function DMITPanel({ intelligences }: { intelligences?: Array<{ type: string; score: number }> }) {
   if (!intelligences?.length) return (
     <div className="flex flex-col items-center gap-2">
-      <div className="w-32 h-32 rounded-full border-2 border-dashed border-[var(--warm-sand)] flex items-center justify-center text-4xl">??</div>
+      <div className="w-32 h-32 rounded-full border-2 border-dashed border-[var(--warm-sand)] flex items-center justify-center text-4xl">🧠</div>
       <p className="text-xs text-[var(--warm-charcoal)]/40 uppercase tracking-wider">Intelligence Profile</p>
     </div>
   )
@@ -1208,7 +1208,7 @@ function AnnualArcPanel({ year = new Date().getFullYear() }: { year?: number }) 
         )
       })}
       <circle cx={cx} cy={cy - 22} r="20" fill="#f59e0b" fillOpacity="0.18" stroke="#f59e0b" strokeWidth="1.5" />
-      <text x={cx} y={cy - 16} textAnchor="middle" fontSize="18" fill="#f59e0b">?</text>
+      <text x={cx} y={cy - 16} textAnchor="middle" fontSize="18" fill="#f59e0b">☉</text>
       <text x={cx} y={cy + 8} textAnchor="middle" fontSize="15" fontWeight="bold" fill="#2F2A44"
         style={{ fontFamily: "'Playfair Display', serif" }}>{year}</text>
     </svg>
@@ -1219,18 +1219,18 @@ function RemediesPanel() {
   return (
     <div className="flex flex-col items-center gap-4">
       <div className="grid grid-cols-3 gap-2">
-        {['??', '??', '??', '??', '???', '??'].map((emoji, i) => (
+        {['🪔', '📿', '💎', '🌿', '🕉️', '🌺'].map((emoji, i) => (
           <div key={i} className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--warm-sand)] to-amber-50 border border-[var(--saffron)]/20 flex items-center justify-center text-xl shadow-sm">
             {emoji}
           </div>
         ))}
       </div>
-      <p className="text-[10px] text-[var(--warm-charcoal)]/40 text-center font-medium tracking-widest uppercase">Upaya � Remedies</p>
+      <p className="text-[10px] text-[var(--warm-charcoal)]/40 text-center font-medium tracking-widest uppercase">Upāya · Remedies</p>
     </div>
   )
 }
 
-// --- Chapter Spread Layout ---------------------------------
+// ─── Chapter Spread Layout ─────────────────────────────────
 
 function ChapterSpread({ chapter, height }: { chapter: BookChapter; height: number }) {
   return (
@@ -1276,7 +1276,7 @@ function ChapterSpread({ chapter, height }: { chapter: BookChapter; height: numb
         </div>
 
         {/* Bottom Om */}
-        <div style={{ textAlign: 'center', fontSize: 22, color: 'rgba(212,160,23,0.4)', marginTop: 12, fontFamily: 'Georgia, serif', letterSpacing: '0.1em' }}>?</div>
+        <div style={{ textAlign: 'center', fontSize: 22, color: 'rgba(212,160,23,0.4)', marginTop: 12, fontFamily: 'Georgia, serif', letterSpacing: '0.1em' }}>ॐ</div>
         <div style={{ height: 3, background: 'linear-gradient(90deg, transparent, #D4A017 40%, #D4A017 60%, transparent)', borderRadius: 2, marginTop: 12 }} />
       </div>
 
@@ -1299,7 +1299,7 @@ function ChapterSpread({ chapter, height }: { chapter: BookChapter; height: numb
   )
 }
 
-// --- Book Viewer -------------------------------------------
+// ─── Book Viewer ───────────────────────────────────────────
 
 const BOOK_HEIGHT = 600
 
@@ -1346,7 +1346,7 @@ function BookViewer({ chapters }: { chapters: BookChapter[] }) {
     <div ref={bookRef} className={isFS ? 'fixed inset-0 z-50 flex flex-col' : ''}
       style={isFS ? { background: '#f7f3ea' } : undefined}>
 
-      {/* -- Top chrome bar - light theme -- */}
+      {/* ── Top chrome bar - light theme ── */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '10px 16px', borderBottom: '2px solid #D4A017',
@@ -1354,9 +1354,9 @@ function BookViewer({ chapters }: { chapters: BookChapter[] }) {
         borderRadius: isFS ? 0 : '16px 16px 0 0',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ fontSize: 20, color: '#D4A017', fontFamily: 'Georgia, serif' }}>?</span>
+          <span style={{ fontSize: 20, color: '#D4A017', fontFamily: 'Georgia, serif' }}>ॐ</span>
           <div>
-            <p style={{ fontSize: 9, color: '#B8860B', letterSpacing: '0.2em', textTransform: 'uppercase', margin: 0, fontWeight: 600 }}>MahaTathastu � Tathastu</p>
+            <p style={{ fontSize: 9, color: '#B8860B', letterSpacing: '0.2em', textTransform: 'uppercase', margin: 0, fontWeight: 600 }}>MahaTathastu · Tathastu</p>
             <p style={{ fontSize: 13, fontWeight: 700, color: '#2F2A44', margin: 0, fontFamily: "'Playfair Display', serif" }}>{cur.title}</p>
           </div>
         </div>
@@ -1372,7 +1372,7 @@ function BookViewer({ chapters }: { chapters: BookChapter[] }) {
         </div>
       </div>
 
-      {/* -- Book body with side arrows -- */}
+      {/* ── Book body with side arrows ── */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 0, padding: isFS ? '12px 0' : '0', flex: isFS ? 1 : undefined }}>
 
         {/* LEFT arrow */}
@@ -1419,7 +1419,7 @@ function BookViewer({ chapters }: { chapters: BookChapter[] }) {
         </button>
       </div>
 
-      {/* -- Chapter dots & reading progress - light -- */}
+      {/* ── Chapter dots & reading progress - light ── */}
       <div style={{ padding: '10px 60px', display: 'flex', alignItems: 'center', gap: 10, background: isFS ? '#fdf8f0' : undefined }}>
         <div style={{ flex: 1, height: 3, background: 'rgba(212,160,23,0.15)', borderRadius: 2, overflow: 'hidden' }}>
           <div style={{ height: '100%', width: `${((displayIdx + 1) / active.length) * 100}%`, background: 'linear-gradient(90deg, #2F2A44, #D4A017)', transition: 'width 0.4s ease', borderRadius: 2 }} />
@@ -1507,13 +1507,13 @@ export default function ReportDetailPage() {
 
   const chapters: BookChapter[] = [
     {
-      id: 'astrology', number: 'I', title: 'Kundli & Birth Chart', sanskrit: '???? ???????',
+      id: 'astrology', number: 'I', title: 'Kundli & Birth Chart', sanskrit: 'ग्रह ज्योतिष',
       leftPanel: d.kundli ? <KundliWheel kundli={d.kundli} /> : <OmMandala size={175} />,
       content: <KundliSection data={d} birthDate={member?.date_of_birth} />,
       show: (report.report_type === 'astrology' || isFull) && !!d.kundli,
     },
     {
-      id: 'numerology', number: 'II', title: 'Numerology Analysis', sanskrit: '??????????',
+      id: 'numerology', number: 'II', title: 'Numerology Analysis', sanskrit: 'अंकशास्त्र',
       leftPanel: d.numerology
         ? <NumerologyGrid numerology={d.numerology} member={{ name: member?.full_name, dob: member?.date_of_birth }} />
         : <OmMandala size={175} />,
@@ -1521,7 +1521,7 @@ export default function ReportDetailPage() {
       show: (report.report_type === 'numerology' || isFull) && !!d.numerology,
     },
     {
-      id: 'shakti_chakra', number: 'III', title: 'Shakti Chakra', sanskrit: '????? ????',
+      id: 'shakti_chakra', number: 'III', title: 'Shakti Chakra', sanskrit: 'शक्ति चक्र',
       leftPanel: (d.chakras || d.chakra)
         ? <ChakraChart data={{ chakras: d.chakras || d.chakra, overallBalance: d.overallBalance }} />
         : <OmMandala size={175} />,
@@ -1529,7 +1529,7 @@ export default function ReportDetailPage() {
       show: (report.report_type === 'shakti_chakra' || isFull) && !!(d.chakras || d.chakra),
     },
     {
-      id: 'prakriti', number: 'IV', title: 'Prakriti � Ayurveda', sanskrit: '???????',
+      id: 'prakriti', number: 'IV', title: 'Prakriti · Ayurveda', sanskrit: 'प्रकृति',
       leftPanel: <DoshaPanel vata={d.prakriti?.vata} pitta={d.prakriti?.pitta} kapha={d.prakriti?.kapha} />,
       content: (
         <Section title="Prakriti (Ayurvedic Constitution)" icon="eco">
@@ -1562,7 +1562,7 @@ export default function ReportDetailPage() {
             {d.prakriti?.lifestyle?.length > 0 && (
               <div>
                 <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Lifestyle Guidelines</p>
-                {d.prakriti.lifestyle.map((l: string) => <p key={l} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">� {l}</p>)}
+                {d.prakriti.lifestyle.map((l: string) => <p key={l} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {l}</p>)}
               </div>
             )}
             {d.prakriti?.avoid?.length > 0 && (
@@ -1579,17 +1579,17 @@ export default function ReportDetailPage() {
       show: (report.report_type === 'prakriti' || isFull) && !!d.prakriti,
     },
     {
-      id: 'yantra_colour', number: 'V', title: 'Yantra & Colour', sanskrit: '????? ??? ????????',
+      id: 'yantra_colour', number: 'V', title: 'Yantra & Colour', sanskrit: 'यंत्र रंग चिकित्सा',
       leftPanel: <SriYantraPanel size={175} />,
       content: <YantraSection data={d.yantra || d.yantraColour} />,
       show: (report.report_type === 'yantra_colour' || isFull) && !!(d.yantra || d.yantraColour),
     },
     {
-      id: 'mantra_chanting', number: 'VI', title: 'Mantra Guidance', sanskrit: '????? ??',
+      id: 'mantra_chanting', number: 'VI', title: 'Mantra Guidance', sanskrit: 'मंत्र जप',
       leftPanel: (
         <div className="flex flex-col items-center gap-4">
           <div className="w-28 h-28 rounded-full bg-gradient-to-br from-[var(--indigo-deep)] to-[var(--plum)] flex items-center justify-center shadow-xl">
-            <span className="text-5xl text-white" style={{ fontFamily: 'serif' }}>?</span>
+            <span className="text-5xl text-white" style={{ fontFamily: 'serif' }}>ॐ</span>
           </div>
           {(d.mantras?.chanting?.beejMantra || d.mantra?.chanting?.beejMantra) && (
             <div className="bg-[var(--indigo-deep)]/8 border border-[var(--indigo-deep)]/15 rounded-xl px-3 py-2 text-center max-w-[190px]">
@@ -1604,7 +1604,7 @@ export default function ReportDetailPage() {
       show: (['mantra_chanting', 'mantra_writing'].includes(report.report_type) || isFull) && !!(d.mantras || d.mantra),
     },
     {
-      id: 'psychology', number: 'VII', title: 'Vedic Psychology', sanskrit: '????? ??????????',
+      id: 'psychology', number: 'VII', title: 'Vedic Psychology', sanskrit: 'वैदिक मनोविज्ञान',
       leftPanel: <MoonArchetypePanel archetype={d.psychology?.moonPersonalityType} />,
       content: (
         <Section title="Vedic Psychology Profile" icon="self_improvement">
@@ -1645,7 +1645,7 @@ export default function ReportDetailPage() {
             {d.psychology?.shadowWork?.length > 0 && (
               <div>
                 <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Shadow Work Themes</p>
-                {d.psychology.shadowWork.map((s: string) => <p key={s} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">� {s}</p>)}
+                {d.psychology.shadowWork.map((s: string) => <p key={s} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {s}</p>)}
               </div>
             )}
           </div>
@@ -1654,13 +1654,13 @@ export default function ReportDetailPage() {
       show: (report.report_type === 'psychology' || isFull) && !!d.psychology,
     },
     {
-      id: 'astro_vastu', number: 'VIII', title: 'Astro Vastu', sanskrit: '??????? ??????',
+      id: 'astro_vastu', number: 'VIII', title: 'Astro Vastu', sanskrit: 'ज्योतिष वास्तु',
       leftPanel: <VastuCompassPanel size={165} />,
       content: <VastuSection data={d.vastu || d.vastuAnalysis} />,
       show: (report.report_type === 'astro_vastu' || isFull) && !!(d.vastu || d.vastuAnalysis),
     },
     {
-      id: 'dmit', number: 'IX', title: 'DMIT Intelligence', sanskrit: '??????????? ????????',
+      id: 'dmit', number: 'IX', title: 'DMIT Intelligence', sanskrit: 'बुद्धिमत्ता प्रोफाइल',
       leftPanel: <DMITPanel intelligences={d.dmit?.allIntelligences} />,
       content: (
         <Section title="DMIT Intelligence Profile" icon="psychology">
@@ -1678,7 +1678,7 @@ export default function ReportDetailPage() {
                   <div key={intel.type} className="mb-2">
                     <div className="flex items-center justify-between mb-0.5">
                       <span className="text-sm font-medium text-[var(--indigo-deep)]">{intel.type}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${intel.strength === 'Strong' ? 'bg-emerald-100 text-emerald-700' : intel.strength === 'Moderate' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600'}`}>{intel.strength} � {intel.score}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full ${intel.strength === 'Strong' ? 'bg-emerald-100 text-emerald-700' : intel.strength === 'Moderate' ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600'}`}>{intel.strength} · {intel.score}</span>
                     </div>
                     <div className="bg-[var(--warm-sand)] rounded-full h-1.5 overflow-hidden">
                       <div className="h-full bg-[var(--indigo-deep)] rounded-full" style={{ width: `${intel.score}%` }} />
@@ -1713,7 +1713,7 @@ export default function ReportDetailPage() {
       show: (report.report_type === 'dmit' || isFull) && !!d.dmit,
     },
     {
-      id: 'colour_therapy', number: 'X', title: 'Colour Therapy', sanskrit: '??? ????????',
+      id: 'colour_therapy', number: 'X', title: 'Colour Therapy', sanskrit: 'रंग चिकित्सा',
       leftPanel: <ColourWheelPanel size={155} />,
       content: (
         <Section title="Colour Therapy" icon="palette">
@@ -1754,8 +1754,8 @@ export default function ReportDetailPage() {
                       <p className="text-xs text-[var(--warm-charcoal)]/50">Primary Healing Color</p>
                     </div>
                   </div>
-                  {d.colourTherapy.chromotherapy.sessions && <p className="text-sm text-[var(--warm-charcoal)]/70">� {d.colourTherapy.chromotherapy.sessions}</p>}
-                  {d.colourTherapy.chromotherapy.duration && <p className="text-sm text-[var(--warm-charcoal)]/70">� Duration: {d.colourTherapy.chromotherapy.duration}</p>}
+                  {d.colourTherapy.chromotherapy.sessions && <p className="text-sm text-[var(--warm-charcoal)]/70">• {d.colourTherapy.chromotherapy.sessions}</p>}
+                  {d.colourTherapy.chromotherapy.duration && <p className="text-sm text-[var(--warm-charcoal)]/70">• Duration: {d.colourTherapy.chromotherapy.duration}</p>}
                   {d.colourTherapy.chromotherapy.waterSolarization && (
                     <p className="mt-2 text-xs text-[var(--warm-charcoal)]/55 italic">{d.colourTherapy.chromotherapy.waterSolarization}</p>
                   )}
@@ -1774,7 +1774,7 @@ export default function ReportDetailPage() {
       show: (report.report_type === 'colour_therapy' || isFull) && !!d.colourTherapy,
     },
     {
-      id: 'annual_prediction', number: 'XI', title: 'Annual Prediction', sanskrit: '??????? ??????????',
+      id: 'annual_prediction', number: 'XI', title: 'Annual Prediction', sanskrit: 'वार्षिक भविष्यवाणी',
       leftPanel: <AnnualArcPanel />,
       content: (
         <Section title="Annual Prediction" icon="calendar_today">
@@ -1801,19 +1801,19 @@ export default function ReportDetailPage() {
       show: isFull && !!d.annualPrediction,
     },
     {
-      id: 'muhurta', number: 'XII', title: 'Muhurta - Timing', sanskrit: '???????',
+      id: 'muhurta', number: 'XII', title: 'Muhurta - Timing', sanskrit: 'मुहूर्त',
       leftPanel: <AnnualArcPanel />,
       content: <MuhurtaSection data={d.muhurta} />,
       show: isFull && !!d.muhurta,
     },
     {
-      id: 'remedies', number: 'XIII', title: 'Remedies & Upaya', sanskrit: '????',
+      id: 'remedies', number: 'XIII', title: 'Remedies & Upāya', sanskrit: 'उपाय',
       leftPanel: <RemediesPanel />,
       content: <RemediesSection data={d.remediesSummary || d.remedies} />,
       show: isFull && !!(d.remediesSummary || d.remedies),
     },
     {
-      id: 'child_development', number: 'I', title: 'Child Development', sanskrit: '??? ?????',
+      id: 'child_development', number: 'I', title: 'Child Development', sanskrit: 'बाल विकास',
       leftPanel: <OmMandala size={175} />,
       content: (
         <Section title="Child Development Report" icon="child_care">
@@ -1831,13 +1831,13 @@ export default function ReportDetailPage() {
             {d.childDevelopment?.milestones?.length > 0 && (
               <div>
                 <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Key Milestones</p>
-                {d.childDevelopment.milestones.map((m: string) => <p key={m} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">� {m}</p>)}
+                {d.childDevelopment.milestones.map((m: string) => <p key={m} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {m}</p>)}
               </div>
             )}
             {d.childDevelopment?.parentingAdvice?.length > 0 && (
               <div className="bg-[var(--warm-sand)] rounded-xl p-4">
                 <p className="text-xs font-bold text-[var(--saffron)] uppercase tracking-wider mb-2">Parenting Guidance</p>
-                {d.childDevelopment.parentingAdvice.map((a: string) => <p key={a} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">� {a}</p>)}
+                {d.childDevelopment.parentingAdvice.map((a: string) => <p key={a} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {a}</p>)}
               </div>
             )}
           </div>
@@ -1846,7 +1846,7 @@ export default function ReportDetailPage() {
       show: report.report_type === 'child_development' && !!d.childDevelopment,
     },
     {
-      id: 'mobile_number', number: 'I', title: 'Mobile Number Analysis', sanskrit: '??????????',
+      id: 'mobile_number', number: 'I', title: 'Mobile Number Analysis', sanskrit: 'अंकशास्त्र',
       leftPanel: <NumerologyGrid numerology={{ lifePathNumber: d.lifePath || 1, destinyNumber: d.mobile?.totalNumber || 1, soulUrgeNumber: 1, personalityNumber: 1, dateOfBirth: '', fullName: '' }} />,
       content: (
         <Section title="Mobile Number Analysis" icon="phone">
@@ -1906,14 +1906,14 @@ export default function ReportDetailPage() {
             <h1 className="text-2xl font-bold text-[var(--indigo-deep)] mt-1" style={{ fontFamily: "'Playfair Display', serif" }}>{title}</h1>
             {member && (
               <p className="text-sm text-[var(--warm-charcoal)]/60 mt-0.5">
-                {member.full_name} � {member.place_of_birth || ''} � {new Date(report.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
+                {member.full_name} · {member.place_of_birth || ''} · {new Date(report.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
               </p>
             )}
           </div>
           <div className="flex items-center gap-2 flex-wrap justify-end">
             <div className="flex items-center bg-[var(--warm-sand)] rounded-lg p-0.5 gap-0.5">
               <button onClick={() => setLang('en')} className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all ${lang === 'en' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--warm-charcoal)]/60 hover:text-[var(--indigo-deep)]'}`}>EN</button>
-              <button onClick={() => setLang('hi')} className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all ${lang === 'hi' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--warm-charcoal)]/60 hover:text-[var(--indigo-deep)]'}`}>???</button>
+              <button onClick={() => setLang('hi')} className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all ${lang === 'hi' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--warm-charcoal)]/60 hover:text-[var(--indigo-deep)]'}`}>हिं</button>
             </div>
             <span className={`text-sm px-3 py-1 rounded-full font-medium ${isGenerated ? 'bg-emerald-100 text-emerald-700' : report.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
               {report.status}
@@ -1922,7 +1922,7 @@ export default function ReportDetailPage() {
               <button onClick={handlePrint} disabled={downloading}
                 className="flex items-center gap-2 px-4 py-2 bg-[var(--indigo-deep)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50">
                 <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>download</span>
-                {downloading ? 'Preparing�' : 'Download PDF'}
+                {downloading ? 'Preparing…' : 'Download PDF'}
               </button>
             )}
           </div>
@@ -1956,7 +1956,7 @@ export default function ReportDetailPage() {
 
             {/* Top Sanskrit invocation */}
             <div style={{ textAlign: 'center', padding: '28px 0 0', color: '#cc2200', fontSize: 13, fontWeight: 700 }}>
-              ? ????????? ??? | ?????????? ??? |
+              ॐ महागणपतये नमः | श्रीमात्रे नमः |
             </div>
 
             {/* Two-column layout */}
@@ -2003,8 +2003,8 @@ export default function ReportDetailPage() {
                     </svg>
                   ))}
                 </div>
-                {/* � mark */}
-                <div style={{ alignSelf: 'flex-end', fontSize: 10, color: '#888', marginBottom: -8 }}>�</div>
+                {/* © mark */}
+                <div style={{ alignSelf: 'flex-end', fontSize: 10, color: '#888', marginBottom: -8 }}>©</div>
                 {/* TATHASTU logo */}
                 <div style={{ textAlign: 'center' }}>
                   <div style={{ fontSize: 38, fontWeight: 900, color: '#2c1a0e', letterSpacing: '0.1em', fontFamily: 'Georgia, serif' }}>TATHASTU</div>
@@ -2014,9 +2014,9 @@ export default function ReportDetailPage() {
 
                 {/* 18 Acharyas */}
                 <div style={{ textAlign: 'center', color: '#cc2200', fontSize: 10, lineHeight: 1.7 }}>
-                  <div style={{ fontWeight: 700, marginBottom: 2 }}>??????? ??????? (?????? ???????) ?? 18 ??????:</div>
-                  <div>?????, ?????? (???????), ?????, ??????, ?????, ?????, ?????, ????, ????,</div>
-                  <div>?????, ???, ??????, ????, ?????, ?????, ???, ???? ?? ????</div>
+                  <div style={{ fontWeight: 700, marginBottom: 2 }}>ज्योतिष शास्त्र (वेदांग ज्योतिष) के 18 आचार्य:</div>
+                  <div>सूर्य, पितामह (ब्रह्मा), व्यास, वशिष्ठ, अत्रि, पराशर, कश्यप, नारद, गर्ग,</div>
+                  <div>मरीचि, मनु, अंगिरा, लोमश, पौलिश, च्यवन, यवन, भृगु और शौनक</div>
                 </div>
 
                 {/* Yantra grid symbol */}
@@ -2047,7 +2047,7 @@ export default function ReportDetailPage() {
             </div>
             {/* Bottom bar */}
             <div style={{ textAlign: 'center', padding: '10px 0 20px', color: '#888', fontSize: 9 }}>
-              9858784784 � www.mahatathastu.com � info@mahatathastu.com
+              9858784784 · www.mahatathastu.com · info@mahatathastu.com
             </div>
           </div>
 
@@ -2093,7 +2093,7 @@ export default function ReportDetailPage() {
                   <div style={{ textAlign: 'center', marginBottom: 10 }}>
                     <div style={{ fontSize: 10, color: '#1a1a1a', fontWeight: 700, lineHeight: 1.5 }}>
                       India's First Comprehensive Report<br />
-                      <span style={{ color: '#cc2200' }}>Covering 360� Aspects of Human Life</span><br />
+                      <span style={{ color: '#cc2200' }}>Covering 360° Aspects of Human Life</span><br />
                       for Future Holistic Growth and Development
                     </div>
                     <div style={{ fontSize: 18, fontWeight: 900, color: '#2c1a0e', margin: '8px 0 2px', letterSpacing: '0.08em' }}>TATHASTU</div>
@@ -2105,12 +2105,12 @@ export default function ReportDetailPage() {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, fontSize: 9, color: '#2c1a0e' }}>
                     {['Astrology Report', 'Astro-Vastu Report', 'Shakti Chakra Report', 'Numerology Report', 'Mobile Number Report', 'Psychology Report', 'Prakriti Report', 'Yantra Colour Report', 'DMIT Report', 'Colour Therapy Report', 'Child Development Report', 'Mantra Chanting Guidance', 'Affirmation Report (Tithi Wise)'].map(r => (
                       <div key={r} style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                        <span style={{ color: '#c8922a', fontSize: 10 }}>?</span> {r}
+                        <span style={{ color: '#c8922a', fontSize: 10 }}>✦</span> {r}
                       </div>
                     ))}
                   </div>
                   <div style={{ marginTop: 12, textAlign: 'center', background: '#f5ede0', borderRadius: 6, padding: '8px 12px' }}>
-                    <div style={{ fontSize: 9, color: '#1a1a1a', marginBottom: 4 }}>? Hurry! Life Time Report Support &nbsp; ? Complete Guidance & Remedies</div>
+                    <div style={{ fontSize: 9, color: '#1a1a1a', marginBottom: 4 }}>✓ Hurry! Life Time Report Support &nbsp; ✓ Complete Guidance & Remedies</div>
                     <div style={{ fontSize: 11, fontWeight: 700, color: '#1a1a1a' }}>With Remedies Contact:</div>
                     <div style={{ fontSize: 15, fontWeight: 900, color: '#cc2200', marginTop: 2 }}>9858784784</div>
                   </div>
@@ -2128,7 +2128,7 @@ export default function ReportDetailPage() {
             {[
               { label: 'Cover', desc: 'Report Identity & Date' },
               { label: 'Preface', desc: 'Understanding Your Report & About MahaTathastu' },
-              ...visibleChapters.map(c => ({ label: `Chapter ${c.number}`, desc: `${c.title} � ${c.sanskrit}` })),
+              ...visibleChapters.map(c => ({ label: `Chapter ${c.number}`, desc: `${c.title} · ${c.sanskrit}` })),
               { label: 'Appendix', desc: 'Disclaimer, Guidance Notes & Closing' },
             ].map((item, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '9px 0', borderBottom: '1px solid #f3f4f6' }}>
@@ -2155,7 +2155,7 @@ export default function ReportDetailPage() {
                     <h2 style={{ fontFamily: 'Georgia, serif', fontSize: 22, fontWeight: 700, color: '#1a3a8c', marginBottom: 2, lineHeight: 1.2 }}>{c.title}</h2>
                     {c.sanskrit && <p style={{ fontSize: 13, color: '#cc2200', fontFamily: 'Georgia, serif', margin: 0 }}>{c.sanskrit}</p>}
                   </div>
-                  <div style={{ marginLeft: 'auto', fontSize: 28, color: '#c8922a', opacity: 0.5 }}>?</div>
+                  <div style={{ marginLeft: 'auto', fontSize: 28, color: '#c8922a', opacity: 0.5 }}>ॐ</div>
                 </div>
               </div>
               {/* Visual chart (KundliWheel / ChakraChart / etc.) - included in PDF */}
@@ -2180,7 +2180,7 @@ export default function ReportDetailPage() {
             ))}
             <div style={{ padding: '36px 44px' }}>
               <div style={{ borderBottom: '2px solid #c8922a', paddingBottom: 14, marginBottom: 24, display: 'flex', alignItems: 'center', gap: 12 }}>
-                <div style={{ fontSize: 24, color: '#c8922a' }}>?</div>
+                <div style={{ fontSize: 24, color: '#c8922a' }}>ॐ</div>
                 <h2 style={{ fontFamily: 'Georgia, serif', fontSize: 18, color: '#1a3a8c', fontWeight: 700, margin: 0 }}>Appendix: Disclaimer & Guidance Notes</h2>
               </div>
               {[
@@ -2197,13 +2197,13 @@ export default function ReportDetailPage() {
               ))}
               {/* Closing - parchment style, no dark box */}
               <div style={{ marginTop: 24, border: '2px solid #c8922a', borderRadius: 10, padding: '20px 28px', textAlign: 'center', background: 'rgba(200,146,42,0.06)' }}>
-                <p style={{ fontSize: 32, margin: '0 0 6px', color: '#cc2200', fontFamily: 'Georgia, serif' }}>? ??? ???</p>
+                <p style={{ fontSize: 32, margin: '0 0 6px', color: '#cc2200', fontFamily: 'Georgia, serif' }}>ॐ तत् सत्</p>
                 <p style={{ fontSize: 11, color: '#2c1a0e', marginBottom: 6, lineHeight: 1.7 }}>
                   May this report guide you on your path to self-knowledge and dharmic living.<br />
                   Follow the remedies with faith, patience and devotion for 90 days minimum.
                 </p>
-                <p style={{ fontSize: 11, color: '#1a3a8c', fontWeight: 700, marginBottom: 3 }}>- MahaTathastu � Tathastu Report System</p>
-                <p style={{ fontSize: 9, color: '#888' }}>www.mahatathastu.com � 9858784784</p>
+                <p style={{ fontSize: 11, color: '#1a3a8c', fontWeight: 700, marginBottom: 3 }}>- MahaTathastu · Tathastu Report System</p>
+                <p style={{ fontSize: 9, color: '#888' }}>www.mahatathastu.com · 9858784784</p>
                 <p style={{ fontSize: 8, color: '#aaa', marginTop: 8 }}>Contents of this product/report are copyright protected and owned by MahaTathastu</p>
               </div>
             </div>
