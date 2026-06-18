@@ -6,7 +6,8 @@ export async function POST(req: NextRequest) {
   const body = await req.json()
   const { type, to, subject, html } = body
 
-  if (!to) return NextResponse.json({ error: 'Missing recipient' }, { status: 400 })
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!to || !EMAIL_RE.test(to)) return NextResponse.json({ error: 'Invalid recipient email' }, { status: 400 })
 
   try {
     switch (type) {
