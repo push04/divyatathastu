@@ -23,11 +23,13 @@ interface Ebook {
 
 const EMPTY_FORM = {
   name: '',
+  author: '',
   description: '',
   price: 299,
   sale_price: '',
   slug: '',
   ebook_download_limit: 3,
+  external_url: '',
 }
 
 const inputCls = 'w-full px-3 py-2 rounded-lg border border-[var(--warm-sand)] text-sm focus:outline-none focus:border-[var(--saffron)] bg-white text-[var(--warm-charcoal)]'
@@ -74,11 +76,13 @@ export default function AdminEbooksPage() {
     setEditingId(eb.id)
     setForm({
       name: eb.name,
+      author: '',
       description: eb.description || '',
       price: eb.price,
       sale_price: eb.sale_price?.toString() || '',
       slug: eb.slug,
       ebook_download_limit: eb.ebook_download_limit ?? 3,
+      external_url: '',
     })
     setCoverPreview(getFirstImage(eb.images))
     setCoverFile(null)
@@ -169,15 +173,21 @@ export default function AdminEbooksPage() {
       await supabase.from('products').update(updates).eq('id', targetId!)
     }
 
+    // If external URL provided and no PDF uploaded, save it as file URL
+    const externalUrl = form.external_url.trim()
+    if (externalUrl && !pdfUrl) {
+      await supabase.from('products').update({ ebook_file_url: externalUrl }).eq('id', targetId!)
+    }
+
     // Keep ebooks table in sync so my-library can find this ebook
-    const finalFileUrl = pdfUrl ?? (editingId ? ebooks.find(e => e.id === editingId)?.ebook_file_url : null)
+    const finalFileUrl = pdfUrl ?? externalUrl ?? (editingId ? ebooks.find(e => e.id === editingId)?.ebook_file_url : null)
     if (finalFileUrl) {
       await supabase.from('ebooks').upsert({
         id: targetId!,
         title: form.name,
         file_url: finalFileUrl,
         description: form.description || null,
-        author: 'MahaTathastu',
+        author: form.author.trim() || 'MahaTathastu',
         language: null,
         tags: [],
       } as any, { onConflict: 'id' })
@@ -258,8 +268,26 @@ export default function AdminEbooksPage() {
           </div>
 
           <div className="col-span-2">
+            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">
+              Or — Paste External PDF URL
+            </label>
+            <input
+              type="url"
+              value={form.external_url}
+              onChange={e => setForm(f => ({ ...f, external_url: e.target.value }))}
+              className={inputCls}
+              placeholder="https://drive.google.com/... or any direct PDF link"
+            />
+            <p className="text-[10px] text-[var(--warm-charcoal)]/40 mt-1">Used only if no PDF file is uploaded above. Direct PDF links work best.</p>
+          </div>
+
+          <div className="col-span-2">
             <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Ebook Name *</label>
             <input type="text" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value, slug: generateSlug(e.target.value) }))} className={inputCls} placeholder="Vedic Astrology for Beginners" />
+          </div>
+          <div className="col-span-2">
+            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Author</label>
+            <input type="text" value={form.author} onChange={e => setForm(f => ({ ...f, author: e.target.value }))} className={inputCls} placeholder="MahaTathastu" />
           </div>
           <div>
             <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Price (₹) *</label>
