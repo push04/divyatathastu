@@ -74,7 +74,7 @@ export async function POST(req: NextRequest) {
       reportType: primary?.report_type,
     })
   } catch (err) {
-    console.error('Noxatra create error:', err)
+    console.error('Nakshatra create error:', err)
     return NextResponse.json({ error: err instanceof Error ? err.message : 'Failed' }, { status: 500 })
   }
 }

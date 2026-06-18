@@ -12,7 +12,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: "MahaTathastu — India's First 360° Holistic Life Report Platform",
-  description: "14 personalized holistic life reports for your entire family — Vedic astrology, numerology, chakra, Vastu, Prakriti & more. Powered by Noxatra AI.",
+  description: "14 personalized holistic life reports for your entire family — Vedic astrology, numerology, chakra, Vastu, Prakriti & more. Powered by Nakshatra AI.",
 }
 
 export default function HomePage() {

@@ -36,7 +36,7 @@ export default function AboutPage() {
           <h2 className="text-3xl font-bold text-[var(--indigo-deep)] mb-6 text-center">Our Mission</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { icon: 'my_location', title: 'Accuracy', desc: 'Our Noxatra AI engine combines Vedic calculations with machine learning for unparalleled accuracy in astrology reports.' },
+              { icon: 'my_location', title: 'Accuracy', desc: 'Our Nakshatra AI engine combines Vedic calculations with machine learning for unparalleled accuracy in astrology reports.' },
               { icon: 'public', title: 'Accessibility', desc: 'Making 5,000 years of Vedic wisdom accessible to every Indian family — in their language, at their budget.' },
               { icon: 'favorite', title: 'Authenticity', desc: 'Every recommendation is validated by our panel of expert astrologers, Ayurvedic doctors, and Vastu consultants.' },
             ].map(v => (

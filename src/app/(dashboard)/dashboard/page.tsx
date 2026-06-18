@@ -232,7 +232,7 @@ export default function DashboardPage() {
               </div>
             </div>
             <p className="text-sm text-[var(--indigo-deep)]/55 mb-4 leading-relaxed">
-              Your spiritual sanctuary is active. Generate reports for any family member using the Noxatra AI engine.
+              Your spiritual sanctuary is active. Generate reports for any family member using the Nakshatra AI engine.
             </p>
             <div className="flex gap-2 flex-wrap">
               <Link href="/reports/generate" className="btn-divine text-[10px] px-4 py-2">

@@ -14,8 +14,8 @@ const steps = [
   {
     num: '02',
     icon: 'auto_awesome',
-    title: 'Noxatra Generates Reports',
-    desc: 'Our Noxatra engine analyzes the cosmic blueprint using Vedic sciences and AI — all 14 reports auto-generated.',
+    title: 'Nakshatra Generates Reports',
+    desc: 'Our Nakshatra engine analyzes the cosmic blueprint using Vedic sciences and AI — all 14 reports auto-generated.',
     color: 'var(--saffron)',
   },
   {
@@ -71,7 +71,7 @@ export default function HowItWorks() {
             transition={{ delay: 0.2 }}
             className="text-white/60 max-w-xl mx-auto"
           >
-            From birth data to comprehensive life guidance in minutes. Our Noxatra AI engine handles the complex calculations.
+            From birth data to comprehensive life guidance in minutes. Our Nakshatra AI engine handles the complex calculations.
           </motion.p>
         </div>
 

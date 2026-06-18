@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
   title: 'Our Services | MahaTathastu — 14 Vedic Reports',
-  description: 'Explore all 14 Noxatra reports: Kundli, Numerology, Chakra, Prakriti, Yantra, Mantra, Vastu, DMIT, and more.',
+  description: 'Explore all 14 Nakshatra reports: Kundli, Numerology, Chakra, Prakriti, Yantra, Mantra, Vastu, DMIT, and more.',
 }
 
 const SERVICES = [
@@ -40,8 +40,8 @@ export default async function ServicesPage() {
       {/* Hero */}
       <section className="page-banner">
         <div className="page-banner-inner max-w-3xl mx-auto">
-          <p className="text-[var(--saffron)] text-xs font-bold tracking-[0.2em] uppercase mb-4" style={{ fontFamily: "'Sora', sans-serif" }}>The Noxatra Engine</p>
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>Noxatra Report System</h1>
+          <p className="text-[var(--saffron)] text-xs font-bold tracking-[0.2em] uppercase mb-4" style={{ fontFamily: "'Sora', sans-serif" }}>The Nakshatra Engine</p>
+          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>Nakshatra Report System</h1>
           <div className="ornate-divider">
             <span className="material-symbols-outlined text-[14px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
           </div>
