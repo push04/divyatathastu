@@ -141,6 +141,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${s.title} | MahaTathastu`,
     description: s.description.slice(0, 160),
+    alternates: { canonical: `/services/${slug}` },
   }
 }
 

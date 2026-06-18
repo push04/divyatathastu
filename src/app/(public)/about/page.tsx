@@ -5,6 +5,7 @@ import SudarshanLoader from '@/components/SudarshanLoader'
 export const metadata: Metadata = {
   title: 'About Us | MahaTathastu',
   description: "India's First 360° Holistic Life Platform - combining Vedic astrology, numerology, Ayurveda, and spiritual guidance.",
+  alternates: { canonical: '/about' },
 }
 
 const TEAM = [

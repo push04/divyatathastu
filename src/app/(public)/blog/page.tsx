@@ -5,6 +5,7 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Blog | MahaTathastu - Vedic Wisdom & Spiritual Guidance',
   description: 'Read articles on Vedic astrology, numerology, yoga, Ayurveda, and spiritual practices.',
+  alternates: { canonical: '/blog' },
 }
 export const revalidate = 3600
 

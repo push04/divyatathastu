@@ -3,6 +3,7 @@
 export const metadata: Metadata = {
   title: 'Terms of Service | MahaTathastu',
   description: 'Terms and conditions for using MahaTathastu - India\'s 360° Holistic Life Platform.',
+  alternates: { canonical: '/terms' },
 }
 
 const SECTIONS = [

@@ -5,6 +5,7 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Events | MahaTathastu - Spiritual Events & Workshops',
   description: 'Join live webinars, workshops and spiritual events on astrology, numerology, meditation and Vedic sciences.',
+  alternates: { canonical: '/events' },
 }
 export const revalidate = 3600
 

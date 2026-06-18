@@ -4,6 +4,7 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'In the Media | MahaTathastu - Press & Coverage',
   description: 'MahaTathastu featured in leading Indian media outlets - Times of India, NDTV, Hindustan Times and more.',
+  alternates: { canonical: '/in-media' },
 }
 
 const PRESS_FEATURES: { id: number; outlet: string; logo: string; date: string; headline: string; excerpt: string; category: string; color: string; url?: string }[] = [

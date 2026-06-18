@@ -9,10 +9,39 @@ const dmSans = DM_Sans({
   display: 'swap',
 })
 
+const SITE_URL = 'https://www.mahatathastu.com'
+
+const ORG_SCHEMA = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${SITE_URL}/#organization`,
+      name: 'MahaTathastu',
+      url: SITE_URL,
+      logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo.png` },
+      description: "India's first comprehensive holistic life platform combining Vedic astrology, numerology, Vastu, chakra science, and Ayurveda.",
+      telephone: '+91-9858784784',
+      email: 'support@mahatathastu.com',
+      address: { '@type': 'PostalAddress', addressCountry: 'IN' },
+      sameAs: [],
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE_URL}/#website`,
+      url: SITE_URL,
+      name: 'MahaTathastu',
+      description: '14 personalized holistic life reports for your family - Vedic astrology, numerology, chakra, Vastu, Prakriti.',
+      publisher: { '@id': `${SITE_URL}/#organization` },
+      inLanguage: 'en-IN',
+    },
+  ],
+}
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://mahatathastu.com'),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "MahaTathastu - India's First 360° Holistic Life Report Platform",
+    default: "MahaTathastu - India's First 360° Holistic Life Reports",
     template: '%s | MahaTathastu',
   },
   description: "Get personalized Vedic astrology, numerology, chakra, Vastu, Prakriti, DMIT & psychology reports for your entire family. India's most comprehensive spiritual wellness platform.",
@@ -22,7 +51,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_IN',
-    url: 'https://mahatathastu.com',
+    url: SITE_URL,
     siteName: 'MahaTathastu',
     title: 'MahaTathastu - 360° Holistic Life Report Platform',
     description: '14 personalized reports combining Vedic astrology, numerology, chakra, Vastu & Ayurveda for your family.',
@@ -43,6 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_SCHEMA) }} />
       </head>
       <body className="antialiased min-h-screen flex flex-col">
         {children}

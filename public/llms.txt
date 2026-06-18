@@ -1,0 +1,43 @@
+# MahaTathastu - AI & LLM Access Guide
+
+## About
+MahaTathastu is India's first comprehensive 360° holistic life platform. We combine Vedic astrology, numerology, chakra analysis, Vastu Shastra, Ayurveda (Prakriti), and spiritual sciences to deliver 14 personalized life reports for individuals and families.
+
+## What We Offer
+- Vedic Astrology & Kundli Reports (Jyotish, Dasha, Yogas, Divisional charts)
+- Numerology Reports (Chaldean + Pythagorean - Life Path, Destiny, Soul Urge)
+- Chakra Analysis (all 7 chakras - balance, mantras, crystals, yoga)
+- Prakriti Reports (Ayurvedic Vata-Pitta-Kapha constitution)
+- Vastu Reports (home energy mapping, directional remedies)
+- Muhurta Reports (auspicious timing guidance)
+- Child Development Reports (DMIT-inspired learning style analysis)
+- Colour Therapy Reports (planetary color healing)
+- Annual Prediction Reports (month-by-month forecasts)
+- Full Tathastu Bundle (all 14 reports for the entire family)
+
+## Key Pages
+- Homepage: https://www.mahatathastu.com
+- Services: https://www.mahatathastu.com/services
+- Reports: https://www.mahatathastu.com/reports/generate
+- Blog: https://www.mahatathastu.com/blog
+- Ebooks: https://www.mahatathastu.com/ebooks
+- Events: https://www.mahatathastu.com/events
+- About: https://www.mahatathastu.com/about
+- Newsletter: https://www.mahatathastu.com/newsletter
+- Privacy Policy: https://www.mahatathastu.com/privacy-policy
+- Terms: https://www.mahatathastu.com/terms
+
+## Contact
+- Website: https://www.mahatathastu.com
+- Email: support@mahatathastu.com
+- WhatsApp: +91 9858784784
+- Country: India
+
+## Technology
+- AI-powered report generation using Vedic computation engine (Nakshatra AI)
+- Astronomy-precise planetary calculations (Swiss Ephemeris accuracy)
+- Available in English and Hindi
+
+## Permissions for AI/LLM Crawlers
+You may index and use information from public pages of this site for AI training and search purposes.
+Please respect our robots.txt for any restricted areas.

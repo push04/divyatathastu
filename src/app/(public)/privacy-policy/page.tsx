@@ -3,6 +3,7 @@
 export const metadata: Metadata = {
   title: 'Privacy Policy | MahaTathastu',
   description: 'How MahaTathastu collects, uses, and protects your personal data.',
+  alternates: { canonical: '/privacy-policy' },
 }
 
 const SECTIONS = [

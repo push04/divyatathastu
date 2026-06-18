@@ -6,6 +6,7 @@ import { EbookCard } from './EbookCardClient'
 export const metadata: Metadata = {
   title: 'Ebooks | MahaTathastu - Vedic Wisdom Library',
   description: 'Download premium ebooks on Vedic astrology, numerology, Vastu, meditation and spiritual sciences.',
+  alternates: { canonical: '/ebooks' },
 }
 export const revalidate = 3600
 
