@@ -52,6 +52,7 @@ export default function CoursesPage() {
   const [enrollModal, setEnrollModal] = useState<ServiceItem | null>(null)
   const [enrollStep, setEnrollStep] = useState<'confirm' | 'processing' | 'done'>('confirm')
   const [videoModal, setVideoModal] = useState<ServiceItem | null>(null)
+  const [detailModal, setDetailModal] = useState<ServiceItem | null>(null)
   const [enrolled, setEnrolled] = useState<Set<string>>(new Set())
   const [levelFilter, setLevelFilter] = useState<string>('all')
   const [typeFilter, setTypeFilter] = useState<'all' | 'live' | 'recorded'>('all')
@@ -121,7 +122,7 @@ export default function CoursesPage() {
         body: JSON.stringify({ action: 'create', courseId: item.id, amount: item.price }),
       })
       const orderData = await orderRes.json()
-      if (!orderRes.ok) throw new Error(orderData.error || 'Payment initialization failed')
+      if (!orderRes.ok) throw new Error(orderData.error || 'Could not create payment order. Please try again.')
 
       if (!document.getElementById('rzp-courses-script')) {
         await new Promise<void>(resolve => {
@@ -135,7 +136,7 @@ export default function CoursesPage() {
 
       const rzp = new (window as any).Razorpay({
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: item.price * 100,
+        amount: Math.round((item.price || 0) * 100),
         currency: 'INR',
         order_id: orderData.order_id,
         name: 'MahaTathastu',
@@ -152,7 +153,8 @@ export default function CoursesPage() {
             setEnrollStep('done')
             setEnrolled(s => new Set([...s, item.id]))
           } else {
-            toast.error('Payment successful but enrollment failed. Contact support.')
+            const errData = await vRes.json().catch(() => ({}))
+            toast.error(errData.error || 'Payment successful but enrollment failed. Contact support.')
             closeModal()
           }
         },
@@ -177,6 +179,162 @@ export default function CoursesPage() {
 
   return (
     <div className="min-h-screen bg-[var(--kutch-white)]">
+
+      {/* ── Course Detail Modal ── */}
+      {detailModal && (() => {
+        const item = detailModal
+        const isEnrolled = enrolled.has(item.id)
+        const hasVideo = !!(item.video_url && getYouTubeEmbedUrl(item.video_url))
+        return (
+          <div
+            className="fixed inset-0 z-[150] flex items-end sm:items-center justify-center p-0 sm:p-6"
+            style={{ background: 'rgba(10,8,30,0.7)', backdropFilter: 'blur(8px)' }}
+            onClick={e => { if (e.target === e.currentTarget) setDetailModal(null) }}
+          >
+            <div className="bg-white rounded-t-3xl sm:rounded-2xl w-full sm:max-w-2xl shadow-2xl overflow-hidden flex flex-col" style={{ maxHeight: '92vh' }}>
+
+              {/* Cover / header */}
+              <div className="relative flex-shrink-0" style={{ minHeight: 180 }}>
+                {item.image_url ? (
+                  <img src={item.image_url} alt={item.title} className="w-full h-48 object-cover" />
+                ) : (
+                  <div className="w-full h-48 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #312e81 0%, #4338ca 100%)' }}>
+                    <span className="material-symbols-outlined text-[72px] text-white/15" style={{ fontVariationSettings: "'FILL' 0" }}>menu_book</span>
+                  </div>
+                )}
+                <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%)' }} />
+                <button onClick={() => setDetailModal(null)}
+                  className="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors">
+                  <span className="material-symbols-outlined text-[18px]">close</span>
+                </button>
+                {item.is_live && <span className="absolute top-4 left-4 text-[10px] px-2.5 py-0.5 rounded-full bg-red-500 text-white font-bold shadow">LIVE</span>}
+                {hasVideo && (
+                  <button
+                    onClick={() => { setDetailModal(null); setVideoModal(item) }}
+                    className="absolute bottom-4 left-4 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-white"
+                    style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.25)' }}>
+                    <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>play_circle</span>
+                    Watch Preview
+                  </button>
+                )}
+              </div>
+
+              {/* Scrollable content */}
+              <div className="overflow-y-auto flex-1 p-6 space-y-5">
+
+                {/* Badges */}
+                <div className="flex gap-2 flex-wrap">
+                  {item.level && <span className="text-[11px] px-2.5 py-0.5 rounded-full font-semibold" style={{ background: 'rgba(99,102,241,0.1)', color: '#3730a3' }}>{item.level}</span>}
+                  {item.badge_text && (
+                    <span className="text-[11px] px-2.5 py-0.5 rounded-full font-semibold" style={{ background: `${item.badge_color || '#D4A017'}18`, color: item.badge_color || '#D4A017', border: `1px solid ${item.badge_color || '#D4A017'}40` }}>
+                      {item.badge_text}
+                    </span>
+                  )}
+                </div>
+
+                {/* Title */}
+                <h2 className="text-2xl font-black text-[var(--indigo-deep)] leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  {item.title}
+                </h2>
+                {item.subtitle && <p className="text-sm text-[var(--warm-charcoal)]/60 -mt-3">{item.subtitle}</p>}
+
+                {/* Meta row */}
+                <div className="flex gap-4 flex-wrap text-sm text-[var(--warm-charcoal)]/60">
+                  {item.instructor_name && (
+                    <span className="flex items-center gap-1.5 text-[var(--saffron)] font-semibold">
+                      <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>person</span>
+                      {item.instructor_name}
+                    </span>
+                  )}
+                  {item.duration && (
+                    <span className="flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-[16px]">schedule</span>
+                      {item.duration}
+                    </span>
+                  )}
+                  {item.max_participants > 0 && (
+                    <span className="flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-[16px]">group</span>
+                      Max {item.max_participants} students
+                    </span>
+                  )}
+                </div>
+
+                {/* Description */}
+                {(item.long_description || item.description) && (
+                  <div>
+                    <p className="text-[11px] font-bold text-[var(--indigo-deep)]/40 uppercase tracking-widest mb-2">About This Course</p>
+                    <p className="text-sm text-[var(--warm-charcoal)]/70 leading-relaxed whitespace-pre-line">
+                      {item.long_description || item.description}
+                    </p>
+                  </div>
+                )}
+
+                {/* Instructor bio */}
+                {item.instructor_bio && (
+                  <div className="p-4 rounded-xl" style={{ background: 'rgba(99,102,241,0.05)', border: '1px solid rgba(99,102,241,0.1)' }}>
+                    <p className="text-[11px] font-bold text-[var(--indigo-deep)]/40 uppercase tracking-widest mb-2">About the Instructor</p>
+                    <p className="text-sm font-semibold text-[var(--indigo-deep)] mb-1">{item.instructor_name}</p>
+                    <p className="text-xs text-[var(--warm-charcoal)]/65 leading-relaxed">{item.instructor_bio}</p>
+                  </div>
+                )}
+
+                {/* What&apos;s included */}
+                <div>
+                  <p className="text-[11px] font-bold text-[var(--indigo-deep)]/40 uppercase tracking-widest mb-3">What&apos;s Included</p>
+                  <div className="space-y-2.5">
+                    {(DEFAULT_INCLUDES).map((inc: string) => (
+                      <div key={inc} className="flex items-center gap-2.5 text-sm text-[var(--warm-charcoal)]/80">
+                        <span className="material-symbols-outlined text-emerald-500 text-[17px]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                        {inc}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Footer CTA */}
+              <div className="flex-shrink-0 border-t border-[var(--outline-variant)]/20 p-5 flex items-center justify-between gap-4">
+                <div>
+                  {item.price && item.price > 0 ? (
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-black text-[var(--indigo-deep)]">₹{item.price.toLocaleString('en-IN')}</span>
+                      {item.original_price && <span className="text-sm line-through text-[var(--warm-charcoal)]/30">₹{item.original_price.toLocaleString('en-IN')}</span>}
+                    </div>
+                  ) : (
+                    <span className="text-2xl font-black text-emerald-600">Free</span>
+                  )}
+                </div>
+
+                {isEnrolled ? (
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm px-4 py-2.5 rounded-xl bg-emerald-100 text-emerald-700 font-semibold flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                      Enrolled
+                    </span>
+                    {hasVideo && (
+                      <button onClick={() => { setDetailModal(null); setVideoModal(item) }}
+                        className="btn-divine px-5 py-2.5 text-sm flex items-center gap-1.5">
+                        <span className="material-symbols-outlined text-[17px]" style={{ fontVariationSettings: "'FILL' 1" }}>play_circle</span>
+                        Watch
+                      </button>
+                    )}
+                  </div>
+                ) : item.is_bookable ? (
+                  <button
+                    onClick={() => { setDetailModal(null); openEnrollModal(item) }}
+                    className="btn-divine px-6 py-3 text-sm font-semibold flex items-center gap-2">
+                    <span className="material-symbols-outlined text-[18px]">school</span>
+                    {item.price && item.price > 0 ? `Enroll — ₹${item.price.toLocaleString('en-IN')}` : 'Enroll Free'}
+                  </button>
+                ) : (
+                  <span className="text-sm px-4 py-2.5 rounded-xl border border-[var(--warm-sand)] text-[var(--warm-charcoal)]/50">Coming Soon</span>
+                )}
+              </div>
+            </div>
+          </div>
+        )
+      })()}
 
       {/* ── Video Viewer Modal ── */}
       {videoModal && (
@@ -459,7 +617,7 @@ export default function CoursesPage() {
                 const isEnrolled = enrolled.has(item.id)
                 const hasVideo = !!(item.video_url && getYouTubeEmbedUrl(item.video_url))
                 return (
-                  <div key={item.id} className="bento-card flex flex-col hover:shadow-xl transition-all hover:-translate-y-1 overflow-hidden group">
+                  <div key={item.id} className="bento-card flex flex-col hover:shadow-xl transition-all hover:-translate-y-1 overflow-hidden group cursor-pointer" onClick={() => setDetailModal(item)}>
 
                     {/* Banner */}
                     {item.image_url ? (
@@ -531,7 +689,7 @@ export default function CoursesPage() {
                             </span>
                             {hasVideo && (
                               <button
-                                onClick={() => setVideoModal(item)}
+                                onClick={e => { e.stopPropagation(); setVideoModal(item) }}
                                 title="Watch Course"
                                 className="w-8 h-8 rounded-full bg-[var(--indigo-deep)]/10 hover:bg-[var(--indigo-deep)] hover:text-white text-[var(--indigo-deep)] flex items-center justify-center transition-all"
                               >
@@ -540,7 +698,7 @@ export default function CoursesPage() {
                             )}
                           </div>
                         ) : item.is_bookable ? (
-                          <button onClick={() => openEnrollModal(item)} className="btn-divine text-xs px-4 py-2">
+                          <button onClick={e => { e.stopPropagation(); openEnrollModal(item) }} className="btn-divine text-xs px-4 py-2">
                             Enroll Now
                           </button>
                         ) : (

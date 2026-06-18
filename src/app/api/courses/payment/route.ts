@@ -50,20 +50,31 @@ export async function POST(req: NextRequest) {
 
   if (action === 'create') {
     if (!process.env.RAZORPAY_KEY_ID) {
-      return NextResponse.json({ error: 'Payment not configured' }, { status: 503 })
+      return NextResponse.json({ error: 'Payment not configured on server' }, { status: 503 })
     }
+
     const { amount } = body
+    const amountPaise = Math.round((Number(amount) || 0) * 100)
+
+    if (amountPaise < 100) {
+      return NextResponse.json({ error: 'Course price must be at least ₹1' }, { status: 400 })
+    }
+
     try {
       const razorpay = getRazorpay()
       const order = await razorpay.orders.create({
-        amount: Math.round(amount * 100),
+        amount: amountPaise,
         currency: 'INR',
-        receipt: `course-${courseId}-${Date.now()}`,
+        // Razorpay receipt limit is 40 chars — keep it short
+        receipt: `crs-${Date.now()}`,
         notes: { course_id: courseId, user_id: user.id },
       })
       return NextResponse.json({ order_id: order.id })
     } catch (err: any) {
-      return NextResponse.json({ error: err.message }, { status: 500 })
+      // Razorpay throws { error: { description: '...' } }, not a standard Error
+      const msg = err?.error?.description || err?.description || err?.message || 'Payment order creation failed'
+      console.error('[courses/payment/create] Razorpay error:', JSON.stringify(err))
+      return NextResponse.json({ error: msg }, { status: 500 })
     }
   }
 
