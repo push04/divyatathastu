@@ -120,7 +120,7 @@ export default function PilgrimagePage() {
           {/* Config */}
           <div className="space-y-4">
             <div className="card-divine p-5 space-y-4">
-              <h2 className="font-bold text-[var(--indigo-deep)]">Journey Details</h2>
+              <h2 className="text-lg font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Journey Details</h2>
               <div>
                 <label className="block text-sm font-medium text-[var(--indigo-deep)] mb-1.5">Starting City *</label>
                 <input type="text" value={startCity} onChange={e => setStartCity(e.target.value)} placeholder="e.g. Delhi, Mumbai" className="w-full px-3 py-2.5 rounded-lg border border-[var(--warm-sand)] bg-white text-sm focus:outline-none focus:border-[var(--saffron)]" />
@@ -154,7 +154,7 @@ export default function PilgrimagePage() {
 
             {savedItineraries.length > 0 && (
               <div className="card-divine p-5">
-                <h2 className="font-bold text-[var(--indigo-deep)] mb-3">Previous Itineraries</h2>
+                <h2 className="text-lg font-bold text-[var(--indigo-deep)] mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>Previous Itineraries</h2>
                 <div className="space-y-2">
                   {savedItineraries.map(s => (
                     <button key={s.id} onClick={() => setItinerary(s.schedule as any)} className="w-full text-left p-2.5 rounded-lg hover:bg-[var(--warm-sand)] transition-all">
@@ -170,7 +170,7 @@ export default function PilgrimagePage() {
           {/* Temple selector */}
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="font-bold text-[var(--indigo-deep)]">Select Temples ({selected.size} chosen)</h2>
+              <h2 className="text-lg font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Select Temples ({selected.size} chosen)</h2>
               <button onClick={() => setSelected(new Set())} className="text-xs text-[var(--warm-charcoal)]/50 hover:text-[var(--terracotta)]">Clear all</button>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[600px] overflow-y-auto pr-1">

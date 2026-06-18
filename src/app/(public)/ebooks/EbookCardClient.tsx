@@ -129,7 +129,7 @@ export function EbookCard({ book }: { book: any }) {
         <span className="text-[10px] uppercase tracking-widest" style={{ fontFamily: "'Sora', sans-serif", color: catTextColor }}>
           {book.category}
         </span>
-        <h3 className="mt-2 font-semibold leading-snug line-clamp-2" style={{ fontFamily: "'Playfair Display', serif", fontSize: '16px', color: 'var(--indigo-deep)' }}>
+        <h3 className="mt-2 font-bold leading-snug line-clamp-2" style={{ fontFamily: "'Playfair Display', serif", fontSize: '17px', color: 'var(--indigo-deep)' }}>
           {book.title}
         </h3>
         {book.author && (

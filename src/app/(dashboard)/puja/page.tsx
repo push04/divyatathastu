@@ -372,7 +372,7 @@ ${htmlContent}
                 <p className="text-xs text-[var(--terracotta)] font-semibold uppercase tracking-widest mb-0.5">
                   {isHindi ? 'पूजा मार्गदर्शिका' : 'Ritual Guide'}
                 </p>
-                <h2 className="text-xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <h2 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>
                   {pujaTitle}
                 </h2>
               </div>

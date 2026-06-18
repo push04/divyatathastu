@@ -105,7 +105,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
           {/* What's included */}
           {event.includes && (
             <div className="card-divine p-5">
-              <h2 className="font-bold text-[var(--indigo-deep)] mb-3">What's Included</h2>
+              <h2 className="text-lg font-bold text-[var(--indigo-deep)] mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>What's Included</h2>
               <ul className="space-y-2">
                 {event.includes.map((item: string, i: number) => (
                   <li key={i} className="flex items-center gap-2 text-sm text-[var(--warm-charcoal)]/80">
@@ -119,7 +119,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
           {/* Requirements */}
           {event.requirements && (
             <div className="card-divine p-5">
-              <h2 className="font-bold text-[var(--indigo-deep)] mb-2">Requirements</h2>
+              <h2 className="text-lg font-bold text-[var(--indigo-deep)] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Requirements</h2>
               <p className="text-sm text-[var(--warm-charcoal)]/70">{event.requirements}</p>
             </div>
           )}

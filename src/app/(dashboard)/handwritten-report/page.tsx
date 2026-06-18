@@ -120,7 +120,7 @@ export default function HandwrittenReportPage() {
           <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-sm" style={{ background: 'var(--indigo-deep)' }}>
             <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>draw</span>
           </div>
-          <h1 className="text-xl font-bold text-[var(--indigo-deep)]">Handwritten Report</h1>
+          <h1 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Handwritten Report</h1>
         </div>
         <p className="text-sm text-[var(--warm-charcoal)]/50 ml-12">
           Our expert astrologers will prepare a personalised handwritten analysis for you or your family members.
@@ -129,7 +129,7 @@ export default function HandwrittenReportPage() {
 
       {/* Request form */}
       <div className="card-divine p-5 space-y-4">
-        <h2 className="font-semibold text-[var(--indigo-deep)] flex items-center gap-2 text-sm">
+        <h2 className="text-lg font-bold text-[var(--indigo-deep)] flex items-center gap-2" style={{ fontFamily: "'Playfair Display', serif" }}>
           <span className="material-symbols-outlined text-[16px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>add_circle</span>
           Request a New Report
         </h2>
@@ -190,7 +190,7 @@ export default function HandwrittenReportPage() {
       {/* Previous requests */}
       {requests.length > 0 && (
         <div className="space-y-3">
-          <h2 className="font-semibold text-[var(--indigo-deep)] text-sm">Your Requests</h2>
+          <h2 className="text-lg font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Your Requests</h2>
           {requests.map(r => (
             <div key={r.id} className="card-divine p-4 flex items-start gap-3">
               <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'var(--warm-sand)' }}>

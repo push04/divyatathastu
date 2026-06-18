@@ -114,7 +114,7 @@ export default function AddMemberPage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info */}
         <div className="card-divine p-6 space-y-4">
-          <h2 className="font-bold text-[var(--indigo-deep)] text-sm uppercase tracking-wider">Basic Information</h2>
+          <h2 className="text-lg font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Basic Information</h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -160,7 +160,7 @@ export default function AddMemberPage() {
 
         {/* Birth Details */}
         <div className="card-divine p-6 space-y-4">
-          <h2 className="font-bold text-[var(--indigo-deep)] text-sm uppercase tracking-wider">Birth Details</h2>
+          <h2 className="text-lg font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Birth Details</h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
