@@ -60,7 +60,7 @@ export default async function ServicesPage() {
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">
-                  <h2 className="text-2xl font-bold text-[var(--indigo-deep)]">{SERVICES[0].label}</h2>
+                  <h2 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>{SERVICES[0].label}</h2>
                   <span className="text-xs bg-[var(--terracotta)] text-white px-2 py-0.5 rounded-full font-bold">{SERVICES[0].badge}</span>
                 </div>
                 <p className="text-[var(--warm-charcoal)]/70 mb-3">{SERVICES[0].desc}</p>
@@ -84,7 +84,7 @@ export default async function ServicesPage() {
                     <span className="material-symbols-outlined text-[20px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{s.icon}</span>
                   </div>
                   <div>
-                    <h3 className="font-bold text-[var(--indigo-deep)]">{s.label}</h3>
+                    <h3 className="font-bold text-[var(--indigo-deep)] text-base" style={{ fontFamily: "'Playfair Display', serif" }}>{s.label}</h3>
                     <span className="text-sm font-bold text-[var(--terracotta)]">₹{s.price.toLocaleString('en-IN')}</span>
                   </div>
                 </div>

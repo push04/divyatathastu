@@ -62,7 +62,7 @@ export default function ReportsPage() {
     <div className="p-6 max-w-5xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--indigo-deep)]">Nakshatra Reports</h1>
+          <h1 className="text-3xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Nakshatra Reports</h1>
           <p className="text-sm text-[var(--warm-charcoal)]/60 mt-0.5">{reports.length} reports · 14 types available</p>
         </div>
         <Link href="/reports/generate" className="btn-divine text-sm px-4 py-2 self-start sm:self-auto inline-flex items-center gap-1.5"><span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>Generate Report</Link>
@@ -84,7 +84,7 @@ export default function ReportsPage() {
       {filtered.length === 0 ? (
         <div className="bg-white rounded-2xl border border-dashed border-[var(--warm-sand)] p-16 text-center">
           <span className="material-symbols-outlined text-[56px] text-[var(--outline-variant)] mb-4 block">description</span>
-          <h2 className="text-xl font-bold text-[var(--indigo-deep)] mb-2">No Reports Yet</h2>
+          <h2 className="text-xl font-bold text-[var(--indigo-deep)] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>No Reports Yet</h2>
           <p className="text-[var(--warm-charcoal)]/60 mb-6">Generate your first Nakshatra report to unlock divine insights</p>
           <Link href="/reports/generate" className="btn-divine px-8 py-3">Generate First Report</Link>
         </div>

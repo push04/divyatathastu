@@ -290,8 +290,8 @@ export default function ShopPage() {
 
                     {/* Content */}
                     <div className="p-4 flex flex-col flex-1">
-                      <h3 className="font-bold text-sm leading-snug mb-1 line-clamp-2 cursor-pointer transition-colors"
-                        style={{ color: 'var(--indigo-deep)', fontFamily: "'DM Sans', sans-serif" }}
+                      <h3 className="font-bold text-base leading-snug mb-1 line-clamp-2 cursor-pointer transition-colors"
+                        style={{ color: 'var(--indigo-deep)', fontFamily: "'Playfair Display', serif" }}
                         onClick={() => setSelected(p)}
                         onMouseEnter={e => (e.currentTarget.style.color = 'var(--terracotta)')}
                         onMouseLeave={e => (e.currentTarget.style.color = 'var(--indigo-deep)')}>

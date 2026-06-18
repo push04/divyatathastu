@@ -103,7 +103,7 @@ export default function HowItWorks() {
                     {step.icon}
                   </span>
                 </div>
-                <h3 className="text-white font-semibold text-lg mb-2">{step.title}</h3>
+                <h3 className="text-white font-bold text-lg mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{step.title}</h3>
                 <p className="text-white/60 text-sm leading-relaxed">{step.desc}</p>
               </div>
             </motion.div>

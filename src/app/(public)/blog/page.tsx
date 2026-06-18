@@ -59,7 +59,7 @@ export default async function BlogPage() {
               <div className="flex items-start gap-4">
                 <div className="flex-1">
                   <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${CATEGORY_COLORS[posts[0].category] || 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>{posts[0].category}</span>
-                  <h2 className="text-2xl font-bold text-[var(--indigo-deep)] mt-3 mb-2">{posts[0].title}</h2>
+                  <h2 className="text-2xl font-bold text-[var(--indigo-deep)] mt-3 mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{posts[0].title}</h2>
                   <p className="text-[var(--warm-charcoal)]/70">{posts[0].excerpt}</p>
                   <p className="text-sm text-[var(--warm-charcoal)]/40 mt-3">{posts[0].read_time} min read &middot; {new Date(posts[0].created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                 </div>
@@ -75,7 +75,7 @@ export default async function BlogPage() {
               <Link key={post.id} href={`/blog/${post.slug}`} className="card-divine p-5 hover:shadow-md transition-all flex flex-col">
                 <div className="flex-1">
                   <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${CATEGORY_COLORS[post.category] || 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>{post.category}</span>
-                  <h3 className="font-bold text-[var(--indigo-deep)] mt-2 mb-2 leading-snug">{post.title}</h3>
+                  <h3 className="font-bold text-[var(--indigo-deep)] mt-2 mb-2 leading-snug text-base" style={{ fontFamily: "'Playfair Display', serif" }}>{post.title}</h3>
                   <p className="text-sm text-[var(--warm-charcoal)]/70 line-clamp-3">{post.excerpt}</p>
                 </div>
                 <p className="text-xs text-[var(--warm-charcoal)]/40 mt-3">{post.read_time} min read &middot; {new Date(post.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</p>

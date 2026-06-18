@@ -36,7 +36,7 @@ export default function InMediaPage() {
       {/* Featured press */}
       <section className="py-12 px-6 bg-[var(--kutch-white)]">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-2xl font-bold text-[var(--indigo-deep)] mb-6">Featured Coverage</h2>
+          <h2 className="text-2xl font-bold text-[var(--indigo-deep)] mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>Featured Coverage</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {PRESS_FEATURES.map(item => (
               <div key={item.id} className="card-divine p-5 flex flex-col gap-3 hover:shadow-md transition-shadow">
@@ -50,7 +50,7 @@ export default function InMediaPage() {
                   </div>
                   <span className="text-xs bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 px-2 py-0.5 rounded-full">{item.category}</span>
                 </div>
-                <h3 className="font-semibold text-[var(--indigo-deep)] leading-snug text-sm">{item.headline}</h3>
+                <h3 className="font-bold text-[var(--indigo-deep)] leading-snug text-base" style={{ fontFamily: "'Playfair Display', serif" }}>{item.headline}</h3>
                 <p className="text-xs text-[var(--warm-charcoal)]/60 leading-relaxed">{item.excerpt}</p>
                 {item.url && (
                   <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-xs text-[var(--indigo-deep)] font-medium hover:underline text-left mt-auto flex items-center gap-1">
@@ -86,7 +86,7 @@ export default function InMediaPage() {
 
       {/* Press kit CTA */}
       <section className="py-12 px-6 bg-[var(--indigo-deep)] text-center">
-        <h2 className="text-2xl font-bold text-white mb-2">Media Inquiries</h2>
+        <h2 className="text-2xl font-bold text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Media Inquiries</h2>
         <p className="text-white/70 mb-6 max-w-md mx-auto">Journalists, bloggers and researchers — we'd love to share our story. Download our press kit or reach out directly.</p>
         <div className="flex justify-center gap-4 flex-wrap">
           <button className="btn-divine px-6 py-3 flex items-center gap-2"><span className="material-symbols-outlined text-[18px]">folder_open</span>Download Press Kit</button>

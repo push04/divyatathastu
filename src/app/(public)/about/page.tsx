@@ -33,7 +33,7 @@ export default function AboutPage() {
       {/* Mission */}
       <section className="py-16 px-6 bg-white">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-[var(--indigo-deep)] mb-6 text-center">Our Mission</h2>
+          <h2 className="text-3xl font-bold text-[var(--indigo-deep)] mb-6 text-center" style={{ fontFamily: "'Playfair Display', serif" }}>Our Mission</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               { icon: 'my_location', title: 'Accuracy', desc: 'Our Nakshatra AI engine combines Vedic calculations with machine learning for unparalleled accuracy in astrology reports.' },
@@ -42,7 +42,7 @@ export default function AboutPage() {
             ].map(v => (
               <div key={v.title} className="card-divine p-6 text-center">
                 <div className="flex justify-center mb-4"><span className="material-symbols-outlined text-[40px] text-[var(--indigo-deep)]" style={{ fontVariationSettings: "'FILL' 1" }}>{v.icon}</span></div>
-                <h3 className="font-bold text-[var(--indigo-deep)] mb-2">{v.title}</h3>
+                <h3 className="font-bold text-[var(--indigo-deep)] mb-2 text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>{v.title}</h3>
                 <p className="text-sm text-[var(--warm-charcoal)]/70">{v.desc}</p>
               </div>
             ))}
@@ -70,7 +70,7 @@ export default function AboutPage() {
       {/* Team */}
       <section className="py-16 px-6 bg-[var(--kutch-white)]">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-[var(--indigo-deep)] mb-8 text-center">Our Expert Panel</h2>
+          <h2 className="text-3xl font-bold text-[var(--indigo-deep)] mb-8 text-center" style={{ fontFamily: "'Playfair Display', serif" }}>Our Expert Panel</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {TEAM.map(t => (
               <div key={t.name} className="card-divine p-5 flex items-center gap-4">
@@ -78,7 +78,7 @@ export default function AboutPage() {
                   <span className="material-symbols-outlined text-[28px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{t.icon}</span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-[var(--indigo-deep)]">{t.name}</h3>
+                  <h3 className="font-bold text-[var(--indigo-deep)] text-base" style={{ fontFamily: "'Playfair Display', serif" }}>{t.name}</h3>
                   <p className="text-sm text-[var(--warm-charcoal)]/70">{t.role}</p>
                   <p className="text-xs text-[var(--terracotta)]">{t.exp} experience</p>
                 </div>
@@ -90,7 +90,7 @@ export default function AboutPage() {
 
       {/* CTA */}
       <section className="py-16 px-6 bg-white text-center">
-        <h2 className="text-3xl font-bold text-[var(--indigo-deep)] mb-4">Start Your Spiritual Journey</h2>
+        <h2 className="text-3xl font-bold text-[var(--indigo-deep)] mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>Start Your Spiritual Journey</h2>
         <p className="text-[var(--warm-charcoal)]/60 mb-8 max-w-lg mx-auto">Join 10,000+ families who have discovered their divine path with MahaTathastu.</p>
         <div className="flex gap-4 justify-center flex-wrap">
           <Link href="/register" className="btn-divine px-8 py-3">Get Started Free</Link>
