@@ -193,9 +193,9 @@ export default function SettingsPage() {
               <p className="text-sm text-white/70">14 reports · Lifetime access · All family members</p>
             </div>
             <div className="text-right">
-              <p className="text-xl font-bold">₹{(bundlePrice ?? 2999).toLocaleString('en-IN')}</p>
-              {bundleSalePrice !== null && bundleSalePrice !== bundlePrice && (
-                <p className="text-xs text-white/50 line-through">₹{bundleSalePrice.toLocaleString('en-IN')}</p>
+              <p className="text-xl font-bold">₹{(bundleSalePrice ?? bundlePrice ?? 2999).toLocaleString('en-IN')}</p>
+              {bundleSalePrice != null && bundlePrice != null && (
+                <p className="text-xs text-white/50 line-through">₹{bundlePrice.toLocaleString('en-IN')}</p>
               )}
             </div>
           </div>

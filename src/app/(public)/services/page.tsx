@@ -32,8 +32,8 @@ export default async function ServicesPage() {
     .eq('slug', 'full-tathastu-bundle')
     .single()
 
-  const bundlePrice = bundle?.price ?? 2999
-  const bundleOriginal = bundle?.sale_price ?? 4999
+  const bundlePrice = bundle?.sale_price ?? bundle?.price ?? 2999
+  const bundleOriginal = (bundle?.sale_price != null && bundle.price != null) ? bundle.price : null
 
   return (
     <div className="min-h-screen">
@@ -70,7 +70,9 @@ export default async function ServicesPage() {
               </div>
               <div className="text-right flex-shrink-0">
                 <div className="text-3xl font-bold text-[var(--indigo-deep)]">₹{bundlePrice.toLocaleString('en-IN')}</div>
-                <div className="text-sm text-[var(--warm-charcoal)]/40 line-through">₹{bundleOriginal.toLocaleString('en-IN')}</div>
+                {bundleOriginal != null && (
+                  <div className="text-sm text-[var(--warm-charcoal)]/40 line-through">₹{bundleOriginal.toLocaleString('en-IN')}</div>
+                )}
                 <Link href="/reports/generate" className="btn-divine mt-3 px-6 py-2.5 text-sm block text-center">Get Full Report</Link>
               </div>
             </div>

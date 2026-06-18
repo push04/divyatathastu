@@ -84,8 +84,8 @@ function BundleSVG() {
 
 export default function TathastuCTA() {
   const { price, sale_price } = useBundlePrice()
-  const displayPrice = price ?? 2999
-  const originalPrice = sale_price !== null ? displayPrice : (price ? Math.round(price * 1.67) : 4999)
+  const displayPrice = sale_price ?? price ?? 2999
+  const originalPrice = sale_price != null ? price : null
   return (
     <section className="section-padding relative overflow-hidden" style={{ background: '#0F1628', backgroundImage: CROSS_HATCH }}>
       {/* Ambient orbs */}
@@ -122,12 +122,16 @@ export default function TathastuCTA() {
             {/* Pricing */}
             <div className="mb-6">
               <div className="flex items-baseline gap-3 mb-1">
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '15px', color: 'rgba(255,255,255,0.35)', textDecoration: 'line-through' }}>₹{originalPrice.toLocaleString('en-IN')}</span>
+                {originalPrice != null && (
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '15px', color: 'rgba(255,255,255,0.35)', textDecoration: 'line-through' }}>₹{originalPrice.toLocaleString('en-IN')}</span>
+                )}
                 <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '40px', fontWeight: 700, color: 'var(--saffron)' }}>₹{displayPrice.toLocaleString('en-IN')}</span>
               </div>
-              <p className="text-[10px] uppercase tracking-widest" style={{ fontFamily: "'Sora', sans-serif", color: 'rgba(255,255,255,0.4)' }}>
-                Limited time offer
-              </p>
+              {originalPrice != null && (
+                <p className="text-[10px] uppercase tracking-widest" style={{ fontFamily: "'Sora', sans-serif", color: 'rgba(255,255,255,0.4)' }}>
+                  Limited time offer
+                </p>
+              )}
             </div>
 
             {/* CTA */}

@@ -112,7 +112,7 @@ export default function DashboardPage() {
   const [panchang, setPanchang] = useState<PanchangSnap | null>(null)
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
-  const { price: bundlePrice } = useBundlePrice()
+  const { price: bundlePrice, sale_price: bundleSalePrice } = useBundlePrice()
 
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0]
@@ -438,7 +438,7 @@ export default function DashboardPage() {
               <h3 className="text-xl text-white mb-1 relative z-10" style={{ fontFamily: "'Playfair Display', serif" }}>Full Tathastu Bundle</h3>
               <p className="text-white/60 text-sm mb-5 relative z-10">All 14 reports + lifetime access for your entire family</p>
               <Link href="/shop" className="relative z-10 inline-flex items-center gap-2 bg-[var(--terracotta)] text-white text-xs px-5 py-2.5 rounded-full font-semibold hover:bg-[var(--terracotta-vivid)] transition-colors shadow-lg" style={{ fontFamily: "'Sora', sans-serif" }}>
-                Upgrade — ₹{(bundlePrice ?? 2999).toLocaleString('en-IN')}
+                Upgrade — ₹{(bundleSalePrice ?? bundlePrice ?? 2999).toLocaleString('en-IN')}
               </Link>
             </div>
           </div>
