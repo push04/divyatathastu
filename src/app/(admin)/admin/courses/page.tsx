@@ -39,7 +39,7 @@ interface Enrollment {
   status: string
   payment_status: string
   service_item_id: string
-  profiles: { full_name: string; email: string } | null
+  user_id: string
 }
 
 const EMPTY_FORM: Partial<Course> = {
@@ -74,22 +74,32 @@ export default function AdminCoursesPage() {
         .select('*')
         .eq('category', 'course')
         .order('display_order'),
+      // No profiles join — avoids silent failure when FK isn't defined in DB
       (supabase as any)
         .from('service_bookings')
-        .select('*, profiles(full_name,email)')
+        .select('id, created_at, amount, status, payment_status, service_item_id, user_id')
         .order('created_at', { ascending: false })
-        .limit(300),
+        .limit(500),
     ])
     if (cs) setCourses(cs as Course[])
     if (enr) {
-      // Filter to only bookings for course items
       const courseIds = new Set((cs || []).map((c: Course) => c.id))
       setEnrollments((enr as Enrollment[]).filter(e => courseIds.has(e.service_item_id)))
     }
     setLoading(false)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => { loadAll() }, [loadAll])
+  // Initial load + real-time subscription on service_bookings
+  useEffect(() => {
+    loadAll()
+    const channel = supabase
+      .channel('admin-enrollments-rt')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'service_bookings' }, () => {
+        loadAll()
+      })
+      .subscribe()
+    return () => { supabase.removeChannel(channel) }
+  }, [loadAll]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function openNew() {
     setEditing(null)
@@ -398,12 +408,19 @@ export default function AdminCoursesPage() {
               <p className="text-[11px] text-gray-400">{courses.length} courses · {enrollments.length} enrollments</p>
             </div>
           </div>
-          <button onClick={openNew}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-            style={{ background: 'linear-gradient(135deg, var(--indigo-deep), #4338ca)' }}>
-            <span className="material-symbols-outlined text-[16px]">add</span>
-            New Course
-          </button>
+          <div className="flex items-center gap-2">
+            <button onClick={() => loadAll()}
+              className="w-9 h-9 rounded-xl border border-gray-200 bg-white flex items-center justify-center text-gray-400 hover:text-gray-600 hover:border-gray-300 transition-all"
+              title="Refresh data">
+              <span className="material-symbols-outlined text-[18px]">refresh</span>
+            </button>
+            <button onClick={openNew}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
+              style={{ background: 'linear-gradient(135deg, var(--indigo-deep), #4338ca)' }}>
+              <span className="material-symbols-outlined text-[16px]">add</span>
+              New Course
+            </button>
+          </div>
         </div>
 
         {/* Stats strip */}
@@ -411,7 +428,7 @@ export default function AdminCoursesPage() {
           {[
             { n: courses.filter(c => c.is_active).length, l: 'Active', color: 'text-emerald-600' },
             { n: courses.filter(c => c.is_live).length, l: 'Live', color: 'text-red-500' },
-            { n: courses.filter(c => !c.price || c.price === 0).length, l: 'Free', color: 'text-blue-500' },
+            { n: enrollments.filter(e => e.payment_status === 'paid').length, l: 'Enrollments', color: 'text-violet-600' },
             { n: `₹${revenue.toLocaleString('en-IN')}`, l: 'Revenue', color: 'text-[var(--saffron)]' },
           ].map(s => (
             <div key={s.l} className="flex items-baseline gap-1.5">
@@ -578,8 +595,7 @@ export default function AdminCoursesPage() {
                       return (
                         <tr key={e.id} className="hover:bg-gray-50/50 transition-colors">
                           <td className="px-5 py-3">
-                            <div className="font-semibold text-gray-800 text-xs">{e.profiles?.full_name || '—'}</div>
-                            <div className="text-[11px] text-gray-400">{e.profiles?.email || '—'}</div>
+                            <div className="font-mono text-[10px] text-gray-500 select-all">{e.user_id}</div>
                           </td>
                           <td className="px-5 py-3">
                             <p className="text-xs text-gray-700 font-medium line-clamp-1">{course?.title || 'Unknown'}</p>
