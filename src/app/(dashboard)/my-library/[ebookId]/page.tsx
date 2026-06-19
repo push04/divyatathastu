@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import SudarshanLoader from '@/components/SudarshanLoader'
 import { createClient } from '@/lib/supabase/client'
 
@@ -17,6 +17,7 @@ export default function EbookReaderPage() {
   const [totalPages, setTotalPages] = useState(0)
   const [renderedCount, setRenderedCount] = useState(0)
   const [currentPage, setCurrentPage] = useState(0)
+  const [direction, setDirection] = useState<1 | -1>(1)
   const [showUI, setShowUI] = useState(true)
   const [zoom, setZoom] = useState(1)
   const [pageInput, setPageInput] = useState('1')
@@ -26,12 +27,10 @@ export default function EbookReaderPage() {
   const [toc, setToc] = useState<{ title: string; page: number }[]>([])
   const [theme, setTheme] = useState<'dark' | 'sepia'>('dark')
 
-  const bookContainerRef = useRef<HTMLDivElement>(null)
-  const pageFlipRef = useRef<any>(null)
   const uiTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const pageImagesRef = useRef<string[]>([])
 
-  // Init: load PDF + render ALL pages to dataURLs, then hand off to PageFlip
+  // Init: load PDF + render ALL pages to dataURLs
   useEffect(() => {
     let alive = true
     async function init() {
@@ -86,8 +85,11 @@ export default function EbookReaderPage() {
         for (let i = 1; i <= pages; i++) {
           if (!alive) return
           const pdfPage = await doc.getPage(i)
-          const dpr = Math.min(window.devicePixelRatio || 1, 2)
-          const vp = pdfPage.getViewport({ scale: dpr * 1.5 })
+          // Use higher scale for crisp rendering on all DPR levels.
+          // We render at 3× the native PDF unit size — this is enough for 3× displays
+          // and still sharp when downsampled for 1× or 2× displays.
+          const scale = Math.max(window.devicePixelRatio * 2, 3)
+          const vp = pdfPage.getViewport({ scale })
           const canvas = document.createElement('canvas')
           canvas.width = vp.width
           canvas.height = vp.height
@@ -107,7 +109,8 @@ export default function EbookReaderPage() {
               ctx.fillText(wm, -vp.width * 0.35 + c * sx, -vp.height * 0.2 + r * sy)
           ctx.restore()
 
-          images.push(canvas.toDataURL('image/jpeg', 0.93))
+          // PNG for maximum sharpness (no lossy JPEG artifacts on text)
+          images.push(canvas.toDataURL('image/png'))
           if (alive) setRenderedCount(i)
         }
 
@@ -121,58 +124,6 @@ export default function EbookReaderPage() {
     init()
     return () => { alive = false }
   }, [ebookId]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Mount StPageFlip once all pages are ready
-  useEffect(() => {
-    if (loadStatus !== 'ready') return
-    if (!bookContainerRef.current) return
-    if (pageFlipRef.current) return
-    const images = pageImagesRef.current
-    if (!images.length) return
-
-    let pf: any = null
-
-    const mount = async () => {
-      const { PageFlip } = await import('page-flip')
-      const mobile = window.innerWidth < 768
-
-      pf = new PageFlip(bookContainerRef.current!, {
-        width: 550,
-        height: 733,
-        size: 'stretch',
-        minWidth: mobile ? 280 : 360,
-        maxWidth: mobile ? 520 : 760,
-        minHeight: mobile ? 380 : 480,
-        maxHeight: 1100,
-        drawShadow: true,
-        flippingTime: 700,
-        usePortrait: mobile,
-        autoSize: true,
-        maxShadowOpacity: 0.65,
-        showCover: true,
-        mobileScrollSupport: false,
-        swipeDistance: 25,
-        clickEventForward: true,
-        useMouseEvents: true,
-      })
-
-      pf.loadFromImages(images)
-      pageFlipRef.current = pf
-
-      pf.on('flip', (e: any) => {
-        setCurrentPage(e.data)
-        setPageInput(String(e.data + 1))
-        setShowUI(true)
-        saveBookmark(e.data)
-      })
-    }
-
-    mount()
-    return () => {
-      if (pf) { try { pf.destroy?.() } catch {} }
-      pageFlipRef.current = null
-    }
-  }, [loadStatus])
 
   // Fullscreen
   const toggleFullscreen = useCallback(() => {
@@ -188,19 +139,41 @@ export default function EbookReaderPage() {
     return () => document.removeEventListener('fullscreenchange', h)
   }, [])
 
-  // Bookmark save when page flips
+  // Bookmark save
   const saveBookmark = useCallback((page: number) => {
     setBookmark(page)
     localStorage.setItem(`ebook-bm-${ebookId}`, String(page))
   }, [ebookId])
 
-  const goNext = useCallback(() => pageFlipRef.current?.flipNext(), [])
-  const goPrev = useCallback(() => pageFlipRef.current?.flipPrev(), [])
+  const goNext = useCallback(() => {
+    setCurrentPage(p => {
+      if (p >= pageImagesRef.current.length - 1) return p
+      setDirection(1)
+      const next = p + 1
+      setPageInput(String(next + 1))
+      saveBookmark(next)
+      return next
+    })
+  }, [saveBookmark])
+
+  const goPrev = useCallback(() => {
+    setCurrentPage(p => {
+      if (p <= 0) return p
+      setDirection(-1)
+      const prev = p - 1
+      setPageInput(String(prev + 1))
+      saveBookmark(prev)
+      return prev
+    })
+  }, [saveBookmark])
+
   const goToPage = useCallback((idx: number) => {
-    pageFlipRef.current?.turnToPage(idx)
-    setCurrentPage(idx)
-    setPageInput(String(idx + 1))
-  }, [])
+    const clamped = Math.max(0, Math.min(idx, pageImagesRef.current.length - 1))
+    setDirection(clamped > currentPage ? 1 : -1)
+    setCurrentPage(clamped)
+    setPageInput(String(clamped + 1))
+    saveBookmark(clamped)
+  }, [currentPage, saveBookmark])
 
   // Keyboard
   useEffect(() => {
@@ -216,7 +189,7 @@ export default function EbookReaderPage() {
     }
     window.addEventListener('keydown', h, true)
     return () => window.removeEventListener('keydown', h, true)
-  }, [goNext, goPrev])
+  }, [goNext, goPrev, toggleFullscreen, bookmark, goToPage])
 
   // Pinch-to-zoom on mobile
   const lastDist = useRef<number | null>(null)
@@ -290,14 +263,14 @@ export default function EbookReaderPage() {
     </div>
   )
 
+  const images = pageImagesRef.current
+
   // ── Reader ────────────────────────────────────────────────────────────────
   return (
     <>
       <style>{`
         @media print { body { display:none!important; } }
         .no-ctx * { -webkit-user-select:none; user-select:none; }
-        /* StPageFlip: ensure canvas layers stack correctly */
-        .stf__parent { touch-action: none; }
       `}</style>
 
       <div
@@ -401,7 +374,7 @@ export default function EbookReaderPage() {
             </div>
             <div className="flex-1 overflow-y-auto py-2">
               {toc.map((item, i) => (
-                <button key={i} onClick={() => { pageFlipRef.current?.turnToPage(item.page); setShowToC(false) }}
+                <button key={i} onClick={() => { goToPage(item.page); setShowToC(false) }}
                   className="w-full text-left px-4 py-2 text-sm text-white/60 hover:text-white hover:bg-white/5 transition-all truncate">
                   {item.title}
                 </button>
@@ -410,7 +383,7 @@ export default function EbookReaderPage() {
           </motion.div>
         )}
 
-        {/* ── Book area ── */}
+        {/* ── Page area ── */}
         <div className="flex-1 relative overflow-hidden flex items-center justify-center">
 
           {/* Ambient glow */}
@@ -421,7 +394,7 @@ export default function EbookReaderPage() {
           {/* Left nav arrow */}
           <motion.button
             onClick={goPrev}
-            animate={{ opacity: showUI ? 0.85 : 0 }}
+            animate={{ opacity: showUI && currentPage > 0 ? 0.85 : 0 }}
             whileHover={{ scale: 1.12, opacity: 1 }}
             whileTap={{ scale: 0.9 }}
             className="absolute left-2 sm:left-4 z-20 w-11 h-11 rounded-full flex items-center justify-center text-white"
@@ -433,7 +406,7 @@ export default function EbookReaderPage() {
           {/* Right nav arrow */}
           <motion.button
             onClick={goNext}
-            animate={{ opacity: showUI ? 0.85 : 0 }}
+            animate={{ opacity: showUI && currentPage < images.length - 1 ? 0.85 : 0 }}
             whileHover={{ scale: 1.12, opacity: 1 }}
             whileTap={{ scale: 0.9 }}
             className="absolute right-2 sm:right-4 z-20 w-11 h-11 rounded-full flex items-center justify-center text-white"
@@ -442,23 +415,39 @@ export default function EbookReaderPage() {
             <span className="material-symbols-outlined text-[24px]">chevron_right</span>
           </motion.button>
 
-          {/* StPageFlip mount point — zoom via CSS transform */}
+          {/* Page images — <img> renders at native resolution → sharp on all DPR levels */}
           <div
-            style={{
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transform: `scale(${zoom})`,
-              transition: 'transform 0.22s ease',
-              transformOrigin: 'center center',
-            }}
+            className="relative w-full h-full flex items-center justify-center"
+            style={{ transform: `scale(${zoom})`, transition: 'transform 0.22s ease', transformOrigin: 'center center' }}
           >
-            <div
-              ref={bookContainerRef}
-              style={{ width: '100%', height: '100%' }}
-            />
+            <AnimatePresence mode="wait" initial={false} custom={direction}>
+              <motion.div
+                key={currentPage}
+                custom={direction}
+                initial={{ opacity: 0, x: direction * 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: direction * -40 }}
+                transition={{ duration: 0.18, ease: 'easeInOut' }}
+                className="absolute inset-0 flex items-center justify-center p-4 sm:p-8"
+              >
+                {images[currentPage] && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={images[currentPage]}
+                    alt={`Page ${currentPage + 1}`}
+                    draggable={false}
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: '100%',
+                      objectFit: 'contain',
+                      borderRadius: 4,
+                      boxShadow: '0 8px 48px rgba(0,0,0,0.6)',
+                      imageRendering: 'crisp-edges',
+                    }}
+                  />
+                )}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
 

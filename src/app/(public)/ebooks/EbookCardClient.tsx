@@ -80,10 +80,15 @@ function EbookCover({ book }: { book: any }) {
   const isFree = book.price === 0 || book.free
   const coverImg = Array.isArray(book.images) && book.images[0]?.url ? book.images[0].url : null
   return (
-    <div className="relative overflow-hidden" style={{ aspectRatio: '3/2', background: bg, backgroundImage: NOISE }}>
+    <div className="relative overflow-hidden" style={{ aspectRatio: '3/2', background: bg }}>
       {coverImg ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={coverImg} alt={book.title} className="absolute inset-0 w-full h-full object-cover" />
+        <img
+          src={coverImg}
+          alt={book.title}
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ imageRendering: 'auto' }}
+        />
       ) : (
         <div className="absolute inset-0 flex items-center justify-center">
           <CoverIllustration title={book.title} />
