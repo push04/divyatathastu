@@ -12,6 +12,7 @@ const DEFAULT_PRICES: Record<string, number> = {
   prakriti: 299,
   yantra_colour: 299,
   mantra_chanting: 299,
+  mantra_writing: 199,
   astro_vastu: 399,
   child_development: 399,
   dmit: 499,
@@ -20,18 +21,19 @@ const DEFAULT_PRICES: Record<string, number> = {
 }
 
 const REPORT_META: Record<string, { label: string; icon: string; category: string }> = {
-  full_tathastu:     { label: 'Full Tathastu Bundle', icon: 'auto_awesome',   category: 'Bundle' },
-  astrology:         { label: 'Kundli / Horoscope',   icon: 'brightness_7',   category: 'Astrology' },
-  numerology:        { label: 'Numerology',            icon: 'tag',            category: 'Numbers' },
-  shakti_chakra:     { label: 'Chakra Analysis',       icon: 'local_florist',  category: 'Energy' },
-  prakriti:          { label: 'Prakriti (Ayurveda)',   icon: 'eco',            category: 'Wellness' },
-  yantra_colour:     { label: 'Yantra & Colour',       icon: 'palette',        category: 'Vastu' },
-  mantra_chanting:   { label: 'Mantra Science',        icon: 'temple_hindu',   category: 'Spiritual' },
-  astro_vastu:       { label: 'Vastu Report',          icon: 'house',          category: 'Vastu' },
-  child_development: { label: 'Child Development',     icon: 'child_care',     category: 'Family' },
-  dmit:              { label: 'DMIT (Brain Mapping)',  icon: 'psychology',     category: 'Science' },
-  colour_therapy:    { label: 'Colour Therapy',        icon: 'colorize',       category: 'Wellness' },
-  psychology:        { label: 'Vedic Psychology',      icon: 'stars',          category: 'Mind' },
+  full_tathastu:     { label: 'Full Tathastu Bundle',        icon: 'auto_awesome',   category: 'Bundle' },
+  astrology:         { label: 'Kundli / Horoscope',          icon: 'brightness_7',   category: 'Astrology' },
+  numerology:        { label: 'Numerology',                  icon: 'tag',            category: 'Numbers' },
+  shakti_chakra:     { label: 'Chakra Analysis',             icon: 'local_florist',  category: 'Energy' },
+  prakriti:          { label: 'Prakriti (Ayurveda)',         icon: 'eco',            category: 'Wellness' },
+  yantra_colour:     { label: 'Yantra & Colour',             icon: 'palette',        category: 'Vastu' },
+  mantra_chanting:   { label: 'Mantra Science',              icon: 'temple_hindu',   category: 'Spiritual' },
+  mantra_writing:    { label: 'Likhit Japa (Mantra Lekhnan)', icon: 'edit_note',     category: 'Spiritual' },
+  astro_vastu:       { label: 'Vastu Report',                icon: 'house',          category: 'Vastu' },
+  child_development: { label: 'Child Development',           icon: 'child_care',     category: 'Family' },
+  dmit:              { label: 'DMIT (Brain Mapping)',        icon: 'psychology',     category: 'Science' },
+  colour_therapy:    { label: 'Colour Therapy',              icon: 'colorize',       category: 'Wellness' },
+  psychology:        { label: 'Vedic Psychology',            icon: 'stars',          category: 'Mind' },
 }
 
 export default function ReportPricingPage() {
