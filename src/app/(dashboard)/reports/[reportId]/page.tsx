@@ -535,6 +535,27 @@ function YantraSection({ data }: { data: any }) {
   )
 }
 
+const NAKSHATRA_LORDS: Record<string, string> = {
+  Ashwini: 'Ketu', Bharani: 'Venus', Krittika: 'Sun', Rohini: 'Moon',
+  Mrigashira: 'Mars', Ardra: 'Rahu', Punarvasu: 'Jupiter', Pushya: 'Saturn',
+  Ashlesha: 'Mercury', Magha: 'Ketu', 'Purva Phalguni': 'Venus', 'Uttara Phalguni': 'Sun',
+  Hasta: 'Moon', Chitra: 'Mars', Swati: 'Rahu', Vishakha: 'Jupiter',
+  Anuradha: 'Saturn', Jyeshtha: 'Mercury', Moola: 'Ketu', 'Purva Ashadha': 'Venus',
+  'Uttara Ashadha': 'Sun', Shravana: 'Moon', Dhanishtha: 'Mars', Shatabhisha: 'Rahu',
+  'Purva Bhadrapada': 'Jupiter', 'Uttara Bhadrapada': 'Saturn', Revati: 'Mercury',
+}
+const PLANET_PRACTICE: Record<string, { penColor: string; paperColor: string; bestTime: string; bestDay: string; deity: string; benefit: string }> = {
+  Sun:     { penColor: 'Red / saffron ink pen', paperColor: 'Yellow or white paper', bestTime: 'Sunrise (6–8 AM)', bestDay: 'Sunday', deity: 'Lord Surya / Lord Rama', benefit: 'Enhances confidence, leadership, vitality, and paternal blessings. Strengthens the Lagna and overall health.' },
+  Moon:    { penColor: 'Silver / white ink pen', paperColor: 'White paper', bestTime: 'Brahma Muhurta (4–6 AM)', bestDay: 'Monday', deity: 'Lord Shiva / Goddess Parvati', benefit: 'Brings peace of mind, emotional stability, mental clarity, and maternal blessings.' },
+  Mars:    { penColor: 'Red ink pen', paperColor: 'Red or saffron paper', bestTime: 'Sunrise (6–8 AM)', bestDay: 'Tuesday', deity: 'Lord Hanuman / Lord Kartikeya', benefit: 'Builds courage, removes obstacles and enemies, and strengthens willpower and physical vitality.' },
+  Mercury: { penColor: 'Green ink pen', paperColor: 'Green or white paper', bestTime: 'Morning (7–9 AM)', bestDay: 'Wednesday', deity: 'Lord Vishnu / Goddess Saraswati', benefit: 'Improves intellect, communication skills, business success, and educational attainment.' },
+  Jupiter: { penColor: 'Yellow / golden ink pen', paperColor: 'Yellow paper', bestTime: 'Brahma Muhurta (4–6 AM)', bestDay: 'Thursday', deity: 'Lord Brihaspati / Lord Vishnu', benefit: 'Brings wisdom, prosperity, good health, spiritual growth, and teacher–student relationships.' },
+  Venus:   { penColor: 'White / pink ink pen', paperColor: 'Pink or white paper', bestTime: 'Sunrise or evening', bestDay: 'Friday', deity: 'Goddess Lakshmi / Goddess Durga', benefit: 'Brings love, harmony, creativity, luxury, beauty, and marital happiness.' },
+  Saturn:  { penColor: 'Blue / black ink pen', paperColor: 'White or blue paper', bestTime: 'Early morning (5–7 AM)', bestDay: 'Saturday', deity: 'Lord Shani / Lord Bhairava', benefit: 'Removes karmic blocks, brings discipline, stability, longevity, and professional success.' },
+  Rahu:    { penColor: 'Blue ink pen', paperColor: 'Blue or grey paper', bestTime: 'After sunset (7–9 PM)', bestDay: 'Saturday', deity: 'Goddess Durga / Goddess Kali', benefit: 'Transforms hidden obstacles into opportunities, removes past-life karmas, and amplifies ambitions.' },
+  Ketu:    { penColor: 'Red / brown ink pen', paperColor: 'White or grey paper', bestTime: 'Brahma Muhurta (4–6 AM)', bestDay: 'Tuesday', deity: 'Lord Ganesha / Lord Bhairava', benefit: 'Brings spiritual liberation, removes deep past-life karma, enhances intuition and moksha path.' },
+}
+
 function MantraSection({ data }: { data: any }) {
   // Mantra Lekhnan (Likhit Japa) format — matches DOCX report structure
   if (data?.mantraLekhnan) {
@@ -644,6 +665,160 @@ function MantraSection({ data }: { data: any }) {
             </div>
           </div>
         </div>
+
+        {/* Practice Materials & Schedule */}
+        {(() => {
+          const lord = NAKSHATRA_LORDS[ml.nakshatra] || 'Jupiter'
+          const practice = PLANET_PRACTICE[lord] || PLANET_PRACTICE.Jupiter
+          return (
+            <>
+              <div className="mt-5">
+                <p className="text-sm font-extrabold text-[var(--indigo-deep)] mb-2 flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[16px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+                  अभ्यास विवरण — {ml.nakshatra} नक्षत्र ({lord} राशि)
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-xl p-3" style={{ background: '#fffbeb', border: '1px solid #fde68a' }}>
+                    <p className="text-xs font-bold mb-2" style={{ color: '#92400e' }}>सामग्री सूची (Required Materials)</p>
+                    <div className="space-y-1.5">
+                      {[
+                        ['कलम', practice.penColor],
+                        ['कागज', practice.paperColor],
+                        ['देवता', practice.deity],
+                        ['आसन', 'स्वच्छ ऊनी या सूती आसन'],
+                        ['दिशा', 'पूर्व या उत्तर मुख'],
+                      ].map(([k, v]) => (
+                        <p key={k} className="text-xs" style={{ color: '#78350f' }}>
+                          <span className="font-semibold">{k}:</span> {v}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="rounded-xl p-3" style={{ background: '#eff6ff', border: '1px solid #bfdbfe' }}>
+                    <p className="text-xs font-bold mb-2" style={{ color: '#1e3a8a' }}>समय सारणी (Optimal Schedule)</p>
+                    <div className="space-y-1.5">
+                      {[
+                        ['श्रेष्ठ समय', practice.bestTime],
+                        ['श्रेष्ठ दिन', practice.bestDay],
+                        ['न्यूनतम', '21 दिन (स्थिरता)'],
+                        ['अनुशंसित', '41 दिन (परिवर्तन)'],
+                        ['आदर्श', '108 दिन (पूर्णसिद्धि)'],
+                      ].map(([k, v]) => (
+                        <p key={k} className="text-xs" style={{ color: '#1e40af' }}>
+                          <span className="font-semibold">{k}:</span> {v}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Spiritual Benefits */}
+              <div className="mt-3 rounded-xl p-3" style={{ background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
+                <p className="text-xs font-bold mb-1.5" style={{ color: '#14532d' }}>
+                  फलश्रुति — आध्यात्मिक लाभ (Spiritual Benefits)
+                </p>
+                <p className="text-xs leading-relaxed" style={{ color: '#166534' }}>{practice.benefit}</p>
+                <p className="text-xs leading-relaxed mt-1" style={{ color: '#15803d' }}>
+                  इस विशेष अभ्यास से लग्न नक्षत्र की ऊर्जा संतुलित होती है। लग्न नक्षत्र शक्तिशाली होने पर जीवन के सभी क्षेत्रों — स्वास्थ्य, करियर, संबंध, और आध्यात्मिकता — में सकारात्मक परिवर्तन आते हैं।
+                </p>
+              </div>
+
+              {/* Progress milestones */}
+              <div className="mt-3 grid grid-cols-4 gap-2 text-center">
+                {([
+                  { days: '21', label: 'स्थिरता', color: '#d97706', bg: '#fffbeb', desc: 'Habit forms' },
+                  { days: '41', label: 'परिवर्तन', color: '#dc2626', bg: '#fef2f2', desc: 'Changes begin' },
+                  { days: '90', label: 'सिद्धि', color: '#7c3aed', bg: '#f5f3ff', desc: 'Siddhi attained' },
+                  { days: '108', label: 'पूर्णता', color: '#1e3a8a', bg: '#eff6ff', desc: 'Full completion' },
+                ] as const).map(ms => (
+                  <div key={ms.days} className="rounded-lg p-2" style={{ background: ms.bg, border: `1px solid ${ms.color}40` }}>
+                    <p className="text-xl font-black" style={{ color: ms.color }}>{ms.days}</p>
+                    <p className="text-xs font-bold" style={{ color: ms.color }}>{ms.label}</p>
+                    <p className="text-[10px] mt-0.5" style={{ color: '#6b7280' }}>{ms.desc}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Important Rules */}
+              <div className="mt-3 rounded-xl p-3" style={{ background: '#fff7ed', border: '1px solid #fed7aa' }}>
+                <p className="text-xs font-bold mb-2" style={{ color: '#7c2d12' }}>
+                  महत्वपूर्ण नियम (Practice Rules — Must Follow)
+                </p>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                  {[
+                    'स्नान के बाद ही लिखना शुरू करें',
+                    'दाएं हाथ से लिखें, बाएं से नहीं',
+                    'शुद्ध आसन पर बैठें, जमीन पर नहीं',
+                    'मन एकाग्र रखें, बात न करें',
+                    'चरणों का क्रम न तोड़ें',
+                    'किसी को लिखी हुई सामग्री न दिखाएं',
+                    'प्रतिदिन एक ही समय पर अभ्यास करें',
+                    'लिखे हुए पृष्ठों को पवित्र स्थान पर सुरक्षित रखें',
+                    '108 दिन पूर्ण होने पर जल में प्रवाहित करें',
+                    'भोजन के तुरंत बाद न लिखें (30 मिनट अंतराल रखें)',
+                  ].map((rule, i) => (
+                    <p key={i} className="text-xs flex gap-1 items-start" style={{ color: '#92400e' }}>
+                      <span className="font-bold shrink-0" style={{ color: '#c2410c' }}>•</span>{rule}
+                    </p>
+                  ))}
+                </div>
+              </div>
+
+              {/* Closing Prayer */}
+              <div className="mt-3 rounded-xl p-4 text-center" style={{ background: '#faf5ff', border: '1px solid #e9d5ff' }}>
+                <p className="text-xs font-bold mb-2" style={{ color: '#4c1d95' }}>
+                  समापन प्रार्थना (Closing Sankalpa — Write After Each Session)
+                </p>
+                <p className="text-sm font-bold leading-relaxed" style={{ color: '#5b21b6' }}>
+                  ॐ तत् सत् | यत् फलम् अस्तु तत् सर्वं श्री गुरुचरणार्पणम् अस्तु ॥
+                </p>
+                <p className="text-xs mt-1 italic" style={{ color: '#7c3aed' }}>
+                  "May all fruits of this practice be dedicated at the lotus feet of the Guru and the Divine"
+                </p>
+                <div className="mt-3 grid grid-cols-3 gap-2">
+                  {[
+                    { label: 'Before Writing', value: 'Sankalpa — सत्य संकल्प' },
+                    { label: 'While Writing', value: 'Single-pointed focus' },
+                    { label: 'After Writing', value: 'Closing prayer above' },
+                  ].map(item => (
+                    <div key={item.label} className="rounded-lg p-2" style={{ background: 'white', border: '1px solid #ddd6fe' }}>
+                      <p className="text-[10px] font-bold" style={{ color: '#6d28d9' }}>{item.label}</p>
+                      <p className="text-[10px] mt-0.5" style={{ color: '#7c3aed' }}>{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Shloka sequence visual */}
+              <div className="mt-3 rounded-xl p-3" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+                <p className="text-xs font-bold mb-2 text-center" style={{ color: '#334155' }}>
+                  दैनिक लेखन अनुक्रम (Daily Writing Sequence)
+                </p>
+                <div className="flex items-center gap-1 flex-wrap justify-center text-xs">
+                  {[
+                    { label: 'Step 1', desc: 'Ganpati mantra × 5', color: '#1e3a8a' },
+                    { label: '→', desc: '', color: '#94a3b8' },
+                    { label: 'Step 2', desc: 'Gayatri × 5', color: '#d97706' },
+                    { label: '→', desc: '', color: '#94a3b8' },
+                    { label: 'Step 3', desc: `${ml.nakshatra} Ganpati × 5`, color: '#6d28d9' },
+                    { label: '→', desc: '', color: '#94a3b8' },
+                    { label: 'Step 4', desc: `VS Shloka ${ml.step4.number} × 3`, color: '#0f766e' },
+                    { label: '→', desc: '', color: '#94a3b8' },
+                    { label: 'Closing', desc: 'Sankalpa', color: '#7c2d12' },
+                  ].map((item, i) => (
+                    item.desc ? (
+                      <div key={i} className="rounded-lg px-2 py-1 text-center" style={{ background: item.color + '15', border: `1px solid ${item.color}40` }}>
+                        <p className="text-[9px] font-bold" style={{ color: item.color }}>{item.label}</p>
+                        <p className="text-[9px]" style={{ color: item.color }}>{item.desc}</p>
+                      </div>
+                    ) : <span key={i} style={{ color: '#94a3b8', fontWeight: 700 }}>→</span>
+                  ))}
+                </div>
+              </div>
+            </>
+          )
+        })()}
       </Section>
     )
   }
@@ -1997,11 +2172,19 @@ export default function ReportDetailPage() {
       #rpa { display: block !important; visibility: visible !important; position: absolute; left: 0; top: 0; width: 100%; }
       #rpa * { visibility: visible !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
       .no-print { display: none !important; }
-      .card-divine { box-shadow: none !important; border: 1px solid #d4a017 !important; break-inside: avoid; margin-bottom: 10px; }
+      .card-divine { box-shadow: none !important; border: 1px solid #d4a017 !important; break-inside: avoid !important; page-break-inside: avoid !important; margin-bottom: 8px; }
+      #rpa p { break-inside: avoid; orphans: 3; widows: 3; }
+      #rpa li { break-inside: avoid; }
+      #rpa tr { break-inside: avoid; page-break-inside: avoid; }
+      #rpa thead { display: table-header-group; }
+      #rpa h2, #rpa h3, #rpa h4 { break-after: avoid; page-break-after: avoid; }
+      #rpa [class*="rounded"] { break-inside: avoid; }
+      #rpa [style*="border-radius"] { break-inside: avoid; }
       table { font-size: 9px !important; width: 100%; border-collapse: collapse; }
       table th, table td { padding: 3px 6px !important; border: 1px solid #c8a96e; }
+      thead { display: table-header-group; }
       h2 { font-size: 15px !important; } h3 { font-size: 12px !important; }
-      p, span, li { font-size: 11px !important; line-height: 1.55 !important; }
+      p, span, li { font-size: 11px !important; line-height: 1.6 !important; }
     }
   `
 
