@@ -348,17 +348,18 @@ export default function MyCoursesPage() {
 
                       {/* CTA bottom strip */}
                       <div className="px-5 pb-4 flex gap-2">
-                        {hasVideo ? (
+                        <Link href={`/my-courses/${ec.course.id}`}
+                          className="flex-1 btn-divine text-xs py-2.5 inline-flex items-center justify-center gap-1.5">
+                          <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>play_lesson</span>
+                          Open Course
+                        </Link>
+                        {hasVideo && (
                           <button
                             onClick={() => setVideoModal(ec)}
-                            className="flex-1 btn-divine text-xs py-2.5 inline-flex items-center justify-center gap-1.5">
-                            <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>play_circle</span>
-                            Watch Now
+                            title="Quick preview"
+                            className="w-10 h-10 rounded-xl flex items-center justify-center border border-[var(--warm-sand)] text-[var(--indigo-deep)]/50 hover:border-[var(--indigo-deep)] hover:text-[var(--indigo-deep)] transition-all">
+                            <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>play_circle</span>
                           </button>
-                        ) : (
-                          <div className="flex-1 py-2.5 text-center text-[11px] text-[var(--warm-charcoal)]/40 border border-[var(--warm-sand)] rounded-xl">
-                            Access coming soon
-                          </div>
                         )}
                         <Link href="/courses"
                           className="w-10 h-10 rounded-xl flex items-center justify-center border border-[var(--warm-sand)] text-[var(--indigo-deep)]/40 hover:border-[var(--indigo-deep)] hover:text-[var(--indigo-deep)] transition-all"

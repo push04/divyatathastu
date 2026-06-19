@@ -527,6 +527,11 @@ export default function AdminCoursesPage() {
                             {c.is_active ? 'visibility' : 'visibility_off'}
                           </span>
                         </button>
+                        <a href={`/admin/courses/${c.id}/curriculum`}
+                          className="w-8 h-8 rounded-lg bg-violet-50 hover:bg-violet-100 flex items-center justify-center transition-all"
+                          title="Manage Curriculum">
+                          <span className="material-symbols-outlined text-[16px] text-violet-600">view_module</span>
+                        </a>
                         <button onClick={() => openEdit(c)}
                           className="w-8 h-8 rounded-lg bg-[var(--indigo-deep)]/10 hover:bg-[var(--indigo-deep)]/20 flex items-center justify-center transition-all">
                           <span className="material-symbols-outlined text-[16px] text-[var(--indigo-deep)]">edit</span>

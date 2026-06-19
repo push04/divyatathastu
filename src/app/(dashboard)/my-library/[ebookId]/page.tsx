@@ -20,6 +20,11 @@ export default function EbookReaderPage() {
   const [showUI, setShowUI] = useState(true)
   const [zoom, setZoom] = useState(1)
   const [pageInput, setPageInput] = useState('1')
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [bookmark, setBookmark] = useState<number | null>(null)
+  const [showToC, setShowToC] = useState(false)
+  const [toc, setToc] = useState<{ title: string; page: number }[]>([])
+  const [theme, setTheme] = useState<'dark' | 'sepia'>('dark')
 
   const bookContainerRef = useRef<HTMLDivElement>(null)
   const pageFlipRef = useRef<any>(null)
@@ -47,6 +52,35 @@ export default function EbookReaderPage() {
 
         const pages = doc.numPages
         if (alive) { setTotalPages(pages); setLoadStatus('rendering') }
+
+        // Extract table of contents
+        try {
+          const outline = await doc.getOutline()
+          if (outline && outline.length) {
+            const items: { title: string; page: number }[] = []
+            const processItems = async (entries: any[]) => {
+              for (const entry of entries.slice(0, 40)) {
+                if (entry.dest) {
+                  try {
+                    const dest = typeof entry.dest === 'string' ? await doc.getDestination(entry.dest) : entry.dest
+                    if (dest) {
+                      const ref = dest[0]
+                      const pageIdx = await doc.getPageIndex(ref)
+                      items.push({ title: entry.title, page: pageIdx })
+                    }
+                  } catch {}
+                }
+                if (entry.items?.length) await processItems(entry.items.slice(0, 10))
+              }
+            }
+            await processItems(outline)
+            if (alive && items.length) setToc(items)
+          }
+        } catch {}
+
+        // Restore bookmark
+        const saved = localStorage.getItem(`ebook-bm-${ebookId}`)
+        if (saved && alive) setBookmark(parseInt(saved, 10))
 
         const images: string[] = []
         for (let i = 1; i <= pages; i++) {
@@ -129,6 +163,7 @@ export default function EbookReaderPage() {
         setCurrentPage(e.data)
         setPageInput(String(e.data + 1))
         setShowUI(true)
+        saveBookmark(e.data)
       })
     }
 
@@ -138,6 +173,26 @@ export default function EbookReaderPage() {
       pageFlipRef.current = null
     }
   }, [loadStatus])
+
+  // Fullscreen
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {})
+    } else {
+      document.exitFullscreen()
+    }
+  }, [])
+  useEffect(() => {
+    const h = () => setIsFullscreen(!!document.fullscreenElement)
+    document.addEventListener('fullscreenchange', h)
+    return () => document.removeEventListener('fullscreenchange', h)
+  }, [])
+
+  // Bookmark save when page flips
+  const saveBookmark = useCallback((page: number) => {
+    setBookmark(page)
+    localStorage.setItem(`ebook-bm-${ebookId}`, String(page))
+  }, [ebookId])
 
   const goNext = useCallback(() => pageFlipRef.current?.flipNext(), [])
   const goPrev = useCallback(() => pageFlipRef.current?.flipPrev(), [])
@@ -155,6 +210,8 @@ export default function EbookReaderPage() {
       if (e.key === '+' || e.key === '=') setZoom(z => Math.min(+(z + 0.15).toFixed(2), 2.5))
       if (e.key === '-') setZoom(z => Math.max(+(z - 0.15).toFixed(2), 0.4))
       if (e.key === '0') setZoom(1)
+      if (e.key === 'f' || e.key === 'F') { e.preventDefault(); toggleFullscreen() }
+      if (e.key === 'b' || e.key === 'B') { if (bookmark !== null) goToPage(bookmark) }
       if ((e.ctrlKey || e.metaKey) && ['p', 's', 'u'].includes(e.key)) e.preventDefault()
     }
     window.addEventListener('keydown', h, true)
@@ -245,7 +302,9 @@ export default function EbookReaderPage() {
 
       <div
         className="fixed inset-0 flex flex-col no-ctx"
-        style={{ background: 'linear-gradient(150deg,#0C0B1E 0%,#13112B 55%,#0C0B1E 100%)' }}
+        style={{ background: theme === 'sepia'
+          ? 'linear-gradient(150deg,#2c2015 0%,#3a2a18 55%,#2c2015 100%)'
+          : 'linear-gradient(150deg,#0C0B1E 0%,#13112B 55%,#0C0B1E 100%)' }}
         onContextMenu={e => e.preventDefault()}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -271,8 +330,24 @@ export default function EbookReaderPage() {
             {meta?.author && <p className="text-white/30 text-[10px] mt-0.5 hidden sm:block">{meta.author}</p>}
           </div>
 
-          <div className="flex items-center gap-1.5">
-            {/* Zoom controls */}
+          <div className="flex items-center gap-1">
+            {/* ToC */}
+            {toc.length > 0 && (
+              <button onClick={() => setShowToC(s => !s)} title="Table of Contents"
+                className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${showToC ? 'bg-white/20 text-white' : 'text-white/50 hover:text-white hover:bg-white/10'}`}>
+                <span className="material-symbols-outlined text-[17px]">toc</span>
+              </button>
+            )}
+
+            {/* Bookmark */}
+            <button onClick={() => saveBookmark(currentPage)} title={`Bookmark page ${currentPage + 1}`}
+              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${bookmark === currentPage ? 'text-[var(--saffron)]' : 'text-white/50 hover:text-white hover:bg-white/10'}`}>
+              <span className="material-symbols-outlined text-[17px]" style={{ fontVariationSettings: bookmark === currentPage ? "'FILL' 1" : "'FILL' 0" }}>bookmark</span>
+            </button>
+
+            <div className="w-px h-5 mx-0.5 hidden sm:block" style={{ background: 'rgba(255,255,255,0.08)' }} />
+
+            {/* Zoom */}
             <button onClick={() => setZoom(z => Math.max(+(z - 0.15).toFixed(2), 0.4))}
               className="w-8 h-8 rounded-lg flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-all">
               <span className="material-symbols-outlined text-[17px]">zoom_out</span>
@@ -286,6 +361,20 @@ export default function EbookReaderPage() {
               <span className="material-symbols-outlined text-[17px]">zoom_in</span>
             </button>
 
+            <div className="w-px h-5 mx-0.5 hidden sm:block" style={{ background: 'rgba(255,255,255,0.08)' }} />
+
+            {/* Sepia toggle */}
+            <button onClick={() => setTheme(t => t === 'dark' ? 'sepia' : 'dark')} title="Toggle sepia mode"
+              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${theme === 'sepia' ? 'bg-amber-500/20 text-amber-400' : 'text-white/50 hover:text-white hover:bg-white/10'}`}>
+              <span className="material-symbols-outlined text-[17px]">wb_sunny</span>
+            </button>
+
+            {/* Fullscreen */}
+            <button onClick={toggleFullscreen} title={isFullscreen ? 'Exit fullscreen (F)' : 'Fullscreen (F)'}
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-all">
+              <span className="material-symbols-outlined text-[17px]">{isFullscreen ? 'fullscreen_exit' : 'fullscreen'}</span>
+            </button>
+
             <div className="w-px h-5 mx-0.5" style={{ background: 'rgba(255,255,255,0.08)' }} />
 
             <div className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold tracking-wide"
@@ -295,6 +384,31 @@ export default function EbookReaderPage() {
             </div>
           </div>
         </motion.div>
+
+        {/* ── ToC Drawer ── */}
+        {showToC && toc.length > 0 && (
+          <motion.div
+            initial={{ x: -280, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -280, opacity: 0 }}
+            transition={{ duration: 0.22 }}
+            className="absolute left-0 top-[52px] bottom-[56px] z-40 w-64 flex flex-col border-r overflow-hidden"
+            style={{ background: 'rgba(10,9,24,0.97)', borderColor: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(24px)' }}
+          >
+            <div className="px-4 py-3 border-b flex items-center justify-between" style={{ borderColor: 'rgba(255,255,255,0.07)' }}>
+              <span className="text-white/80 text-sm font-semibold tracking-wide">Contents</span>
+              <button onClick={() => setShowToC(false)} className="text-white/40 hover:text-white/80 transition-colors">
+                <span className="material-symbols-outlined text-[18px]">close</span>
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto py-2">
+              {toc.map((item, i) => (
+                <button key={i} onClick={() => { pageFlipRef.current?.turnToPage(item.page); setShowToC(false) }}
+                  className="w-full text-left px-4 py-2 text-sm text-white/60 hover:text-white hover:bg-white/5 transition-all truncate">
+                  {item.title}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
 
         {/* ── Book area ── */}
         <div className="flex-1 relative overflow-hidden flex items-center justify-center">
