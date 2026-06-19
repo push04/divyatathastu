@@ -169,6 +169,16 @@ export async function generateReportData(
         Promise.resolve(generateDmitReport(kundli, member.date_of_birth)),
         Promise.resolve(generateColourTherapy(kundli)),
       ])
+      // Lagna nakshatra for Likhit Japa (mantra writing) section
+      const NAKSHATRAS_LIST_ML = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra',
+        'Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta',
+        'Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Moola','Purva Ashadha',
+        'Uttara Ashadha','Shravana','Dhanishtha','Shatabhisha','Purva Bhadrapada','Uttara Bhadrapada','Revati']
+      const nakSpan = 360 / 27
+      const lagnaNakIdx = Math.floor(kundli.ascendantDegree / nakSpan) % 27
+      const lagnaNakshatra = NAKSHATRAS_LIST_ML[lagnaNakIdx]
+      const lagnaPada = Math.floor((kundli.ascendantDegree % nakSpan) / (nakSpan / 4)) + 1
+      const mantraLekhnan = getMantraLekhnan(lagnaNakshatra, lagnaPada)
       return {
         member,
         kundli,
@@ -177,6 +187,17 @@ export async function generateReportData(
         prakriti,
         yantra,
         mantras,
+        mantraLekhnan,
+        lekhnanMember: {
+          name: member.full_name,
+          dob: member.date_of_birth,
+          tob: member.time_of_birth,
+          pob: member.place_of_birth,
+          lagna: kundli.ascendant,
+          nakshatra: lagnaNakshatra,
+          pada: lagnaPada,
+          gotra: (member as any).gotra,
+        },
         psychology,
         vastuAnalysis: vastuResult,
         dmit,

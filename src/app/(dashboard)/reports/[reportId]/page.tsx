@@ -557,10 +557,19 @@ const PLANET_PRACTICE: Record<string, { penColor: string; paperColor: string; be
 }
 
 function MantraSection({ data }: { data: any }) {
-  // Mantra Lekhnan (Likhit Japa) format — matches DOCX report structure
-  if (data?.mantraLekhnan) {
+  // Resolve chanting: may live at data.chanting (standalone) or data.mantras.chanting (full report)
+  const chantingSource = data?.chanting ? data : (data?.mantras?.chanting ? data.mantras : null)
+  const hasLekhnan = !!data?.mantraLekhnan
+  const hasChanting = !!chantingSource?.chanting
+
+  if (!hasLekhnan && !hasChanting) return null
+
+  return (
+    <>
+    {hasLekhnan && (() => {
     const ml = data.mantraLekhnan
-    const m = data.member
+    // full_tathastu provides lekhnanMember (normalized); standalone mantra_writing provides member directly
+    const m = data.lekhnanMember || data.member
     return (
       <Section title="Customized Mantra Lekhan Report" icon="edit_note">
         {/* Opening invocation */}
@@ -821,13 +830,11 @@ function MantraSection({ data }: { data: any }) {
         })()}
       </Section>
     )
-  }
-
-  // Mantra Chanting format (existing)
-  if (!data?.chanting) return null
-  const { chanting, likhitJapa, namaAkshara } = data
-  return (
-    <Section title="Mantra Guidance" icon="temple_hindu">
+    })()}
+    {hasChanting && (() => {
+      const { chanting, likhitJapa, namaAkshara } = chantingSource!
+      return (
+    <Section title="Mantra Chanting Guidance" icon="temple_hindu">
       <div className="mt-4 space-y-4">
         <div className="bg-gradient-to-br from-[var(--indigo-deep)] to-[var(--plum)] rounded-xl p-5 text-white text-center">
           <p className="text-xs text-white/50 uppercase tracking-wider mb-2">Your Beej Mantra</p>
@@ -883,6 +890,9 @@ function MantraSection({ data }: { data: any }) {
         )}
       </div>
     </Section>
+      )
+    })()}
+    </>
   )
 }
 
