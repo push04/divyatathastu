@@ -3,6 +3,7 @@
 import SudarshanLoader from '@/components/SudarshanLoader'
 
 import { useState, useEffect, useRef } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
@@ -268,6 +269,11 @@ export default function AdminProductsPage() {
                         <p className="font-bold text-[var(--indigo-deep)]">₹{Number(p.price).toLocaleString('en-IN')}</p>
                         {p.sale_price && (
                           <p className="text-xs text-emerald-600 font-medium">₹{Number(p.sale_price).toLocaleString('en-IN')} <span className="text-[var(--warm-charcoal)]/40">({discount}% off)</span></p>
+                        )}
+                        {p.product_type === 'report' && (
+                          <Link href="/admin/report-pricing" className="text-[10px] text-indigo-400 hover:text-indigo-600 font-medium mt-0.5 flex items-center gap-0.5">
+                            <span className="material-symbols-outlined text-[10px]">edit</span>via Report Pricing
+                          </Link>
                         )}
                       </td>
                       <td className="px-4 py-3">

@@ -27,11 +27,15 @@ export async function POST(req: NextRequest) {
     const { error } = await (supabase as any).from('settings').upsert({ key: SETTINGS_KEY, value: prices, updated_at: new Date().toISOString() } as any)
     if (error) throw new Error(error.message || 'DB upsert failed — ensure the settings table exists')
 
-    // Sync prices to products table for any report-type product whose slug matches a pricing key
-    for (const [slug, price] of Object.entries(prices) as [string, number][]) {
+    // Sync prices to products table. Map report-type keys to their product slugs.
+    const PRODUCT_SLUG_MAP: Record<string, string> = {
+      full_tathastu: 'full-tathastu-bundle',
+    }
+    for (const [key, price] of Object.entries(prices) as [string, number][]) {
+      const productSlug = PRODUCT_SLUG_MAP[key] ?? key.replace(/_/g, '-')
       await supabase.from('products')
         .update({ price, updated_at: new Date().toISOString() } as any)
-        .eq('slug', slug)
+        .eq('slug', productSlug)
         .eq('product_type', 'report')
     }
 
