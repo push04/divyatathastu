@@ -26,8 +26,8 @@ const ERROR_MESSAGES: Record<number, string> = {
   2: 'This lecture is temporarily unavailable.',
   5: 'Playback error. Please try again.',
   100: 'This video could not be found.',
-  101: 'Embedding is not allowed for this video.',
-  150: 'Embedding is not allowed for this video.',
+  101: 'Embedding is not allowed for this video. Enable it in YouTube Studio.',
+  150: 'Embedding is not allowed for this video. Enable it in YouTube Studio.',
 }
 
 function fmtTime(s: number) {
@@ -48,6 +48,8 @@ const WM_POSITIONS = [
   { top: '22%', left: '48%' },
 ]
 
+let playerCounter = 0
+
 export default function LecturePlayer({
   videoId,
   watermarkText,
@@ -56,7 +58,7 @@ export default function LecturePlayer({
   hasNextLesson,
 }: LecturePlayerProps) {
   const wrapperRef = useRef<HTMLDivElement>(null)
-  const playerDivRef = useRef<HTMLDivElement>(null)
+  const playerIdRef = useRef(`yt-lp-${++playerCounter}`)
   const playerRef = useRef<any>(null)
   const progressRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -108,32 +110,38 @@ export default function LecturePlayer({
     }, 3000)
   }, [])
 
-  // Init player
+  // Init player using element ID (more reliable than passing element reference)
   useEffect(() => {
     let alive = true
 
     loadYouTubeApi().then((YT: any) => {
-      if (!alive || !playerDivRef.current || !YT?.Player) return
+      if (!alive || !YT?.Player) return
 
-      playerRef.current = new YT.Player(playerDivRef.current, {
+      playerRef.current = new YT.Player(playerIdRef.current, {
         videoId,
         host: 'https://www.youtube-nocookie.com',
         playerVars: {
           autoplay: 1,
-          controls: 0,
-          disablekb: 1,
-          fs: 0,
-          iv_load_policy: 3,
+          controls: 0,       // Hide all YouTube chrome
+          disablekb: 1,      // Disable YouTube keyboard shortcuts (we handle them)
+          fs: 0,             // No native fullscreen button (we build our own)
+          iv_load_policy: 3, // No annotations/info cards
           modestbranding: 1,
-          playsinline: 1,
+          playsinline: 1,    // Critical for iOS — prevents native fullscreen takeover
           rel: 0,
           cc_load_policy: 0,
-          origin: window.location.origin,
+          origin: typeof window !== 'undefined' ? window.location.origin : '',
           enablejsapi: 1,
         },
         events: {
           onReady: (e: any) => {
             if (!alive) return
+            // Force iframe to be non-interactive — click-catcher handles all events
+            const iframe = e.target.getIframe?.()
+            if (iframe) {
+              iframe.style.pointerEvents = 'none'
+              iframe.setAttribute('tabindex', '-1')
+            }
             const r = e.target.getAvailablePlaybackRates?.()
             if (r?.length) setRates(r)
             setVolume(e.target.getVolume?.() || 100)
@@ -196,9 +204,7 @@ export default function LecturePlayer({
       if (!p) return
 
       switch (e.key) {
-        case ' ':
-        case 'k':
-        case 'K':
+        case ' ': case 'k': case 'K':
           e.preventDefault()
           pStateRef.current === 'playing' ? p.pauseVideo() : p.playVideo()
           break
@@ -218,13 +224,11 @@ export default function LecturePlayer({
           e.preventDefault()
           { const v = Math.max(0, (p.getVolume?.() || 100) - 5); p.setVolume(v); setVolume(v) }
           break
-        case 'f':
-        case 'F':
+        case 'f': case 'F':
           e.preventDefault()
           toggleFullscreen()
           break
-        case 'm':
-        case 'M':
+        case 'm': case 'M':
           e.preventDefault()
           p.isMuted?.() ? (p.unMute?.(), setMuted(false)) : (p.mute?.(), setMuted(true))
           break
@@ -233,8 +237,7 @@ export default function LecturePlayer({
           e.preventDefault()
           { const d = p.getDuration?.() || 0; if (d) p.seekTo(d * (parseInt(e.key) / 10), true) }
           break
-        default:
-          return
+        default: return
       }
       showControlsTemporarily()
     }
@@ -242,7 +245,7 @@ export default function LecturePlayer({
     return () => window.removeEventListener('keydown', onKey)
   }, [showControlsTemporarily]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Cleanup hide timer
+  // Cleanup
   useEffect(() => () => { if (hideTimerRef.current) clearTimeout(hideTimerRef.current) }, [])
 
   const toggleFullscreen = useCallback(() => {
@@ -330,45 +333,65 @@ export default function LecturePlayer({
   const timeFrac = duration > 0 ? time / duration : 0
   const volIcon = muted || volume === 0 ? 'volume_off' : volume < 50 ? 'volume_down' : 'volume_up'
 
+  // States that require showing the cover (hide YouTube UI completely)
+  const showCover = pState === 'unstarted' || pState === 'paused'
+
   return (
     <div
       ref={wrapperRef}
       className="relative w-full bg-black select-none overflow-hidden"
       style={{ aspectRatio: '16/9' }}
       onMouseMove={showControlsTemporarily}
+      onContextMenu={e => e.preventDefault()}
     >
-      {/* YT iframe target */}
-      <div ref={playerDivRef} className="absolute inset-0 z-[1] w-full h-full pointer-events-none" />
+      {/* YT iframe target — YouTube API replaces this div with an iframe */}
+      <div id={playerIdRef.current} className="absolute inset-0 z-[1] w-full h-full" />
 
-      {/* Click-catcher overlay */}
-      {pState !== 'ended' && pState !== 'error' && (
-        <div
-          className="absolute inset-0 z-[2] cursor-pointer"
-          onClick={togglePlayPause}
-          onDoubleClick={handleOverlayDoubleClick}
-          onContextMenu={e => e.preventDefault()}
-          onMouseMove={showControlsTemporarily}
-          onTouchEnd={handleTouchTap}
-        />
+      {/* ── ALWAYS-ON click-catcher — no YouTube chrome ever receives a direct click ── */}
+      <div
+        className="absolute inset-0 z-[2] cursor-pointer"
+        onClick={pState === 'ended' || pState === 'error' ? undefined : togglePlayPause}
+        onDoubleClick={pState !== 'ended' && pState !== 'error' ? handleOverlayDoubleClick : undefined}
+        onContextMenu={e => e.preventDefault()}
+        onMouseMove={showControlsTemporarily}
+        onTouchEnd={pState !== 'ended' && pState !== 'error' ? handleTouchTap : undefined}
+      />
+
+      {/* ── Pause / unstarted cover — completely hides YouTube UI when not playing ── */}
+      {showCover && (
+        <div className="absolute inset-0 z-[3] flex items-center justify-center pointer-events-none"
+          style={{ background: 'rgba(0,0,0,0.72)' }}>
+          <div
+            className="w-20 h-20 rounded-full flex items-center justify-center transition-transform"
+            style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)' }}
+          >
+            <span
+              className="material-symbols-outlined text-white ml-1"
+              style={{ fontSize: 40, fontVariationSettings: "'FILL' 1" }}
+            >
+              play_arrow
+            </span>
+          </div>
+        </div>
       )}
 
-      {/* Buffering spinner */}
+      {/* ── Buffering spinner ── */}
       {pState === 'buffering' && (
-        <div className="absolute inset-0 z-[3] flex items-center justify-center bg-black/50 pointer-events-none">
+        <div className="absolute inset-0 z-[3] flex items-center justify-center bg-black/60 pointer-events-none">
           <div className="w-12 h-12 rounded-full border-[3px] border-white/20 border-t-white animate-spin" />
         </div>
       )}
 
-      {/* Error overlay */}
+      {/* ── Error overlay ── */}
       {pState === 'error' && errorMsg && (
-        <div className="absolute inset-0 z-[4] flex flex-col items-center justify-center gap-3 bg-black/90">
+        <div className="absolute inset-0 z-[4] flex flex-col items-center justify-center gap-3 bg-black/95">
           <span className="material-symbols-outlined text-[44px] text-red-400" style={{ fontVariationSettings: "'FILL' 1" }}>error</span>
           <p className="text-white/70 text-sm text-center px-8 max-w-xs">{errorMsg}</p>
-          <p className="text-white/30 text-xs">Check that this video allows embedding in YouTube Studio.</p>
+          <p className="text-white/30 text-xs text-center px-4">Ensure "Allow embedding" is checked in YouTube Studio for this video.</p>
         </div>
       )}
 
-      {/* End card */}
+      {/* ── End card — replaces YouTube's related-video grid ── */}
       {pState === 'ended' && (
         <div className="absolute inset-0 z-[4] flex flex-col items-center justify-center gap-5 bg-black/90">
           <span className="material-symbols-outlined text-[56px] text-emerald-400" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
@@ -398,7 +421,7 @@ export default function LecturePlayer({
         </div>
       )}
 
-      {/* Watermark */}
+      {/* ── Watermark — slowly drifts position every 25s ── */}
       {watermarkText && (
         <div
           className="absolute z-[5] pointer-events-none"
@@ -410,15 +433,15 @@ export default function LecturePlayer({
         </div>
       )}
 
-      {/* Custom controls */}
+      {/* ── Custom controls — always on top ── */}
       <div
         className="absolute bottom-0 left-0 right-0 z-[6]"
         style={{
-          background: 'linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 60%, transparent 100%)',
+          background: 'linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.5) 65%, transparent 100%)',
           opacity: showControls ? 1 : 0,
           pointerEvents: showControls ? 'auto' : 'none',
           transition: 'opacity 0.3s ease',
-          padding: '40px 14px 12px',
+          padding: '44px 14px 12px',
         }}
       >
         {/* Seek bar */}
@@ -441,14 +464,12 @@ export default function LecturePlayer({
 
         {/* Controls row */}
         <div className="flex items-center gap-1.5">
-          {/* Play/Pause */}
           <button onClick={togglePlayPause} className="w-9 h-9 flex items-center justify-center text-white hover:scale-110 transition-transform">
             <span className="material-symbols-outlined text-[26px]" style={{ fontVariationSettings: "'FILL' 1" }}>
               {pState === 'playing' ? 'pause' : 'play_arrow'}
             </span>
           </button>
 
-          {/* Volume */}
           <button onClick={toggleMute} className="w-8 h-8 flex items-center justify-center text-white/70 hover:text-white transition-colors">
             <span className="material-symbols-outlined text-[20px]">{volIcon}</span>
           </button>
@@ -459,14 +480,13 @@ export default function LecturePlayer({
             style={{ accentColor: 'var(--terracotta)' }}
           />
 
-          {/* Time display */}
           <span className="text-white/60 text-[11px] tabular-nums ml-1 whitespace-nowrap">
             {fmtTime(time)} / {fmtTime(duration)}
           </span>
 
           <div className="flex-1" />
 
-          {/* Speed settings */}
+          {/* Speed */}
           <div className="relative">
             <button
               onClick={() => setShowSettings(s => !s)}
@@ -491,7 +511,6 @@ export default function LecturePlayer({
             )}
           </div>
 
-          {/* Fullscreen */}
           <button onClick={toggleFullscreen} className="w-8 h-8 flex items-center justify-center text-white/70 hover:text-white transition-colors">
             <span className="material-symbols-outlined text-[20px]">{isFullscreen ? 'fullscreen_exit' : 'fullscreen'}</span>
           </button>
