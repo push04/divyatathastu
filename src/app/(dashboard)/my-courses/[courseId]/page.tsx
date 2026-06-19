@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 import SudarshanLoader from '@/components/SudarshanLoader'
+import LecturePlayer from '@/components/LecturePlayer'
 
 interface Lesson {
   id: string
@@ -55,6 +56,8 @@ export default function CourseViewerPage() {
   const [expandedModules, setExpandedModules] = useState<Set<string>>(new Set())
   const [completed, setCompleted] = useState<Set<string>>(new Set())
 
+  const [userEmail, setUserEmail] = useState('')
+
   // PDF viewer state
   const [pdfPages, setPdfPages] = useState<string[]>([])
   const [pdfLoading, setPdfLoading] = useState(false)
@@ -79,10 +82,12 @@ export default function CourseViewerPage() {
   const load = useCallback(async () => {
     setLoading(true)
     try {
-      const [courseRes, contentRes] = await Promise.all([
+      const [courseRes, contentRes, { data: { user } }] = await Promise.all([
         (supabase as any).from('service_items').select('title').eq('id', courseId).single(),
         fetch(`/api/courses/content?courseId=${courseId}`),
+        supabase.auth.getUser(),
       ])
+      if (user?.email) setUserEmail(user.email)
       if (courseRes.data) setCourseName(courseRes.data.title)
       const contentData = await contentRes.json()
       if (!contentRes.ok) throw new Error(contentData.error || 'Could not load course content')
@@ -278,20 +283,22 @@ export default function CourseViewerPage() {
               <p>Select a lesson to begin</p>
             </div>
           ) : activeLesson.lesson_type === 'youtube' ? (
-            /* ── YouTube ── */
+            /* ── YouTube (custom branded player) ── */
             <div className="flex flex-col">
-              <div className="relative w-full" style={{ paddingBottom: '56.25%', background: '#000' }}>
-                {getYouTubeId(activeLesson.content_url || '') ? (
-                  <iframe
-                    src={`https://www.youtube-nocookie.com/embed/${getYouTubeId(activeLesson.content_url!)}?rel=0&modestbranding=1&autoplay=1`}
-                    className="absolute inset-0 w-full h-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen title={activeLesson.title} style={{ border: 'none' }}
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center text-white/30 text-sm">Invalid YouTube URL</div>
-                )}
-              </div>
+              {getYouTubeId(activeLesson.content_url || '') ? (
+                <LecturePlayer
+                  key={activeLesson.id}
+                  videoId={getYouTubeId(activeLesson.content_url!)!}
+                  watermarkText={userEmail || undefined}
+                  onEnded={() => markComplete(activeLesson.id)}
+                  onNextLesson={activeIdx < allLessons.length - 1 ? goNext : undefined}
+                  hasNextLesson={activeIdx < allLessons.length - 1}
+                />
+              ) : (
+                <div className="w-full flex items-center justify-center text-white/30 text-sm bg-black" style={{ aspectRatio: '16/9' }}>
+                  Invalid YouTube URL
+                </div>
+              )}
               {activeLesson.description && (
                 <div className="p-6 max-w-3xl">
                   <p className="text-white/50 text-sm leading-relaxed">{activeLesson.description}</p>
