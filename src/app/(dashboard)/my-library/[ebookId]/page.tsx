@@ -20,6 +20,9 @@ export default function EbookReaderPage() {
   const [direction, setDirection] = useState<1 | -1>(1)
   const [showUI, setShowUI] = useState(true)
   const [zoom, setZoom] = useState(1)
+  const [panX, setPanX] = useState(0)
+  const [panY, setPanY] = useState(0)
+  const [isDragging, setIsDragging] = useState(false)
   const [pageInput, setPageInput] = useState('1')
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [bookmark, setBookmark] = useState<number | null>(null)
@@ -29,6 +32,10 @@ export default function EbookReaderPage() {
 
   const uiTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const pageImagesRef = useRef<string[]>([])
+  const pageAreaRef = useRef<HTMLDivElement>(null)
+  const panRef = useRef({ x: 0, y: 0 })
+  const dragStartRef = useRef({ mouseX: 0, mouseY: 0, panX: 0, panY: 0 })
+  const dragMovedRef = useRef(false) // true once drag threshold exceeded
 
   // Init: load PDF + render ALL pages to dataURLs
   useEffect(() => {
@@ -175,6 +182,46 @@ export default function EbookReaderPage() {
     saveBookmark(clamped)
   }, [currentPage, saveBookmark])
 
+  // Reset pan when page changes or zoom returns to 1
+  useEffect(() => {
+    panRef.current = { x: 0, y: 0 }
+    setPanX(0); setPanY(0)
+  }, [currentPage])
+
+  useEffect(() => {
+    if (zoom <= 1) { panRef.current = { x: 0, y: 0 }; setPanX(0); setPanY(0) }
+  }, [zoom])
+
+  const clampPan = useCallback((x: number, y: number) => {
+    const el = pageAreaRef.current
+    if (!el) return { x, y }
+    const maxX = (el.clientWidth * (zoom - 1)) / 2
+    const maxY = (el.clientHeight * (zoom - 1)) / 2
+    return { x: Math.max(-maxX, Math.min(maxX, x)), y: Math.max(-maxY, Math.min(maxY, y)) }
+  }, [zoom])
+
+  const handlePanStart = useCallback((clientX: number, clientY: number) => {
+    if (zoom <= 1) return
+    dragStartRef.current = { mouseX: clientX, mouseY: clientY, panX: panRef.current.x, panY: panRef.current.y }
+    dragMovedRef.current = false
+    setIsDragging(true)
+  }, [zoom])
+
+  const handlePanMove = useCallback((clientX: number, clientY: number) => {
+    if (!isDragging) return
+    const dx = clientX - dragStartRef.current.mouseX
+    const dy = clientY - dragStartRef.current.mouseY
+    if (!dragMovedRef.current && Math.abs(dx) < 5 && Math.abs(dy) < 5) return
+    dragMovedRef.current = true
+    const { x, y } = clampPan(dragStartRef.current.panX + dx, dragStartRef.current.panY + dy)
+    panRef.current = { x, y }
+    setPanX(x); setPanY(y)
+  }, [isDragging, clampPan])
+
+  const handlePanEnd = useCallback(() => {
+    setIsDragging(false)
+  }, [])
+
   // Keyboard
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
@@ -191,21 +238,45 @@ export default function EbookReaderPage() {
     return () => window.removeEventListener('keydown', h, true)
   }, [goNext, goPrev, toggleFullscreen, bookmark, goToPage])
 
-  // Pinch-to-zoom on mobile
+  // Pinch-to-zoom + single-finger pan on mobile
   const lastDist = useRef<number | null>(null)
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (e.touches.length !== 2) { lastDist.current = null; return }
-    e.preventDefault()
-    const dx = e.touches[0].clientX - e.touches[1].clientX
-    const dy = e.touches[0].clientY - e.touches[1].clientY
-    const dist = Math.sqrt(dx * dx + dy * dy)
-    if (lastDist.current !== null) {
-      const delta = (dist - lastDist.current) * 0.008
-      setZoom(z => Math.min(Math.max(+(z + delta).toFixed(2), 0.4), 2.5))
+  const lastTouchPos = useRef<{ x: number; y: number } | null>(null)
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      // Pinch to zoom
+      lastTouchPos.current = null
+      e.preventDefault()
+      const dx = e.touches[0].clientX - e.touches[1].clientX
+      const dy = e.touches[0].clientY - e.touches[1].clientY
+      const dist = Math.sqrt(dx * dx + dy * dy)
+      if (lastDist.current !== null) {
+        const delta = (dist - lastDist.current) * 0.008
+        setZoom(z => Math.min(Math.max(+(z + delta).toFixed(2), 0.4), 2.5))
+      }
+      lastDist.current = dist
+    } else if (e.touches.length === 1 && zoom > 1) {
+      // Single-finger pan when zoomed
+      lastDist.current = null
+      e.preventDefault()
+      const touch = e.touches[0]
+      if (lastTouchPos.current) {
+        const dx = touch.clientX - lastTouchPos.current.x
+        const dy = touch.clientY - lastTouchPos.current.y
+        const { x, y } = clampPan(panRef.current.x + dx, panRef.current.y + dy)
+        panRef.current = { x, y }
+        setPanX(x); setPanY(y)
+      }
+      lastTouchPos.current = { x: touch.clientX, y: touch.clientY }
+    } else {
+      lastDist.current = null
+      lastTouchPos.current = null
     }
-    lastDist.current = dist
-  }
-  const handleTouchEnd = () => { lastDist.current = null }
+  }, [zoom, clampPan])
+  const handleTouchEnd = useCallback(() => {
+    lastDist.current = null
+    lastTouchPos.current = null
+    setIsDragging(false)
+  }, [])
 
   // Auto-hide UI
   const resetUITimer = useCallback(() => {
@@ -384,7 +455,15 @@ export default function EbookReaderPage() {
         )}
 
         {/* ── Page area ── */}
-        <div className="flex-1 relative overflow-hidden flex items-center justify-center">
+        <div
+          ref={pageAreaRef}
+          className="flex-1 relative overflow-hidden flex items-center justify-center"
+          style={{ cursor: isDragging ? 'grabbing' : zoom > 1 ? 'grab' : 'default' }}
+          onMouseDown={e => { handlePanStart(e.clientX, e.clientY); resetUITimer() }}
+          onMouseMove={e => handlePanMove(e.clientX, e.clientY)}
+          onMouseUp={handlePanEnd}
+          onMouseLeave={handlePanEnd}
+        >
 
           {/* Ambient glow */}
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
@@ -393,61 +472,61 @@ export default function EbookReaderPage() {
 
           {/* Left nav arrow */}
           <motion.button
-            onClick={goPrev}
+            onClick={e => { if (!dragMovedRef.current) goPrev(); e.stopPropagation() }}
             animate={{ opacity: showUI && currentPage > 0 ? 0.85 : 0 }}
             whileHover={{ scale: 1.12, opacity: 1 }}
             whileTap={{ scale: 0.9 }}
             className="absolute left-2 sm:left-4 z-20 w-11 h-11 rounded-full flex items-center justify-center text-white"
-            style={{ background: 'rgba(255,255,255,0.07)', top: '50%', transform: 'translateY(-50%)' }}
+            style={{ background: 'rgba(255,255,255,0.07)', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer' }}
           >
             <span className="material-symbols-outlined text-[24px]">chevron_left</span>
           </motion.button>
 
           {/* Right nav arrow */}
           <motion.button
-            onClick={goNext}
+            onClick={e => { if (!dragMovedRef.current) goNext(); e.stopPropagation() }}
             animate={{ opacity: showUI && currentPage < images.length - 1 ? 0.85 : 0 }}
             whileHover={{ scale: 1.12, opacity: 1 }}
             whileTap={{ scale: 0.9 }}
             className="absolute right-2 sm:right-4 z-20 w-11 h-11 rounded-full flex items-center justify-center text-white"
-            style={{ background: 'rgba(255,255,255,0.07)', top: '50%', transform: 'translateY(-50%)' }}
+            style={{ background: 'rgba(255,255,255,0.07)', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer' }}
           >
             <span className="material-symbols-outlined text-[24px]">chevron_right</span>
           </motion.button>
 
-          {/* Page images — <img> renders at native resolution → sharp on all DPR levels */}
-          <div
-            className="relative w-full h-full flex items-center justify-center"
-            style={{ transform: `scale(${zoom})`, transition: 'transform 0.22s ease', transformOrigin: 'center center' }}
-          >
-            <AnimatePresence mode="wait" initial={false} custom={direction}>
-              <motion.div
-                key={currentPage}
-                custom={direction}
-                initial={{ opacity: 0, x: direction * 40 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: direction * -40 }}
-                transition={{ duration: 0.18, ease: 'easeInOut' }}
-                className="absolute inset-0 flex items-center justify-center p-4 sm:p-8"
-              >
-                {images[currentPage] && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={images[currentPage]}
-                    alt={`Page ${currentPage + 1}`}
-                    draggable={false}
-                    style={{
-                      maxWidth: '100%',
-                      maxHeight: '100%',
-                      objectFit: 'contain',
-                      borderRadius: 4,
-                      boxShadow: '0 8px 48px rgba(0,0,0,0.6)',
-                      imageRendering: 'crisp-edges',
-                    }}
-                  />
-                )}
-              </motion.div>
-            </AnimatePresence>
+          {/* Pan layer (screen-space translate) → Zoom layer → Page image */}
+          <div style={{ transform: `translate(${panX}px, ${panY}px)`, transition: isDragging ? 'none' : 'transform 0.15s ease', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ transform: `scale(${zoom})`, transition: isDragging ? 'none' : 'transform 0.22s ease', transformOrigin: 'center center', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <AnimatePresence mode="wait" initial={false} custom={direction}>
+                <motion.div
+                  key={currentPage}
+                  custom={direction}
+                  initial={{ opacity: 0, x: direction * 40 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: direction * -40 }}
+                  transition={{ duration: 0.18, ease: 'easeInOut' }}
+                  className="absolute inset-0 flex items-center justify-center p-4 sm:p-8"
+                >
+                  {images[currentPage] && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={images[currentPage]}
+                      alt={`Page ${currentPage + 1}`}
+                      draggable={false}
+                      style={{
+                        maxWidth: '100%',
+                        maxHeight: '100%',
+                        objectFit: 'contain',
+                        borderRadius: 4,
+                        boxShadow: '0 8px 48px rgba(0,0,0,0.6)',
+                        imageRendering: 'crisp-edges',
+                        userSelect: 'none',
+                      }}
+                    />
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </div>
         </div>
 
