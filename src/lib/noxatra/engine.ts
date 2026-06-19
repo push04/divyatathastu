@@ -4,6 +4,7 @@ import { calculateChakras } from './chakra'
 import { calculatePrakriti } from './prakriti'
 import { calculateYantraColour } from './yantra'
 import { calculateMantraGuidance } from './mantra'
+import { getMantraLekhnan } from './mantraLekhnan'
 import type { ReportType } from '@/types/database.types'
 
 export interface FamilyMemberData {
@@ -17,6 +18,7 @@ export interface FamilyMemberData {
   birth_timezone: string | null
   gender: string | null
   mobile_number: string | null
+  gotra: string | null
 }
 
 export async function generateReportData(
@@ -93,10 +95,37 @@ export async function generateReportData(
       return { member: { name: member.full_name }, yantra }
     }
 
-    case 'mantra_chanting':
-    case 'mantra_writing': {
+    case 'mantra_chanting': {
       const mantras = calculateMantraGuidance(kundli.dashaLord, kundli.nakshatra, kundli.ascendant, kundli.moonSign, kundli.nakshatraPada)
       return { member: { name: member.full_name }, mantras, type: reportType }
+    }
+
+    case 'mantra_writing': {
+      // Lagna nakshatra: derived from ascendant absolute ecliptic degree
+      const NAKSHATRAS_LIST = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra',
+        'Punarvasu','Pushya','Ashlesha','Magha','Purva Phalguni','Uttara Phalguni','Hasta',
+        'Chitra','Swati','Vishakha','Anuradha','Jyeshtha','Moola','Purva Ashadha',
+        'Uttara Ashadha','Shravana','Dhanishtha','Shatabhisha','Purva Bhadrapada',
+        'Uttara Bhadrapada','Revati']
+      const nakSpan = 360 / 27
+      const lagnaNakIdx = Math.floor(kundli.ascendantDegree / nakSpan) % 27
+      const lagnaNakshatra = NAKSHATRAS_LIST[lagnaNakIdx]
+      const lagnaPada = Math.floor((kundli.ascendantDegree % nakSpan) / (nakSpan / 4)) + 1
+      const mantraLekhnan = getMantraLekhnan(lagnaNakshatra, lagnaPada)
+      return {
+        member: {
+          name: member.full_name,
+          dob: member.date_of_birth,
+          tob: member.time_of_birth,
+          pob: member.place_of_birth,
+          lagna: kundli.ascendant,
+          nakshatra: lagnaNakshatra,
+          pada: lagnaPada,
+          gotra: member.gotra,
+        },
+        mantraLekhnan,
+        type: 'mantra_writing',
+      }
     }
 
     case 'astro_vastu': {

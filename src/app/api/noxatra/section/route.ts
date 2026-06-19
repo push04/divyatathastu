@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
     // Fetch member data
     const { data: member, error: memberErr } = await supabase
       .from('family_members')
-      .select('id, full_name, date_of_birth, time_of_birth, place_of_birth, birth_latitude, birth_longitude, birth_timezone, gender, mobile_number')
+      .select('id, full_name, date_of_birth, time_of_birth, place_of_birth, birth_latitude, birth_longitude, birth_timezone, gender, mobile_number, gotra')
       .eq('id', report.family_member_id)
       .eq('family_id', family.id)
       .single()
@@ -129,7 +129,7 @@ export async function POST(req: NextRequest) {
       ...existingContent,
       ...newData,
       // Always keep member info from the first section
-      member: (existingContent.member as any) || { name: member.full_name, dob: member.date_of_birth, pob: member.place_of_birth },
+      member: (newData.member as any) || (existingContent.member as any) || { name: member.full_name, dob: member.date_of_birth, pob: member.place_of_birth },
     }
 
     // If first astrology section, make sure member info is updated from the richer version

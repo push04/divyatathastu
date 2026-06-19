@@ -74,14 +74,8 @@ function KundliGrid({
 
   return (
     <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} className="max-w-full w-full">
-      <defs>
-        <linearGradient id={`bg-${label}`} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor={bgColor} />
-          <stop offset="100%" stopColor="#fef9f0" />
-        </linearGradient>
-      </defs>
       {/* Background */}
-      <rect width={W} height={H} fill={`url(#bg-${label})`} />
+      <rect width={W} height={H} fill={bgColor} />
       {/* Center decorative area */}
       <rect x={CS} y={CS} width={CS * 2} height={CS * 2} fill={accentColor} fillOpacity="0.05" />
       <polygon points={`${W/2},${H/2-18} ${W/2+10},${H/2-6} ${W/2+16},${H/2+10} ${W/2},${H/2+16} ${W/2-16},${H/2+10} ${W/2-10},${H/2-6}`} fill={accentColor} fillOpacity={0.08} stroke={accentColor} strokeOpacity={0.12} strokeWidth="0.8" />

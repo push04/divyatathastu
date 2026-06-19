@@ -50,7 +50,7 @@ function Section({ title, icon, children, printAlwaysOpen }: { title: string; ic
       >
         <div className="flex items-center gap-2">
           {icon && <span className="material-symbols-outlined text-[20px] text-[var(--indigo-deep)] print:hidden" style={{ fontVariationSettings: "'FILL' 1" }}>{icon}</span>}
-          <h2 className="font-bold text-[var(--indigo-deep)] text-base">{title}</h2>
+          <h2 className="font-black text-[var(--indigo-deep)] text-lg">{title}</h2>
         </div>
         <span className="material-symbols-outlined text-[18px] text-[var(--warm-charcoal)]/40 print:hidden">{open ? 'expand_less' : 'expand_more'}</span>
       </button>
@@ -139,14 +139,14 @@ function KundliSection({ data, birthDate }: { data: any; birthDate?: string }) {
       {k.planets?.length > 0 && k.ascendant && (
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
-            <h3 className="text-sm font-bold text-[var(--indigo-deep)] mb-3 flex items-center gap-1.5">
+            <h3 className="text-base font-extrabold text-[var(--indigo-deep)] mb-3 flex items-center gap-1.5">
               <span className="material-symbols-outlined text-[15px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>grid_4x4</span>
               North Indian Kundli (D-1)
             </h3>
             <NorthIndianKundli kundli={k} />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-[var(--indigo-deep)] mb-3 flex items-center gap-1.5">
+            <h3 className="text-base font-extrabold text-[var(--indigo-deep)] mb-3 flex items-center gap-1.5">
               <span className="material-symbols-outlined text-[15px] text-[var(--plum)]" style={{ fontVariationSettings: "'FILL' 1" }}>grid_4x4</span>
               Navamsha Chart (D-9)
             </h3>
@@ -158,7 +158,7 @@ function KundliSection({ data, birthDate }: { data: any; birthDate?: string }) {
       {/* Vimshottari Dasha Timeline */}
       {k.dashaLord && (
         <div className="mt-6">
-          <h3 className="text-sm font-bold text-[var(--indigo-deep)] mb-3 flex items-center gap-1.5">
+          <h3 className="text-base font-extrabold text-[var(--indigo-deep)] mb-3 flex items-center gap-1.5">
             <span className="material-symbols-outlined text-[15px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>timeline</span>
             Vimshottari Dasha Sequence
           </h3>
@@ -168,7 +168,7 @@ function KundliSection({ data, birthDate }: { data: any; birthDate?: string }) {
 
       {k.planets?.length > 0 && (
         <div className="mt-5">
-          <h3 className="text-sm font-bold text-[var(--indigo-deep)] mb-3">Planetary Positions</h3>
+          <h3 className="text-base font-extrabold text-[var(--indigo-deep)] mb-3">Planetary Positions</h3>
           <div className="overflow-x-auto rounded-xl border border-[var(--warm-sand)]">
             <table className="w-full text-sm">
               <thead>
@@ -205,7 +205,7 @@ function KundliSection({ data, birthDate }: { data: any; birthDate?: string }) {
         <div className="mt-5 space-y-4">
           {analysis.yogas?.length > 0 && (
             <div>
-              <h3 className="text-sm font-bold text-[var(--indigo-deep)] mb-2 flex items-center gap-1">
+              <h3 className="text-base font-extrabold text-[var(--indigo-deep)] mb-2 flex items-center gap-1">
                 <span className="material-symbols-outlined text-[14px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>stars</span>
                 Yogas in your Chart
               </h3>
@@ -250,7 +250,7 @@ function KundliSection({ data, birthDate }: { data: any; birthDate?: string }) {
 
           {analysis.houseThemes?.length > 0 && (
             <div>
-              <h3 className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Key House Influences</h3>
+              <h3 className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Key House Influences</h3>
               <div className="space-y-1.5">
                 {analysis.houseThemes.map((h: any) => (
                   <div key={h.house} className="flex gap-3 text-sm py-1.5 border-b border-[var(--warm-sand)]">
@@ -536,6 +536,119 @@ function YantraSection({ data }: { data: any }) {
 }
 
 function MantraSection({ data }: { data: any }) {
+  // Mantra Lekhnan (Likhit Japa) format — matches DOCX report structure
+  if (data?.mantraLekhnan) {
+    const ml = data.mantraLekhnan
+    const m = data.member
+    return (
+      <Section title="Customized Mantra Lekhan Report" icon="edit_note">
+        {/* Opening invocation */}
+        <div className="mt-4 bg-gradient-to-br from-[var(--saffron)]/10 to-[var(--indigo-deep)]/10 rounded-xl p-4 text-center border border-[var(--saffron)]/30">
+          <p className="text-xs text-[var(--warm-charcoal)]/50 uppercase tracking-wider mb-2">उद्घाटन मंत्र</p>
+          <p className="text-sm font-bold text-[var(--indigo-deep)] leading-relaxed">{ml.openingInvocation}</p>
+        </div>
+
+        {/* Customer info */}
+        <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+          {[
+            { label: 'नाम', value: m?.name },
+            { label: 'जन्म तिथि', value: m?.dob },
+            { label: 'जन्म समय', value: m?.tob },
+            { label: 'जन्म स्थान', value: m?.pob },
+            { label: 'जन्म लग्न', value: m?.lagna },
+            { label: 'नक्षत्र', value: `${ml.nakshatra} पद ${ml.pada}` },
+            { label: 'गोत्र', value: m?.gotra },
+          ].filter(i => i.value).map(item => (
+            <div key={item.label} className="bg-[var(--warm-sand)] rounded-lg p-2">
+              <p className="text-[var(--warm-charcoal)]/50">{item.label}</p>
+              <p className="font-semibold text-[var(--indigo-deep)] mt-0.5">{item.value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Purpose */}
+        <div className="mt-3 bg-[var(--warm-sand)] rounded-xl p-4">
+          <p className="text-xs text-[var(--warm-charcoal)]/50 uppercase tracking-wider mb-1">उद्देश्य</p>
+          <p className="text-sm text-[var(--warm-charcoal)]/80 leading-relaxed">{ml.purpose}</p>
+        </div>
+
+        {/* Section header */}
+        <div className="mt-4 text-center">
+          <p className="text-base font-black text-[var(--indigo-deep)]">{ml.nakshatra} Nakshatra Astrology</p>
+          <p className="text-sm font-bold text-[var(--plum)] mt-0.5">{ml.nakshatra} Nakshatra Pada - {ml.pada}</p>
+        </div>
+
+        {/* Instruction note */}
+        <div className="mt-2 bg-amber-50 border border-amber-200 rounded-lg p-3">
+          <p className="text-xs text-amber-800 leading-relaxed">{ml.instruction}</p>
+        </div>
+
+        {/* 4 Steps */}
+        <div className="mt-4 space-y-3">
+          {/* Step 1 */}
+          <div className="border border-[var(--indigo-deep)]/20 rounded-xl overflow-hidden">
+            <div className="bg-[var(--indigo-deep)] px-4 py-2 flex items-center justify-between">
+              <p className="text-white text-sm font-bold">चरण 1 — सार्वभौमिक गणपति मंत्र</p>
+              <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">{ml.step1.times}× लिखें</span>
+            </div>
+            <div className="p-4 bg-white text-center space-y-1">
+              <p className="text-lg font-bold text-[var(--indigo-deep)]">{ml.step1.mantra}</p>
+              <p className="text-sm text-[var(--warm-charcoal)]/60 italic">{ml.step1.transliteration}</p>
+              <p className="text-xs text-[var(--warm-charcoal)]/50">({ml.step1.meaning})</p>
+            </div>
+          </div>
+
+          {/* Step 2 */}
+          <div className="border border-[var(--saffron)]/30 rounded-xl overflow-hidden">
+            <div className="bg-[var(--saffron)] px-4 py-2 flex items-center justify-between">
+              <p className="text-white text-sm font-bold">चरण 2 — गायत्री मंत्र</p>
+              <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">{ml.step2.times}× लिखें</span>
+            </div>
+            <div className="p-4 bg-white text-center">
+              <p className="text-sm font-bold text-[var(--indigo-deep)] leading-relaxed">{ml.step2.mantra}</p>
+            </div>
+          </div>
+
+          {/* Step 3 */}
+          {ml.step3 ? (
+            <div className="border border-[var(--plum)]/30 rounded-xl overflow-hidden">
+              <div className="bg-[var(--plum)] px-4 py-2 flex items-center justify-between">
+                <p className="text-white text-sm font-bold">चरण 3 — नक्षत्र गणपति मंत्र</p>
+                <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">{ml.step3.times}× लिखें</span>
+              </div>
+              <div className="p-4 bg-white text-center space-y-1">
+                <p className="text-lg font-bold text-[var(--plum)]">{ml.step3.mantra}</p>
+                <p className="text-sm text-[var(--warm-charcoal)]/60 italic">{ml.step3.transliteration}</p>
+                <p className="text-xs text-[var(--warm-charcoal)]/50">({ml.step3.meaning})</p>
+              </div>
+            </div>
+          ) : (
+            <div className="border border-gray-200 rounded-xl p-4 bg-gray-50 text-center">
+              <p className="text-xs text-[var(--warm-charcoal)]/50">चरण 3 — पुष्य नक्षत्र के लिए नक्षत्र गणपति मंत्र नहीं है</p>
+            </div>
+          )}
+
+          {/* Step 4 */}
+          <div className="border border-teal-400/40 rounded-xl overflow-hidden">
+            <div className="bg-teal-600 px-4 py-2 flex items-center justify-between">
+              <p className="text-white text-sm font-bold">चरण 4 — विष्णु सहस्रनाम श्लोक</p>
+              <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">{ml.step4.times}× लिखें</span>
+            </div>
+            <div className="p-4 bg-white space-y-3">
+              <p className="text-xs text-[var(--warm-charcoal)]/40 text-right">श्लोक {ml.step4.number}</p>
+              <p className="text-base font-bold text-[var(--indigo-deep)] leading-relaxed text-center">{ml.step4.sanskrit}</p>
+              <div className="border-t border-gray-100 pt-3">
+                <p className="text-xs text-[var(--warm-charcoal)]/50 uppercase tracking-wider mb-1">अर्थ</p>
+                <p className="text-xs text-[var(--warm-charcoal)]/70 leading-relaxed">{ml.step4.arth}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Section>
+    )
+  }
+
+  // Mantra Chanting format (existing)
   if (!data?.chanting) return null
   const { chanting, likhitJapa, namaAkshara } = data
   return (
@@ -572,7 +685,7 @@ function MantraSection({ data }: { data: any }) {
 
         {chanting.sequence?.length > 0 && (
           <div>
-            <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Chanting Ritual Sequence</p>
+            <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Chanting Ritual Sequence</p>
             {chanting.sequence.map((s: string, i: number) => (
               <div key={i} className="flex gap-3 py-1.5 text-sm">
                 <span className="w-5 h-5 rounded-full bg-[var(--saffron)] text-white text-xs flex items-center justify-center font-bold flex-shrink-0">{i + 1}</span>
@@ -584,7 +697,7 @@ function MantraSection({ data }: { data: any }) {
 
         {likhitJapa && (
           <div className="bg-[var(--warm-sand)] rounded-xl p-4">
-            <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Likhit Japa (Written Mantra Practice)</p>
+            <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Likhit Japa (Written Mantra Practice)</p>
             <p className="text-sm text-[var(--warm-charcoal)]/80 font-medium">{likhitJapa.mantra}</p>
             <div className="mt-2 grid grid-cols-3 gap-2 text-xs">
               <div><span className="text-[var(--warm-charcoal)]/50">Count: </span><span>{likhitJapa.count}</span></div>
@@ -636,7 +749,7 @@ function VastuSection({ data }: { data: any }) {
 
         {data.colors && (
           <div>
-            <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Room Colors</p>
+            <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Room Colors</p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {Object.entries(data.colors).map(([room, color]) => (
                 <div key={room} className="bg-[var(--warm-sand)] rounded-lg p-2.5 text-xs">
@@ -650,7 +763,7 @@ function VastuSection({ data }: { data: any }) {
 
         {data.plants?.length > 0 && (
           <div>
-            <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Recommended Plants</p>
+            <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Recommended Plants</p>
             <div className="flex gap-2 flex-wrap">
               {data.plants.map((p: string) => (
                 <span key={p} className="text-xs bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full border border-emerald-200">{p}</span>
@@ -749,7 +862,7 @@ function MuhurtaSection({ data }: { data: any }) {
 
         {/* Life domain timing */}
         <div>
-          <h3 className="text-sm font-bold text-[var(--indigo-deep)] mb-3">Best Timing by Life Domain</h3>
+          <h3 className="text-base font-extrabold text-[var(--indigo-deep)] mb-3">Best Timing by Life Domain</h3>
           <div className="space-y-2">
             {TIMING_ITEMS.filter(i => i.value).map(item => (
               <div key={item.label} className="flex gap-3 items-start py-2.5 border-b border-[var(--warm-sand)]">
@@ -818,7 +931,7 @@ function RemediesSection({ data }: { data: any }) {
       <div className="mt-4 space-y-4">
         {data.dailyPractices?.length > 0 && (
           <div>
-            <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2 flex items-center gap-1">
+            <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2 flex items-center gap-1">
               <span className="material-symbols-outlined text-[14px] text-emerald-500" style={{ fontVariationSettings: "'FILL' 1" }}>today</span>
               Daily Practices
             </p>
@@ -834,7 +947,7 @@ function RemediesSection({ data }: { data: any }) {
         )}
         {data.weeklyPractices?.length > 0 && (
           <div>
-            <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2 flex items-center gap-1">
+            <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2 flex items-center gap-1">
               <span className="material-symbols-outlined text-[14px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>calendar_view_week</span>
               Weekly Practices
             </p>
@@ -847,7 +960,7 @@ function RemediesSection({ data }: { data: any }) {
         )}
         {data.gemstones?.length > 0 && (
           <div>
-            <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Gemstone Recommendations</p>
+            <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Gemstone Recommendations</p>
             {data.gemstones.map((g: any, i: number) => (
               <div key={g.stone} className={`rounded-xl p-3 text-sm mb-2 ${i === 0 ? 'bg-gradient-to-r from-amber-50 to-[var(--warm-sand)] border border-amber-200' : 'bg-[var(--warm-sand)]'}`}>
                 <p className="font-bold text-[var(--indigo-deep)]">{g.stone}</p>
@@ -859,7 +972,7 @@ function RemediesSection({ data }: { data: any }) {
         )}
         {data.dietRecommendations?.length > 0 && (
           <div>
-            <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2 flex items-center gap-1">
+            <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2 flex items-center gap-1">
               <span className="material-symbols-outlined text-[14px] text-emerald-500" style={{ fontVariationSettings: "'FILL' 1" }}>nutrition</span>
               Diet & Food Remedies
             </p>
@@ -886,7 +999,7 @@ function RemediesSection({ data }: { data: any }) {
         )}
         {data.yantras?.length > 0 && (
           <div>
-            <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Yantras</p>
+            <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Yantras</p>
             {data.yantras.map((y: string) => (
               <p key={y} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {y}</p>
             ))}
@@ -1261,7 +1374,7 @@ function ChapterSpread({ chapter, height }: { chapter: BookChapter; height: numb
           <p style={{ fontSize: 9, color: '#B8860B', letterSpacing: '0.35em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 5 }}>
             CHAPTER {chapter.number}
           </p>
-          <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 21, fontWeight: 700, color: '#2F2A44', margin: '0 0 4px', lineHeight: 1.25 }}>
+          <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 26, fontWeight: 900, color: '#2F2A44', margin: '0 0 4px', lineHeight: 1.25 }}>
             {chapter.title}
           </h2>
           <p style={{ fontFamily: 'Georgia, serif', fontSize: 14, color: '#B8860B', margin: 0 }}>
@@ -1553,7 +1666,7 @@ export default function ReportDetailPage() {
             </div>
             {d.prakriti?.diet?.length > 0 && (
               <div>
-                <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Diet Recommendations</p>
+                <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Diet Recommendations</p>
                 <div className="flex flex-wrap gap-1.5">
                   {d.prakriti.diet.map((f: string) => <span key={f} className="text-xs bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full border border-emerald-200">{f}</span>)}
                 </div>
@@ -1561,7 +1674,7 @@ export default function ReportDetailPage() {
             )}
             {d.prakriti?.lifestyle?.length > 0 && (
               <div>
-                <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Lifestyle Guidelines</p>
+                <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Lifestyle Guidelines</p>
                 {d.prakriti.lifestyle.map((l: string) => <p key={l} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {l}</p>)}
               </div>
             )}
@@ -1600,8 +1713,8 @@ export default function ReportDetailPage() {
           )}
         </div>
       ),
-      content: <MantraSection data={d.mantras || d.mantra} />,
-      show: (['mantra_chanting', 'mantra_writing'].includes(report.report_type) || isFull) && !!(d.mantras || d.mantra),
+      content: <MantraSection data={d.mantraLekhnan ? d : (d.mantras || d.mantra)} />,
+      show: (['mantra_chanting', 'mantra_writing'].includes(report.report_type) || isFull) && !!(d.mantras || d.mantra || d.mantraLekhnan),
     },
     {
       id: 'psychology', number: 'VII', title: 'Vedic Psychology', sanskrit: 'वैदिक मनोविज्ञान',
@@ -1615,7 +1728,7 @@ export default function ReportDetailPage() {
             </div>
             {(d.psychology?.coreTrait || d.psychology?.strengths)?.length > 0 && (
               <div>
-                <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Core Traits & Strengths</p>
+                <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Core Traits & Strengths</p>
                 <div className="flex gap-2 flex-wrap">
                   {(d.psychology.coreTrait || d.psychology.strengths).map((s: string) => (
                     <span key={s} className="text-xs bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full font-medium">{s}</span>
@@ -1644,7 +1757,7 @@ export default function ReportDetailPage() {
             )}
             {d.psychology?.shadowWork?.length > 0 && (
               <div>
-                <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Shadow Work Themes</p>
+                <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Shadow Work Themes</p>
                 {d.psychology.shadowWork.map((s: string) => <p key={s} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {s}</p>)}
               </div>
             )}
@@ -1673,7 +1786,7 @@ export default function ReportDetailPage() {
             )}
             {d.dmit?.dominantIntelligences?.length > 0 && (
               <div>
-                <p className="text-sm font-bold text-[var(--indigo-deep)] mb-3">Intelligence Profile</p>
+                <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-3">Intelligence Profile</p>
                 {d.dmit.allIntelligences?.map((intel: any) => (
                   <div key={intel.type} className="mb-2">
                     <div className="flex items-center justify-between mb-0.5">
@@ -1689,7 +1802,7 @@ export default function ReportDetailPage() {
             )}
             {d.dmit?.recommendedStreams?.length > 0 && (
               <div>
-                <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Recommended Academic Streams</p>
+                <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Recommended Academic Streams</p>
                 <div className="flex gap-2 flex-wrap">
                   {d.dmit.recommendedStreams.map((s: string) => (
                     <span key={s} className="text-xs bg-[var(--indigo-deep)] text-white px-3 py-1 rounded-full font-medium">{s}</span>
@@ -1699,7 +1812,7 @@ export default function ReportDetailPage() {
             )}
             {d.dmit?.careerAlignment?.length > 0 && (
               <div>
-                <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Career Alignment</p>
+                <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Career Alignment</p>
                 <div className="flex gap-2 flex-wrap">
                   {d.dmit.careerAlignment.map((c: string) => (
                     <span key={c} className="text-xs bg-[var(--warm-sand)] px-2.5 py-1 rounded-full text-[var(--warm-charcoal)]/70">{c}</span>
@@ -1830,7 +1943,7 @@ export default function ReportDetailPage() {
             )}
             {d.childDevelopment?.milestones?.length > 0 && (
               <div>
-                <p className="text-sm font-bold text-[var(--indigo-deep)] mb-2">Key Milestones</p>
+                <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Key Milestones</p>
                 {d.childDevelopment.milestones.map((m: string) => <p key={m} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {m}</p>)}
               </div>
             )}

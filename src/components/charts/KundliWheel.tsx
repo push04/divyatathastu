@@ -191,15 +191,15 @@ export default function KundliWheel({ kundli }: { kundli: KundliData }) {
         })}
 
         {/* Center hub */}
-        <circle cx={cx} cy={cy} r="38" fill="#2F2A44" />
-        <circle cx={cx} cy={cy} r="35" fill="none" stroke="#D4A017" strokeWidth="1" />
+        <circle cx={cx} cy={cy} r="38" fill="#fef9f0" stroke="#D4A017" strokeWidth="1.5" />
+        <circle cx={cx} cy={cy} r="35" fill="none" stroke="#D4A017" strokeWidth="0.6" strokeOpacity="0.5" />
         <text x={cx} y={cy - 9} textAnchor="middle" fontSize="8" fill="#D4A017"
           style={{ fontFamily: "'Sora', sans-serif", letterSpacing: '0.1em' }}>LAGNA</text>
-        <text x={cx} y={cy + 4} textAnchor="middle" fontSize="14" fill="white" fontWeight="bold"
+        <text x={cx} y={cy + 4} textAnchor="middle" fontSize="14" fill="#2F2A44" fontWeight="bold"
           style={{ fontFamily: "'Playfair Display', serif" }}>
           {(kundli.ascendant || '').slice(0, 3).toUpperCase()}
         </text>
-        <text x={cx} y={cy + 17} textAnchor="middle" fontSize="8" fill="#D4A017/80"
+        <text x={cx} y={cy + 17} textAnchor="middle" fontSize="8" fill="#D4A017"
           style={{ fontFamily: "'Sora', sans-serif" }}>
           {ZODIAC_SYMBOLS[kundli.ascendant] || ''}
         </text>

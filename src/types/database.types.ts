@@ -83,6 +83,7 @@ export type Database = {
           birth_timezone: string | null
           gender: 'male' | 'female' | 'other' | null
           mobile_number: string | null
+          gotra: string | null
           created_at: string
         }
         Insert: {
@@ -98,6 +99,7 @@ export type Database = {
           birth_timezone?: string | null
           gender?: 'male' | 'female' | 'other' | null
           mobile_number?: string | null
+          gotra?: string | null
         }
         Update: {
           family_id?: string | null
@@ -112,6 +114,7 @@ export type Database = {
           birth_timezone?: string | null
           gender?: 'male' | 'female' | 'other' | null
           mobile_number?: string | null
+          gotra?: string | null
         }
         Relationships: [
           { foreignKeyName: 'family_members_family_id_fkey'; columns: ['family_id']; isOneToOne: false; referencedRelation: 'families'; referencedColumns: ['id'] }

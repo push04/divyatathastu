@@ -28,6 +28,7 @@ export default function AddMemberPage() {
     name: '',
     relation: 'Self',
     gender: 'male',
+    gotra: '',
     dob: '',
     birth_time: '',
     birth_city: '',
@@ -89,6 +90,7 @@ export default function AddMemberPage() {
         birth_latitude: lat,
         birth_longitude: lng,
         birth_timezone: form.timezone,
+        gotra: form.gotra || null,
       }).select().single()
 
       if (error) throw error
@@ -139,6 +141,19 @@ export default function AddMemberPage() {
                 {RELATIONS.map(r => <option key={r} value={r}>{r}</option>)}
               </select>
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-[var(--indigo-deep)] mb-1.5">
+              Gotra <span className="text-[var(--warm-charcoal)]/40 font-normal">(for Mantra Lekhnan report)</span>
+            </label>
+            <input
+              type="text"
+              value={form.gotra}
+              onChange={e => set('gotra', e.target.value)}
+              placeholder="e.g. Kashyap, Bharadwaj, Vasistha"
+              className="w-full px-3 py-2.5 rounded-lg border border-[var(--warm-sand)] bg-white text-sm focus:outline-none focus:border-[var(--saffron)] focus:ring-1 focus:ring-[var(--saffron)]"
+            />
           </div>
 
           <div>

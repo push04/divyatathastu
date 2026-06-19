@@ -80,6 +80,7 @@ const SINGLE_SECTIONS: Record<string, { sectionType: string; name: string; nameH
   prakriti:        [{ sectionType: 'prakriti',        name: 'Prakriti (Ayurveda)',    nameHi: 'आयुर्वेद प्रकृति', icon: 'eco',             estSeconds: 6  }],
   yantra_colour:   [{ sectionType: 'yantra_colour',   name: 'Yantra & Colour',        nameHi: 'यंत्र और रंग',   icon: 'palette',          estSeconds: 6  }],
   mantra_chanting: [{ sectionType: 'mantra_chanting', name: 'Mantra Science',         nameHi: 'मंत्र विज्ञान',   icon: 'temple_hindu',    estSeconds: 6  }],
+  mantra_writing:  [{ sectionType: 'mantra_writing',  name: 'Likhit Japa Guide',      nameHi: 'लिखित जप मार्गदर्शन', icon: 'edit_note',    estSeconds: 6  }],
   astro_vastu:     [{ sectionType: 'astro_vastu',     name: 'Vastu Analysis',         nameHi: 'वास्तु विश्लेषण', icon: 'house',           estSeconds: 8  }],
   child_development:[{ sectionType: 'child_development', name: 'Child Development',   nameHi: 'बाल विकास',       icon: 'child_care',      estSeconds: 8  }],
   dmit:            [{ sectionType: 'dmit',            name: 'Brain Mapping',          nameHi: 'मस्तिष्क मानचित्र', icon: 'psychology',   estSeconds: 8  }],
