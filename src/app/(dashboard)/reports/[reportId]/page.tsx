@@ -1944,25 +1944,30 @@ export default function ReportDetailPage() {
       for (const { top, height } of sectionBounds) {
         const sectionMmH = height * mmPerPx
 
-        // Oversized section → scale to fit one page
+        // Oversized section (taller than one page) → span across multiple pages naturally
         if (sectionMmH > contentH) {
-          if (curY > margin + 2) { pdf.addPage(); drawBorder(); curY = margin }
-          const strip = document.createElement('canvas')
-          strip.width = fullCanvas.width
-          strip.height = height
-          strip.getContext('2d')!.drawImage(fullCanvas, 0, top, fullCanvas.width, height, 0, 0, fullCanvas.width, height)
-          pdf.addImage(strip.toDataURL('image/jpeg', 0.95), 'JPEG', margin, curY, contentW, contentH)
-          pdf.addPage(); drawBorder(); curY = margin
+          let sliceFrom = top
+          const sliceTo = top + height
+          while (sliceFrom < sliceTo) {
+            const availMm = pdfH - margin - curY
+            const availPx = Math.round(availMm / mmPerPx)
+            const chunkTo = Math.min(sliceFrom + availPx, sliceTo)
+            placeStrip(sliceFrom, chunkTo, curY)
+            curY += (chunkTo - sliceFrom) * mmPerPx
+            sliceFrom = chunkTo
+            if (sliceFrom < sliceTo) { pdf.addPage(); drawBorder(); curY = margin }
+          }
+          curY += 2
           continue
         }
 
-        // Won't fit on this page → start a fresh page
+        // Normal section — start a new page if it won't fit
         if (curY + sectionMmH > pdfH - margin) {
           pdf.addPage(); drawBorder(); curY = margin
         }
 
         placeStrip(top, top + height, curY)
-        curY += sectionMmH + 2   // 2mm gap between sections
+        curY += sectionMmH + 2
       }
 
       const safeName = (title ?? 'report').replace(/[^a-z0-9\s]/gi, '').trim().replace(/\s+/g, '_')
