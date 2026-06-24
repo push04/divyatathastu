@@ -1866,58 +1866,108 @@ export default function ReportDetailPage() {
 
   async function handleDownload() {
     setDownloading(true)
+    const el = document.getElementById('rpa')
     try {
-      const el = document.getElementById('rpa')
       if (!el) return
+
+      // Show at fixed A4 width for consistent rendering
       el.style.display = 'block'
+      el.style.width = '794px'
+      el.style.maxWidth = '794px'
       await document.fonts.ready
 
-      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
-        import('html2canvas'),
+      // ── Measure section positions NOW (while element is visible) ──
+      const PIXEL_RATIO = 2
+      const elRect = el.getBoundingClientRect()
+      const sections = Array.from(el.children) as HTMLElement[]
+      const sectionBounds = sections.map(s => {
+        const r = s.getBoundingClientRect()
+        return {
+          top: Math.round((r.top - elRect.top) * PIXEL_RATIO),
+          height: Math.round(r.height * PIXEL_RATIO),
+        }
+      }).filter(b => b.height > 4)
+
+      // ── html-to-image: lets the browser render oklch/oklab/CSS vars natively ──
+      const [{ toCanvas }, { default: jsPDF }] = await Promise.all([
+        import('html-to-image'),
         import('jspdf'),
       ])
 
+      const fullCanvas = await toCanvas(el, {
+        pixelRatio: PIXEL_RATIO,
+        backgroundColor: '#FDFAF5',
+        skipAutoScale: true,
+      })
+
+      // Hide and reset after capture
+      el.style.display = ''
+      el.style.width = ''
+      el.style.maxWidth = ''
+
+      // ── Build PDF ──
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
       const pdfW = pdf.internal.pageSize.getWidth()   // 210mm
       const pdfH = pdf.internal.pageSize.getHeight()  // 297mm
-      const margin = 8   // mm padding on each side
-      const contentW = pdfW - margin * 2
-      const h2cOpts = { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false }
+      const margin = 9
+      const contentW = pdfW - margin * 2   // 192mm
+      const contentH = pdfH - margin * 2   // 279mm
+      const mmPerPx = contentW / fullCanvas.width
 
-      // Capture each direct child separately → no card ever sliced mid-way
-      const sections = Array.from(el.children) as HTMLElement[]
+      // Gold double-border on every page
+      const drawBorder = () => {
+        pdf.setDrawColor(196, 155, 55)
+        pdf.setLineWidth(0.7)
+        pdf.rect(5, 5, pdfW - 10, pdfH - 10)
+        pdf.setDrawColor(218, 185, 95)
+        pdf.setLineWidth(0.25)
+        pdf.rect(7, 7, pdfW - 14, pdfH - 14)
+      }
+
+      // Crop a horizontal strip from fullCanvas and place it on the current page
+      const placeStrip = (fromPx: number, toPx: number, atMmY: number) => {
+        const h = toPx - fromPx
+        if (h <= 0) return
+        const strip = document.createElement('canvas')
+        strip.width = fullCanvas.width
+        strip.height = h
+        strip.getContext('2d')!.drawImage(fullCanvas, 0, fromPx, fullCanvas.width, h, 0, 0, fullCanvas.width, h)
+        pdf.addImage(strip.toDataURL('image/jpeg', 0.95), 'JPEG', margin, atMmY, contentW, h * mmPerPx)
+      }
+
+      // ── Pack sections: never slice a card mid-way ──
       let curY = margin
-      let pageNum = 0
+      drawBorder()  // first page
 
-      for (const section of sections) {
-        const canvas = await html2canvas(section, h2cOpts)
-        if (canvas.width === 0 || canvas.height === 0) continue
-        const sectionH = canvas.height * (contentW / canvas.width)
+      for (const { top, height } of sectionBounds) {
+        const sectionMmH = height * mmPerPx
 
-        // If this section is taller than a full page, scale it to fit one page
-        if (sectionH > pdfH - margin * 2) {
-          if (pageNum > 0) { pdf.addPage(); curY = margin }
-          const scaledH = pdfH - margin * 2
-          pdf.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', margin, curY, contentW, scaledH)
-          pdf.addPage(); curY = margin; pageNum++
+        // Oversized section → scale to fit one page
+        if (sectionMmH > contentH) {
+          if (curY > margin + 2) { pdf.addPage(); drawBorder(); curY = margin }
+          const strip = document.createElement('canvas')
+          strip.width = fullCanvas.width
+          strip.height = height
+          strip.getContext('2d')!.drawImage(fullCanvas, 0, top, fullCanvas.width, height, 0, 0, fullCanvas.width, height)
+          pdf.addImage(strip.toDataURL('image/jpeg', 0.95), 'JPEG', margin, curY, contentW, contentH)
+          pdf.addPage(); drawBorder(); curY = margin
           continue
         }
 
-        // Start a new page if section won't fit on current page
-        if (pageNum > 0 && curY + sectionH > pdfH - margin) {
-          pdf.addPage(); curY = margin
+        // Won't fit on this page → start a fresh page
+        if (curY + sectionMmH > pdfH - margin) {
+          pdf.addPage(); drawBorder(); curY = margin
         }
 
-        pdf.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', margin, curY, contentW, sectionH)
-        curY += sectionH + 3  // 3mm gap between sections
-        pageNum++
+        placeStrip(top, top + height, curY)
+        curY += sectionMmH + 2   // 2mm gap between sections
       }
 
-      el.style.display = ''
       const safeName = (title ?? 'report').replace(/[^a-z0-9\s]/gi, '').trim().replace(/\s+/g, '_')
-      pdf.save(`${safeName}.pdf`)
+      pdf.save(`${safeName || 'DivyaTathastu_Report'}.pdf`)
     } catch (e) {
       console.error('PDF download failed:', e)
+      if (el) { el.style.display = ''; el.style.width = ''; el.style.maxWidth = '' }
     } finally {
       setDownloading(false)
     }
