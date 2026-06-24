@@ -54,6 +54,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing reportId or sectionType' }, { status: 400 })
     }
 
+    const VALID_SECTION_TYPES = [
+      'astrology', 'numerology', 'shakti_chakra', 'prakriti', 'yantra_colour',
+      'mantra_chanting', 'mantra_writing', 'astro_vastu', 'dmit', 'colour_therapy',
+      'child_development', 'psychology', 'mobile_number', '_finale',
+    ]
+    if (!VALID_SECTION_TYPES.includes(sectionType)) {
+      return NextResponse.json({ error: 'Invalid section type' }, { status: 400 })
+    }
+
     // Verify user owns a family
     const { data: family } = await supabase
       .from('families')

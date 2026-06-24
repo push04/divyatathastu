@@ -17,6 +17,7 @@ interface Product {
   stock_count: number
   is_active: boolean
   slug: string
+  is_featured?: boolean
 }
 
 const CATEGORIES = [
@@ -29,6 +30,7 @@ const CATEGORIES = [
   { label: 'Puja Items', value: 'physical', icon: 'temple_hindu' },
   { label: 'Herbal', value: 'herbal', icon: 'eco' },
   { label: 'Bundles', value: 'bundle', icon: 'auto_awesome' },
+  { label: 'Ardra Jalam', value: 'ardra_jalam', icon: 'water_drop' },
 ]
 
 const TYPE_ICON: Record<string, string> = {
@@ -56,11 +58,15 @@ const SORT_OPTIONS = [
   { label: 'Newest', value: 'newest' },
 ]
 
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
 function getImageUrl(images: any): string | null {
   if (!images) return null
   if (Array.isArray(images) && images.length > 0) {
     const img = images[0]
-    if (typeof img === 'string') return img
+    if (typeof img === 'string') {
+      if (img.startsWith('http')) return img
+      return `${SUPABASE_URL}/storage/v1/object/public/product-images/${img}`
+    }
     if (img?.url) return img.url
   }
   return null
@@ -99,7 +105,7 @@ export default function ShopPage() {
       const [productsRes, authRes] = await Promise.all([
         supabase
           .from('products')
-          .select('id,name,description,price,sale_price,product_type,images,stock_count,is_active,slug')
+          .select('id,name,description,price,sale_price,product_type,images,stock_count,is_active,slug,is_featured')
           .eq('is_active', true),
         supabase.auth.getUser(),
       ])
@@ -151,7 +157,8 @@ export default function ShopPage() {
     return true
   })
 
-  if (sort === 'price_asc') displayed = [...displayed].sort((a, b) => (a.sale_price ?? a.price) - (b.sale_price ?? b.price))
+  if (sort === 'featured') displayed = [...displayed].sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0))
+  else if (sort === 'price_asc') displayed = [...displayed].sort((a, b) => (a.sale_price ?? a.price) - (b.sale_price ?? b.price))
   else if (sort === 'price_desc') displayed = [...displayed].sort((a, b) => (b.sale_price ?? b.price) - (a.sale_price ?? a.price))
   else if (sort === 'newest') displayed = [...displayed].reverse()
 
@@ -262,7 +269,40 @@ export default function ShopPage() {
           </p>
 
           {/* ── Product Grid ── */}
-          {displayed.length === 0 ? (
+          {category === 'ardra_jalam' ? (
+            <div className="max-w-2xl mx-auto py-8">
+              <div className="rounded-3xl overflow-hidden" style={{ background: 'linear-gradient(160deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%)', border: '2px solid rgba(16,185,129,0.3)' }}>
+                <div className="p-8 text-center">
+                  <div className="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center shadow-xl" style={{ background: 'linear-gradient(135deg, #065f46, #047857)' }}>
+                    <span className="material-symbols-outlined text-white text-[36px]" style={{ fontVariationSettings: "'FILL' 1" }}>water_drop</span>
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-widest" style={{ background: 'rgba(16,185,129,0.15)', color: '#065f46' }}>
+                    <span className="material-symbols-outlined text-[11px]" style={{ fontVariationSettings: "'FILL' 1" }}>stars</span>
+                    Sacred · Limited Batches
+                  </div>
+                  <h2 className="text-3xl font-black text-[#065f46] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Ardra Jalam</h2>
+                  <p className="text-base text-[#065f46]/70 mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>Sacred Healing Water</p>
+                  <p className="text-sm text-[#065f46]/60 mb-6 max-w-md mx-auto leading-relaxed">
+                    Charged under Ardra Nakshatra frequencies — ruled by Lord Rudra. Each batch prepared through Vedic rituals, mantras, and cosmic alignment. Available only once every 27 days.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <Link href="/ardra-jalam"
+                      className="inline-flex items-center gap-2 px-8 py-3 rounded-xl font-semibold text-white transition-all"
+                      style={{ background: 'linear-gradient(135deg, #065f46, #047857)', fontSize: '15px' }}>
+                      <span className="material-symbols-outlined text-[18px]">water_drop</span>
+                      Order Ardra Jalam
+                    </Link>
+                    <Link href="/ardra-jalam#about"
+                      className="inline-flex items-center gap-2 px-8 py-3 rounded-xl font-semibold transition-all"
+                      style={{ background: 'rgba(6,95,70,0.1)', color: '#065f46', fontSize: '15px' }}>
+                      <span className="material-symbols-outlined text-[18px]">info</span>
+                      Learn More
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : displayed.length === 0 ? (
             <div className="text-center py-20">
               <span className="material-symbols-outlined text-[64px] block mb-4" style={{ color: 'var(--warm-sand)', fontVariationSettings: "'FILL' 1" }}>storefront</span>
               <p style={{ color: 'rgba(61,52,80,0.4)' }}>No products found{search ? ` for "${search}"` : ''}</p>

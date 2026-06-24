@@ -3,8 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useServiceItems } from '@/lib/hooks/useServiceItems'
-import { createClient } from '@/lib/supabase/client'
-import { toast } from 'sonner'
+import { useServicePayment } from '@/lib/hooks/useServicePayment'
 
 const DOSHAS = [
   {
@@ -36,25 +35,14 @@ const MEDICAL_ASTRO_HOUSES = [
 
 export default function AyurvedaPage() {
   const { items, loading } = useServiceItems('ayurveda')
-  const [booking, setBooking] = useState<string | null>(null)
   const [booked, setBooked] = useState<Set<string>>(new Set())
   const [activeDosha, setActiveDosha] = useState(0)
+  const { pay, bookingId: booking } = useServicePayment()
 
-  async function bookService(item: typeof items[number]) {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { toast.error('Please login to book'); return }
-    setBooking(item.id)
-    const { error } = await (supabase as any).from('service_bookings').insert({
-      service_item_id: item.id, user_id: user.id,
-      status: 'pending', amount: item.price ?? 0, payment_status: 'pending',
+  function bookService(item: typeof items[number]) {
+    pay({ id: item.id, title: item.title, price: item.price ?? 0 }, {
+      onSuccess: (id) => setBooked(s => new Set([...s, id])),
     })
-    if (error) toast.error('Booking failed. Try again.')
-    else {
-      toast.success(`Booked! Our Ayurvedic practitioner will contact you within 24 hours.`)
-      setBooked(s => new Set([...s, item.id]))
-    }
-    setBooking(null)
   }
 
   const d = DOSHAS[activeDosha]

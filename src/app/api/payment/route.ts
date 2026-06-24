@@ -124,11 +124,12 @@ export async function POST(req: NextRequest) {
   if (action === 'verify') {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, db_order_id } = await req.json()
 
+    const isMock = process.env.NODE_ENV === 'development' && process.env.RAZORPAY_MOCK_MODE === 'true'
     const secret = process.env.RAZORPAY_KEY_SECRET || 'mock_secret'
     const body = razorpay_order_id + '|' + razorpay_payment_id
     const expectedSignature = crypto.createHmac('sha256', secret).update(body).digest('hex')
 
-    const isValid = expectedSignature === razorpay_signature || razorpay_order_id?.startsWith('mock_')
+    const isValid = isMock || expectedSignature === razorpay_signature
 
     if (!isValid) return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
 

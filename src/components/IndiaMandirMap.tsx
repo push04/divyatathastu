@@ -2,8 +2,6 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import indiaMap from '@svg-maps/india'
-import mandirData from '@/data/mandirs.json'
-import routeData from '@/data/pilgrimageroutes.json'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
@@ -52,9 +50,6 @@ const CATEGORY_COLORS: Record<string, string> = {
   'Sapta Puri': 'bg-purple-100 text-purple-700',
 }
 
-const temples = mandirData.temples as Temple[]
-const circuits = routeData.pilgrimage_circuits as Circuit[]
-
 function getTempleColor(count: number): string {
   if (count === 0) return '#F5ECD7'
   if (count <= 2) return '#F5C97B'
@@ -68,9 +63,19 @@ export default function IndiaMandirMap() {
   const [selectedState, setSelectedState] = useState<string | null>(null)
   const [selectedCircuit, setSelectedCircuit] = useState<Circuit | null>(null)
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set())
+  const [temples, setTemples] = useState<Temple[]>([])
+  const [circuits, setCircuits] = useState<Circuit[]>([])
   const supabase = createClient()
 
   useEffect(() => {
+    Promise.all([
+      fetch('/data/mandirs.json').then(r => r.json()),
+      fetch('/data/pilgrimageroutes.json').then(r => r.json()),
+    ]).then(([mandirData, routeData]) => {
+      setTemples(mandirData.temples as Temple[])
+      setCircuits(routeData.pilgrimage_circuits as Circuit[])
+    }).catch(() => {})
+
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!user) return
       supabase.from('saved_mandirs').select('google_place_id').eq('user_id', user.id)

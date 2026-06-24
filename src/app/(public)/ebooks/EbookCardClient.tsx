@@ -78,7 +78,8 @@ function CoverIllustration({ title }: { title: string }) {
 function EbookCover({ book }: { book: any }) {
   const bg = CAT_BG[book.category] || '#0D1229'
   const isFree = book.price === 0 || book.free
-  const coverImg = Array.isArray(book.images) && book.images[0]?.url ? book.images[0].url : null
+  const firstImg = Array.isArray(book.images) ? book.images[0] : null
+  const coverImg = firstImg ? (typeof firstImg === 'string' ? firstImg : firstImg?.url ?? null) : null
   return (
     <div className="relative overflow-hidden" style={{ aspectRatio: '3/2', background: bg }}>
       {coverImg ? (
@@ -163,7 +164,7 @@ export function EbookCard({ book }: { book: any }) {
           )}
         </div>
         <Link
-          href="/shop"
+          href={isFree ? '/my-library' : `/shop?category=ebook&book=${book.id}`}
           className="mt-3 w-full font-semibold transition-colors text-center block"
           style={{
             fontFamily: "'DM Sans', sans-serif",

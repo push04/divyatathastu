@@ -17,6 +17,7 @@ const footerLinks = {
     { href: '/events', label: 'Events' },
   ],
   Company: [
+    { href: '/contact', label: 'Contact Us' },
     { href: '/about', label: 'About Us' },
     { href: '/blog', label: 'Blog' },
     { href: '/newsletter', label: 'Newsletter' },
@@ -56,6 +57,29 @@ export default function Footer() {
                 <span className="material-symbols-outlined text-[16px]">mail</span>
                 support@mahatathastu.com
               </a>
+            {/* Social media */}
+            <div className="flex items-center gap-3 mt-5">
+              <a href="https://www.instagram.com/mahatathastu" target="_blank" rel="noopener noreferrer"
+                className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                style={{ background: 'linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)' }} title="Instagram">
+                <span className="material-symbols-outlined text-white text-[15px]" style={{ fontVariationSettings: "'FILL' 1" }}>photo_camera</span>
+              </a>
+              <a href="https://www.youtube.com/@mahatathastu" target="_blank" rel="noopener noreferrer"
+                className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                style={{ background: '#FF0000' }} title="YouTube">
+                <span className="material-symbols-outlined text-white text-[15px]" style={{ fontVariationSettings: "'FILL' 1" }}>play_circle</span>
+              </a>
+              <a href="https://www.facebook.com/mahatathastu" target="_blank" rel="noopener noreferrer"
+                className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                style={{ background: '#1877F2' }} title="Facebook">
+                <span className="material-symbols-outlined text-white text-[15px]" style={{ fontVariationSettings: "'FILL' 1" }}>groups</span>
+              </a>
+              <a href="https://wa.me/919858784784" target="_blank" rel="noopener noreferrer"
+                className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110"
+                style={{ background: '#25D366' }} title="WhatsApp">
+                <span className="material-symbols-outlined text-white text-[15px]" style={{ fontVariationSettings: "'FILL' 1" }}>chat</span>
+              </a>
+            </div>
             </div>
           </div>
 

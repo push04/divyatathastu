@@ -85,7 +85,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ id
           <div className="card-divine p-5 grid grid-cols-2 gap-4">
             <div>
               <p className="text-xs text-[var(--warm-charcoal)]/50 mb-1">Date & Time</p>
-              <p className="font-semibold text-sm flex items-center gap-1"><span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>calendar_today</span>{new Date(event.start_date).toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
+              <p className="font-semibold text-sm flex items-center gap-1"><span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>calendar_today</span>{(() => { const [y,m,d] = event.start_date.split('-'); return new Date(+y,+m-1,+d).toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) })()}</p>
               <p className="text-sm text-[var(--warm-charcoal)]/70 flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">schedule</span>{event.start_time} IST</p>
             </div>
             <div>

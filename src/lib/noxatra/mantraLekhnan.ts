@@ -599,7 +599,7 @@ const NAKSHATRA_GANPATI: Record<string, GanpatiForm | null> = {
   Mrigashira:          { mantra: 'ॐ क्षिप्र गणपतये नमः', transliteration: 'Om Kshipra Ganapataye Namah', meaning: 'शीघ्र प्रसन्न होने वाले गणपति' },
   Ardra:               { mantra: 'ॐ हेरम्ब गणपतये नमः', transliteration: 'Om Heramba Ganapataye Namah', meaning: 'माता के प्रिय पुत्र गणपति' },
   Punarvasu:           { mantra: 'ॐ लक्ष्मी गणपतये नमः', transliteration: 'Om Lakshmi Ganapataye Namah', meaning: 'भाग्यशाली गणपति' },
-  Pushya:              null,
+  Pushya:              { mantra: 'ॐ वृद्धि गणपतये नमः', transliteration: 'Om Vriddhi Ganapataye Namah', meaning: 'वृद्धि और समृद्धि देने वाले गणपति' },
   Ashlesha:            { mantra: 'ॐ विजय गणपतये नमः', transliteration: 'Om Vijaya Ganapataye Namah', meaning: 'विजय दिलाने वाले गणपति' },
   Magha:               { mantra: 'ॐ नृत्य गणपतये नमः', transliteration: 'Om Nritya Ganapataye Namah', meaning: 'नृत्य करने वाले गणपति' },
   'Purva Phalguni':    { mantra: 'ॐ बाल गणपतये नमः', transliteration: 'Om Bala Ganapataye Namah', meaning: 'बाल स्वरूप गणपति' },

@@ -3,8 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useServiceItems } from '@/lib/hooks/useServiceItems'
-import { createClient } from '@/lib/supabase/client'
-import { toast } from 'sonner'
+import { useServicePayment } from '@/lib/hooks/useServicePayment'
 
 const LEVEL_COLORS: Record<string, { bg: string; text: string }> = {
   'Beginner':     { bg: '#dcfce7', text: '#166534' },
@@ -15,20 +14,13 @@ const LEVEL_COLORS: Record<string, { bg: string; text: string }> = {
 
 export default function GyanampeethamPage() {
   const { items: courses, loading } = useServiceItems('gyanampeetham')
-  const [enrolling, setEnrolling] = useState<string | null>(null)
+  const [enrolled, setEnrolled] = useState<Set<string>>(new Set())
+  const { pay, bookingId: enrolling } = useServicePayment()
 
-  async function enroll(item: typeof courses[number]) {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { toast.error('Please login to enroll'); return }
-    setEnrolling(item.id)
-    const { error } = await (supabase as any).from('service_bookings').insert({
-      service_item_id: item.id, user_id: user.id,
-      status: 'pending', amount: item.price ?? 0, payment_status: 'pending',
+  function enroll(item: typeof courses[number]) {
+    pay({ id: item.id, title: item.title, price: item.price ?? 0 }, {
+      onSuccess: (id) => setEnrolled(s => new Set([...s, id])),
     })
-    if (error) toast.error('Enrollment failed')
-    else toast.success(`Enrolled in "${item.title}"! We'll contact you with next steps.`)
-    setEnrolling(null)
   }
 
   return (

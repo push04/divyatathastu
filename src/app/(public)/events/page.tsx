@@ -9,13 +9,19 @@ export const metadata: Metadata = {
 }
 export const revalidate = 3600
 
+function futureDate(daysFromNow: number): string {
+  const d = new Date()
+  d.setDate(d.getDate() + daysFromNow)
+  return d.toISOString().split('T')[0]
+}
+
 const FALLBACK_EVENTS = [
-  { id: '1', title: 'Navratri Special: Devi Sahasranam Chanting', type: 'online', start_date: '2025-10-02', start_time: '06:00', duration_minutes: 120, price: 0, max_participants: 500, current_participants: 347, description: 'Join 500+ devotees for a live Devi Sahasranam chanting session with Pt. Suresh Mishra. Free for all.', category: 'Spiritual', location: 'Zoom + YouTube Live' },
-  { id: '2', title: 'Kundli Reading Workshop - Beginners', type: 'online', start_date: '2025-10-15', start_time: '10:00', duration_minutes: 180, price: 999, max_participants: 50, current_participants: 32, description: 'Learn to read your own birth chart. Covers Lagna, Rashi, planets and basic dasha system.', category: 'Astrology', location: 'Zoom' },
-  { id: '3', title: 'Vastu Walk: Transform Your Home', type: 'offline', start_date: '2025-10-20', start_time: '09:00', duration_minutes: 240, price: 2999, max_participants: 20, current_participants: 8, description: 'Physical Vastu consultation walk through your home/office with our expert. Limited to Mumbai area.', category: 'Vastu', location: 'Mumbai (On-site)' },
-  { id: '4', title: 'Numerology & Name Correction Masterclass', type: 'online', start_date: '2025-11-01', start_time: '11:00', duration_minutes: 150, price: 1499, max_participants: 100, current_participants: 67, description: 'Discover how to use numerology for business naming, baby naming and mobile number optimization.', category: 'Numerology', location: 'Zoom' },
-  { id: '5', title: 'Chakra Healing Meditation Retreat', type: 'offline', start_date: '2025-11-08', start_time: '07:00', duration_minutes: 480, price: 4999, max_participants: 30, current_participants: 15, description: 'Full-day retreat covering all 7 chakras, kundalini yoga, mantra, crystal healing and Ayurvedic lunch.', category: 'Wellness', location: 'Rishikesh, Uttarakhand' },
-  { id: '6', title: 'Diwali: Lakshmi Puja Vidhi & Yantra Workshop', type: 'online', start_date: '2025-10-29', start_time: '17:00', duration_minutes: 90, price: 0, max_participants: 1000, current_participants: 621, description: 'Learn the correct Diwali Lakshmi puja vidhi, create your personal Yantra and perform the ritual together.', category: 'Spiritual', location: 'YouTube Live' },
+  { id: '1', title: 'Devi Sahasranam Chanting — Live Session', type: 'online', start_date: futureDate(5), start_time: '06:00', duration_minutes: 120, price: 0, max_participants: 500, current_participants: 347, description: 'Join 500+ devotees for a live Devi Sahasranam chanting session. Free for all seekers.', category: 'Spiritual', location: 'Zoom + YouTube Live' },
+  { id: '2', title: 'Kundli Reading Workshop — Beginners', type: 'online', start_date: futureDate(12), start_time: '10:00', duration_minutes: 180, price: 999, max_participants: 50, current_participants: 32, description: 'Learn to read your own birth chart. Covers Lagna, Rashi, planets and basic dasha system.', category: 'Astrology', location: 'Zoom' },
+  { id: '3', title: 'Vastu Walk: Transform Your Home', type: 'offline', start_date: futureDate(18), start_time: '09:00', duration_minutes: 240, price: 2999, max_participants: 20, current_participants: 8, description: 'Physical Vastu consultation walk through your home/office with our expert.', category: 'Vastu', location: 'Delhi NCR (On-site)' },
+  { id: '4', title: 'Numerology & Name Correction Masterclass', type: 'online', start_date: futureDate(25), start_time: '11:00', duration_minutes: 150, price: 1499, max_participants: 100, current_participants: 67, description: 'Discover how numerology shapes business names, baby names and mobile number optimization.', category: 'Numerology', location: 'Zoom' },
+  { id: '5', title: 'Chakra Healing Meditation Retreat', type: 'offline', start_date: futureDate(35), start_time: '07:00', duration_minutes: 480, price: 4999, max_participants: 30, current_participants: 15, description: 'Full-day retreat covering all 7 chakras, kundalini yoga, mantra, crystal healing and Ayurvedic lunch.', category: 'Wellness', location: 'Rishikesh, Uttarakhand' },
+  { id: '6', title: 'Lakshmi Puja Vidhi & Yantra Workshop', type: 'online', start_date: futureDate(42), start_time: '17:00', duration_minutes: 90, price: 0, max_participants: 1000, current_participants: 621, description: 'Learn the complete Lakshmi puja vidhi, create your personal Yantra and perform the ritual together.', category: 'Spiritual', location: 'YouTube Live' },
 ]
 
 const TYPE_BADGE: Record<string, string> = {
@@ -32,10 +38,16 @@ const CAT_COLOR: Record<string, string> = {
 
 export default async function EventsPage() {
   let events = FALLBACK_EVENTS
+  let liveEvent: any = null
   try {
     const supabase = await createClient()
-    const { data } = await supabase.from('events').select('*').gte('start_date', new Date().toISOString().split('T')[0]).order('start_date').limit(12)
-    if (data?.length) events = data as any
+    const today = new Date().toISOString().split('T')[0]
+    const [eventsRes, liveRes] = await Promise.all([
+      supabase.from('events').select('*').gte('start_date', today).order('start_date').limit(12),
+      (supabase as any).from('events').select('*').eq('start_date', today).not('youtube_live_url', 'is', null).eq('is_live', true).limit(1),
+    ])
+    if (eventsRes.data?.length) events = eventsRes.data as any
+    if (liveRes.data?.length) liveEvent = liveRes.data[0]
   } catch {}
 
   return (
@@ -50,6 +62,28 @@ export default async function EventsPage() {
           <p className="text-white/65 text-lg leading-relaxed">Live workshops, retreats and sacred ceremonies - online and offline</p>
         </div>
       </section>
+
+      {/* Live Now Banner */}
+      {liveEvent && (
+        <section className="py-6 px-6" style={{ background: 'linear-gradient(135deg, #1a0a2e, #460B2F)' }}>
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="inline-flex items-center gap-1.5 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">
+                <span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'FILL' 1" }}>radio_button_checked</span> LIVE NOW
+              </span>
+              <p className="text-white/80 text-sm font-medium">{liveEvent.title}</p>
+            </div>
+            <div className="rounded-2xl overflow-hidden" style={{ paddingTop: '56.25%', position: 'relative' }}>
+              <iframe
+                src={`https://www.youtube.com/embed/${liveEvent.youtube_live_url?.split('v=')[1] || liveEvent.youtube_live_url?.split('/').pop()}?autoplay=1&mute=1`}
+                className="absolute inset-0 w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="py-12 px-6 bg-[var(--kutch-white)]">
         <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -77,7 +111,7 @@ export default async function EventsPage() {
                   <h3 className="font-bold text-[var(--indigo-deep)] mb-1 leading-snug">{e.title}</h3>
                   <p className="text-xs text-[var(--warm-charcoal)]/60 mb-3 flex-1 line-clamp-2">{e.description}</p>
                   <div className="space-y-1 text-xs text-[var(--warm-charcoal)]/60 mb-3">
-                    <p className="flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">calendar_today</span>{new Date(e.start_date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} at {e.start_time}</p>
+                    <p className="flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">calendar_today</span>{(() => { const [y,m,d] = e.start_date.split('-'); return new Date(+y,+m-1,+d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}) })()} at {e.start_time}</p>
                     <p className="flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">timer</span>{e.duration_minutes >= 60 ? `${Math.floor(e.duration_minutes / 60)}h ${e.duration_minutes % 60 ? e.duration_minutes % 60 + 'm' : ''}` : `${e.duration_minutes}m`}</p>
                     <p className="flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">location_on</span>{e.location}</p>
                   </div>

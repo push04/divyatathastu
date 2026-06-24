@@ -198,7 +198,7 @@ function getChoghadiya(srH: number, ssH: number, dow: number) {
 // Best 48-min window is the first 48 min of each Amrit / Shubh choghadiya
 function getDoGhatiMuhurt(choghadiya: ReturnType<typeof getChoghadiya>) {
   return choghadiya
-    .filter(c => ['Amrit', 'Shubh'].includes(c.name))
+    .filter(c => ['Amrit', 'Shubh', 'Labh'].includes(c.name))
     .map(c => ({
       name: `${c.name} Muhurt`,
       start: c.start,

@@ -2,9 +2,11 @@
 
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import SudarshanLoader from '@/components/SudarshanLoader'
 import { createClient } from '@/lib/supabase/client'
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type PageFlipInstance = any
 
 export default function EbookReaderPage() {
   const { ebookId } = useParams<{ ebookId: string }>()
@@ -17,7 +19,7 @@ export default function EbookReaderPage() {
   const [totalPages, setTotalPages] = useState(0)
   const [renderedCount, setRenderedCount] = useState(0)
   const [currentPage, setCurrentPage] = useState(0)
-  const [direction, setDirection] = useState<1 | -1>(1)
+
   const [showUI, setShowUI] = useState(true)
   const [zoom, setZoom] = useState(1)
   const [panX, setPanX] = useState(0)
@@ -33,6 +35,8 @@ export default function EbookReaderPage() {
   const uiTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const pageImagesRef = useRef<string[]>([])
   const pageAreaRef = useRef<HTMLDivElement>(null)
+  const flipContainerRef = useRef<HTMLDivElement>(null)
+  const flipRef = useRef<PageFlipInstance | null>(null)
   const panRef = useRef({ x: 0, y: 0 })
   const dragStartRef = useRef({ mouseX: 0, mouseY: 0, panX: 0, panY: 0 })
   const dragMovedRef = useRef(false) // true once drag threshold exceeded
@@ -152,35 +156,93 @@ export default function EbookReaderPage() {
     localStorage.setItem(`ebook-bm-${ebookId}`, String(page))
   }, [ebookId])
 
-  const goNext = useCallback(() => {
-    setCurrentPage(p => {
-      if (p >= pageImagesRef.current.length - 1) return p
-      setDirection(1)
-      const next = p + 1
-      setPageInput(String(next + 1))
-      saveBookmark(next)
-      return next
+  // ── PageFlip init ─────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (loadStatus !== 'ready') return
+    const imgs = pageImagesRef.current
+    if (!imgs.length || !flipContainerRef.current || !pageAreaRef.current) return
+
+    const areaRect = pageAreaRef.current.getBoundingClientRect()
+    const pad = 48
+    const availW = areaRect.width - pad * 2
+    const availH = areaRect.height - pad * 2
+
+    // Fit page into available area preserving A4 ratio (1:1.414)
+    const ratio = 1 / 1.414
+    let pageW = Math.min(availW, availH * ratio)
+    let pageH = pageW / ratio
+    if (pageH > availH) { pageH = availH; pageW = pageH * ratio }
+    pageW = Math.max(200, Math.round(pageW))
+    pageH = Math.max(280, Math.round(pageH))
+
+    let pf: PageFlipInstance | null = null
+
+    import('page-flip').then(mod => {
+      const PageFlip = (mod as any).PageFlip || mod.default?.PageFlip || mod.default
+      if (!flipContainerRef.current || !PageFlip) return
+
+      pf = new PageFlip(flipContainerRef.current, {
+        width: pageW,
+        height: pageH,
+        size: 'fixed',
+        minWidth: 100,
+        maxWidth: pageW,
+        minHeight: 100,
+        maxHeight: pageH,
+        drawShadow: true,
+        flippingTime: 600,
+        usePortrait: true,
+        startZIndex: 0,
+        autoSize: true,
+        showCover: false,
+        mobileScrollSupport: false,
+        showPageCorners: true,
+        disableFlipByClick: false,
+        clickEventForward: false,
+      })
+
+      pf.loadFromImages(imgs)
+
+      pf.on('flip', (e: any) => {
+        const page = e.data as number
+        setCurrentPage(page)
+        setPageInput(String(page + 1))
+        saveBookmark(page)
+      })
+
+      pf.on('changeState', () => {
+        const page = pf?.getCurrentPageIndex() ?? 0
+        setCurrentPage(page)
+        setPageInput(String(page + 1))
+      })
+
+      flipRef.current = pf
     })
-  }, [saveBookmark])
+
+    return () => {
+      if (pf) {
+        try { pf.destroy() } catch {}
+      }
+      if (flipContainerRef.current) flipContainerRef.current.innerHTML = ''
+      flipRef.current = null
+    }
+  }, [loadStatus, saveBookmark]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const goNext = useCallback(() => {
+    if (flipRef.current) flipRef.current.flipNext('bottom')
+  }, [])
 
   const goPrev = useCallback(() => {
-    setCurrentPage(p => {
-      if (p <= 0) return p
-      setDirection(-1)
-      const prev = p - 1
-      setPageInput(String(prev + 1))
-      saveBookmark(prev)
-      return prev
-    })
-  }, [saveBookmark])
+    if (flipRef.current) flipRef.current.flipPrev('bottom')
+  }, [])
 
   const goToPage = useCallback((idx: number) => {
     const clamped = Math.max(0, Math.min(idx, pageImagesRef.current.length - 1))
-    setDirection(clamped > currentPage ? 1 : -1)
+    if (flipRef.current) flipRef.current.turnToPage(clamped)
     setCurrentPage(clamped)
     setPageInput(String(clamped + 1))
     saveBookmark(clamped)
-  }, [currentPage, saveBookmark])
+  }, [saveBookmark])
 
   // Reset pan when page changes or zoom returns to 1
   useEffect(() => {
@@ -494,38 +556,10 @@ export default function EbookReaderPage() {
             <span className="material-symbols-outlined text-[24px]">chevron_right</span>
           </motion.button>
 
-          {/* Pan layer (screen-space translate) → Zoom layer → Page image */}
+          {/* Pan layer (screen-space translate) → Zoom layer → PageFlip canvas */}
           <div style={{ transform: `translate(${panX}px, ${panY}px)`, transition: isDragging ? 'none' : 'transform 0.15s ease', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div style={{ transform: `scale(${zoom})`, transition: isDragging ? 'none' : 'transform 0.22s ease', transformOrigin: 'center center', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <AnimatePresence mode="wait" initial={false} custom={direction}>
-                <motion.div
-                  key={currentPage}
-                  custom={direction}
-                  initial={{ opacity: 0, x: direction * 40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: direction * -40 }}
-                  transition={{ duration: 0.18, ease: 'easeInOut' }}
-                  className="absolute inset-0 flex items-center justify-center p-4 sm:p-8"
-                >
-                  {images[currentPage] && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={images[currentPage]}
-                      alt={`Page ${currentPage + 1}`}
-                      draggable={false}
-                      style={{
-                        maxWidth: '100%',
-                        maxHeight: '100%',
-                        objectFit: 'contain',
-                        borderRadius: 4,
-                        boxShadow: '0 8px 48px rgba(0,0,0,0.6)',
-                        imageRendering: 'crisp-edges',
-                        userSelect: 'none',
-                      }}
-                    />
-                  )}
-                </motion.div>
-              </AnimatePresence>
+              <div ref={flipContainerRef} style={{ position: 'relative' }} />
             </div>
           </div>
         </div>

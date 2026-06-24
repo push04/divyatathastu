@@ -15,6 +15,7 @@ interface Slot {
   end_time: string
   is_booked: boolean
   is_blocked: boolean
+  specialization?: string
 }
 
 interface Booking {
@@ -50,7 +51,13 @@ export default function ConsultationsPage() {
     async function load() {
       const today = new Date().toISOString().split('T')[0]
       const [slotsRes, { data: { user } }] = await Promise.all([
-        supabase.from('consultation_slots').select('*').eq('is_booked', false).gte('date', today).order('date').order('start_time'),
+        supabase.from('consultation_slots').select('*')
+          .eq('is_booked', false)
+          .gte('date', today)
+          .gte('start_time', '17:00')
+          .lte('start_time', '23:00')
+          .order('date')
+          .order('start_time'),
         supabase.auth.getUser(),
       ])
       if (slotsRes.data) setSlots(slotsRes.data)
@@ -79,7 +86,24 @@ export default function ConsultationsPage() {
     setTab('my')
   }
 
-  const filtered = slots
+  // Cap at 5 slots per day (business rule), then apply specialization filter
+  const slotsCappped = (() => {
+    const perDay: Record<string, number> = {}
+    return slots.filter(s => {
+      const count = perDay[s.date] || 0
+      if (count >= 5) return false
+      perDay[s.date] = count + 1
+      return true
+    })
+  })()
+  const filtered = filter === 'All' ? slotsCappped : slotsCappped.filter(s => (s as any).specialization === filter)
+
+  const fmtTime = (t: string) => {
+    if (!t) return t
+    const [h, m] = t.split(':').map(Number)
+    const p = h >= 12 ? 'PM' : 'AM'
+    return `${h % 12 || 12}:${m.toString().padStart(2, '0')} ${p} IST`
+  }
 
   if (loading) return <div className="flex items-center justify-center h-64"><SudarshanLoader size="sm" /></div>
 
@@ -87,7 +111,7 @@ export default function ConsultationsPage() {
     <div className="p-6 max-w-4xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-[var(--indigo-deep)] inline-flex items-center gap-2"><span className="material-symbols-outlined text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>handshake</span> Consultations</h1>
-        <p className="text-sm text-[var(--warm-charcoal)]/60 mt-0.5">Book 1-on-1 sessions with Vedic experts</p>
+        <p className="text-sm text-[var(--warm-charcoal)]/60 mt-0.5">Book 1-on-1 sessions with Vedic experts · <span className="text-[var(--saffron)] font-semibold">5 PM – 11 PM IST · 45 min slots</span></p>
       </div>
 
       {/* Tabs */}
@@ -134,8 +158,8 @@ export default function ConsultationsPage() {
                   <h3 className="font-bold text-[var(--indigo-deep)]">Expert Consultation</h3>
 
                   <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-[var(--warm-charcoal)]/60">
-                    <div className="bg-[var(--warm-sand)] rounded-lg p-2"><p className="font-medium text-[var(--indigo-deep)] inline-flex items-center gap-1"><span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>calendar_today</span> Date</p><p>{new Date(slot.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</p></div>
-                    <div className="bg-[var(--warm-sand)] rounded-lg p-2"><p className="font-medium text-[var(--indigo-deep)] inline-flex items-center gap-1"><span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>schedule</span> Time</p><p>{slot.start_time}</p></div>
+                    <div className="bg-[var(--warm-sand)] rounded-lg p-2"><p className="font-medium text-[var(--indigo-deep)] inline-flex items-center gap-1"><span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>calendar_today</span> Date</p><p>{(() => { const [y,m,d] = slot.date.split('-'); return new Date(+y,+m-1,+d).toLocaleDateString('en-IN',{day:'numeric',month:'short'}) })()}</p></div>
+                    <div className="bg-[var(--warm-sand)] rounded-lg p-2"><p className="font-medium text-[var(--indigo-deep)] inline-flex items-center gap-1"><span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>schedule</span> Time</p><p>{fmtTime(slot.start_time)}</p></div>
                   </div>
 
                   <button
@@ -170,7 +194,7 @@ export default function ConsultationsPage() {
                     </div>
                     <div className="flex-1">
                       <p className="font-bold text-[var(--indigo-deep)]">Expert Consultation</p>
-                      <p className="text-sm text-[var(--warm-charcoal)]/60">{slot ? `${new Date(slot.date).toLocaleDateString('en-IN')} at ${slot.start_time}` : new Date(b.booked_at).toLocaleDateString('en-IN')}</p>
+                      <p className="text-sm text-[var(--warm-charcoal)]/60">{slot ? `${(() => { const [y,m,d] = slot.date.split('-'); return new Date(+y,+m-1,+d).toLocaleDateString('en-IN') })()}  at ${slot.start_time}` : new Date(b.booked_at).toLocaleDateString('en-IN')}</p>
                     </div>
                     <div className="flex items-center gap-2 flex-wrap justify-end">
                       <span className={`text-xs px-3 py-1 rounded-full font-medium ${b.status === 'confirmed' ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>{b.status}</span>

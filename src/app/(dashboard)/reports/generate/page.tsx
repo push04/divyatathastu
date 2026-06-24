@@ -295,6 +295,12 @@ function GenerateReportContent() {
         setSecondsLeft(remainingEst)
       }
 
+      // Ensure report is marked generated even if the _finale section errored
+      const { data: finalReport } = await supabase.from('reports').select('status').eq('id', rId).single()
+      if (finalReport?.status !== 'generated') {
+        await supabase.from('reports').update({ status: 'generated' as any }).eq('id', rId)
+      }
+
       setAllDone(true)
       setSecondsLeft(0)
       if (timerRef.current) clearInterval(timerRef.current)
@@ -311,6 +317,11 @@ function GenerateReportContent() {
   async function handleGenerate() {
     if (!selectedMember || !selectedReport) {
       toast.error(isHindi ? 'सदस्य और रिपोर्ट प्रकार चुनें' : 'Select member and report type')
+      return
+    }
+    if (selectedReport === 'astro_vastu' && !vastuData.homeDirection) {
+      toast.error(isHindi ? 'कृपया वास्तु रिपोर्ट के लिए मुख्य द्वार की दिशा चुनें' : 'Please select the main door direction for Vastu report')
+      setStep(2)
       return
     }
     const price = selectedReportInfo?.price || 0
@@ -375,7 +386,7 @@ function GenerateReportContent() {
   const canProceed = [
     selectedMember !== '',
     selectedReport !== '',
-    true,
+    selectedReport === 'astro_vastu' ? vastuData.homeDirection !== '' : true,
     true,
   ]
 
@@ -393,109 +404,191 @@ function GenerateReportContent() {
     const progressPct = totalSections > 0 ? Math.round((doneSections / totalSections) * 100) : 0
 
     return (
-      <div className="p-6 max-w-2xl mx-auto">
-        <div className="card-divine overflow-hidden">
-          {/* Header */}
-          <div className="bg-gradient-to-br from-[var(--indigo-deep)] to-[#3B2882] p-8 text-white text-center">
-            <div className="flex justify-center mb-4">
-              <SudarshanLoader size="lg" />
+      <>
+        <style>{`
+          @keyframes gen-om-float {
+            0%,100%{transform:translateY(0) scale(1);filter:drop-shadow(0 0 18px rgba(212,160,23,0.7))}
+            50%{transform:translateY(-10px) scale(1.06);filter:drop-shadow(0 0 36px rgba(212,160,23,1))}
+          }
+          @keyframes gen-ring-cw{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+          @keyframes gen-ring-ccw{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(-360deg)}}
+          @keyframes gen-gold-pulse{
+            0%,100%{box-shadow:0 0 0 0 rgba(212,160,23,0.3),0 2px 8px rgba(0,0,0,0.06);border-color:rgba(212,160,23,0.5)}
+            50%{box-shadow:0 0 18px 5px rgba(212,160,23,0.18),0 2px 8px rgba(0,0,0,0.06);border-color:rgba(212,160,23,0.95)}
+          }
+          @keyframes gen-shimmer{
+            0%{background-position:-300% center}
+            100%{background-position:300% center}
+          }
+          @keyframes gen-bar-glow{
+            0%,100%{filter:drop-shadow(0 0 3px rgba(212,160,23,0.45))}
+            50%{filter:drop-shadow(0 0 10px rgba(212,160,23,0.85))}
+          }
+          @keyframes gen-dot{
+            0%,100%{opacity:1;transform:scale(1)}
+            50%{opacity:0.25;transform:scale(0.5)}
+          }
+          @keyframes gen-done-pop{
+            0%{transform:scale(0.85);opacity:0}
+            60%{transform:scale(1.08)}
+            100%{transform:scale(1);opacity:1}
+          }
+          @keyframes gen-cta-shine{
+            0%,100%{box-shadow:0 8px 28px rgba(194,98,42,0.45)}
+            50%{box-shadow:0 12px 40px rgba(194,98,42,0.65),0 0 0 4px rgba(212,160,23,0.15)}
+          }
+          @keyframes gen-star-twinkle-a{0%,100%{opacity:.15}50%{opacity:.7}}
+          @keyframes gen-star-twinkle-b{0%,100%{opacity:.25}60%{opacity:.9}}
+          @keyframes gen-star-twinkle-c{0%,100%{opacity:.1}40%{opacity:.6}}
+          .gen-om{animation:gen-om-float 3.4s ease-in-out infinite}
+          .gen-ring-cw{position:absolute;top:50%;left:50%;border-radius:50%;pointer-events:none;animation:gen-ring-cw 22s linear infinite}
+          .gen-ring-ccw{position:absolute;top:50%;left:50%;border-radius:50%;pointer-events:none;animation:gen-ring-ccw 15s linear infinite}
+          .gen-active{animation:gen-gold-pulse 1.9s ease-in-out infinite}
+          .gen-shimmer{background:linear-gradient(90deg,#d1fae5 0%,#a7f3d0 20%,#ecfdf5 40%,#bbf7d0 60%,#a7f3d0 80%,#d1fae5 100%);background-size:300% auto;animation:gen-shimmer 2.8s linear infinite}
+          .gen-bar-fill{animation:gen-bar-glow 2.2s ease-in-out infinite}
+          .gen-d1{animation:gen-dot 1.2s ease-in-out 0s infinite}
+          .gen-d2{animation:gen-dot 1.2s ease-in-out 0.22s infinite}
+          .gen-d3{animation:gen-dot 1.2s ease-in-out 0.44s infinite}
+          .gen-cta{animation:gen-cta-shine 2.8s ease-in-out infinite}
+          .gen-s-a{animation:gen-star-twinkle-a 2.1s ease-in-out infinite}
+          .gen-s-b{animation:gen-star-twinkle-b 2.9s ease-in-out 0.4s infinite}
+          .gen-s-c{animation:gen-star-twinkle-c 1.8s ease-in-out 0.8s infinite}
+          .gen-s-d{animation:gen-star-twinkle-a 3.2s ease-in-out 1.2s infinite}
+          .gen-s-e{animation:gen-star-twinkle-b 2.5s ease-in-out 0.6s infinite}
+          .gen-s-f{animation:gen-star-twinkle-c 3.8s ease-in-out 0.2s infinite}
+          .gen-s-g{animation:gen-star-twinkle-a 1.6s ease-in-out 1.6s infinite}
+          .gen-s-h{animation:gen-star-twinkle-b 2.3s ease-in-out 0.9s infinite}
+        `}</style>
+        <div className="p-4 sm:p-6 max-w-2xl mx-auto">
+          <div style={{ borderRadius: 22, overflow: 'hidden', boxShadow: '0 28px 80px rgba(47,42,68,0.32), 0 0 0 1px rgba(212,160,23,0.18)' }}>
+
+            {/* ── Cosmic header ── */}
+            <div style={{ background: 'linear-gradient(160deg, #0f0b22 0%, #2F2A44 50%, #3a1e04 100%)', padding: '44px 32px 38px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+              {/* Stars */}
+              {[
+                {cls:'gen-s-a',top:'12%',left:'8%',sz:3},{cls:'gen-s-b',top:'20%',left:'85%',sz:2},{cls:'gen-s-c',top:'35%',left:'14%',sz:2},
+                {cls:'gen-s-d',top:'8%',left:'55%',sz:2},{cls:'gen-s-e',top:'65%',left:'92%',sz:3},{cls:'gen-s-f',top:'80%',left:'6%',sz:2},
+                {cls:'gen-s-g',top:'50%',left:'78%',sz:2},{cls:'gen-s-h',top:'28%',left:'42%',sz:2},
+              ].map((s, i) => (
+                <div key={i} className={s.cls} style={{ position: 'absolute', top: s.top, left: s.left, width: s.sz, height: s.sz, borderRadius: '50%', background: 'white', zIndex: 0 }} />
+              ))}
+
+              {/* Concentric rings */}
+              <div className="gen-ring-cw" style={{ width: 380, height: 380, marginLeft: -190, marginTop: -190, border: '1px solid rgba(212,160,23,0.1)', zIndex: 0 }} />
+              <div className="gen-ring-ccw" style={{ width: 270, height: 270, marginLeft: -135, marginTop: -135, border: '1px dashed rgba(212,160,23,0.18)', zIndex: 0 }} />
+              <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 170, height: 170, border: '1px solid rgba(212,160,23,0.09)', borderRadius: '50%', pointerEvents: 'none', zIndex: 0 }} />
+
+              {/* OM */}
+              <div className="gen-om" style={{ fontSize: 58, lineHeight: 1, color: '#D4A017', marginBottom: 18, position: 'relative', zIndex: 2, userSelect: 'none' }}>ॐ</div>
+
+              <h2 style={{ color: '#fff', fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, marginBottom: 6, position: 'relative', zIndex: 2 }}>
+                {t.craftingTitle}
+              </h2>
+              <p style={{ color: 'rgba(255,255,255,0.52)', fontSize: 13, position: 'relative', zIndex: 2 }}>{t.craftingSubtitle}</p>
+              {selectedMemberInfo && (
+                <p style={{ color: '#D4A017', fontSize: 13, fontWeight: 600, marginTop: 12, position: 'relative', zIndex: 2, letterSpacing: '0.01em' }}>
+                  {selectedMemberInfo.full_name} · {isHindi ? selectedReportInfo?.labelHi : selectedReportInfo?.label}
+                </p>
+              )}
             </div>
-            <h2 className="text-xl font-bold mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>
-              {t.craftingTitle}
-            </h2>
-            <p className="text-white/70 text-sm">{t.craftingSubtitle}</p>
-            {selectedMemberInfo && (
-              <p className="text-[#D4A017] text-sm font-medium mt-2">
-                {selectedMemberInfo.full_name} · {isHindi ? selectedReportInfo?.labelHi : selectedReportInfo?.label}
-              </p>
+
+            {/* ── Progress bar ── */}
+            <div style={{ background: '#FDFAF5', padding: '20px 28px 10px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 9 }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: '#2F2A44' }}>
+                  {doneSections}/{totalSections} {isHindi ? 'अध्याय पूर्ण' : 'chapters done'}
+                </span>
+                {!allDone && secondsLeft > 0 ? (
+                  <span style={{ fontSize: 12, color: 'rgba(42,32,28,0.45)' }}>~{secondsLeft}s {t.remaining}</span>
+                ) : allDone ? (
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#059669' }}>{isHindi ? 'पूर्ण ✓' : 'Complete ✓'}</span>
+                ) : null}
+              </div>
+              <div style={{ background: '#EDE8DC', borderRadius: 9999, height: 8, overflow: 'hidden' }}>
+                <div
+                  className="gen-bar-fill"
+                  style={{ height: '100%', borderRadius: 9999, background: 'linear-gradient(90deg, #C2622A, #D4A017)', width: `${allDone ? 100 : progressPct}%`, transition: 'width 0.8s ease' }}
+                />
+              </div>
+            </div>
+
+            {/* ── Section list ── */}
+            <div style={{ background: '#FDFAF5', padding: '14px 28px 26px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {sections.map((sec) => {
+                const isDone = sec.status === 'done'
+                const isActive = sec.status === 'active'
+                const isErr = sec.status === 'error'
+                return (
+                  <div
+                    key={sec.sectionType}
+                    className={isActive ? 'gen-active' : isDone ? 'gen-shimmer' : ''}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 12,
+                      padding: '11px 16px', borderRadius: 14,
+                      border: `1.5px solid ${isDone ? '#6ee7b7' : isActive ? 'rgba(212,160,23,0.5)' : isErr ? '#fca5a5' : '#EDE8DC'}`,
+                      background: isErr ? '#fef2f2' : undefined,
+                      transition: 'border-color 0.35s ease',
+                    }}
+                  >
+                    {/* Icon */}
+                    <div style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      {isDone ? (
+                        <span className="material-symbols-outlined" style={{ fontSize: 22, color: '#10b981', fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                      ) : isActive ? (
+                        <SudarshanLoader size="sm" />
+                      ) : isErr ? (
+                        <span className="material-symbols-outlined" style={{ fontSize: 22, color: '#f87171', fontVariationSettings: "'FILL' 1" }}>error</span>
+                      ) : (
+                        <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'rgba(42,32,28,0.2)' }}>{sec.icon}</span>
+                      )}
+                    </div>
+
+                    {/* Name + Sanskrit */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontSize: 13, fontWeight: 600, color: isDone ? '#065f46' : isActive ? '#2F2A44' : isErr ? '#dc2626' : 'rgba(42,32,28,0.28)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: 0 }}>
+                        {isHindi ? sec.nameHi : sec.name}
+                      </p>
+                      {sec.status !== 'pending' && (
+                        <p style={{ fontSize: 10, color: isDone ? '#10b981' : 'rgba(42,32,28,0.3)', margin: '2px 0 0' }}>
+                          {SECTION_SANSKRIT[sec.sectionType] || ''}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Time / dots */}
+                    <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
+                      {isActive && (
+                        <span style={{ display: 'inline-flex', gap: 3, alignItems: 'center' }}>
+                          <span className="gen-d1" style={{ width: 4, height: 4, borderRadius: '50%', background: '#D4A017', display: 'inline-block' }} />
+                          <span className="gen-d2" style={{ width: 4, height: 4, borderRadius: '50%', background: '#D4A017', display: 'inline-block' }} />
+                          <span className="gen-d3" style={{ width: 4, height: 4, borderRadius: '50%', background: '#D4A017', display: 'inline-block' }} />
+                        </span>
+                      )}
+                      <span style={{ fontSize: 11, fontWeight: 600, color: isDone ? '#10b981' : isActive ? '#D4A017' : 'rgba(42,32,28,0.22)' }}>
+                        {isDone && sec.elapsed ? `${sec.elapsed}s` : sec.status === 'pending' ? `~${sec.estSeconds}s` : ''}
+                      </span>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* ── Done CTA ── */}
+            {allDone && reportId && (
+              <div style={{ padding: '0 28px 30px', background: '#FDFAF5' }}>
+                <button
+                  onClick={() => router.push(`/reports/${reportId}`)}
+                  className="gen-cta"
+                  style={{ width: '100%', padding: '17px', background: 'linear-gradient(135deg, #2F2A44 0%, #C2622A 100%)', color: 'white', border: 'none', borderRadius: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, letterSpacing: '0.02em', fontFamily: "'Playfair Display', serif" }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 20, fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+                  {t.viewReport}
+                </button>
+              </div>
             )}
           </div>
-
-          {/* Progress bar */}
-          <div className="px-6 pt-5">
-            <div className="flex items-center justify-between text-xs font-medium mb-2">
-              <span className="text-[var(--indigo-deep)]">{doneSections} / {totalSections} {isHindi ? 'अध्याय पूर्ण' : 'chapters done'}</span>
-              {!allDone && secondsLeft > 0 && (
-                <span className="text-[var(--warm-charcoal)]/60">~{secondsLeft}s {t.remaining}</span>
-              )}
-              {allDone && <span className="text-emerald-600 font-bold">{isHindi ? 'पूर्ण ✓' : 'Complete ✓'}</span>}
-            </div>
-            <div className="w-full bg-[var(--warm-sand)] rounded-full h-2 overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-[var(--terracotta)] to-[var(--saffron)] transition-all duration-700 rounded-full"
-                style={{ width: `${allDone ? 100 : progressPct}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Section list */}
-          <div className="p-6 space-y-2">
-            {sections.map((sec) => (
-              <div
-                key={sec.sectionType}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
-                  sec.status === 'done' ? 'bg-emerald-50 border border-emerald-200'
-                  : sec.status === 'active' ? 'bg-[var(--warm-sand)] border border-[var(--saffron)]/40'
-                  : sec.status === 'error' ? 'bg-red-50 border border-red-200'
-                  : 'bg-white border border-[var(--warm-sand)]'
-                }`}
-              >
-                {/* Status icon */}
-                <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
-                  {sec.status === 'done' ? (
-                    <span className="material-symbols-outlined text-[20px] text-emerald-500" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-                  ) : sec.status === 'active' ? (
-                    <SudarshanLoader size="sm" />
-                  ) : sec.status === 'error' ? (
-                    <span className="material-symbols-outlined text-[20px] text-red-400" style={{ fontVariationSettings: "'FILL' 1" }}>error</span>
-                  ) : (
-                    <span className="material-symbols-outlined text-[20px] text-[var(--warm-charcoal)]/30">{sec.icon}</span>
-                  )}
-                </div>
-
-                {/* Name */}
-                <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-medium truncate ${
-                    sec.status === 'done' ? 'text-emerald-700'
-                    : sec.status === 'active' ? 'text-[var(--indigo-deep)]'
-                    : sec.status === 'error' ? 'text-red-600'
-                    : 'text-[var(--warm-charcoal)]/40'
-                  }`}>
-                    {isHindi ? sec.nameHi : sec.name}
-                  </p>
-                  {sec.status !== 'pending' && (
-                    <p className={`text-[10px] ${sec.status === 'done' ? 'text-emerald-500' : 'text-[var(--warm-charcoal)]/40'}`}>
-                      {SECTION_SANSKRIT[sec.sectionType] || ''}
-                    </p>
-                  )}
-                </div>
-
-                {/* Time / est */}
-                <span className={`text-xs font-medium flex-shrink-0 ${
-                  sec.status === 'done' ? 'text-emerald-500'
-                  : sec.status === 'active' ? 'text-[var(--saffron)]'
-                  : 'text-[var(--warm-charcoal)]/30'
-                }`}>
-                  {sec.status === 'done' && sec.elapsed ? `${sec.elapsed}s` : sec.status === 'pending' ? `~${sec.estSeconds}s` : ''}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          {/* Done CTA */}
-          {allDone && reportId && (
-            <div className="px-6 pb-6">
-              <button
-                onClick={() => router.push(`/reports/${reportId}`)}
-                className="btn-divine w-full py-4 text-base font-bold inline-flex items-center justify-center gap-2"
-              >
-                <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
-                {t.viewReport}
-              </button>
-            </div>
-          )}
         </div>
-      </div>
+      </>
     )
   }
 

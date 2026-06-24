@@ -6,10 +6,34 @@ import NumerologyGrid from '@/components/charts/NumerologyGrid'
 import ChakraChart from '@/components/charts/ChakraChart'
 import { NorthIndianKundli, NavamshaChart, DashaTimeline } from '@/components/charts/VedicCharts'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo, Component } from 'react'
+import type { ReactNode, ErrorInfo } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+
+class SectionErrorBoundary extends Component<{ children: ReactNode; name?: string }, { error: Error | null }> {
+  constructor(props: { children: ReactNode; name?: string }) {
+    super(props)
+    this.state = { error: null }
+  }
+  static getDerivedStateFromError(error: Error) { return { error } }
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error(`[SectionErrorBoundary${this.props.name ? ` ${this.props.name}` : ''}]`, error, info)
+  }
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="card-divine p-6 text-center print:hidden">
+          <span className="material-symbols-outlined text-[32px] text-amber-400 mb-2 block" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
+          <p className="font-semibold text-[var(--indigo-deep)] text-sm">This section could not be displayed</p>
+          <p className="text-xs text-[var(--warm-charcoal)]/50 mt-1">{this.state.error.message}</p>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
 
 interface Report {
   id: string
@@ -42,6 +66,15 @@ const REPORT_TITLES_HI: Record<string, string> = {
 
 function Section({ title, icon, children, printAlwaysOpen }: { title: string; icon?: string; children: React.ReactNode; printAlwaysOpen?: boolean }) {
   const [open, setOpen] = useState(true)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const mq = window.matchMedia('print')
+    const handler = (e: MediaQueryListEvent) => { if (e.matches) setOpen(true) }
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+
   return (
     <div className="card-divine overflow-hidden print:overflow-visible print:shadow-none print:border print:border-gray-200 print:break-inside-avoid-page">
       <button
@@ -83,6 +116,18 @@ function nameToColor(name: unknown): string {
   for (const [k, v] of Object.entries(map)) {
     if (lower.includes(k)) return v
   }
+  // Try CSS named colors as broader fallback
+  try {
+    if (typeof document !== 'undefined') {
+      const canvas = document.createElement('canvas')
+      canvas.width = canvas.height = 1
+      const ctx = canvas.getContext('2d')!
+      ctx.fillStyle = '#c4a882'
+      ctx.fillStyle = lower
+      const resolved = ctx.fillStyle
+      if (resolved !== '#c4a882') return resolved
+    }
+  } catch {}
   return '#c4a882'
 }
 
@@ -265,8 +310,8 @@ function KundliSection({ data, birthDate }: { data: any; birthDate?: string }) {
           {analysis.remedies?.length > 0 && (
             <div className="bg-[var(--warm-sand)] rounded-xl p-4">
               <p className="text-xs font-bold text-[var(--saffron)] uppercase tracking-wider mb-2">Remedies</p>
-              {analysis.remedies.map((r: string) => (
-                <p key={r} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {r}</p>
+              {analysis.remedies.map((r: string, i: number) => (
+                <p key={i} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {r}</p>
               ))}
             </div>
           )}
@@ -614,7 +659,7 @@ function MantraSection({ data }: { data: any }) {
         </div>
 
         {/* 4 Steps */}
-        <div className="mt-4 space-y-3">
+        <div className="mt-4 space-y-3 ml-steps">
           {/* Step 1 */}
           <div className="border border-[var(--indigo-deep)]/20 rounded-xl overflow-hidden">
             <div className="bg-[var(--indigo-deep)] px-4 py-2 flex items-center justify-between">
@@ -622,7 +667,7 @@ function MantraSection({ data }: { data: any }) {
               <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">{ml.step1.times}× लिखें</span>
             </div>
             <div className="p-4 bg-white text-center space-y-1">
-              <p className="text-lg font-bold text-[var(--indigo-deep)]">{ml.step1.mantra}</p>
+              <p className="text-2xl font-bold text-[var(--indigo-deep)] leading-relaxed">{ml.step1.mantra}</p>
               <p className="text-sm text-[var(--warm-charcoal)]/60 italic">{ml.step1.transliteration}</p>
               <p className="text-xs text-[var(--warm-charcoal)]/50">({ml.step1.meaning})</p>
             </div>
@@ -635,7 +680,7 @@ function MantraSection({ data }: { data: any }) {
               <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">{ml.step2.times}× लिखें</span>
             </div>
             <div className="p-4 bg-white text-center">
-              <p className="text-sm font-bold text-[var(--indigo-deep)] leading-relaxed">{ml.step2.mantra}</p>
+              <p className="text-base font-bold text-[var(--indigo-deep)] leading-relaxed">{ml.step2.mantra}</p>
             </div>
           </div>
 
@@ -647,7 +692,7 @@ function MantraSection({ data }: { data: any }) {
                 <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">{ml.step3.times}× लिखें</span>
               </div>
               <div className="p-4 bg-white text-center space-y-1">
-                <p className="text-lg font-bold text-[var(--plum)]">{ml.step3.mantra}</p>
+                <p className="text-2xl font-bold text-[var(--plum)] leading-relaxed">{ml.step3.mantra}</p>
                 <p className="text-sm text-[var(--warm-charcoal)]/60 italic">{ml.step3.transliteration}</p>
                 <p className="text-xs text-[var(--warm-charcoal)]/50">({ml.step3.meaning})</p>
               </div>
@@ -666,7 +711,7 @@ function MantraSection({ data }: { data: any }) {
             </div>
             <div className="p-4 bg-white space-y-3">
               <p className="text-xs text-[var(--warm-charcoal)]/40 text-right">श्लोक {ml.step4.number}</p>
-              <p className="text-base font-bold text-[var(--indigo-deep)] leading-relaxed text-center">{ml.step4.sanskrit}</p>
+              <p className="text-lg font-bold text-[var(--indigo-deep)] leading-relaxed text-center">{ml.step4.sanskrit}</p>
               <div className="border-t border-gray-100 pt-3">
                 <p className="text-xs text-[var(--warm-charcoal)]/50 uppercase tracking-wider mb-1">अर्थ</p>
                 <p className="text-xs text-[var(--warm-charcoal)]/70 leading-relaxed">{ml.step4.arth}</p>
@@ -677,7 +722,16 @@ function MantraSection({ data }: { data: any }) {
 
         {/* Practice Materials & Schedule */}
         {(() => {
-          const lord = NAKSHATRA_LORDS[ml.nakshatra] || 'Jupiter'
+          const lord = (() => {
+            if (!ml.nakshatra) return 'Jupiter'
+            const direct = NAKSHATRA_LORDS[ml.nakshatra.trim()]
+            if (direct) return direct
+            const lower = ml.nakshatra.trim().toLowerCase()
+            for (const [k, v] of Object.entries(NAKSHATRA_LORDS)) {
+              if (k.toLowerCase() === lower) return v
+            }
+            return 'Jupiter'
+          })()
           const practice = PLANET_PRACTICE[lord] || PLANET_PRACTICE.Jupiter
           return (
             <>
@@ -734,7 +788,7 @@ function MantraSection({ data }: { data: any }) {
               </div>
 
               {/* Progress milestones */}
-              <div className="mt-3 grid grid-cols-4 gap-2 text-center">
+              <div className="mt-3 grid grid-cols-4 gap-2 text-center ml-progress">
                 {([
                   { days: '21', label: 'स्थिरता', color: '#d97706', bg: '#fffbeb', desc: 'Habit forms' },
                   { days: '41', label: 'परिवर्तन', color: '#dc2626', bg: '#fef2f2', desc: 'Changes begin' },
@@ -785,7 +839,7 @@ function MantraSection({ data }: { data: any }) {
                 <p className="text-xs mt-1 italic" style={{ color: '#7c3aed' }}>
                   "May all fruits of this practice be dedicated at the lotus feet of the Guru and the Divine"
                 </p>
-                <div className="mt-3 grid grid-cols-3 gap-2">
+                <div className="mt-3 grid grid-cols-3 gap-2 ml-closing-breakdown">
                   {[
                     { label: 'Before Writing', value: 'Sankalpa — सत्य संकल्प' },
                     { label: 'While Writing', value: 'Single-pointed focus' },
@@ -800,7 +854,7 @@ function MantraSection({ data }: { data: any }) {
               </div>
 
               {/* Shloka sequence visual */}
-              <div className="mt-3 rounded-xl p-3" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+              <div className="mt-3 rounded-xl p-3 ml-seq-visual" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
                 <p className="text-xs font-bold mb-2 text-center" style={{ color: '#334155' }}>
                   दैनिक लेखन अनुक्रम (Daily Writing Sequence)
                 </p>
@@ -960,8 +1014,8 @@ function VastuSection({ data }: { data: any }) {
         {data.remedies?.length > 0 && (
           <div className="bg-[var(--warm-sand)] rounded-xl p-4">
             <p className="text-xs font-bold text-[var(--terracotta)] uppercase tracking-wider mb-2">Vastu Remedies</p>
-            {data.remedies.map((r: string) => (
-              <p key={r} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {r}</p>
+            {data.remedies.map((r: string, i: number) => (
+              <p key={i} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {r}</p>
             ))}
           </div>
         )}
@@ -1137,8 +1191,8 @@ function RemediesSection({ data }: { data: any }) {
               Weekly Practices
             </p>
             <div className="space-y-1.5">
-              {data.weeklyPractices.map((p: string) => (
-                <p key={p} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {p}</p>
+              {data.weeklyPractices.map((p: string, i: number) => (
+                <p key={i} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {p}</p>
               ))}
             </div>
           </div>
@@ -1161,16 +1215,16 @@ function RemediesSection({ data }: { data: any }) {
               <span className="material-symbols-outlined text-[14px] text-emerald-500" style={{ fontVariationSettings: "'FILL' 1" }}>nutrition</span>
               Diet & Food Remedies
             </p>
-            {data.dietRecommendations.map((d: string) => (
-              <p key={d} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {d}</p>
+            {data.dietRecommendations.map((d: string, i: number) => (
+              <p key={i} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {d}</p>
             ))}
           </div>
         )}
         {data.charityItems?.length > 0 && (
           <div className="bg-[var(--warm-sand)] rounded-xl p-3">
             <p className="text-xs font-bold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-2">Dana (Charity Items)</p>
-            {data.charityItems.map((c: string) => (
-              <p key={c} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {c}</p>
+            {data.charityItems.map((c: string, i: number) => (
+              <p key={i} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {c}</p>
             ))}
           </div>
         )}
@@ -1185,8 +1239,8 @@ function RemediesSection({ data }: { data: any }) {
         {data.yantras?.length > 0 && (
           <div>
             <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Yantras</p>
-            {data.yantras.map((y: string) => (
-              <p key={y} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {y}</p>
+            {data.yantras.map((y: string, i: number) => (
+              <p key={i} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {y}</p>
             ))}
           </div>
         )}
@@ -1379,11 +1433,11 @@ function DoshaPanel({ vata = 33, pitta = 34, kapha = 33 }: { vata?: number; pitt
       <circle cx="55" cy="128" r="47" fill="#fed7aa" fillOpacity="0.6" stroke="#ea580c" strokeWidth="1.5" />
       <circle cx="125" cy="128" r="47" fill="#bbf7d0" fillOpacity="0.6" stroke="#16a34a" strokeWidth="1.5" />
       <text x="90" y="40" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#0284c7">Vāta</text>
-      <text x="90" y="53" textAnchor="middle" fontSize="13" fontWeight="bold" fill="#0284c7">{vata}%</text>
+      <text x="90" y="53" textAnchor="middle" fontSize="13" fontWeight="bold" fill="#0284c7">{vata ?? '–'}%</text>
       <text x="35" y="147" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#ea580c">Pitta</text>
-      <text x="35" y="160" textAnchor="middle" fontSize="13" fontWeight="bold" fill="#ea580c">{pitta}%</text>
+      <text x="35" y="160" textAnchor="middle" fontSize="13" fontWeight="bold" fill="#ea580c">{pitta ?? '–'}%</text>
       <text x="145" y="147" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#16a34a">Kapha</text>
-      <text x="145" y="160" textAnchor="middle" fontSize="13" fontWeight="bold" fill="#16a34a">{kapha}%</text>
+      <text x="145" y="160" textAnchor="middle" fontSize="13" fontWeight="bold" fill="#16a34a">{kapha ?? '–'}%</text>
     </svg>
   )
 }
@@ -1473,7 +1527,7 @@ function ColourWheelPanel({ size = 150 }: { size?: number }) {
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       {COLORS.map((color, i) => {
         const s = (i / COLORS.length) * Math.PI * 2 - Math.PI / 2
-        const e = ((i + 1) / COLORS.length) * Math.PI * 2 - Math.PI / 2
+        const e = ((i + 1.01) / COLORS.length) * Math.PI * 2 - Math.PI / 2
         const ir = r - 24
         return (
           <path key={i}
@@ -1496,7 +1550,7 @@ function AnnualArcPanel({ year = new Date().getFullYear() }: { year?: number }) 
     <svg viewBox="0 0 180 155" width="180" height="155">
       <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`} fill="none" stroke="#D4A017" strokeWidth="2" strokeOpacity="0.25" />
       {MONTHS.map((m, i) => {
-        const a = (i / 11) * Math.PI
+        const a = (i / 11) * Math.PI * 0.95 + 0.025
         const x = cx - r * Math.cos(a), y = cy - r * Math.sin(a)
         return (
           <g key={m}>
@@ -1590,7 +1644,9 @@ function ChapterSpread({ chapter, height }: { chapter: BookChapter; height: numb
           <span style={{ fontSize: 12, color: '#2F2A44', fontWeight: 600 }}>{chapter.title}</span>
         </div>
         <div style={{ padding: '20px 24px 32px', flex: 1 }}>
-          {chapter.content}
+          <SectionErrorBoundary name={chapter.title}>
+            {chapter.content}
+          </SectionErrorBoundary>
         </div>
       </div>
     </div>
@@ -1599,8 +1655,6 @@ function ChapterSpread({ chapter, height }: { chapter: BookChapter; height: numb
 
 // ─── Book Viewer ───────────────────────────────────────────
 
-const BOOK_HEIGHT = 600
-
 function BookViewer({ chapters }: { chapters: BookChapter[] }) {
   const active = chapters.filter(c => c.show)
   const [displayIdx, setDisplayIdx] = useState(0)
@@ -1608,11 +1662,21 @@ function BookViewer({ chapters }: { chapters: BookChapter[] }) {
   const [isAnimating, setIsAnimating] = useState(false)
   const bookRef = useRef<HTMLDivElement>(null)
   const [isFS, setIsFS] = useState(false)
+  const [bookHeight, setBookHeight] = useState(600)
 
   useEffect(() => {
     const handler = () => setIsFS(!!document.fullscreenElement)
     document.addEventListener('fullscreenchange', handler)
     return () => document.removeEventListener('fullscreenchange', handler)
+  }, [])
+
+  useEffect(() => {
+    function updateHeight() {
+      setBookHeight(Math.min(600, Math.round(window.innerHeight * 0.75)))
+    }
+    updateHeight()
+    window.addEventListener('resize', updateHeight)
+    return () => window.removeEventListener('resize', updateHeight)
   }, [])
 
   function goTo(to: number) {
@@ -1638,7 +1702,7 @@ function BookViewer({ chapters }: { chapters: BookChapter[] }) {
   const cur = active[displayIdx]
   const inc = incoming ? active[incoming.idx] : null
   const dir = incoming?.dir ?? 1
-  const bookH = isFS ? (typeof window !== 'undefined' ? window.innerHeight - 110 : 640) : BOOK_HEIGHT
+  const bookH = isFS ? (typeof window !== 'undefined' ? window.innerHeight - 110 : 640) : bookHeight
 
   return (
     <div ref={bookRef} className={isFS ? 'fixed inset-0 z-50 flex flex-col' : ''}
@@ -1748,7 +1812,7 @@ function BookViewer({ chapters }: { chapters: BookChapter[] }) {
 export default function ReportDetailPage() {
 
   const { reportId } = useParams<{ reportId: string }>()
-  const supabase = createClient()
+  const supabase = useMemo(() => createClient(), [])
   const [report, setReport] = useState<Report | null>(null)
   const [loading, setLoading] = useState(true)
   const [downloading, setDownloading] = useState(false)
@@ -1757,20 +1821,45 @@ export default function ReportDetailPage() {
 
   useEffect(() => {
     async function load() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { setLoading(false); return }
+      const { data: family } = await supabase.from('families').select('id').eq('owner_id', user.id).single()
+      if (!family) { setLoading(false); return }
       const { data } = await supabase
         .from('reports')
         .select('id,report_type,status,report_content,created_at,family_members(full_name,date_of_birth,place_of_birth)')
         .eq('id', reportId)
+        .eq('family_id', family.id)
         .single()
       if (data) setReport(data as Report)
       setLoading(false)
     }
     load()
-  }, [reportId])
+  }, [reportId, supabase])
+
+  // Poll every 3s while report is processing
+  useEffect(() => {
+    if (report?.status !== 'processing') return
+    const interval = setInterval(async () => {
+      const { data } = await supabase
+        .from('reports')
+        .select('id,report_type,status,report_content,created_at,family_members(full_name,date_of_birth,place_of_birth)')
+        .eq('id', reportId)
+        .single()
+      if (data && data.status !== 'processing') {
+        setReport(data as Report)
+        clearInterval(interval)
+      }
+    }, 3000)
+    return () => clearInterval(interval)
+  }, [report?.status, reportId, supabase])
 
   function handlePrint() {
     setDownloading(true)
-    setTimeout(() => { window.print(); setDownloading(false) }, 300)
+    document.fonts.ready.then(() => {
+      window.print()
+      setDownloading(false)
+    })
   }
 
   if (loading) return <div className="flex items-center justify-center h-64"><SudarshanLoader size="md" /></div>
@@ -1783,15 +1872,21 @@ export default function ReportDetailPage() {
     </div>
   )
   if (report.status === 'processing') return (
-    <div className="flex flex-col items-center justify-center h-64 gap-4 p-6">
-      <SudarshanLoader size="lg" />
-      <div className="text-center">
-        <p className="font-bold text-[var(--indigo-deep)] text-lg">Your report is being generated</p>
-        <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">Please wait - this page will update automatically</p>
+    <div className="p-6 flex flex-col items-center justify-center min-h-[60vh] gap-6">
+      <div style={{ borderRadius: 20, overflow: 'hidden', boxShadow: '0 16px 48px rgba(47,42,68,0.2)', maxWidth: 400, width: '100%', textAlign: 'center' }}>
+        <div style={{ background: 'linear-gradient(160deg, #0f0b22 0%, #2F2A44 55%, #3a1e04 100%)', padding: '36px 32px 30px', position: 'relative', overflow: 'hidden' }}>
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 280, height: 280, border: '1px solid rgba(212,160,23,0.1)', borderRadius: '50%', pointerEvents: 'none' }} />
+          <div style={{ fontSize: 48, color: '#D4A017', marginBottom: 14 }}>ॐ</div>
+          <SudarshanLoader size="lg" />
+        </div>
+        <div style={{ background: '#FDFAF5', padding: '24px 28px 28px' }}>
+          <p style={{ fontWeight: 700, color: '#2F2A44', fontSize: 17, fontFamily: "'Playfair Display', serif", marginBottom: 6 }}>Crafting Your Sacred Report</p>
+          <p style={{ fontSize: 13, color: 'rgba(42,32,28,0.55)', marginBottom: 20 }}>This page will refresh automatically when ready</p>
+          <Link href="/reports/generate" className="text-sm text-[var(--terracotta)] hover:underline inline-flex items-center justify-center gap-1">
+            <span className="material-symbols-outlined text-[16px]">arrow_back</span>Back to Generate
+          </Link>
+        </div>
       </div>
-      <Link href="/reports/generate" className="text-sm text-[var(--terracotta)] hover:underline inline-flex items-center gap-1">
-        <span className="material-symbols-outlined text-[16px]">arrow_back</span>Back to Generate
-      </Link>
     </div>
   )
 
@@ -1803,12 +1898,14 @@ export default function ReportDetailPage() {
   const isFull = report.report_type === 'full_tathastu'
   const isGenerated = ['generated', 'reviewed', 'delivered'].includes(report.status)
 
+  const ROMAN = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV']
+
   const chapters: BookChapter[] = [
     {
       id: 'astrology', number: 'I', title: 'Kundli & Birth Chart', sanskrit: 'ग्रह ज्योतिष',
       leftPanel: d.kundli ? <KundliWheel kundli={d.kundli} /> : <OmMandala size={175} />,
       content: <KundliSection data={d} birthDate={member?.date_of_birth} />,
-      show: (report.report_type === 'astrology' || isFull) && !!d.kundli,
+      show: (report.report_type === 'astrology' || isFull) && !!(d.kundli?.ascendant),
     },
     {
       id: 'numerology', number: 'II', title: 'Numerology Analysis', sanskrit: 'अंकशास्त्र',
@@ -1816,7 +1913,7 @@ export default function ReportDetailPage() {
         ? <NumerologyGrid numerology={d.numerology} member={{ name: member?.full_name, dob: member?.date_of_birth }} />
         : <OmMandala size={175} />,
       content: <NumerologySection data={d} />,
-      show: (report.report_type === 'numerology' || isFull) && !!d.numerology,
+      show: (report.report_type === 'numerology' || isFull) && !!(d.numerology?.lifePathNumber),
     },
     {
       id: 'shakti_chakra', number: 'III', title: 'Shakti Chakra', sanskrit: 'शक्ति चक्र',
@@ -1824,7 +1921,7 @@ export default function ReportDetailPage() {
         ? <ChakraChart data={{ chakras: d.chakras || d.chakra, overallBalance: d.overallBalance }} />
         : <OmMandala size={175} />,
       content: <ChakraSection data={d.chakras || d.chakra} />,
-      show: (report.report_type === 'shakti_chakra' || isFull) && !!(d.chakras || d.chakra),
+      show: (report.report_type === 'shakti_chakra' || isFull) && !!(Array.isArray(d.chakras || d.chakra) && (d.chakras || d.chakra).length > 0),
     },
     {
       id: 'prakriti', number: 'IV', title: 'Prakriti · Ayurveda', sanskrit: 'प्रकृति',
@@ -1874,13 +1971,13 @@ export default function ReportDetailPage() {
           </div>
         </Section>
       ),
-      show: (report.report_type === 'prakriti' || isFull) && !!d.prakriti,
+      show: (report.report_type === 'prakriti' || isFull) && !!(d.prakriti?.dominant),
     },
     {
       id: 'yantra_colour', number: 'V', title: 'Yantra & Colour', sanskrit: 'यंत्र रंग चिकित्सा',
       leftPanel: <SriYantraPanel size={175} />,
       content: <YantraSection data={d.yantra || d.yantraColour} />,
-      show: (report.report_type === 'yantra_colour' || isFull) && !!(d.yantra || d.yantraColour),
+      show: (report.report_type === 'yantra_colour' || isFull) && !!(d.yantra?.primaryYantra || d.yantraColour?.primaryYantra),
     },
     {
       id: 'mantra_chanting', number: 'VI', title: 'Mantra Guidance', sanskrit: 'मंत्र जप',
@@ -1899,7 +1996,7 @@ export default function ReportDetailPage() {
         </div>
       ),
       content: <MantraSection data={d.mantraLekhnan ? d : (d.mantras || d.mantra)} />,
-      show: (['mantra_chanting', 'mantra_writing'].includes(report.report_type) || isFull) && !!(d.mantras || d.mantra || d.mantraLekhnan),
+      show: (['mantra_chanting', 'mantra_writing'].includes(report.report_type) || isFull) && !!(d.mantras?.chanting || d.mantra?.chanting || d.mantraLekhnan),
     },
     {
       id: 'psychology', number: 'VII', title: 'Vedic Psychology', sanskrit: 'वैदिक मनोविज्ञान',
@@ -1949,13 +2046,13 @@ export default function ReportDetailPage() {
           </div>
         </Section>
       ),
-      show: (report.report_type === 'psychology' || isFull) && !!d.psychology,
+      show: (report.report_type === 'psychology' || isFull) && !!(d.psychology?.moonPersonalityType),
     },
     {
       id: 'astro_vastu', number: 'VIII', title: 'Astro Vastu', sanskrit: 'ज्योतिष वास्तु',
       leftPanel: <VastuCompassPanel size={165} />,
       content: <VastuSection data={d.vastu || d.vastuAnalysis} />,
-      show: (report.report_type === 'astro_vastu' || isFull) && !!(d.vastu || d.vastuAnalysis),
+      show: (report.report_type === 'astro_vastu' || isFull) && !!(d.vastu?.homeDirection || d.vastuAnalysis?.homeDirection),
     },
     {
       id: 'dmit', number: 'IX', title: 'DMIT Intelligence', sanskrit: 'बुद्धिमत्ता प्रोफाइल',
@@ -2008,7 +2105,7 @@ export default function ReportDetailPage() {
           </div>
         </Section>
       ),
-      show: (report.report_type === 'dmit' || isFull) && !!d.dmit,
+      show: (report.report_type === 'dmit' || isFull) && !!(d.dmit?.learningStyle),
     },
     {
       id: 'colour_therapy', number: 'X', title: 'Colour Therapy', sanskrit: 'रंग चिकित्सा',
@@ -2069,7 +2166,7 @@ export default function ReportDetailPage() {
           </div>
         </Section>
       ),
-      show: (report.report_type === 'colour_therapy' || isFull) && !!d.colourTherapy,
+      show: (report.report_type === 'colour_therapy' || isFull) && !!(d.colourTherapy?.healingColors?.length || d.colourTherapy?.chromotherapy),
     },
     {
       id: 'annual_prediction', number: 'XI', title: 'Annual Prediction', sanskrit: 'वार्षिक भविष्यवाणी',
@@ -2173,11 +2270,13 @@ export default function ReportDetailPage() {
     },
   ]
 
-  const visibleChapters = chapters.filter(c => c.show)
+  const visibleChapters = chapters
+    .filter(c => c.show)
+    .map((c, i) => ({ ...c, number: ROMAN[i] ?? String(i + 1) }))
 
   const PRINT_CSS = `
     @media print {
-      @page { size: A4 portrait; margin: 0; }
+      @page { size: A4 portrait; margin: 10mm 8mm; }
       body { visibility: hidden; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
       #rpa { display: block !important; visibility: visible !important; position: absolute; left: 0; top: 0; width: 100%; }
       #rpa * { visibility: visible !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
@@ -2194,7 +2293,18 @@ export default function ReportDetailPage() {
       table th, table td { padding: 3px 6px !important; border: 1px solid #c8a96e; }
       thead { display: table-header-group; }
       h2 { font-size: 15px !important; } h3 { font-size: 12px !important; }
-      p, span, li { font-size: 11px !important; line-height: 1.6 !important; }
+      #rpa p, #rpa li { font-size: 11px !important; line-height: 1.6 !important; }
+      #rpa .cover-page * { font-size: inherit !important; }
+      #rpa [class*="text-2xl"], #rpa [class*="text-3xl"], #rpa [class*="text-4xl"] { font-size: inherit !important; }
+      /* Likhit mantra print compaction */
+      .ml-seq-visual { display: none !important; }
+      .ml-closing-breakdown { display: none !important; }
+      .ml-steps .space-y-3 > * { margin-top: 6px !important; }
+      .ml-steps .p-4 { padding: 6px 10px !important; }
+      .ml-steps .text-2xl { font-size: 16px !important; }
+      .ml-progress { gap: 4px !important; }
+      .ml-progress > * { padding: 4px !important; }
+      .ml-progress .text-xl { font-size: 14px !important; }
     }
   `
 
@@ -2236,12 +2346,13 @@ export default function ReportDetailPage() {
 
         {/* Screen: book viewer */}
         {!isGenerated ? (
-          <div className="card-divine p-8 text-center no-print">
-            <SudarshanLoader size="lg" className="mb-4" />
-            <p className="font-bold text-[var(--indigo-deep)]">Report is being generated...</p>
+          <div className="card-divine p-10 text-center no-print" style={{ background: 'linear-gradient(160deg, rgba(47,42,68,0.04), rgba(212,160,23,0.04))' }}>
+            <SudarshanLoader size="lg" />
+            <p className="font-bold text-[var(--indigo-deep)] mt-4" style={{ fontFamily: "'Playfair Display', serif" }}>Report is being prepared…</p>
+            <p className="text-sm text-[var(--warm-charcoal)]/50 mt-1">This will update automatically once complete</p>
           </div>
         ) : visibleChapters.length > 0 ? (
-          <div className="no-print"><BookViewer chapters={chapters} /></div>
+          <div className="no-print"><BookViewer chapters={visibleChapters} /></div>
         ) : (
           <div className="card-divine p-8 text-center no-print">
             <p className="text-[var(--warm-charcoal)]/60">Report content not yet available.</p>
@@ -2252,7 +2363,7 @@ export default function ReportDetailPage() {
         <div id="rpa" ref={printRef} style={{ display: 'none' }}>
 
           {/* COVER PAGE - Tathastu parchment style */}
-          <div style={{ minHeight: '29.7cm', background: '#f5ede0', pageBreakAfter: 'always', position: 'relative', overflow: 'hidden', fontFamily: 'Georgia, serif' }}>
+          <div style={{ minHeight: 'calc(29.7cm - 20mm)', background: '#f5ede0', pageBreakAfter: 'always', position: 'relative', overflow: 'hidden', fontFamily: 'Georgia, serif' }}>
             {/* Decorative corner borders */}
             {[{ top: 12, left: 12 }, { top: 12, right: 12 }, { bottom: 12, left: 12 }, { bottom: 12, right: 12 }].map((pos, i) => (
               <div key={i} style={{ position: 'absolute', width: 40, height: 40, ...pos, borderColor: '#c8922a', borderStyle: 'solid', borderWidth: i === 0 ? '3px 0 0 3px' : i === 1 ? '3px 3px 0 0' : i === 2 ? '0 0 3px 3px' : '0 3px 3px 0' }} />

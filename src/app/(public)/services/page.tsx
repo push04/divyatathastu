@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 
+export const revalidate = 3600
+
 export const metadata: Metadata = {
   title: 'Our Services | MahaTathastu - 14 Vedic Reports',
   description: 'Explore all 14 Nakshatra reports: Kundli, Numerology, Chakra, Prakriti, Yantra, Mantra, Vastu, DMIT, and more.',

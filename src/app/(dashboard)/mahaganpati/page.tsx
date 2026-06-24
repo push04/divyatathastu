@@ -3,8 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useServiceItems } from '@/lib/hooks/useServiceItems'
-import { createClient } from '@/lib/supabase/client'
-import { toast } from 'sonner'
+import { useServicePayment } from '@/lib/hooks/useServicePayment'
 
 const GANESH_ATTRIBUTES = [
   { sanskrit: 'विघ्नहर्ता', english: 'Vighnaharta', meaning: 'Remover of all obstacles from life, business, and relationships' },
@@ -24,27 +23,16 @@ const PUJA_BENEFITS = [
 
 export default function MahaganpatiPage() {
   const { items, loading } = useServiceItems('mahaganpati')
-  const [booking, setBooking] = useState<string | null>(null)
   const [booked, setBooked] = useState<Set<string>>(new Set())
   const [preferred, setPreferred] = useState<Record<string, string>>({})
+  const { pay, bookingId: booking } = useServicePayment()
 
-  async function bookService(item: typeof items[number]) {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { toast.error('Please login to book'); return }
-    setBooking(item.id)
-    const { error } = await (supabase as any).from('service_bookings').insert({
-      service_item_id: item.id, user_id: user.id,
-      status: 'pending', amount: item.price ?? 0, payment_status: 'pending',
-      preferred_date: preferred[item.id] || null,
+  function bookService(item: typeof items[number]) {
+    pay({ id: item.id, title: item.title, price: item.price ?? 0 }, {
       notes: `Puja: ${item.title}${preferred[item.id] ? ` - Preferred date: ${preferred[item.id]}` : ''}`,
+      preferredDate: preferred[item.id] || undefined,
+      onSuccess: (id) => setBooked(s => new Set([...s, id])),
     })
-    if (error) toast.error('Booking failed. Try again.')
-    else {
-      toast.success(`Booked "${item.title}"! Our pandit will contact you to finalize the muhurta.`)
-      setBooked(s => new Set([...s, item.id]))
-    }
-    setBooking(null)
   }
 
   return (

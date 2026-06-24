@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import { useServiceItems } from '@/lib/hooks/useServiceItems'
-import { createClient } from '@/lib/supabase/client'
-import { toast } from 'sonner'
+import { useServicePayment } from '@/lib/hooks/useServicePayment'
 
 const NAKSHATRA_INFO = [
   { title: 'Ardra Nakshatra', desc: 'The 6th of 27 nakshatras, ruled by Rudra (Shiva). Symbolized by a teardrop - the tear of transformation, renewal, and cosmic dissolution.' },
@@ -32,29 +31,22 @@ const BENEFITS = [
 export default function ArdraJalamPage() {
   const { items, loading } = useServiceItems('ardra_jalam')
   const [qty, setQty] = useState(1)
-  const [ordering, setOrdering] = useState(false)
   const [booked, setBooked] = useState(false)
+  const { pay, bookingId } = useServicePayment()
 
   const product = items[0]
+  const ordering = !!bookingId
 
-  async function handleOrder() {
-    const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { toast.error('Please login to order'); return }
-
-    setOrdering(true)
-    const { error } = await (supabase as any).from('service_bookings').insert({
-      service_item_id: product?.id,
-      user_id: user.id,
-      status: 'pending',
-      amount: product ? product.price! * qty : 499 * qty,
-      payment_status: 'pending',
-      notes: `Qty: ${qty} bottle(s) of Ardra Jalam`,
-    })
-    if (error) { toast.error('Failed to place order. Try again.'); setOrdering(false); return }
-    toast.success('Order placed! Our team will contact you within 24 hours to confirm.')
-    setBooked(true)
-    setOrdering(false)
+  function handleOrder() {
+    if (!product) return
+    const totalPrice = product.price! * qty
+    pay(
+      { id: product.id, title: product.title, price: totalPrice },
+      {
+        notes: `Qty: ${qty} bottle(s) of Ardra Jalam`,
+        onSuccess: () => setBooked(true),
+      }
+    )
   }
 
   return (
@@ -153,7 +145,7 @@ export default function ArdraJalamPage() {
         {/* Nakshatra science */}
         <section>
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>The Science of Ardra Nakshatra</h2>
+            <h2 className="text-3xl font-black text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>The Science of Ardra Nakshatra</h2>
             <p className="text-sm text-[var(--warm-charcoal)]/60 mt-2">Why this nakshatra makes the water sacred</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -172,14 +164,14 @@ export default function ArdraJalamPage() {
         {/* Benefits */}
         <section style={{ background: 'linear-gradient(135deg, #f0fdf4, #ecfdf5)', borderRadius: 20, padding: '40px' }}>
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Benefits</h2>
+            <h2 className="text-3xl font-black text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Benefits</h2>
             <p className="text-sm text-[var(--warm-charcoal)]/60 mt-2">As per Vedic tradition and reported experiences</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {BENEFITS.map(b => (
               <div key={b.title} className="bg-white rounded-2xl p-5 shadow-sm">
                 <div className="mb-3"><span className="material-symbols-outlined text-[24px] text-emerald-700" style={{ fontVariationSettings: "'FILL' 1" }}>{b.icon}</span></div>
-                <h3 className="font-bold text-[var(--indigo-deep)] mb-2 text-sm">{b.title}</h3>
+                <h3 className="font-semibold text-[var(--indigo-deep)] mb-2 text-base">{b.title}</h3>
                 <p className="text-xs text-[var(--warm-charcoal)]/60 leading-relaxed">{b.desc}</p>
               </div>
             ))}
@@ -189,7 +181,7 @@ export default function ArdraJalamPage() {
         {/* How to use */}
         <section>
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>How to Use</h2>
+            <h2 className="text-3xl font-black text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>How to Use</h2>
           </div>
           <div className="space-y-4">
             {HOW_TO_USE.map(h => (
@@ -198,7 +190,7 @@ export default function ArdraJalamPage() {
                   {h.step}
                 </div>
                 <div>
-                  <h3 className="font-bold text-[var(--indigo-deep)] mb-1">{h.title}</h3>
+                  <h3 className="text-base font-extrabold text-[var(--indigo-deep)] mb-1">{h.title}</h3>
                   <p className="text-sm text-[var(--warm-charcoal)]/60 leading-relaxed">{h.desc}</p>
                 </div>
               </div>

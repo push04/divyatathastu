@@ -40,6 +40,8 @@ interface Enrollment {
   payment_status: string
   service_item_id: string
   user_id: string
+  user_name?: string
+  user_email?: string
 }
 
 const EMPTY_FORM: Partial<Course> = {
@@ -84,7 +86,24 @@ export default function AdminCoursesPage() {
     if (cs) setCourses(cs as Course[])
     if (enr) {
       const courseIds = new Set((cs || []).map((c: Course) => c.id))
-      setEnrollments((enr as Enrollment[]).filter(e => courseIds.has(e.service_item_id)))
+      const filtered = (enr as Enrollment[]).filter(e => courseIds.has(e.service_item_id))
+      // Resolve user names from profiles
+      if (filtered.length > 0) {
+        const uids = [...new Set(filtered.map(e => e.user_id))]
+        const { data: profiles } = await (supabase as any)
+          .from('profiles')
+          .select('id, full_name, email')
+          .in('id', uids)
+        const pm: Record<string, { full_name: string; email: string }> = {}
+        for (const p of profiles || []) pm[p.id] = p
+        setEnrollments(filtered.map(e => ({
+          ...e,
+          user_name: pm[e.user_id]?.full_name || '',
+          user_email: pm[e.user_id]?.email || '',
+        })))
+      } else {
+        setEnrollments([])
+      }
     }
     setLoading(false)
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
@@ -595,7 +614,14 @@ export default function AdminCoursesPage() {
                       return (
                         <tr key={e.id} className="hover:bg-gray-50/50 transition-colors">
                           <td className="px-5 py-3">
-                            <div className="font-mono text-[10px] text-gray-500 select-all">{e.user_id}</div>
+                            {e.user_name ? (
+                              <>
+                                <p className="text-xs font-semibold text-gray-800">{e.user_name}</p>
+                                {e.user_email && <p className="text-[11px] text-gray-400">{e.user_email}</p>}
+                              </>
+                            ) : (
+                              <div className="font-mono text-[10px] text-gray-400 select-all">{e.user_id.slice(0, 8)}…</div>
+                            )}
                           </td>
                           <td className="px-5 py-3">
                             <p className="text-xs text-gray-700 font-medium line-clamp-1">{course?.title || 'Unknown'}</p>

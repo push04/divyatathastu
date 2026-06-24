@@ -7,7 +7,9 @@
   },
   "functions": {
     "src/app/api/noxatra/route.ts": { "maxDuration": 60 },
+    "src/app/api/noxatra/section/route.ts": { "maxDuration": 60 },
     "src/app/api/groq/route.ts": { "maxDuration": 60 },
+    "src/app/api/payment/route.ts": { "maxDuration": 30 },
     "src/app/api/itinerary/route.ts": { "maxDuration": 60 },
     "src/app/api/cron/spiritual-digest/route.ts": { "maxDuration": 60 }
   },
