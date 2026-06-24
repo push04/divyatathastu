@@ -1870,10 +1870,14 @@ export default function ReportDetailPage() {
     try {
       if (!el) return
 
-      // Show at fixed A4 width for consistent rendering
+      // Render off-screen so user never sees the flash — position: fixed + left: -9999px
       el.style.display = 'block'
+      el.style.position = 'fixed'
+      el.style.top = '0'
+      el.style.left = '-9999px'
       el.style.width = '794px'
       el.style.maxWidth = '794px'
+      el.style.zIndex = '-1'
       await document.fonts.ready
 
       // ── Measure section positions NOW (while element is visible) ──
@@ -1900,10 +1904,14 @@ export default function ReportDetailPage() {
         skipAutoScale: true,
       })
 
-      // Hide and reset after capture
+      // Reset after capture
       el.style.display = ''
+      el.style.position = ''
+      el.style.top = ''
+      el.style.left = ''
       el.style.width = ''
       el.style.maxWidth = ''
+      el.style.zIndex = ''
 
       // ── Build PDF ──
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
@@ -1967,7 +1975,7 @@ export default function ReportDetailPage() {
       pdf.save(`${safeName || 'DivyaTathastu_Report'}.pdf`)
     } catch (e) {
       console.error('PDF download failed:', e)
-      if (el) { el.style.display = ''; el.style.width = ''; el.style.maxWidth = '' }
+      if (el) { el.style.cssText = '' }
     } finally {
       setDownloading(false)
     }
@@ -2454,6 +2462,18 @@ export default function ReportDetailPage() {
   return (
     <>
       <style>{PRINT_CSS + BOOK_ANIM_STYLES}</style>
+
+      {/* PDF generation overlay — covers page so #rpa never flashes visibly */}
+      {downloading && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center no-print"
+          style={{ background: 'rgba(253,250,245,0.92)', backdropFilter: 'blur(6px)' }}>
+          <SudarshanLoader size="lg" />
+          <p className="mt-5 font-bold text-[var(--indigo-deep)] text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
+            Preparing Your Sacred Report…
+          </p>
+          <p className="text-sm text-[var(--warm-charcoal)]/50 mt-1">This may take a few seconds</p>
+        </div>
+      )}
 
       <div id="report-page-wrap" className="p-4 sm:p-6 max-w-5xl mx-auto">
         {/* Screen header */}
