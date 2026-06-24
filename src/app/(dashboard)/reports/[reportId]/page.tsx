@@ -1870,29 +1870,27 @@ export default function ReportDetailPage() {
     try {
       if (!el) return
 
-      // Render off-screen so user never sees the flash — position: fixed + left: -9999px
+      // Show in normal flow — the downloading overlay (z-50) covers it visually
+      // Do NOT use position:fixed/left:-9999px — html-to-image clones computed styles
+      // and the off-screen position makes the cloned content render outside the SVG canvas
       el.style.display = 'block'
-      el.style.position = 'fixed'
-      el.style.top = '0'
-      el.style.left = '-9999px'
       el.style.width = '794px'
       el.style.maxWidth = '794px'
-      el.style.zIndex = '-1'
       await document.fonts.ready
 
-      // ── Measure section positions NOW (while element is visible) ──
+      // ── Measure section positions NOW (while element is laid out) ──
       const PIXEL_RATIO = 2
-      const elRect = el.getBoundingClientRect()
+      const elTop = el.getBoundingClientRect().top
       const sections = Array.from(el.children) as HTMLElement[]
       const sectionBounds = sections.map(s => {
         const r = s.getBoundingClientRect()
         return {
-          top: Math.round((r.top - elRect.top) * PIXEL_RATIO),
+          top: Math.round((r.top - elTop) * PIXEL_RATIO),
           height: Math.round(r.height * PIXEL_RATIO),
         }
       }).filter(b => b.height > 4)
 
-      // ── html-to-image: lets the browser render oklch/oklab/CSS vars natively ──
+      // ── html-to-image: browser renders oklch/oklab/CSS vars natively (no crash) ──
       const [{ toCanvas }, { default: jsPDF }] = await Promise.all([
         import('html-to-image'),
         import('jspdf'),
@@ -1901,17 +1899,13 @@ export default function ReportDetailPage() {
       const fullCanvas = await toCanvas(el, {
         pixelRatio: PIXEL_RATIO,
         backgroundColor: '#FDFAF5',
-        skipAutoScale: true,
+        width: 794,
       })
 
-      // Reset after capture
+      // Reset
       el.style.display = ''
-      el.style.position = ''
-      el.style.top = ''
-      el.style.left = ''
       el.style.width = ''
       el.style.maxWidth = ''
-      el.style.zIndex = ''
 
       // ── Build PDF ──
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
