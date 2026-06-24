@@ -478,8 +478,10 @@ function GenerateReportContent() {
               <div className="gen-ring-ccw" style={{ width: 270, height: 270, marginLeft: -135, marginTop: -135, border: '1px dashed rgba(212,160,23,0.18)', zIndex: 0 }} />
               <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 170, height: 170, border: '1px solid rgba(212,160,23,0.09)', borderRadius: '50%', pointerEvents: 'none', zIndex: 0 }} />
 
-              {/* OM */}
-              <div className="gen-om" style={{ fontSize: 58, lineHeight: 1, color: '#D4A017', marginBottom: 18, position: 'relative', zIndex: 2, userSelect: 'none' }}>ॐ</div>
+              {/* Chakra logo */}
+              <div className="gen-om" style={{ marginBottom: 18, position: 'relative', zIndex: 2 }}>
+                <SudarshanLoader px={72} />
+              </div>
 
               <h2 style={{ color: '#fff', fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, marginBottom: 6, position: 'relative', zIndex: 2 }}>
                 {t.craftingTitle}

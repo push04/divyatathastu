@@ -76,18 +76,24 @@ function Section({ title, icon, children, printAlwaysOpen }: { title: string; ic
   }, [])
 
   return (
-    <div className="card-divine overflow-hidden print:overflow-visible print:shadow-none print:border print:border-gray-200 print:break-inside-avoid-page">
+    <div className="card-divine overflow-hidden print:overflow-visible print:shadow-none print:border-0 print:rounded-none print:mb-3">
+      {/* Screen: accordion toggle */}
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between p-5 text-left print:pointer-events-none"
+        className="w-full flex items-center justify-between p-5 text-left print:hidden"
       >
         <div className="flex items-center gap-2">
-          {icon && <span className="material-symbols-outlined text-[20px] text-[var(--indigo-deep)] print:hidden" style={{ fontVariationSettings: "'FILL' 1" }}>{icon}</span>}
+          {icon && <span className="material-symbols-outlined text-[20px] text-[var(--indigo-deep)]" style={{ fontVariationSettings: "'FILL' 1" }}>{icon}</span>}
           <h2 className="font-black text-[var(--indigo-deep)] text-lg">{title}</h2>
         </div>
-        <span className="material-symbols-outlined text-[18px] text-[var(--warm-charcoal)]/40 print:hidden">{open ? 'expand_less' : 'expand_more'}</span>
+        <span className="material-symbols-outlined text-[18px] text-[var(--warm-charcoal)]/40">{open ? 'expand_less' : 'expand_more'}</span>
       </button>
-      <div className={`${open ? 'block' : 'hidden'} print:block px-5 pb-5 border-t border-[var(--warm-sand)]`}>
+      {/* Print: static section heading */}
+      <div className="hidden print:block px-5 pt-3 pb-2" style={{ borderBottom: '1.5px solid rgba(212,160,23,0.35)' }}>
+        <h2 className="font-black text-[var(--indigo-deep)] text-base m-0">{title}</h2>
+      </div>
+      {/* Content */}
+      <div className={`${open ? 'block' : 'hidden'} print:block px-5 pb-5 border-t border-[var(--warm-sand)] print:border-0 print:pt-3`}>
         {children}
       </div>
     </div>
@@ -1446,12 +1452,16 @@ function MoonArchetypePanel({ archetype }: { archetype?: string }) {
   return (
     <div className="flex flex-col items-center gap-3">
       <svg viewBox="0 0 130 130" width="120" height="120">
-        <circle cx="65" cy="65" r="55" fill="#f1f5f9" stroke="#cbd5e1" strokeWidth="2" />
-        <ellipse cx="82" cy="65" rx="43" ry="55" fill="#1e293b" fillOpacity="0.88" />
-        {[[18, 18], [108, 12], [12, 98], [108, 95], [55, 10]].map(([x, y], i) => (
-          <text key={i} x={x} y={y} textAnchor="middle" fontSize="9" fill="#f59e0b">★</text>
+        {/* Night sky background */}
+        <circle cx="65" cy="65" r="56" fill="#1e293b" stroke="#cbd5e1" strokeWidth="1.5" />
+        {/* Stars as reliable SVG circles (no font dependency) */}
+        {([[18,18],[108,12],[12,95],[108,95],[55,10],[90,44],[28,50],[75,28]] as [number,number][]).map(([x,y],i) => (
+          <circle key={i} cx={x} cy={y} r={i % 2 === 0 ? 2.2 : 1.5} fill="#f59e0b" opacity={0.85} />
         ))}
-        <text x="43" y="73" textAnchor="middle" fontSize="34" fill="#D4A017" style={{ fontFamily: 'serif' }}>☽</text>
+        {/* Crescent moon — gold disc with dark cutout overlay */}
+        <circle cx="57" cy="65" r="31" fill="#D4A017" />
+        <circle cx="71" cy="57" r="27" fill="#1e293b" />
+        <circle cx="57" cy="65" r="31" fill="none" stroke="#D4A017" strokeWidth="0.8" opacity="0.4" />
       </svg>
       {archetype && (
         <p className="text-center text-xs font-bold text-[var(--indigo-deep)] bg-[var(--warm-sand)] px-3 py-1.5 rounded-full"
@@ -1876,8 +1886,7 @@ export default function ReportDetailPage() {
       <div style={{ borderRadius: 20, overflow: 'hidden', boxShadow: '0 16px 48px rgba(47,42,68,0.2)', maxWidth: 400, width: '100%', textAlign: 'center' }}>
         <div style={{ background: 'linear-gradient(160deg, #0f0b22 0%, #2F2A44 55%, #3a1e04 100%)', padding: '36px 32px 30px', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 280, height: 280, border: '1px solid rgba(212,160,23,0.1)', borderRadius: '50%', pointerEvents: 'none' }} />
-          <div style={{ fontSize: 48, color: '#D4A017', marginBottom: 14 }}>ॐ</div>
-          <SudarshanLoader size="lg" />
+          <div style={{ marginBottom: 14 }}><SudarshanLoader size="lg" /></div>
         </div>
         <div style={{ background: '#FDFAF5', padding: '24px 28px 28px' }}>
           <p style={{ fontWeight: 700, color: '#2F2A44', fontSize: 17, fontFamily: "'Playfair Display', serif", marginBottom: 6 }}>Crafting Your Sacred Report</p>
@@ -2276,27 +2285,54 @@ export default function ReportDetailPage() {
 
   const PRINT_CSS = `
     @media print {
-      @page { size: A4 portrait; margin: 10mm 8mm; }
-      body { visibility: hidden; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-      #rpa { display: block !important; visibility: visible !important; position: absolute; left: 0; top: 0; width: 100%; }
-      #rpa * { visibility: visible !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      @page { size: A4 portrait; margin: 12mm 10mm; }
+
+      /* ── 1. Hide ALL screen-only UI (removes from layout, no space taken) ── */
       .no-print { display: none !important; }
-      .card-divine { box-shadow: none !important; border: 1px solid #d4a017 !important; break-inside: avoid !important; page-break-inside: avoid !important; margin-bottom: 8px; }
-      #rpa p { break-inside: avoid; orphans: 3; widows: 3; }
-      #rpa li { break-inside: avoid; }
-      #rpa tr { break-inside: avoid; page-break-inside: avoid; }
-      #rpa thead { display: table-header-group; }
-      #rpa h2, #rpa h3, #rpa h4 { break-after: avoid; page-break-after: avoid; }
-      #rpa [class*="rounded"] { break-inside: avoid; }
-      #rpa [style*="border-radius"] { break-inside: avoid; }
+
+      /* ── 2. Reset the outer page wrapper constraints ── */
+      #report-page-wrap {
+        padding: 0 !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+      }
+
+      /* ── 3. Show and size print container ── */
+      #rpa {
+        display: block !important;
+        width: 100% !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      #rpa * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      /* ── 4. Cards: strip shadows, keep page flow ── */
+      .card-divine {
+        box-shadow: none !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+        margin-bottom: 8px;
+      }
+
+      /* ── 5. Tables ── */
       table { font-size: 9px !important; width: 100%; border-collapse: collapse; }
       table th, table td { padding: 3px 6px !important; border: 1px solid #c8a96e; }
       thead { display: table-header-group; }
-      h2 { font-size: 15px !important; } h3 { font-size: 12px !important; }
-      #rpa p, #rpa li { font-size: 11px !important; line-height: 1.6 !important; }
-      #rpa .cover-page * { font-size: inherit !important; }
-      #rpa [class*="text-2xl"], #rpa [class*="text-3xl"], #rpa [class*="text-4xl"] { font-size: inherit !important; }
-      /* Likhit mantra print compaction */
+      #rpa tr { break-inside: avoid; page-break-inside: avoid; }
+      #rpa thead { display: table-header-group; }
+
+      /* ── 6. Typography ── */
+      h2 { font-size: 15px !important; page-break-after: avoid; break-after: avoid; }
+      h3 { font-size: 12px !important; page-break-after: avoid; break-after: avoid; }
+      #rpa p { font-size: 11px !important; line-height: 1.6 !important; orphans: 3; widows: 3; }
+      #rpa li { font-size: 11px !important; break-inside: avoid; }
+      #rpa h2, #rpa h3, #rpa h4 { break-after: avoid; page-break-after: avoid; }
+      #rpa [class*="rounded"], #rpa [style*="border-radius"] { break-inside: avoid; }
+
+      /* ── 7. Likhit mantra compaction ── */
       .ml-seq-visual { display: none !important; }
       .ml-closing-breakdown { display: none !important; }
       .ml-steps .space-y-3 > * { margin-top: 6px !important; }
@@ -2312,7 +2348,7 @@ export default function ReportDetailPage() {
     <>
       <style>{PRINT_CSS + BOOK_ANIM_STYLES}</style>
 
-      <div className="p-4 sm:p-6 max-w-5xl mx-auto">
+      <div id="report-page-wrap" className="p-4 sm:p-6 max-w-5xl mx-auto">
         {/* Screen header */}
         <div className="flex items-start justify-between mb-6 flex-wrap gap-3 no-print">
           <div>
