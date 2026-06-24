@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 export type ServiceCategory =
@@ -42,7 +42,8 @@ export function useServiceItems(category?: ServiceCategory, onlyActive = true) {
   const [items, setItems] = useState<ServiceItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const supabase = createClient()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const supabase = useMemo(() => createClient(), [])
 
   const fetch = useCallback(async () => {
     setLoading(true)
@@ -53,7 +54,7 @@ export function useServiceItems(category?: ServiceCategory, onlyActive = true) {
     if (err) setError(err.message)
     else setItems((data ?? []) as ServiceItem[])
     setLoading(false)
-  }, [category, onlyActive])
+  }, [supabase, category, onlyActive])
 
   useEffect(() => { fetch() }, [fetch])
   return { items, loading, error, refetch: fetch }

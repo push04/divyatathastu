@@ -1,6 +1,6 @@
 ﻿'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { getUserLocation } from '@/lib/utils/getLocation'
@@ -112,7 +112,8 @@ export default function DashboardPage() {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [panchang, setPanchang] = useState<PanchangSnap | null>(null)
   const [loading, setLoading] = useState(true)
-  const supabase = createClient()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const supabase = useMemo(() => createClient(), [])
   const { price: bundlePrice, sale_price: bundleSalePrice } = useBundlePrice()
 
   useEffect(() => {
@@ -129,29 +130,33 @@ export default function DashboardPage() {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
+      // Nested select fetches family + its reports in one round trip (eliminates serial waterfall)
       const [profileRes, familyRes, membersRes, notifRes] = await Promise.all([
         supabase.from('profiles').select('*').eq('id', user.id).single(),
-        supabase.from('families').select('id,plan_type').eq('owner_id', user.id).single(),
+        supabase.from('families')
+          .select('id,plan_type,reports(id,report_type,status,created_at,family_members(full_name))')
+          .eq('owner_id', user.id)
+          .single(),
         supabase.from('family_members').select('id,full_name,relation,date_of_birth').limit(4),
         supabase.from('notifications').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(5),
       ])
       if (profileRes.data) setProfile(profileRes.data as any)
       if (familyRes.data) {
         setPlanType(familyRes.data.plan_type || 'free')
-        const { data: reportsData } = await supabase
-          .from('reports')
-          .select('id,report_type,status,created_at,family_members(full_name)')
-          .eq('family_id', familyRes.data.id)
-          .order('created_at', { ascending: false })
-          .limit(4)
-        if (reportsData) setReports(reportsData as Report[])
+        const rd = (familyRes.data as any).reports
+        if (rd) {
+          const sorted = [...rd]
+            .sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+            .slice(0, 4)
+          setReports(sorted as Report[])
+        }
       }
       if (membersRes.data) setMembers(membersRes.data as any)
       if (notifRes.data) setNotifications(notifRes.data as any)
       setLoading(false)
     }
     load()
-  }, [])
+  }, [supabase])
 
   async function markRead(id: string) {
     await supabase.from('notifications').update({ is_read: true }).eq('id', id)
