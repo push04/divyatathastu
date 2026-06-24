@@ -1871,31 +1871,49 @@ export default function ReportDetailPage() {
       if (!el) return
       el.style.display = 'block'
       await document.fonts.ready
-      // Dynamic imports — only loaded when user clicks, keeps initial bundle small
+
       const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
         import('html2canvas'),
         import('jspdf'),
       ])
-      const canvas = await html2canvas(el, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        logging: false,
-        windowWidth: 794,
-      })
-      el.style.display = ''
-      const imgData = canvas.toDataURL('image/jpeg', 0.92)
+
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
-      const pdfW = pdf.internal.pageSize.getWidth()
-      const pdfH = pdf.internal.pageSize.getHeight()
-      const totalH = canvas.height * (pdfW / canvas.width)
-      let y = 0; let page = 0
-      while (y < totalH) {
-        if (page > 0) pdf.addPage()
-        pdf.addImage(imgData, 'JPEG', 0, -y, pdfW, totalH)
-        y += pdfH; page++
+      const pdfW = pdf.internal.pageSize.getWidth()   // 210mm
+      const pdfH = pdf.internal.pageSize.getHeight()  // 297mm
+      const margin = 8   // mm padding on each side
+      const contentW = pdfW - margin * 2
+      const h2cOpts = { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff', logging: false }
+
+      // Capture each direct child separately → no card ever sliced mid-way
+      const sections = Array.from(el.children) as HTMLElement[]
+      let curY = margin
+      let pageNum = 0
+
+      for (const section of sections) {
+        const canvas = await html2canvas(section, h2cOpts)
+        if (canvas.width === 0 || canvas.height === 0) continue
+        const sectionH = canvas.height * (contentW / canvas.width)
+
+        // If this section is taller than a full page, scale it to fit one page
+        if (sectionH > pdfH - margin * 2) {
+          if (pageNum > 0) { pdf.addPage(); curY = margin }
+          const scaledH = pdfH - margin * 2
+          pdf.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', margin, curY, contentW, scaledH)
+          pdf.addPage(); curY = margin; pageNum++
+          continue
+        }
+
+        // Start a new page if section won't fit on current page
+        if (pageNum > 0 && curY + sectionH > pdfH - margin) {
+          pdf.addPage(); curY = margin
+        }
+
+        pdf.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', margin, curY, contentW, sectionH)
+        curY += sectionH + 3  // 3mm gap between sections
+        pageNum++
       }
+
+      el.style.display = ''
       const safeName = (title ?? 'report').replace(/[^a-z0-9\s]/gi, '').trim().replace(/\s+/g, '_')
       pdf.save(`${safeName}.pdf`)
     } catch (e) {
