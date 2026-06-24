@@ -1870,39 +1870,70 @@ export default function ReportDetailPage() {
     try {
       if (!el) return
 
-      // Show in normal flow — the downloading overlay (z-50) covers it visually
-      // Do NOT use position:fixed/left:-9999px — html-to-image clones computed styles
-      // and the off-screen position makes the cloned content render outside the SVG canvas
       el.style.display = 'block'
       el.style.width = '794px'
       el.style.maxWidth = '794px'
       await document.fonts.ready
 
-      // ── Measure section positions NOW (while element is laid out) ──
-      const PIXEL_RATIO = 2
+      // ── Pre-patch oklch/oklab colors to rgb so html2canvas can parse them ──
+      // html2canvas handles <canvas> elements correctly (no black pages)
+      // but crashes on modern CSS color functions — convert them first using
+      // the browser's own canvas API as a color converter
+      const tmp = document.createElement('canvas')
+      tmp.width = tmp.height = 1
+      const tmpCtx = tmp.getContext('2d')!
+      const toRgb = (v: string): string => {
+        try {
+          tmpCtx.clearRect(0, 0, 1, 1)
+          tmpCtx.fillStyle = v
+          tmpCtx.fillRect(0, 0, 1, 1)
+          const [r, g, b, a] = tmpCtx.getImageData(0, 0, 1, 1).data
+          return a < 255 ? `rgba(${r},${g},${b},${+(a / 255).toFixed(3)})` : `rgb(${r},${g},${b})`
+        } catch { return v }
+      }
+      const COLOR_PROPS = ['color','background-color','border-top-color','border-right-color',
+        'border-bottom-color','border-left-color','outline-color','text-decoration-color','fill','stroke']
+      type Patch = { el: HTMLElement; prop: string; prev: string }
+      const patches: Patch[] = []
+      ;[el, ...Array.from(el.querySelectorAll('*'))].forEach(node => {
+        if (!(node instanceof HTMLElement)) return
+        const cs = window.getComputedStyle(node)
+        for (const prop of COLOR_PROPS) {
+          const val = cs.getPropertyValue(prop)
+          if (!val || (!val.includes('oklab') && !val.includes('oklch'))) continue
+          patches.push({ el: node, prop, prev: node.style.getPropertyValue(prop) })
+          node.style.setProperty(prop, toRgb(val), 'important')
+        }
+      })
+
+      // ── Measure section positions (while element is in layout) ──
+      const SCALE = 2
       const elTop = el.getBoundingClientRect().top
       const sections = Array.from(el.children) as HTMLElement[]
       const sectionBounds = sections.map(s => {
         const r = s.getBoundingClientRect()
-        return {
-          top: Math.round((r.top - elTop) * PIXEL_RATIO),
-          height: Math.round(r.height * PIXEL_RATIO),
-        }
+        return { top: Math.round((r.top - elTop) * SCALE), height: Math.round(r.height * SCALE) }
       }).filter(b => b.height > 4)
 
-      // ── html-to-image: browser renders oklch/oklab/CSS vars natively (no crash) ──
-      const [{ toCanvas }, { default: jsPDF }] = await Promise.all([
-        import('html-to-image'),
+      // ── Capture with html2canvas (reads canvas pixels directly → no black pages) ──
+      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
+        import('html2canvas'),
         import('jspdf'),
       ])
-
-      const fullCanvas = await toCanvas(el, {
-        pixelRatio: PIXEL_RATIO,
+      const fullCanvas = await html2canvas(el, {
+        scale: SCALE,
+        useCORS: true,
+        allowTaint: true,
         backgroundColor: '#FDFAF5',
-        width: 794,
+        logging: false,
+        windowWidth: 794,
       })
 
-      // Reset
+      // Restore patched colors & hide element
+      patches.forEach(({ el: e, prop, prev }) => {
+        if (prev) e.style.setProperty(prop, prev)
+        else e.style.removeProperty(prop)
+      })
       el.style.display = ''
       el.style.width = ''
       el.style.maxWidth = ''
