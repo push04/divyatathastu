@@ -1864,12 +1864,45 @@ export default function ReportDetailPage() {
     return () => clearInterval(interval)
   }, [report?.status, reportId, supabase])
 
-  function handlePrint() {
+  async function handleDownload() {
     setDownloading(true)
-    document.fonts.ready.then(() => {
-      window.print()
+    try {
+      const el = document.getElementById('rpa')
+      if (!el) return
+      el.style.display = 'block'
+      await document.fonts.ready
+      // Dynamic imports — only loaded when user clicks, keeps initial bundle small
+      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
+        import('html2canvas'),
+        import('jspdf'),
+      ])
+      const canvas = await html2canvas(el, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        windowWidth: 794,
+      })
+      el.style.display = ''
+      const imgData = canvas.toDataURL('image/jpeg', 0.92)
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
+      const pdfW = pdf.internal.pageSize.getWidth()
+      const pdfH = pdf.internal.pageSize.getHeight()
+      const totalH = canvas.height * (pdfW / canvas.width)
+      let y = 0; let page = 0
+      while (y < totalH) {
+        if (page > 0) pdf.addPage()
+        pdf.addImage(imgData, 'JPEG', 0, -y, pdfW, totalH)
+        y += pdfH; page++
+      }
+      const safeName = (title ?? 'report').replace(/[^a-z0-9\s]/gi, '').trim().replace(/\s+/g, '_')
+      pdf.save(`${safeName}.pdf`)
+    } catch (e) {
+      console.error('PDF download failed:', e)
+    } finally {
       setDownloading(false)
-    })
+    }
   }
 
   if (loading) return <div className="flex items-center justify-center h-64"><SudarshanLoader size="md" /></div>
@@ -2377,7 +2410,7 @@ export default function ReportDetailPage() {
               {report.status}
             </span>
             {isGenerated && (
-              <button onClick={handlePrint} disabled={downloading}
+              <button onClick={handleDownload} disabled={downloading}
                 className="flex items-center gap-2 px-4 py-2 bg-[var(--indigo-deep)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50">
                 <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>download</span>
                 {downloading ? 'Preparing…' : 'Download PDF'}
