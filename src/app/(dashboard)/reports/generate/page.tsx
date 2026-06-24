@@ -479,7 +479,7 @@ function GenerateReportContent() {
               <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 170, height: 170, border: '1px solid rgba(212,160,23,0.09)', borderRadius: '50%', pointerEvents: 'none', zIndex: 0 }} />
 
               {/* Chakra logo */}
-              <div className="gen-om" style={{ marginBottom: 18, position: 'relative', zIndex: 2 }}>
+              <div className="gen-om" style={{ marginBottom: 18, position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <SudarshanLoader px={72} />
               </div>
 

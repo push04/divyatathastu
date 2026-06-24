@@ -2284,11 +2284,17 @@ export default function ReportDetailPage() {
     .map((c, i) => ({ ...c, number: ROMAN[i] ?? String(i + 1) }))
 
   const PRINT_CSS = `
+    /* Hide print container on screen via CSS (not inline style, so @media print can override cleanly) */
+    #rpa { display: none; }
+
     @media print {
       @page { size: A4 portrait; margin: 12mm 10mm; }
 
       /* ── 1. Hide ALL screen-only UI (removes from layout, no space taken) ── */
       .no-print { display: none !important; }
+      /* Hide sidebar, topbar, and any other DashboardShell chrome */
+      nav, aside, header { display: none !important; }
+      body > * > * > *:not(#report-page-wrap) { display: none !important; }
 
       /* ── 2. Reset the outer page wrapper constraints ── */
       #report-page-wrap {
@@ -2396,7 +2402,7 @@ export default function ReportDetailPage() {
         )}
 
         {/* Print-only: beautiful 30-page PDF layout */}
-        <div id="rpa" ref={printRef} style={{ display: 'none' }}>
+        <div id="rpa" ref={printRef}>
 
           {/* COVER PAGE - Tathastu parchment style */}
           <div style={{ minHeight: 'calc(29.7cm - 20mm)', background: '#f5ede0', pageBreakAfter: 'always', position: 'relative', overflow: 'hidden', fontFamily: 'Georgia, serif' }}>
