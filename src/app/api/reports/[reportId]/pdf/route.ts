@@ -76,8 +76,9 @@ export async function POST(
   try {
     buffer = Buffer.from(await reactPdf.renderToBuffer(doc as Parameters<typeof reactPdf.renderToBuffer>[0]))
   } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
     console.error('[PDF] renderToBuffer failed:', err)
-    return new Response('PDF generation failed', { status: 500 })
+    return new Response(`PDF generation failed: ${msg}`, { status: 500 })
   }
 
   const member = report.family_members as { full_name: string } | null

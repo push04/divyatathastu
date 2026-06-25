@@ -586,7 +586,7 @@ function CoverPage({ report, member, title }: { report: any; member: any; title:
     <Page size="A4" style={{ backgroundColor: C.bgPage, fontFamily: 'Lato', flexDirection: 'column', position: 'relative' }}>
 
       {/* ── ZONE 1: TOP HEADER BAND (navy, ~210pt tall) ── */}
-      <View style={{ backgroundColor: C.bgDark, paddingTop: 16, paddingBottom: 16, paddingHorizontal: 44, alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
+      <View style={{ backgroundColor: C.bgDark, paddingTop: 16, paddingBottom: 16, paddingHorizontal: 44, alignItems: 'center', position: 'relative' }}>
         <NavyWatermarkCircles w={507} h={210} />
 
         {/* Sanskrit invocations — side by side with separator */}
@@ -734,7 +734,7 @@ function GuidancePage() {
     <Page size="A4" style={{ backgroundColor: C.bgPage, fontFamily: 'Lato', flexDirection: 'column', position: 'relative' }}>
 
       {/* ── PAGE HEADER — navy, 80pt ── */}
-      <View style={{ backgroundColor: C.bgDark, paddingTop: 16, paddingBottom: 18, paddingHorizontal: 44, position: 'relative', overflow: 'hidden' }}>
+      <View style={{ backgroundColor: C.bgDark, paddingTop: 16, paddingBottom: 18, paddingHorizontal: 44, position: 'relative' }}>
         <NavyWatermarkCircles w={507} h={80} />
         <Text style={{ fontSize: 8, fontFamily: 'Lato', color: C.textOnDark, letterSpacing: 2.5, opacity: 0.6, zIndex: 1 }}>
           MAHATATHASTU · ANUSHTHAAN INDIA
