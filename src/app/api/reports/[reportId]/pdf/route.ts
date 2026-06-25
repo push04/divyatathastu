@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import type { ReportPDFProps } from '@/components/pdf/ReportPDF'
+import { Component, createElement, type ReactNode } from 'react'
 
 export const maxDuration = 60
 
@@ -18,6 +19,37 @@ const REPORT_TITLE_SLUGS: Record<string, string> = {
   colour_therapy: 'Colour_Therapy',
   child_development: 'Child_Development',
   mobile_number: 'Mobile_Number_Analysis',
+}
+
+// Module-level error boundary — must be at top level for React reconciler to recognise it
+interface BoundaryProps {
+  children?: ReactNode
+  capture: { error: Error | null }
+  FallbackDoc: React.ElementType
+  FallbackPage: React.ElementType
+}
+class PDFErrorBoundary extends Component<BoundaryProps, { hasError: boolean }> {
+  constructor(props: BoundaryProps) {
+    super(props)
+    this.state = { hasError: false }
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+  componentDidCatch(error: Error) {
+    this.props.capture.error = error
+  }
+  render() {
+    if (this.state.hasError) {
+      const { FallbackDoc, FallbackPage } = this.props
+      return createElement(FallbackDoc, {}, createElement(FallbackPage, { size: 'A4' }))
+    }
+    return this.props.children
+  }
+}
+
+export async function GET() {
+  return new Response('pdf-route-alive-v2', { status: 200 })
 }
 
 export async function POST(
@@ -44,18 +76,24 @@ export async function POST(
     if (!['generated', 'reviewed', 'delivered'].includes(String(report.status)))
       return new Response('Report not ready', { status: 422 })
 
-    const [{ default: ReportPDF }, { renderToBuffer }, { createElement }] = await Promise.all([
+    const [{ default: ReportPDF }, { renderToBuffer, Document, Page }] = await Promise.all([
       import('@/components/pdf/ReportPDF'),
       import('@react-pdf/renderer'),
-      import('react'),
     ])
 
-    const doc = createElement(ReportPDF, { report: report as ReportPDFProps['report'], canvases })
+    // Error capture object — shared between error boundary (render phase) and our handler
+    const capture: { error: Error | null } = { error: null }
+
+    const doc = createElement(PDFErrorBoundary, {
+      capture,
+      FallbackDoc: Document,
+      FallbackPage: Page,
+    }, createElement(ReportPDF, { report: report as ReportPDFProps['report'], canvases }))
 
     const { existsSync } = await import('fs')
     const { join } = await import('path')
-    const fontCheck = ['cg-400.woff2','cg-400i.woff2','cg-600.woff2','cg-700.woff2','cg-700i.woff2','lato-400.woff2','lato-700.woff2']
-      .map(f => `${f}:${existsSync(join(process.cwd(),'public','fonts',f))?'OK':'MISSING'}`)
+    const fontCheck = ['cg-400.woff2', 'cg-400i.woff2', 'cg-600.woff2', 'cg-700.woff2', 'cg-700i.woff2', 'lato-400.woff2', 'lato-700.woff2']
+      .map(f => `${f}:${existsSync(join(process.cwd(), 'public', 'fonts', f)) ? 'OK' : 'MISSING'}`)
       .join(' ')
     console.log('[PDF] fonts:', fontCheck)
 
@@ -66,8 +104,17 @@ export async function POST(
     } catch (renderErr) {
       const msg = renderErr instanceof Error ? renderErr.message : String(renderErr)
       const stack = renderErr instanceof Error ? (renderErr.stack || '').slice(0, 1000) : ''
-      console.error('[PDF] renderToBuffer failed:', msg)
-      return new Response(`renderToBuffer error: ${msg}\n${stack}\nFonts: ${fontCheck}`, { status: 500 })
+      console.error('[PDF] renderToBuffer threw:', msg)
+      const capturedMsg = capture.error ? ` | component: ${capture.error.message}` : ''
+      return new Response(`renderToBuffer error: ${msg}${capturedMsg}\n${stack}\nFonts: ${fontCheck}`, { status: 500 })
+    }
+
+    // If error boundary caught a real component error, surface it now
+    if (capture.error) {
+      const msg = capture.error.message
+      const stack = (capture.error.stack || '').slice(0, 1200)
+      console.error('[PDF] component error (via boundary):', msg)
+      return new Response(`Component render error: ${msg}\n${stack}\nFonts: ${fontCheck}`, { status: 500 })
     }
 
     const member = report.family_members as { full_name: string } | null
