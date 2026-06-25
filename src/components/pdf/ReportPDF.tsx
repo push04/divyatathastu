@@ -1,7 +1,7 @@
 import React from 'react'
 import {
   Document, Page, View, Text, Image, StyleSheet,
-  Svg, Circle, Ellipse, Polygon, Path, Rect, G, Line,
+  Svg, Circle, Ellipse, Polygon, Path,
 } from '@react-pdf/renderer'
 
 // ── Brand colours (hex only — no oklch/lab) ──────────────────────────────
@@ -182,7 +182,6 @@ const styles = StyleSheet.create({
 
 // ── Sudarshan Chakra SVG (scaled down for PDF) ──────────────────────────
 function SudarshanChakra({ size = 100 }: { size?: number }) {
-  const s = size / 200
   const outerPetals = Array.from({ length: 16 }, (_, i) => i * 22.5)
   const innerPetals = Array.from({ length: 8 }, (_, i) => i * 45)
   const spokes = Array.from({ length: 8 }, (_, i) => i * 45)
@@ -1234,62 +1233,62 @@ export default function ReportPDF({ report, canvases = {} }: ReportPDFProps) {
     {
       id: 'astrology',
       show: (rt === 'astrology' || isFull) && !!(d.kundli?.ascendant),
-      node: <KundliPages data={d} canvasImg={canvases.astrology} number={ROMAN[numIdx] ?? 'I'} />,
+      node: <KundliPages data={d} canvasImg={canvases.astrology} number="I" />,
     },
     {
       id: 'numerology',
       show: (rt === 'numerology' || isFull) && !!(d.numerology?.lifePathNumber),
-      node: <NumerologyPages data={d} canvasImg={canvases.numerology} number={ROMAN[numIdx] ?? 'II'} />,
+      node: <NumerologyPages data={d} canvasImg={canvases.numerology} number="I" />,
     },
     {
       id: 'shakti_chakra',
       show: (rt === 'shakti_chakra' || isFull) && !!(d.chakras?.length || d.chakra?.length),
-      node: <ChakraPages data={d} number={ROMAN[numIdx] ?? 'III'} />,
+      node: <ChakraPages data={d} number="I" />,
     },
     {
       id: 'prakriti',
       show: (rt === 'prakriti' || isFull) && !!(d.prakriti?.dominant),
-      node: <PrakritiPages data={d} number={ROMAN[numIdx] ?? 'IV'} />,
+      node: <PrakritiPages data={d} number="I" />,
     },
     {
       id: 'yantra_colour',
       show: (rt === 'yantra_colour' || isFull) && !!(d.yantra?.primaryYantra || d.yantraColour?.primaryYantra),
-      node: <YantraPages data={d} number={ROMAN[numIdx] ?? 'V'} />,
+      node: <YantraPages data={d} number="I" />,
     },
     {
       id: 'mantra_chanting',
       show: (['mantra_chanting','mantra_writing'].includes(rt) || isFull) && !!(d.mantras?.chanting || d.mantra?.chanting || d.mantraLekhnan),
-      node: <MantraPages data={d} number={ROMAN[numIdx] ?? 'VI'} />,
+      node: <MantraPages data={d} number="I" />,
     },
     {
       id: 'psychology',
       show: (rt === 'psychology' || isFull) && !!(d.psychology?.moonPersonalityType),
-      node: <PsychologyPages data={d} number={ROMAN[numIdx] ?? 'VII'} />,
+      node: <PsychologyPages data={d} number="I" />,
     },
     {
       id: 'astro_vastu',
       show: (rt === 'astro_vastu' || isFull) && !!(d.vastu?.homeDirection || d.vastuAnalysis?.homeDirection),
-      node: <VastuPages data={d} number={ROMAN[numIdx] ?? 'VIII'} />,
+      node: <VastuPages data={d} number="I" />,
     },
     {
       id: 'dmit',
       show: (rt === 'dmit' || isFull) && !!(d.dmit?.learningStyle),
-      node: <DmitPages data={d} canvasImg={canvases.dmit} number={ROMAN[numIdx] ?? 'IX'} />,
+      node: <DmitPages data={d} canvasImg={canvases.dmit} number="I" />,
     },
     {
       id: 'colour_therapy',
       show: (rt === 'colour_therapy' || isFull) && !!(d.colourTherapy?.healingColors || d.colourTherapy?.chromotherapy),
-      node: <ColourTherapyPages data={d} number={ROMAN[numIdx] ?? 'X'} />,
+      node: <ColourTherapyPages data={d} number="I" />,
     },
     {
       id: 'annual_prediction',
       show: isFull && !!d.annualPrediction,
-      node: <AnnualPredictionPages data={d} number={ROMAN[numIdx] ?? 'XI'} />,
+      node: <AnnualPredictionPages data={d} number="I" />,
     },
     {
       id: 'remedies',
       show: isFull && !!(d.remediesSummary || d.remedies),
-      node: <RemediesPages data={d} number={ROMAN[numIdx] ?? 'XII'} />,
+      node: <RemediesPages data={d} number="I" />,
     },
   ]
 
