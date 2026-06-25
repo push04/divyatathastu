@@ -90,19 +90,19 @@ const styles = StyleSheet.create({
     paddingBottom: 34,
     paddingLeft: 32,
     paddingRight: 32,
-    fontFamily: 'Helvetica',
+    fontFamily: 'Lato',
     position: 'relative',
   },
-  h1: { fontSize: 19, fontFamily: 'Helvetica-Bold', color: C.navy, marginBottom: 5 },
-  h2: { fontSize: 13, fontFamily: 'Helvetica-Bold', color: C.navy, marginBottom: 4 },
-  h3: { fontSize: 10.5, fontFamily: 'Helvetica-Bold', color: C.navy, marginBottom: 3 },
-  label: { fontSize: 7, fontFamily: 'Helvetica-Bold', color: C.grayMid, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 },
-  value: { fontSize: 10, fontFamily: 'Helvetica-Bold', color: C.navy },
-  body: { fontSize: 9, color: C.charcoal, lineHeight: 1.6 },
-  bodySmall: { fontSize: 8, color: C.text, lineHeight: 1.55 },
-  bodyMuted: { fontSize: 8, color: C.gray, lineHeight: 1.5 },
-  italic: { fontSize: 8.5, color: C.gray, fontStyle: 'italic', lineHeight: 1.5 },
-  bullet: { fontSize: 9, color: C.textDark, lineHeight: 1.6, marginBottom: 2 },
+  h1: { fontSize: 19, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.navy, marginBottom: 5 },
+  h2: { fontSize: 13, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.navy, marginBottom: 4 },
+  h3: { fontSize: 10.5, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.navy, marginBottom: 3 },
+  label: { fontSize: 7, fontFamily: 'Lato', fontWeight: 700, color: C.grayMid, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 },
+  value: { fontSize: 10, fontFamily: 'Lato', fontWeight: 700, color: C.navy },
+  body: { fontSize: 9, fontFamily: 'Lato', color: C.charcoal, lineHeight: 1.6 },
+  bodySmall: { fontSize: 8, fontFamily: 'Lato', color: C.text, lineHeight: 1.55 },
+  bodyMuted: { fontSize: 8, fontFamily: 'Lato', color: C.gray, lineHeight: 1.5 },
+  italic: { fontSize: 8.5, fontFamily: 'Lato', color: C.gray, fontStyle: 'italic', lineHeight: 1.5 },
+  bullet: { fontSize: 9, fontFamily: 'Lato', color: C.textDark, lineHeight: 1.6, marginBottom: 2 },
   row: { flexDirection: 'row', gap: 5 },
   dividerGold: { height: 1, backgroundColor: C.goldMid, marginVertical: 7 },
   dividerLight: { height: 0.5, backgroundColor: C.grayLight, marginVertical: 5 },
@@ -134,9 +134,9 @@ const styles = StyleSheet.create({
   tableHeader: { flexDirection: 'row', backgroundColor: C.navy, padding: '4pt 5pt' },
   tableRow: { flexDirection: 'row', padding: '3.5pt 5pt', borderBottom: `0.5pt solid ${C.grayLight}`, backgroundColor: C.offWhite },
   tableRowAlt: { flexDirection: 'row', padding: '3.5pt 5pt', borderBottom: `0.5pt solid ${C.grayLight}`, backgroundColor: '#fdf8f0' },
-  th: { fontSize: 7, fontFamily: 'Helvetica-Bold', color: C.white, letterSpacing: 0.3 },
-  td: { fontSize: 8, color: C.text },
-  tdBold: { fontSize: 8, fontFamily: 'Helvetica-Bold', color: C.navy },
+  th: { fontSize: 7, fontFamily: 'Lato', fontWeight: 700, color: C.white, letterSpacing: 0.3 },
+  td: { fontSize: 8, fontFamily: 'Lato', color: C.text },
+  tdBold: { fontSize: 8, fontFamily: 'Lato', fontWeight: 700, color: C.navy },
   progressBg: { height: 6, backgroundColor: C.grayLight, borderRadius: 3, overflow: 'hidden', marginTop: 3 },
   progressFill: { height: 6, borderRadius: 3 },
   tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginTop: 3 },
@@ -445,19 +445,17 @@ function ChapterHeader({ number, title, sanskrit }: { number: string; title: str
       <View style={{ height: 3, backgroundColor: C.saffron }} />
       <View style={{ backgroundColor: C.navy, padding: '11pt 15pt', flexDirection: 'row', alignItems: 'center' }}>
         <View style={{ marginRight: 13, alignItems: 'center', justifyContent: 'center', width: 48, height: 48 }}>
-          {/* Glow ring */}
           <View style={{ position: 'absolute', width: 46, height: 46, borderRadius: 23, border: `1pt solid ${C.saffronLight}`, opacity: 0.3 }} />
-          {/* Seal */}
           <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: C.saffron, border: `1.5pt solid ${C.goldLight}`, alignItems: 'center', justifyContent: 'center' }}>
             <View style={{ position: 'absolute', width: 32, height: 32, borderRadius: 16, backgroundColor: C.saffronDark, opacity: 0.3 }} />
-            <Text style={{ fontSize: 13, fontFamily: 'Helvetica-Bold', color: C.white }}>{number}</Text>
+            <Text style={{ fontSize: 13, fontFamily: 'Lato', fontWeight: 700, color: C.white }}>{number}</Text>
           </View>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 14, fontFamily: 'Helvetica-Bold', color: C.white, letterSpacing: 0.5 }}>{title}</Text>
-          {sanskrit ? <Text style={{ fontSize: 8, color: C.goldLight, marginTop: 2, letterSpacing: 1, fontStyle: 'italic' }}>{sanskrit}</Text> : null}
+          <Text style={{ fontSize: 16, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.white, letterSpacing: 0.5 }}>{title}</Text>
+          {sanskrit ? <Text style={{ fontSize: 8, fontFamily: 'Lato', color: C.goldLight, marginTop: 2, letterSpacing: 1, fontStyle: 'italic' }}>{sanskrit}</Text> : null}
         </View>
-        <Text style={{ fontSize: 18, color: C.gold, fontFamily: 'Helvetica-Bold', opacity: 0.85 }}>OM</Text>
+        <Text style={{ fontSize: 20, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.gold, opacity: 0.85 }}>OM</Text>
       </View>
       <View style={{ height: 2, backgroundColor: C.gold }} />
     </View>
@@ -470,8 +468,8 @@ function TitleHeader({ title, subtitle }: { title: string; subtitle?: string }) 
     <View style={{ marginBottom: 12 }}>
       <View style={{ height: 3, backgroundColor: C.gold }} />
       <View style={{ backgroundColor: C.navy, padding: '10pt 15pt', alignItems: 'center' }}>
-        <Text style={{ fontSize: 15, fontFamily: 'Helvetica-Bold', color: C.white, letterSpacing: 1.5 }}>{title}</Text>
-        {subtitle ? <Text style={{ fontSize: 8, color: C.goldLight, marginTop: 3, letterSpacing: 1, fontStyle: 'italic' }}>{subtitle}</Text> : null}
+        <Text style={{ fontSize: 17, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.white, letterSpacing: 1.5 }}>{title}</Text>
+        {subtitle ? <Text style={{ fontSize: 8, fontFamily: 'Lato', color: C.goldLight, marginTop: 3, letterSpacing: 1, fontStyle: 'italic' }}>{subtitle}</Text> : null}
       </View>
       <View style={{ height: 2, backgroundColor: C.gold }} />
     </View>
@@ -484,7 +482,7 @@ function SectionLabel({ children }: { children: string }) {
     <View style={{ marginBottom: 7 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
         <View style={{ width: 4, height: 14, backgroundColor: C.saffron, borderRadius: 1, marginRight: 8 }} />
-        <Text style={{ fontSize: 11, fontFamily: 'Helvetica-Bold', color: C.navy, letterSpacing: 0.3 }}>{children}</Text>
+        <Text style={{ fontSize: 11, fontFamily: 'Lato', fontWeight: 700, color: C.navy, letterSpacing: 0.3 }}>{children}</Text>
       </View>
       <View style={{ height: 0.75, backgroundColor: C.goldPale }} />
     </View>
@@ -582,7 +580,7 @@ function CoverPage({ report, member, title }: { report: any; member: any; title:
   const gen = new Date(report.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
 
   return (
-    <Page size="A4" style={{ backgroundColor: C.bgPage, fontFamily: 'Helvetica', flexDirection: 'column', position: 'relative' }}>
+    <Page size="A4" style={{ backgroundColor: C.bgPage, fontFamily: 'Lato', flexDirection: 'column', position: 'relative' }}>
 
       {/* ── ZONE 1: TOP HEADER BAND (navy, ~210pt tall) ── */}
       <View style={{ backgroundColor: C.bgDark, paddingTop: 16, paddingBottom: 16, paddingHorizontal: 44, alignItems: 'center', position: 'relative', overflow: 'hidden' }}>
@@ -730,7 +728,7 @@ function GuidancePage() {
   ]
 
   return (
-    <Page size="A4" style={{ backgroundColor: C.bgPage, fontFamily: 'Helvetica', flexDirection: 'column', position: 'relative' }}>
+    <Page size="A4" style={{ backgroundColor: C.bgPage, fontFamily: 'Lato', flexDirection: 'column', position: 'relative' }}>
 
       {/* ── PAGE HEADER — navy, 80pt ── */}
       <View style={{ backgroundColor: C.bgDark, paddingTop: 16, paddingBottom: 18, paddingHorizontal: 44, position: 'relative', overflow: 'hidden' }}>
@@ -1094,7 +1092,7 @@ function ChakraPages({ data, number }: { data: any; number: string }) {
               Your chakra system is {overallBalance >= 70 ? 'well-balanced' : overallBalance >= 50 ? 'moderately balanced' : 'needs attention'}. Focus on the lower-percentage chakras with the prescribed remedies.
             </Text>
           </View>
-          <Text style={{ fontSize: 28, fontFamily: 'Helvetica-Bold', color: C.saffronLight, marginLeft: 10 }}>{overallBalance}%</Text>
+          <Text style={{ fontSize: 28, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.saffronLight, marginLeft: 10 }}>{overallBalance}%</Text>
         </View>
       ) : null}
 
@@ -1128,7 +1126,7 @@ function ChakraPages({ data, number }: { data: any; number: string }) {
             {c.affirmations?.length ? (
               <Text style={[styles.italic, { marginTop: 3 }]}>"{Array.isArray(c.affirmations) ? c.affirmations[0] : c.affirmations}"</Text>
             ) : null}
-            {c.remedy ? <Text style={[styles.bodySmall, { color: C.saffron, marginTop: 3, fontFamily: 'Helvetica-Bold' }]}>Remedy: {c.remedy}</Text> : null}
+            {c.remedy ? <Text style={[styles.bodySmall, { color: C.saffron, marginTop: 3, fontFamily: 'Lato', fontWeight: 700 }]}>Remedy: {c.remedy}</Text> : null}
           </View>
         )
       })}
@@ -1365,7 +1363,7 @@ function PsychologyPages({ data, number }: { data: any; number: string }) {
 
       <View style={[styles.cardBlue, { marginBottom: 10 }]}>
         <Text style={[styles.label, { color: C.goldLight, marginBottom: 3 }]}>Moon Archetype — Your Psychological Type</Text>
-        <Text style={{ fontSize: 18, fontFamily: 'Helvetica-Bold', color: C.white }}>{ps.moonPersonalityType}</Text>
+        <Text style={{ fontSize: 20, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.white }}>{ps.moonPersonalityType}</Text>
         {ps.moonArchetypeTagline ? <Text style={{ fontSize: 8.5, color: C.goldLight, marginTop: 3, fontStyle: 'italic' }}>{ps.moonArchetypeTagline}</Text> : null}
       </View>
 
@@ -1505,7 +1503,7 @@ function ColourTherapyPages({ data, number }: { data: any; number: string }) {
       {ct.powerColor ? (
         <View style={[styles.cardBlue, { marginBottom: 8 }]}>
           <Text style={[styles.label, { color: C.goldLight }]}>Your Power Colour</Text>
-          <Text style={{ fontSize: 16, fontFamily: 'Helvetica-Bold', color: C.white }}>{ct.powerColor}</Text>
+          <Text style={{ fontSize: 18, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.white }}>{ct.powerColor}</Text>
           {ct.powerColorMeaning ? <Text style={{ fontSize: 8.5, color: C.goldPale, marginTop: 3 }}>{ct.powerColorMeaning}</Text> : null}
         </View>
       ) : null}
@@ -1732,12 +1730,12 @@ function DisclaimerPage() {
       <OrnamentDivider mt={12} mb={12} />
 
       <View style={[styles.highlightGold, { alignItems: 'center' }]}>
-        <Text style={{ fontSize: 16, color: C.crimson, textAlign: 'center', marginBottom: 5, fontFamily: 'Helvetica-Bold' }}>Om Tat Sat</Text>
+        <Text style={{ fontSize: 18, fontFamily: 'CormorantGaramond', fontWeight: 700, fontStyle: 'italic', color: C.crimson, textAlign: 'center', marginBottom: 5 }}>Om Tat Sat</Text>
         <Text style={[styles.body, { textAlign: 'center' }]}>
           May this report guide you on your path to self-knowledge and dharmic living.{'\n'}
           Follow the remedies with faith, patience and devotion for 90 days minimum.
         </Text>
-        <Text style={[styles.bodySmall, { textAlign: 'center', color: C.navy, marginTop: 5, fontFamily: 'Helvetica-Bold' }]}>
+        <Text style={[styles.bodySmall, { textAlign: 'center', color: C.navy, marginTop: 5, fontFamily: 'Lato', fontWeight: 700 }]}>
           — MahaTathastu · Anushthaan India
         </Text>
         <Text style={[styles.bodyMuted, { textAlign: 'center', marginTop: 3 }]}>
