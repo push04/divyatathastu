@@ -81,10 +81,16 @@ export async function POST(
   }).join(' ')
   console.log('[PDF] font check:', fontCheck)
 
-  // renderToBuffer() calls pdf(element) which calls updateContainer() WITHOUT a callback.
-  // In React 18, the reconciler schedules work asynchronously (microtask), so
-  // container.document is still null when render() fires immediately after pdf() returns.
-  // Fix: use the lower-level pdf() API with an explicit commit callback, then await it.
+  // React 19 routes uncaught component errors through root.onUncaughtError → undefined →
+  // TypeError → caught → re-thrown via setTimeout(() => { throw e }).
+  // We install an uncaughtException handler BEFORE rendering, then wait 500 ms after the
+  // commit callback fires to let that async throw surface before we inspect it.
+  const componentErrors: string[] = []
+  const uncaughtHandler = (err: Error) => {
+    componentErrors.push(err?.stack || String(err))
+  }
+  process.on('uncaughtException', uncaughtHandler)
+
   let buffer: Buffer
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -93,7 +99,7 @@ export async function POST(
     // Wait for the reconciler to fully commit (sets container.document) or timeout
     await new Promise<void>((resolve, reject) => {
       const timer = setTimeout(
-        () => reject(new Error('PDF reconciler timed out after 20s — a component likely threw silently')),
+        () => reject(new Error('PDF reconciler timed out after 20s')),
         20000
       )
       try {
@@ -104,8 +110,16 @@ export async function POST(
       }
     })
 
+    // Give React 19's setTimeout-based error re-throw time to fire and be captured
+    await new Promise(r => setTimeout(r, 500))
+    process.off('uncaughtException', uncaughtHandler)
+
+    if (componentErrors.length > 0) {
+      throw new Error(`React component error: ${componentErrors.join(' | ')}`)
+    }
+
     if (!pdfInst.container?.document) {
-      throw new Error('container.document is null after reconciler commit — reconciler failed silently')
+      throw new Error('container.document is null after reconciler commit — no component error captured')
     }
 
     const pdfStream = await pdfInst.toBuffer()
@@ -116,8 +130,9 @@ export async function POST(
       pdfStream.on('error', (err: Error) => reject(err))
     })
   } catch (err) {
+    process.off('uncaughtException', uncaughtHandler)
     const msg = err instanceof Error ? err.message : String(err)
-    const stack = err instanceof Error ? err.stack?.slice(0, 800) : ''
+    const stack = err instanceof Error ? err.stack?.slice(0, 1200) : ''
     console.error('[PDF] generation failed:', err)
     return new Response(`PDF generation failed: ${msg}\n${stack}\nFonts: ${fontCheck}`, { status: 500 })
   }
