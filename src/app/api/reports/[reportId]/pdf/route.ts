@@ -62,18 +62,17 @@ export async function POST(
       import('@react-pdf/renderer'),
     ])
 
-    // createElement from react (safe — no class components imported)
-    const { createElement } = await import('react')
-
-    const doc = createElement(
-      ReportPDF as React.ElementType,
-      { report: report as ReportPDFProps['report'], canvases }
-    )
+    // Call ReportPDF directly so react-pdf gets a <Document> element at the root.
+    // Using createElement(ReportPDF, props) wraps it in a functional component,
+    // causing react-pdf's scheduler to defer the work — container.document stays
+    // null when render() reads it, producing "Cannot read properties of null".
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const docElement = (ReportPDF as any)({ report: report as ReportPDFProps['report'], canvases })
 
     let buffer: Buffer
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      buffer = await renderToBuffer(doc as any)
+      buffer = await renderToBuffer(docElement as any)
     } catch (renderErr) {
       const msg = renderErr instanceof Error ? renderErr.message : String(renderErr)
       const stack = renderErr instanceof Error ? (renderErr.stack || '').slice(0, 1200) : ''
