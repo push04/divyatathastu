@@ -5,25 +5,24 @@ import {
   Svg, Circle, Ellipse, Polygon, Path,
 } from '@react-pdf/renderer'
 
-// ── Premium font registration — reads from installed node_modules (no CDN) ─────
-const fontsDir = (pkg: string, file: string) =>
-  path.join(process.cwd(), 'node_modules', '@fontsource', pkg, 'files', file)
+// ── Premium font registration — reads from public/fonts/ (always in Vercel bundle)
+const f = (name: string) => path.join(process.cwd(), 'public', 'fonts', name)
 
 Font.register({
   family: 'CormorantGaramond',
   fonts: [
-    { src: fontsDir('cormorant-garamond', 'cormorant-garamond-latin-400-normal.woff2'),  fontWeight: 400 },
-    { src: fontsDir('cormorant-garamond', 'cormorant-garamond-latin-400-italic.woff2'),  fontWeight: 400, fontStyle: 'italic' },
-    { src: fontsDir('cormorant-garamond', 'cormorant-garamond-latin-600-normal.woff2'),  fontWeight: 600 },
-    { src: fontsDir('cormorant-garamond', 'cormorant-garamond-latin-700-normal.woff2'),  fontWeight: 700 },
-    { src: fontsDir('cormorant-garamond', 'cormorant-garamond-latin-700-italic.woff2'),  fontWeight: 700, fontStyle: 'italic' },
+    { src: f('cg-400.woff2'),  fontWeight: 400 },
+    { src: f('cg-400i.woff2'), fontWeight: 400, fontStyle: 'italic' },
+    { src: f('cg-600.woff2'),  fontWeight: 600 },
+    { src: f('cg-700.woff2'),  fontWeight: 700 },
+    { src: f('cg-700i.woff2'), fontWeight: 700, fontStyle: 'italic' },
   ],
 })
 Font.register({
   family: 'Lato',
   fonts: [
-    { src: fontsDir('lato', 'lato-latin-400-normal.woff2'), fontWeight: 400 },
-    { src: fontsDir('lato', 'lato-latin-700-normal.woff2'), fontWeight: 700 },
+    { src: f('lato-400.woff2'), fontWeight: 400 },
+    { src: f('lato-700.woff2'), fontWeight: 700 },
   ],
 })
 Font.registerHyphenationCallback(word => [word])
