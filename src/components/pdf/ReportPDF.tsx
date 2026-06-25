@@ -1,25 +1,29 @@
 import React from 'react'
+import path from 'path'
 import {
   Document, Page, View, Text, Image, StyleSheet, Font,
   Svg, Circle, Ellipse, Polygon, Path,
 } from '@react-pdf/renderer'
 
-// ── Premium font registration ──────────────────────────────────────────────────
+// ── Premium font registration — reads from installed node_modules (no CDN) ─────
+const fontsDir = (pkg: string, file: string) =>
+  path.join(process.cwd(), 'node_modules', '@fontsource', pkg, 'files', file)
+
 Font.register({
   family: 'CormorantGaramond',
   fonts: [
-    { src: 'https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-400-normal.woff2', fontWeight: 400 },
-    { src: 'https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-400-italic.woff2', fontWeight: 400, fontStyle: 'italic' },
-    { src: 'https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-600-normal.woff2', fontWeight: 600 },
-    { src: 'https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-700-normal.woff2', fontWeight: 700 },
-    { src: 'https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-700-italic.woff2', fontWeight: 700, fontStyle: 'italic' },
+    { src: fontsDir('cormorant-garamond', 'cormorant-garamond-latin-400-normal.woff2'),  fontWeight: 400 },
+    { src: fontsDir('cormorant-garamond', 'cormorant-garamond-latin-400-italic.woff2'),  fontWeight: 400, fontStyle: 'italic' },
+    { src: fontsDir('cormorant-garamond', 'cormorant-garamond-latin-600-normal.woff2'),  fontWeight: 600 },
+    { src: fontsDir('cormorant-garamond', 'cormorant-garamond-latin-700-normal.woff2'),  fontWeight: 700 },
+    { src: fontsDir('cormorant-garamond', 'cormorant-garamond-latin-700-italic.woff2'),  fontWeight: 700, fontStyle: 'italic' },
   ],
 })
 Font.register({
   family: 'Lato',
   fonts: [
-    { src: 'https://cdn.jsdelivr.net/npm/@fontsource/lato/files/lato-latin-400-normal.woff2', fontWeight: 400 },
-    { src: 'https://cdn.jsdelivr.net/npm/@fontsource/lato/files/lato-latin-700-normal.woff2', fontWeight: 700 },
+    { src: fontsDir('lato', 'lato-latin-400-normal.woff2'), fontWeight: 400 },
+    { src: fontsDir('lato', 'lato-latin-700-normal.woff2'), fontWeight: 700 },
   ],
 })
 Font.registerHyphenationCallback(word => [word])
