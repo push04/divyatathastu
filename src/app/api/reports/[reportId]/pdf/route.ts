@@ -72,13 +72,23 @@ export async function POST(
 
   const doc = createElement(ReportPDF, props)
 
+  // Debug: verify font files are reachable before rendering
+  const { existsSync } = await import('fs')
+  const { join } = await import('path')
+  const fontCheck = ['cg-700.woff2', 'lato-400.woff2'].map(f => {
+    const p = join(process.cwd(), 'public', 'fonts', f)
+    return `${f}:${existsSync(p) ? 'OK' : 'MISSING'}(cwd=${process.cwd()})`
+  }).join(' ')
+  console.log('[PDF] font check:', fontCheck)
+
   let buffer: Buffer
   try {
     buffer = Buffer.from(await reactPdf.renderToBuffer(doc as Parameters<typeof reactPdf.renderToBuffer>[0]))
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
+    const stack = err instanceof Error ? err.stack?.slice(0, 600) : ''
     console.error('[PDF] renderToBuffer failed:', err)
-    return new Response(`PDF generation failed: ${msg}`, { status: 500 })
+    return new Response(`PDF generation failed: ${msg}\n${stack}\nFonts: ${fontCheck}`, { status: 500 })
   }
 
   const member = report.family_members as { full_name: string } | null
