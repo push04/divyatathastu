@@ -1,21 +1,14 @@
-// @react-pdf/renderer is auto-externalized by Turbopack because it uses
-// Node.js built-ins (fs, buffer). When external, its bundled reconciler's
-// flushSyncWork() runs in an isolated scheduler context that Next.js's server
-// execution interferes with — making it a no-op. container.document stays null.
-//
-// FIX: Use pdf() directly with the event-based 'change' API.
-// react-pdf fires 'change' from resetAfterCommit (AFTER appendChildToContainer
-// sets container.document). By awaiting the change event before calling
-// toBuffer(), we bypass flushSyncWork entirely and work with either sync or
-// async reconciler commits.
 import { createClient } from '@/lib/supabase/server'
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-import { pdf } from '@react-pdf/renderer'
+import React from 'react'
 import ReportPDF, { type ReportPDFProps } from '@/components/pdf/ReportPDF'
 import { existsSync } from 'fs'
 import { join } from 'path'
 
 export const maxDuration = 60
+// Ensure this runs in Node.js, not Edge
+export const runtime = 'nodejs'
+// Prevent static rendering of this route
+export const dynamic = 'force-dynamic'
 
 const REPORT_TITLE_SLUGS: Record<string, string> = {
   full_tathastu: 'Full_Tathastu_Report',
@@ -35,7 +28,7 @@ const REPORT_TITLE_SLUGS: Record<string, string> = {
 }
 
 export async function GET() {
-  return new Response('pdf-route-alive-v6', { status: 200 })
+  return new Response('pdf-route-alive-v7', { status: 200 })
 }
 
 export async function POST(
@@ -68,67 +61,50 @@ export async function POST(
       .join(' ')
     console.log('[PDF] fonts:', fontCheck)
 
-    // Build the react-pdf element tree by calling the component directly
-    const docElement = ReportPDF({ report: report as ReportPDFProps['report'], canvases })
-
-    // Create a pdf() instance WITHOUT an initial value so updateContainer
-    // hasn't been called yet and no reconciler work is queued.
+    // Dynamically import react-pdf to isolate it from Next.js server component passes
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const instance = (pdf as any)()
-
-    // Wait for the reconciler's resetAfterCommit hook to fire ('change' event).
-    // This is guaranteed to fire AFTER appendChildToContainer sets
-    // container.document. Works whether the commit is sync or async — no
-    // dependency on flushSyncWork being functional in the server context.
-    await new Promise<void>((resolve, reject) => {
-      const timeout = setTimeout(
-        () => reject(new Error(`PDF reconciler timeout — container.document=${JSON.stringify(instance.container?.document)}`)),
-        30_000
-      )
-      instance.on('change', () => { clearTimeout(timeout); resolve() })
-      instance.updateContainer(docElement)
-      // Guard: if the reconciler committed synchronously before we registered
-      // the listener (very rare in async server context, common locally):
-      if (instance.container?.document) { clearTimeout(timeout); resolve() }
-    })
-
-    console.log('[PDF] container.document set:', !!instance.container?.document)
-
-    let buffer: Buffer
+    let reactPdf: any
     try {
-      // toBuffer() calls render() which now safely reads container.document.props
-      const stream = await instance.toBuffer()
-      buffer = await new Promise<Buffer>((resolve, reject) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const chunks: Buffer[] = [];
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (stream as any).on('data', (c: Buffer) => chunks.push(c));
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (stream as any).on('end', () => resolve(Buffer.concat(chunks)));
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (stream as any).on('error', reject)
-      })
+      reactPdf = await import('@react-pdf/renderer')
+    } catch (e) {
+      console.error('Failed to import react-pdf:', e)
+      return new Response('Failed to load PDF engine', { status: 500 })
+    }
+
+    const { renderToStream } = reactPdf.default || reactPdf
+
+    // Use a standard JSX tree. This passes the Component itself to the reconciler,
+    // rather than calling it as a function.
+    const docElement = React.createElement(ReportPDF, { report: report as ReportPDFProps['report'], canvases })
+
+    let stream: any
+    try {
+      stream = await renderToStream(docElement)
     } catch (renderErr) {
       const msg = renderErr instanceof Error ? renderErr.message : String(renderErr)
       const stack = renderErr instanceof Error ? (renderErr.stack || '').slice(0, 1200) : ''
-      console.error('[PDF] toBuffer threw:', msg)
-      return new Response(`toBuffer error: ${msg}\n${stack}\nFonts: ${fontCheck}`, { status: 500 })
+      console.error('[PDF] renderToStream threw:', msg)
+      return new Response(`renderToStream error: ${msg}\n${stack}\nFonts: ${fontCheck}`, { status: 500 })
     }
 
     const member = report.family_members as { full_name: string } | null
     const titleSlug = REPORT_TITLE_SLUGS[report.report_type] || 'Report'
     const nameSlug = (member?.full_name || 'Member').replace(/[^a-z0-9\s]/gi, '').trim().replace(/\s+/g, '_')
 
-    const ab = buffer.buffer instanceof ArrayBuffer
-      ? buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength)
-      : new Uint8Array(buffer).buffer
+    // Convert Node Readable stream to Web ReadableStream
+    const webStream = new ReadableStream({
+      start(controller) {
+        stream.on('data', (chunk: Buffer) => controller.enqueue(new Uint8Array(chunk)))
+        stream.on('end', () => controller.close())
+        stream.on('error', (err: Error) => controller.error(err))
+      }
+    })
 
-    return new Response(ab as ArrayBuffer, {
+    return new Response(webStream, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="${nameSlug}_${titleSlug}.pdf"`,
-        'Content-Length': String(buffer.length),
         'Cache-Control': 'no-store',
       },
     })
