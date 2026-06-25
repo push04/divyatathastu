@@ -69,16 +69,33 @@ export async function POST(
     // receives a concrete <Document> at the root — no scheduler deferral.
     const docElement = ReportPDF({ report: report as ReportPDFProps['report'], canvases })
 
+    // Intercept console.error — React 19's reconciler swallows component errors and
+    // calls onUncaughtError(console.error) instead of throwing. So the real error
+    // never reaches our try/catch; we only see the secondary "container.document null" crash.
+    const capturedErrors: string[] = []
+    const origConsoleError = console.error
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    console.error = (...args: any[]) => {
+      capturedErrors.push(args.map(a => (a instanceof Error ? a.stack || a.message : String(a))).join(' '))
+      origConsoleError(...args)
+    }
+
     let buffer: Buffer
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       buffer = await renderToBuffer(docElement as any)
     } catch (renderErr) {
+      console.error = origConsoleError
       const msg = renderErr instanceof Error ? renderErr.message : String(renderErr)
-      const stack = renderErr instanceof Error ? (renderErr.stack || '').slice(0, 1200) : ''
+      const stack = renderErr instanceof Error ? (renderErr.stack || '').slice(0, 800) : ''
+      const captured = capturedErrors.join('\n').slice(0, 1200)
       console.error('[PDF] renderToBuffer threw:', msg)
-      return new Response(`renderToBuffer error: ${msg}\n${stack}\nFonts: ${fontCheck}`, { status: 500 })
+      return new Response(
+        `renderToBuffer error: ${msg}\n${stack}\n\n=== RECONCILER ERRORS (real cause) ===\n${captured || '(none)'}\nFonts: ${fontCheck}`,
+        { status: 500 }
+      )
     }
+    console.error = origConsoleError
 
     const member = report.family_members as { full_name: string } | null
     const titleSlug = REPORT_TITLE_SLUGS[report.report_type] || 'Report'
