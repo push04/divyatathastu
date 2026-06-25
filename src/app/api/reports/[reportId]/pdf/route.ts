@@ -61,7 +61,8 @@ export async function POST(
 
     let buffer: Buffer
     try {
-      buffer = await renderToBuffer(doc)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      buffer = await renderToBuffer(doc as any)
     } catch (renderErr) {
       const msg = renderErr instanceof Error ? renderErr.message : String(renderErr)
       const stack = renderErr instanceof Error ? (renderErr.stack || '').slice(0, 1000) : ''
