@@ -4,183 +4,132 @@ import {
   Svg, Circle, Ellipse, Polygon, Path,
 } from '@react-pdf/renderer'
 
-// ── Brand colours (hex only — no oklch/lab) ──────────────────────────────
+// ── Brand colours ─────────────────────────────────────────────────────────────
 const C = {
-  indigoDeep: '#2F2A44',
-  navy: '#1a3a8c',
-  saffron: '#E36414',
-  gold: '#C49B37',
-  goldLight: '#DAB95F',
-  warmSand: '#F5EDD8',
-  parchment: '#FBF5E8',
-  cream: '#FDFAF5',
-  terracotta: '#C67D53',
-  charcoal: '#3D3530',
-  red: '#cc2200',
-  white: '#FFFFFF',
-  gray: '#6b7280',
-  grayLight: '#e5e7eb',
-  grayMid: '#9ca3af',
-  text: '#374151',
-  emerald: '#059669',
-  amber: '#d97706',
+  navyDark:     '#0B1D52',
+  navy:         '#1a3a8c',
+  saffron:      '#E36414',
+  saffronLight: '#F5A623',
+  gold:         '#C49B37',
+  goldLight:    '#DAB95F',
+  goldPale:     '#F0DCA0',
+  warmSand:     '#F5EDD8',
+  parchment:    '#FBF5E8',
+  offWhite:     '#FAF6EF',
+  terracotta:   '#C67D53',
+  charcoal:     '#3D3530',
+  red:          '#B5220A',
+  white:        '#FFFFFF',
+  gray:         '#6b7280',
+  grayLight:    '#e5e7eb',
+  grayMid:      '#9ca3af',
+  text:         '#374151',
+  emerald:      '#059669',
+  amber:        '#d97706',
 }
 
 const styles = StyleSheet.create({
   page: {
     backgroundColor: C.parchment,
-    paddingTop: 30,
-    paddingBottom: 28,
-    paddingLeft: 28,
-    paddingRight: 28,
+    paddingTop: 32,
+    paddingBottom: 32,
+    paddingLeft: 30,
+    paddingRight: 30,
     fontFamily: 'Helvetica',
     position: 'relative',
   },
-  // Gold decorative borders
   borderOuter: {
     position: 'absolute',
-    top: 7, left: 7, right: 7, bottom: 7,
-    border: '1.5pt solid #C49B37',
+    top: 6, left: 6, right: 6, bottom: 6,
+    border: '2pt solid #C49B37',
   },
   borderInner: {
     position: 'absolute',
-    top: 11, left: 11, right: 11, bottom: 11,
+    top: 10, left: 10, right: 10, bottom: 10,
     border: '0.5pt solid #DAB95F',
   },
   // Typography
-  h1: { fontSize: 22, fontFamily: 'Helvetica-Bold', color: C.indigoDeep, marginBottom: 6 },
-  h2: { fontSize: 15, fontFamily: 'Helvetica-Bold', color: C.indigoDeep, marginBottom: 5 },
-  h3: { fontSize: 11.5, fontFamily: 'Helvetica-Bold', color: C.indigoDeep, marginBottom: 3 },
-  label: { fontSize: 7.5, fontFamily: 'Helvetica-Bold', color: C.grayMid, textTransform: 'uppercase', marginBottom: 2 },
-  value: { fontSize: 10, fontFamily: 'Helvetica-Bold', color: C.indigoDeep },
+  h1: { fontSize: 20, fontFamily: 'Helvetica-Bold', color: C.navyDark, marginBottom: 6 },
+  h2: { fontSize: 14, fontFamily: 'Helvetica-Bold', color: C.navyDark, marginBottom: 4 },
+  h3: { fontSize: 11, fontFamily: 'Helvetica-Bold', color: C.navyDark, marginBottom: 3 },
+  label: { fontSize: 7.5, fontFamily: 'Helvetica-Bold', color: C.grayMid, textTransform: 'uppercase', letterSpacing: 0.3, marginBottom: 2 },
+  value: { fontSize: 10.5, fontFamily: 'Helvetica-Bold', color: C.navyDark },
   body: { fontSize: 9.5, color: C.charcoal, lineHeight: 1.55 },
   bodySmall: { fontSize: 8.5, color: C.text, lineHeight: 1.5 },
   bodyMuted: { fontSize: 8.5, color: C.gray, lineHeight: 1.5 },
   italic: { fontSize: 9, color: C.gray, fontStyle: 'italic', lineHeight: 1.5 },
-  bullet: { fontSize: 9, color: C.charcoal, lineHeight: 1.5, marginBottom: 2 },
-  // Layout helpers
+  bullet: { fontSize: 9.5, color: C.charcoal, lineHeight: 1.6, marginBottom: 3 },
+  // Layout
   row: { flexDirection: 'row', gap: 6 },
   spacer4: { height: 4 },
   spacer8: { height: 8 },
   spacer12: { height: 12 },
-  dividerGold: { height: 1, backgroundColor: C.gold, marginVertical: 8, opacity: 0.5 },
+  dividerGold: { height: 1, backgroundColor: C.gold, marginVertical: 8 },
   dividerLight: { height: 0.5, backgroundColor: C.grayLight, marginVertical: 6 },
-  // Card / box
+  // Cards
   card: {
-    backgroundColor: C.warmSand,
+    backgroundColor: C.offWhite,
+    borderTop: `2pt solid ${C.gold}`,
     padding: '6pt 8pt',
-    borderRadius: 3,
     marginBottom: 5,
   },
   cardBlue: {
-    backgroundColor: C.navy,
-    padding: '6pt 10pt',
-    borderRadius: 3,
+    backgroundColor: C.navyDark,
+    padding: '8pt 11pt',
     marginBottom: 5,
   },
   highlight: {
-    backgroundColor: C.warmSand,
-    padding: '7pt 9pt',
-    borderRadius: 3,
-    borderLeft: `3pt solid ${C.saffron}`,
-    marginBottom: 5,
+    backgroundColor: C.offWhite,
+    padding: '7pt 10pt',
+    borderLeft: `4pt solid ${C.saffron}`,
+    borderBottom: `0.5pt solid ${C.grayLight}`,
+    marginBottom: 6,
   },
   highlightGold: {
     backgroundColor: '#fef9e7',
-    padding: '7pt 9pt',
-    borderRadius: 3,
-    borderLeft: `3pt solid ${C.gold}`,
-    marginBottom: 5,
-  },
-  // Chapter header
-  chapterHeaderBar: {
-    backgroundColor: C.navy,
-    padding: '9pt 12pt',
-    borderRadius: 3,
-    marginBottom: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  chapterNum: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: C.saffron,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10,
-  },
-  chapterNumText: { fontSize: 10, fontFamily: 'Helvetica-Bold', color: C.white },
-  chapterTitle: { fontSize: 13, fontFamily: 'Helvetica-Bold', color: C.white },
-  chapterSanskrit: { fontSize: 8.5, color: '#93c5fd', marginTop: 1 },
-  // Tag/badge
-  tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginTop: 3 },
-  tag: {
-    backgroundColor: C.warmSand,
-    padding: '2pt 6pt',
-    borderRadius: 8,
-    fontSize: 7.5,
-    color: C.indigoDeep,
-  },
-  tagNavy: {
-    backgroundColor: C.navy,
-    padding: '2pt 6pt',
-    borderRadius: 8,
-    fontSize: 7.5,
-    color: C.white,
+    padding: '8pt 11pt',
+    borderLeft: `4pt solid ${C.gold}`,
+    borderBottom: `0.5pt solid ${C.goldPale}`,
+    marginBottom: 6,
   },
   // Table
   table: { width: '100%', marginTop: 4 },
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: C.warmSand,
-    padding: '4pt 5pt',
-    borderBottom: `1pt solid ${C.grayLight}`,
+    backgroundColor: C.navyDark,
+    padding: '5pt 6pt',
   },
   tableRow: {
     flexDirection: 'row',
-    padding: '3.5pt 5pt',
-    borderBottom: `0.5pt solid ${C.warmSand}`,
+    padding: '4pt 6pt',
+    borderBottom: `0.5pt solid ${C.grayLight}`,
   },
   tableRowAlt: {
     flexDirection: 'row',
-    padding: '3.5pt 5pt',
-    borderBottom: `0.5pt solid ${C.warmSand}`,
+    padding: '4pt 6pt',
+    borderBottom: `0.5pt solid ${C.grayLight}`,
     backgroundColor: '#fdf8f0',
   },
-  th: { fontSize: 7.5, fontFamily: 'Helvetica-Bold', color: C.gray },
+  th: { fontSize: 7.5, fontFamily: 'Helvetica-Bold', color: C.white },
   td: { fontSize: 8.5, color: C.text },
-  tdBold: { fontSize: 8.5, fontFamily: 'Helvetica-Bold', color: C.indigoDeep },
+  tdBold: { fontSize: 8.5, fontFamily: 'Helvetica-Bold', color: C.navyDark },
   // Progress bar
-  progressBg: { height: 5, backgroundColor: C.grayLight, borderRadius: 3, overflow: 'hidden', marginTop: 2 },
-  progressFill: { height: 5, borderRadius: 3 },
-  // Cover
-  coverTitle: { fontSize: 36, fontFamily: 'Helvetica-Bold', color: C.indigoDeep, textAlign: 'center', letterSpacing: 4 },
-  coverSubtitle: { fontSize: 11, color: C.terracotta, textAlign: 'center', letterSpacing: 1.5, marginTop: 4 },
-  coverName: { fontSize: 22, fontFamily: 'Helvetica-Bold', color: C.indigoDeep, textAlign: 'center' },
-  coverMeta: { fontSize: 9.5, color: C.gray, textAlign: 'center', marginTop: 3 },
-  coverBadge: {
-    backgroundColor: C.warmSand,
-    border: `1pt solid ${C.gold}`,
-    padding: '8pt 18pt',
-    borderRadius: 4,
-    alignItems: 'center',
-    marginTop: 12,
-  },
-  coverBadgeLabel: { fontSize: 8, fontFamily: 'Helvetica-Bold', color: C.gold, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 },
+  progressBg: { height: 6, backgroundColor: C.grayLight, borderRadius: 3, overflow: 'hidden', marginTop: 3 },
+  progressFill: { height: 6, borderRadius: 3 },
+  // Tags
+  tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginTop: 3 },
+  tag: { backgroundColor: C.warmSand, border: `0.5pt solid ${C.goldLight}`, padding: '2pt 7pt', borderRadius: 10 },
+  tagNavy: { backgroundColor: C.navyDark, padding: '2pt 8pt', borderRadius: 10 },
   // Footer
   footer: {
     position: 'absolute',
-    bottom: 20,
-    left: 28,
-    right: 28,
-    textAlign: 'center',
-    fontSize: 7.5,
-    color: C.grayMid,
+    bottom: 14,
+    left: 30,
+    right: 30,
   },
 })
 
-// ── Sudarshan Chakra SVG (scaled down for PDF) ──────────────────────────
+// ── Sudarshan Chakra ──────────────────────────────────────────────────────────
 function SudarshanChakra({ size = 100 }: { size?: number }) {
   const outerPetals = Array.from({ length: 16 }, (_, i) => i * 22.5)
   const innerPetals = Array.from({ length: 8 }, (_, i) => i * 45)
@@ -238,8 +187,23 @@ function SudarshanChakra({ size = 100 }: { size?: number }) {
   )
 }
 
-// ── Reusable PDF primitives ──────────────────────────────────────────────
-function GoldBorder() {
+// ── Ornament divider ──────────────────────────────────────────────────────────
+function OrnamentDivider({ color = C.gold, mt = 8, mb = 8 }: { color?: string; mt?: number; mb?: number }) {
+  return (
+    <View style={{ alignItems: 'center', marginTop: mt, marginBottom: mb }}>
+      <Svg width={200} height={14} viewBox="0 0 200 14">
+        <Path d="M 0,7 L 78,7" stroke={color} strokeWidth={0.75} />
+        <Path d="M 80,7 L 85,3 L 90,7 L 85,11 Z" fill={color} />
+        <Path d="M 93,7 L 100,1 L 107,7 L 100,13 Z" fill={color} />
+        <Path d="M 110,7 L 115,3 L 120,7 L 115,11 Z" fill={color} />
+        <Path d="M 122,7 L 200,7" stroke={color} strokeWidth={0.75} />
+      </Svg>
+    </View>
+  )
+}
+
+// ── Decorative border (interior pages) ───────────────────────────────────────
+function PageBorder() {
   return (
     <>
       <View style={styles.borderOuter} />
@@ -248,35 +212,69 @@ function GoldBorder() {
   )
 }
 
-function PageFooter({ text = 'MahaTathastu · www.mahatathastu.com · 9858784784' }: { text?: string }) {
-  return <Text style={styles.footer}>{text}</Text>
-}
-
-function ChapterHeader({ number, title, sanskrit }: { number: string; title: string; sanskrit?: string }) {
+// ── Page footer ───────────────────────────────────────────────────────────────
+function PageFooter() {
   return (
-    <View style={styles.chapterHeaderBar}>
-      <View style={styles.chapterNum}>
-        <Text style={styles.chapterNumText}>{number}</Text>
-      </View>
-      <View>
-        <Text style={styles.chapterTitle}>{title}</Text>
-        {sanskrit ? <Text style={styles.chapterSanskrit}>{sanskrit}</Text> : null}
-      </View>
-      <View style={{ marginLeft: 'auto' }}>
-        <Text style={{ fontSize: 18, color: C.gold, opacity: 0.5 }}>OM</Text>
+    <View style={styles.footer}>
+      <View style={{ height: 0.5, backgroundColor: C.goldPale, marginBottom: 4 }} />
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <Text style={{ fontSize: 7, color: C.grayMid }}>MahaTathastu · www.mahatathastu.com</Text>
+        <Text style={{ fontSize: 7, color: C.gold, fontFamily: 'Helvetica-Bold' }}>TATHASTU REPORT SYSTEM</Text>
+        <Text style={{ fontSize: 7, color: C.grayMid }}>9858784784</Text>
       </View>
     </View>
   )
 }
 
+// ── Chapter header (numbered sections) ───────────────────────────────────────
+function ChapterHeader({ number, title, sanskrit }: { number: string; title: string; sanskrit?: string }) {
+  return (
+    <View style={{ marginBottom: 12 }}>
+      <View style={{ height: 3, backgroundColor: C.saffron }} />
+      <View style={{ backgroundColor: C.navyDark, padding: '10pt 14pt', flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{
+          width: 34, height: 34, borderRadius: 17,
+          backgroundColor: C.saffron,
+          border: `1.5pt solid ${C.saffronLight}`,
+          alignItems: 'center', justifyContent: 'center',
+          marginRight: 12,
+        }}>
+          <Text style={{ fontSize: 11, fontFamily: 'Helvetica-Bold', color: C.white }}>{number}</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 14, fontFamily: 'Helvetica-Bold', color: C.white, letterSpacing: 0.5 }}>{title}</Text>
+          {sanskrit ? <Text style={{ fontSize: 8.5, color: C.goldLight, marginTop: 2, letterSpacing: 1 }}>{sanskrit}</Text> : null}
+        </View>
+        <Text style={{ fontSize: 18, color: C.gold, opacity: 0.9, fontFamily: 'Helvetica-Bold' }}>OM</Text>
+      </View>
+      <View style={{ height: 2, backgroundColor: C.gold }} />
+    </View>
+  )
+}
+
+// ── Title header (non-numbered pages) ────────────────────────────────────────
+function TitleHeader({ title, subtitle }: { title: string; subtitle?: string }) {
+  return (
+    <View style={{ marginBottom: 14 }}>
+      <View style={{ height: 3, backgroundColor: C.gold }} />
+      <View style={{ backgroundColor: C.navyDark, padding: '10pt 14pt', alignItems: 'center' }}>
+        <Text style={{ fontSize: 15, fontFamily: 'Helvetica-Bold', color: C.white, letterSpacing: 1 }}>{title}</Text>
+        {subtitle ? <Text style={{ fontSize: 8.5, color: C.goldLight, marginTop: 3, letterSpacing: 1 }}>{subtitle}</Text> : null}
+      </View>
+      <View style={{ height: 2, backgroundColor: C.gold }} />
+    </View>
+  )
+}
+
+// ── InfoGrid ──────────────────────────────────────────────────────────────────
 function InfoGrid({ items, cols = 4 }: { items: { label: string; value?: any }[]; cols?: number }) {
-  const width = cols === 4 ? '23%' : cols === 3 ? '31%' : '48%'
+  const pct = cols === 4 ? '23%' : cols === 3 ? '31%' : '48%'
   const filled = items.filter(i => i.value != null && i.value !== '' && i.value !== undefined)
   if (!filled.length) return null
   return (
     <View style={[styles.row, { flexWrap: 'wrap', marginBottom: 6 }]}>
       {filled.map((item) => (
-        <View key={item.label} style={[styles.card, { width, flexGrow: 0 }]}>
+        <View key={item.label} style={[styles.card, { width: pct, flexGrow: 0 }]}>
           <Text style={styles.label}>{item.label}</Text>
           <Text style={styles.value}>{String(item.value)}</Text>
         </View>
@@ -285,17 +283,22 @@ function InfoGrid({ items, cols = 4 }: { items: { label: string; value?: any }[]
   )
 }
 
+// ── BulletList ────────────────────────────────────────────────────────────────
 function BulletList({ items }: { items: string[] }) {
   if (!items?.length) return null
   return (
     <View>
       {items.map((item, i) => (
-        <Text key={i} style={styles.bullet}>• {item}</Text>
+        <View key={i} style={{ flexDirection: 'row', marginBottom: 3 }}>
+          <Text style={{ fontSize: 9, color: C.saffron, marginRight: 5, marginTop: 1 }}>▸</Text>
+          <Text style={[styles.bullet, { flex: 1 }]}>{item}</Text>
+        </View>
       ))}
     </View>
   )
 }
 
+// ── TagRow ────────────────────────────────────────────────────────────────────
 function TagRow({ items }: { items: string[] }) {
   if (!items?.length) return null
   const arr = Array.isArray(items) ? items : [items]
@@ -303,33 +306,38 @@ function TagRow({ items }: { items: string[] }) {
     <View style={styles.tagRow}>
       {arr.map((t, i) => (
         <View key={i} style={styles.tag}>
-          <Text style={{ fontSize: 7.5, color: C.indigoDeep }}>{t}</Text>
+          <Text style={{ fontSize: 7.5, color: C.navyDark }}>{t}</Text>
         </View>
       ))}
     </View>
   )
 }
 
+// ── HighlightBox ──────────────────────────────────────────────────────────────
 function HighlightBox({ label, text, accent = C.saffron }: { label?: string; text: string; accent?: string }) {
   if (!text) return null
   return (
     <View style={[styles.highlight, { borderLeftColor: accent }]}>
-      {label ? <Text style={[styles.label, { marginBottom: 3 }]}>{label}</Text> : null}
+      {label ? <Text style={[styles.label, { color: accent, marginBottom: 3 }]}>{label}</Text> : null}
       <Text style={styles.body}>{text}</Text>
     </View>
   )
 }
 
+// ── SectionLabel ──────────────────────────────────────────────────────────────
 function SectionLabel({ children }: { children: string }) {
   return (
-    <View>
-      <Text style={[styles.h3, { marginBottom: 5 }]}>{children}</Text>
-      <View style={{ height: 0.5, backgroundColor: C.goldLight, marginBottom: 6 }} />
+    <View style={{ marginBottom: 8 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
+        <View style={{ width: 4, height: 14, backgroundColor: C.saffron, borderRadius: 1, marginRight: 8 }} />
+        <Text style={{ fontSize: 11, fontFamily: 'Helvetica-Bold', color: C.navyDark }}>{children}</Text>
+      </View>
+      <View style={{ height: 0.75, backgroundColor: C.goldPale }} />
     </View>
   )
 }
 
-// ── Cover Page ──────────────────────────────────────────────────────────
+// ── Cover Page ────────────────────────────────────────────────────────────────
 function CoverPage({ report, member, title }: { report: any; member: any; title: string }) {
   const dob = member?.date_of_birth
     ? new Date(member.date_of_birth).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
@@ -337,103 +345,138 @@ function CoverPage({ report, member, title }: { report: any; member: any; title:
   const gen = new Date(report.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
 
   return (
-    <Page size="A4" style={styles.page}>
-      <GoldBorder />
+    <Page size="A4" style={{ backgroundColor: C.navyDark, fontFamily: 'Helvetica', flexDirection: 'column' }}>
 
-      {/* Top invocation */}
-      <Text style={{ fontSize: 10, color: C.red, textAlign: 'center', marginBottom: 16, fontFamily: 'Helvetica-Bold' }}>
-        Shree Matra Namah · Om Mahaganpataye Namah
-      </Text>
+      {/* ── Navy header ── */}
+      <View style={{ backgroundColor: C.navyDark, paddingTop: 20, paddingBottom: 20, paddingHorizontal: 40, alignItems: 'center' }}>
+        <View style={{ height: 1, backgroundColor: C.gold, width: '75%', marginBottom: 12 }} />
+        <Text style={{ fontSize: 7.5, color: C.gold, letterSpacing: 1.5, marginBottom: 14 }}>
+          SHREE MATRA NAMAH  ·  OM MAHAGANPATAYE NAMAH
+        </Text>
 
-      {/* Main content centered */}
-      <View style={{ alignItems: 'center', gap: 10 }}>
-        {/* Chakra logo */}
-        <SudarshanChakra size={110} />
+        <SudarshanChakra size={115} />
 
-        {/* Brand name */}
-        <View style={{ marginTop: 6 }}>
-          <Text style={styles.coverTitle}>TATHASTU</Text>
-          <View style={{ height: 1, backgroundColor: C.gold, marginVertical: 5, opacity: 0.6 }} />
-          <Text style={styles.coverSubtitle}>DECODE YOUR LIFE. DESIGN YOUR FUTURE.</Text>
-        </View>
-
-        {/* Report type badge */}
-        <View style={styles.coverBadge}>
-          <Text style={styles.coverBadgeLabel}>{title}</Text>
-          {member?.full_name ? (
-            <>
-              <Text style={styles.coverName}>{member.full_name}</Text>
-              {dob ? <Text style={styles.coverMeta}>Born: {dob}</Text> : null}
-              {member.place_of_birth ? <Text style={styles.coverMeta}>{member.place_of_birth}</Text> : null}
-            </>
-          ) : null}
-          <Text style={[styles.coverMeta, { marginTop: 6 }]}>Generated: {gen}</Text>
-        </View>
-
-        {/* Acharya text */}
-        <View style={{ marginTop: 10 }}>
-          <Text style={{ fontSize: 8, color: C.red, textAlign: 'center', lineHeight: 1.6 }}>
-            Jyotish Shastra: Surya · Pitamaha · Vyasa · Vashishtha · Atri · Parashara
+        <View style={{ marginTop: 13, alignItems: 'center' }}>
+          <Text style={{ fontSize: 10, color: C.goldLight, letterSpacing: 5, fontFamily: 'Helvetica-Bold', marginBottom: 3 }}>
+            M A H A
           </Text>
-          <Text style={{ fontSize: 8, color: C.red, textAlign: 'center', lineHeight: 1.6 }}>
-            Kashyapa · Narada · Garga · Marichi · Manu · Angira · Lomasha
+          <Text style={{ fontSize: 42, fontFamily: 'Helvetica-Bold', color: C.white, letterSpacing: 8, lineHeight: 1 }}>
+            TATHASTU
+          </Text>
+          <View style={{ height: 1.5, backgroundColor: C.gold, width: 210, marginTop: 10 }} />
+          <Text style={{ fontSize: 8, color: C.saffronLight, letterSpacing: 2, marginTop: 8 }}>
+            DECODE YOUR LIFE.  ·  DESIGN YOUR FUTURE.
           </Text>
         </View>
-
-        {/* Branding footer */}
-        <View style={{ marginTop: 14, alignItems: 'center' }}>
-          <Text style={{ fontSize: 9, fontFamily: 'Helvetica-Bold', color: C.indigoDeep }}>
-            ~ AN INITIATIVE OF ANUSHTHAAN INDIA ~
-          </Text>
-          <Text style={{ fontSize: 7.5, color: C.gray, marginTop: 3 }}>
-            GYANAMPEETHAM · "Educating Society with Wisdom for a Better Life"
-          </Text>
-        </View>
+        <View style={{ height: 1, backgroundColor: C.gold, width: '75%', marginTop: 14 }} />
       </View>
 
-      <PageFooter />
+      {/* ── Gold separator ── */}
+      <View style={{ height: 4, backgroundColor: C.gold }} />
+
+      {/* ── Parchment body ── */}
+      <View style={{ flex: 1, backgroundColor: C.parchment, paddingVertical: 24, paddingHorizontal: 36, alignItems: 'center' }}>
+        {/* Inner frame */}
+        <View style={{ position: 'absolute', top: 8, left: 8, right: 8, bottom: 8, border: `1pt solid ${C.goldLight}` }} />
+
+        {/* Report type badge */}
+        <View style={{
+          border: `1.5pt solid ${C.gold}`,
+          backgroundColor: C.warmSand,
+          paddingVertical: 6, paddingHorizontal: 24,
+          marginBottom: 16,
+        }}>
+          <Text style={{ fontSize: 9, fontFamily: 'Helvetica-Bold', color: C.gold, letterSpacing: 2, textAlign: 'center' }}>
+            {title.toUpperCase()}
+          </Text>
+        </View>
+
+        {/* Person name */}
+        {member?.full_name ? (
+          <Text style={{ fontSize: 26, fontFamily: 'Helvetica-Bold', color: C.navyDark, textAlign: 'center', marginBottom: 8, letterSpacing: 0.5 }}>
+            {member.full_name}
+          </Text>
+        ) : null}
+
+        {dob ? <Text style={{ fontSize: 9.5, color: C.charcoal, textAlign: 'center', lineHeight: 1.7 }}>Born: {dob}</Text> : null}
+        {member?.place_of_birth ? (
+          <Text style={{ fontSize: 9.5, color: C.charcoal, textAlign: 'center', lineHeight: 1.7 }}>{member.place_of_birth}</Text>
+        ) : null}
+        <Text style={{ fontSize: 8.5, color: C.gray, textAlign: 'center', marginTop: 5 }}>Generated: {gen}</Text>
+
+        <OrnamentDivider mt={16} mb={14} />
+
+        <Text style={{ fontSize: 7.5, color: C.red, textAlign: 'center', lineHeight: 1.8 }}>
+          Jyotish Shastra: Surya · Pitamaha · Vyasa · Vashishtha · Atri · Parashara
+        </Text>
+        <Text style={{ fontSize: 7.5, color: C.red, textAlign: 'center', lineHeight: 1.8 }}>
+          Kashyapa · Narada · Garga · Marichi · Manu · Angira · Lomasha
+        </Text>
+
+        <OrnamentDivider mt={14} mb={14} color={C.goldPale} />
+
+        <Text style={{ fontSize: 9, fontFamily: 'Helvetica-Bold', color: C.navyDark, letterSpacing: 0.5, textAlign: 'center' }}>
+          ~ AN INITIATIVE OF ANUSHTHAAN INDIA ~
+        </Text>
+        <Text style={{ fontSize: 7.5, color: C.gray, marginTop: 3, textAlign: 'center' }}>
+          GYANAMPEETHAM · "Educating Society with Wisdom for a Better Life"
+        </Text>
+      </View>
+
+      {/* ── Gold separator ── */}
+      <View style={{ height: 3, backgroundColor: C.gold }} />
+
+      {/* ── Navy footer ── */}
+      <View style={{ backgroundColor: C.navyDark, paddingVertical: 12, paddingHorizontal: 36, alignItems: 'center' }}>
+        <Text style={{ fontSize: 11, fontFamily: 'Helvetica-Bold', color: C.white, letterSpacing: 2 }}>
+          MAHATATHASTU
+        </Text>
+        <Text style={{ fontSize: 7.5, color: C.goldLight, marginTop: 5, letterSpacing: 0.5 }}>
+          www.mahatathastu.com  ·  9858784784
+        </Text>
+      </View>
+
     </Page>
   )
 }
 
-// ── Guidance / About Page ───────────────────────────────────────────────
+// ── Guidance Page ─────────────────────────────────────────────────────────────
 function GuidancePage() {
   const guidance = [
-    { title: 'Faith is the Foundation', body: 'Follow all remedies with full dedication, discipline, and unwavering faith. Faith and devotion are the strongest mediums through which divine blessings flow into one\'s life.' },
-    { title: '90-Day Minimum Practice', body: 'For purification and correction of karmic energies, practice the remedies continuously for a minimum of 90 days without interruption.' },
-    { title: 'Daily Consistency', body: 'Performing remedies at the same time each day (especially during sunrise or the prescribed muhurta) amplifies their effectiveness significantly.' },
-    { title: 'Sattvic Lifestyle', body: 'During the remedy period, maintain a sattvic diet, avoid intoxicants, and practice charitable acts. This supports the energetic work of the remedies.' },
+    { title: 'Faith is the Foundation', body: 'Follow all remedies with full dedication, discipline, and unwavering faith. Faith and devotion are the strongest mediums through which divine blessings flow into one\'s life.', accent: C.saffron },
+    { title: '90-Day Minimum Practice', body: 'For purification and correction of karmic energies, practice the remedies continuously for a minimum of 90 days without interruption.', accent: C.gold },
+    { title: 'Daily Consistency', body: 'Performing remedies at the same time each day (especially during sunrise or the prescribed muhurta) amplifies their effectiveness significantly.', accent: C.navy },
+    { title: 'Sattvic Lifestyle', body: 'During the remedy period, maintain a sattvic diet, avoid intoxicants, and practice charitable acts. This supports the energetic work of the remedies.', accent: C.emerald },
   ]
   return (
     <Page size="A4" style={styles.page}>
-      <GoldBorder />
-      <View style={{ borderBottom: `2pt solid ${C.gold}`, paddingBottom: 10, marginBottom: 14 }}>
-        <Text style={[styles.h1, { textAlign: 'center' }]}>Divine Guidance</Text>
-        <Text style={{ fontSize: 9, color: C.red, textAlign: 'center', marginTop: 3 }}>Shree Matra Namah</Text>
-      </View>
+      <PageBorder />
+      <TitleHeader title="Divine Guidance" subtitle="Shree Matra Namah" />
 
-      <Text style={[styles.body, { marginBottom: 12 }]}>
-        This Tathastu report has been prepared by the Tathastu Team based on your details. It integrates
+      <Text style={[styles.body, { marginBottom: 12, lineHeight: 1.65 }]}>
+        This Tathastu report has been prepared by the MahaTathastu Team based on your details. It integrates
         Vedic Astrology, Numerology, Ayurveda, Chakra Science, Yantra, Mantra, and Vedic Psychology
-        into a comprehensive guidance system.
+        into a comprehensive guidance system tailored for your journey.
       </Text>
 
       {guidance.map((item) => (
-        <View key={item.title} style={[styles.card, { borderLeft: `2.5pt solid ${C.gold}`, marginBottom: 8 }]}>
-          <Text style={[styles.h3, { color: C.navy, marginBottom: 3 }]}>{item.title}</Text>
+        <View key={item.title} style={[styles.highlight, { borderLeftColor: item.accent, marginBottom: 8 }]}>
+          <Text style={[styles.h3, { color: C.navyDark, marginBottom: 3 }]}>{item.title}</Text>
           <Text style={styles.body}>{item.body}</Text>
         </View>
       ))}
 
-      <View style={[styles.highlightGold, { marginTop: 10, alignItems: 'center' }]}>
-        <Text style={{ fontSize: 11, color: C.red, textAlign: 'center', marginBottom: 4, fontFamily: 'Helvetica-Bold' }}>
+      <OrnamentDivider mt={12} mb={12} />
+
+      <View style={[styles.highlightGold, { alignItems: 'center' }]}>
+        <Text style={{ fontSize: 13, color: C.red, textAlign: 'center', marginBottom: 5, fontFamily: 'Helvetica-Bold' }}>
           Om Tat Sat
         </Text>
         <Text style={[styles.body, { textAlign: 'center' }]}>
           May this report guide you on your path to self-knowledge and dharmic living.
         </Text>
-        <Text style={[styles.bodySmall, { textAlign: 'center', color: C.navy, marginTop: 4, fontFamily: 'Helvetica-Bold' }]}>
-          - MahaTathastu · Tathastu Report System
+        <Text style={[styles.bodySmall, { textAlign: 'center', color: C.navyDark, marginTop: 5, fontFamily: 'Helvetica-Bold' }]}>
+          — MahaTathastu · Tathastu Report System
         </Text>
       </View>
 
@@ -442,7 +485,7 @@ function GuidancePage() {
   )
 }
 
-// ── Kundli Section ──────────────────────────────────────────────────────
+// ── Kundli Section ────────────────────────────────────────────────────────────
 function KundliPages({ data, canvasImg, number }: { data: any; canvasImg?: string; number: string }) {
   const k = data.kundli || data
   const analysis = data.analysis
@@ -450,12 +493,12 @@ function KundliPages({ data, canvasImg, number }: { data: any; canvasImg?: strin
 
   return (
     <Page size="A4" style={styles.page} wrap>
-      <GoldBorder />
+      <PageBorder />
       <ChapterHeader number={number} title="Kundli & Birth Chart" sanskrit="Graha Jyotisha" />
 
       {canvasImg ? (
-        <View style={{ alignItems: 'center', marginBottom: 8 }}>
-          <Image src={canvasImg} style={{ width: 180, height: 180 }} />
+        <View style={{ alignItems: 'center', marginBottom: 10 }}>
+          <Image src={canvasImg} style={{ width: 185, height: 185 }} />
         </View>
       ) : null}
 
@@ -481,7 +524,7 @@ function KundliPages({ data, canvasImg, number }: { data: any; canvasImg?: strin
             </View>
             {k.planets.map((p: any, i: number) => (
               <View key={p.name} style={i % 2 === 0 ? styles.tableRow : styles.tableRowAlt}>
-                <Text style={[styles.tdBold, { flex: 1 }]}>{p.name}{p.retrograde ? ' (R)' : ''}</Text>
+                <Text style={[styles.tdBold, { flex: 1 }]}>{p.name}{p.retrograde ? ' ®' : ''}</Text>
                 <Text style={[styles.td, { flex: 1 }]}>{p.rashi}</Text>
                 <Text style={[styles.td, { flex: 1 }]}>{p.degree != null ? `${Number(p.degree).toFixed(1)}°` : '-'}</Text>
                 <Text style={[styles.td, { flex: 1 }]}>{p.house}</Text>
@@ -522,19 +565,19 @@ function KundliPages({ data, canvasImg, number }: { data: any; canvasImg?: strin
   )
 }
 
-// ── Numerology Section ──────────────────────────────────────────────────
+// ── Numerology Section ────────────────────────────────────────────────────────
 function NumerologyPages({ data, canvasImg, number }: { data: any; canvasImg?: string; number: string }) {
   const n = data.numerology || data
   if (!n?.lifePathNumber) return null
 
   return (
     <Page size="A4" style={styles.page} wrap>
-      <GoldBorder />
+      <PageBorder />
       <ChapterHeader number={number} title="Numerology Analysis" sanskrit="Anka Shastra" />
 
       {canvasImg ? (
-        <View style={{ alignItems: 'center', marginBottom: 8 }}>
-          <Image src={canvasImg} style={{ width: 140, height: 140 }} />
+        <View style={{ alignItems: 'center', marginBottom: 10 }}>
+          <Image src={canvasImg} style={{ width: 145, height: 145 }} />
         </View>
       ) : null}
 
@@ -550,13 +593,11 @@ function NumerologyPages({ data, canvasImg, number }: { data: any; canvasImg?: s
       ]} />
 
       {n.interpretation?.lifePath ? (
-        <View style={styles.spacer4}>
-          <HighlightBox
-            label={`Life Path ${n.lifePathNumber}${n.interpretation.lifePathTitle ? ` — ${n.interpretation.lifePathTitle}` : ''}`}
-            text={n.interpretation.lifePath}
-            accent="#7c3aed"
-          />
-        </View>
+        <HighlightBox
+          label={`Life Path ${n.lifePathNumber}${n.interpretation.lifePathTitle ? ` — ${n.interpretation.lifePathTitle}` : ''}`}
+          text={n.interpretation.lifePath}
+          accent="#7c3aed"
+        />
       ) : null}
       {n.interpretation?.destiny ? <HighlightBox label={`Destiny Number ${n.destinyNumber}`} text={n.interpretation.destiny} /> : null}
       {n.interpretation?.soulUrge ? <HighlightBox label={`Soul Urge ${n.soulUrgeNumber}`} text={n.interpretation.soulUrge} /> : null}
@@ -570,13 +611,13 @@ function NumerologyPages({ data, canvasImg, number }: { data: any; canvasImg?: s
           <View style={styles.row}>
             {n.lifePath?.strengths?.length ? (
               <View style={{ flex: 1 }}>
-                <Text style={[styles.label, { color: C.emerald, marginBottom: 3 }]}>Strengths</Text>
+                <Text style={[styles.label, { color: C.emerald, marginBottom: 4 }]}>Strengths</Text>
                 <BulletList items={n.lifePath.strengths.slice(0, 5)} />
               </View>
             ) : null}
             {n.lifePath?.challenges?.length ? (
               <View style={{ flex: 1 }}>
-                <Text style={[styles.label, { color: C.terracotta, marginBottom: 3 }]}>Challenges</Text>
+                <Text style={[styles.label, { color: C.terracotta, marginBottom: 4 }]}>Challenges</Text>
                 <BulletList items={n.lifePath.challenges.slice(0, 5)} />
               </View>
             ) : null}
@@ -595,8 +636,8 @@ function NumerologyPages({ data, canvasImg, number }: { data: any; canvasImg?: s
   )
 }
 
-// ── Chakra Section ──────────────────────────────────────────────────────
-const CHAKRA_COLORS = ['#dc2626','#c2410c','#b45309','#15803d','#0369a1','#4338ca','#6d28d9']
+// ── Chakra Section ────────────────────────────────────────────────────────────
+const CHAKRA_COLORS = ['#dc2626', '#c2410c', '#b45309', '#15803d', '#0369a1', '#4338ca', '#6d28d9']
 
 function ChakraPages({ data, number }: { data: any; number: string }) {
   const rawData = data.chakras || data.chakra || (Array.isArray(data) ? data : null)
@@ -606,23 +647,20 @@ function ChakraPages({ data, number }: { data: any; number: string }) {
 
   return (
     <Page size="A4" style={styles.page} wrap>
-      <GoldBorder />
+      <PageBorder />
       <ChapterHeader number={number} title="Shakti Chakra Analysis" sanskrit="Chakra Vigyan" />
 
       {overallBalance != null ? (
-        <View style={[styles.card, { marginBottom: 8, flexDirection: 'row', alignItems: 'center' }]}>
-          <Text style={[styles.h3, { flex: 1 }]}>Overall Balance</Text>
-          <Text style={[styles.value, { fontSize: 20, color: C.saffron }]}>{overallBalance}%</Text>
+        <View style={[styles.cardBlue, { flexDirection: 'row', alignItems: 'center', marginBottom: 10 }]}>
+          <Text style={[styles.h3, { flex: 1, color: C.white, marginBottom: 0 }]}>Overall Balance</Text>
+          <Text style={{ fontSize: 24, fontFamily: 'Helvetica-Bold', color: C.saffronLight }}>{overallBalance}%</Text>
         </View>
       ) : null}
 
-      {/* Rainbow overview bar */}
-      <View style={{ flexDirection: 'row', height: 8, borderRadius: 4, overflow: 'hidden', marginBottom: 10 }}>
+      {/* Rainbow bar */}
+      <View style={{ flexDirection: 'row', height: 8, borderRadius: 4, overflow: 'hidden', marginBottom: 12 }}>
         {chakras.map((c: any, i: number) => (
-          <View
-            key={i}
-            style={{ flex: 1, backgroundColor: CHAKRA_COLORS[i] || '#9ca3af', opacity: Math.min(1, ((c.level || 50) / 100) + 0.3) }}
-          />
+          <View key={i} style={{ flex: 1, backgroundColor: CHAKRA_COLORS[i] || '#9ca3af' }} />
         ))}
       </View>
 
@@ -630,26 +668,21 @@ function ChakraPages({ data, number }: { data: any; number: string }) {
         const color = CHAKRA_COLORS[i] || '#9ca3af'
         const lvl = c.level ?? 50
         return (
-          <View key={i} style={{ marginBottom: 8, borderLeft: `3pt solid ${color}`, paddingLeft: 8, paddingTop: 4, paddingBottom: 4 }}>
-            <View style={[styles.row, { alignItems: 'center', marginBottom: 3 }]}>
-              <Text style={[styles.h3, { flex: 1, color: C.indigoDeep, marginBottom: 0 }]}>
-                {c.name}{c.sanskrit ? ` — ${c.sanskrit}` : ''}
-              </Text>
-              <Text style={[styles.label, { color: color, marginBottom: 0 }]}>
-                {c.status?.toUpperCase() || ''} · {lvl}%
-              </Text>
+          <View key={i} style={{ marginBottom: 9, borderLeft: `4pt solid ${color}`, paddingLeft: 9, paddingTop: 5, paddingBottom: 5, backgroundColor: C.offWhite }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+              <Text style={[styles.h3, { flex: 1, marginBottom: 0 }]}>{c.name}{c.sanskrit ? ` — ${c.sanskrit}` : ''}</Text>
+              <Text style={[styles.label, { color: color, marginBottom: 0 }]}>{c.status?.toUpperCase() || ''} · {lvl}%</Text>
             </View>
-            {/* Progress bar */}
-            <View style={[styles.progressBg, { marginBottom: 4 }]}>
+            <View style={[styles.progressBg, { marginBottom: 5 }]}>
               <View style={[styles.progressFill, { width: `${lvl}%`, backgroundColor: color }]} />
             </View>
-            <View style={[styles.row, { flexWrap: 'wrap', gap: 4 }]}>
+            <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
               {c.mantras?.length ? <Text style={styles.bodySmall}>Beej: {c.mantras[0]}</Text> : null}
-              {c.crystals?.length ? <Text style={styles.bodySmall}>· Crystal: {c.crystals.slice(0,2).join(', ')}</Text> : null}
-              {c.yoga?.length ? <Text style={styles.bodySmall}>· Yoga: {c.yoga[0]}</Text> : null}
+              {c.crystals?.length ? <Text style={styles.bodySmall}>Crystal: {c.crystals.slice(0, 2).join(', ')}</Text> : null}
+              {c.yoga?.length ? <Text style={styles.bodySmall}>Yoga: {c.yoga[0]}</Text> : null}
             </View>
             {c.affirmations?.length ? (
-              <Text style={[styles.italic, { marginTop: 2 }]}>"{c.affirmations[0]}"</Text>
+              <Text style={[styles.italic, { marginTop: 3 }]}>"{c.affirmations[0]}"</Text>
             ) : null}
           </View>
         )
@@ -660,14 +693,14 @@ function ChakraPages({ data, number }: { data: any; number: string }) {
   )
 }
 
-// ── Prakriti Section ────────────────────────────────────────────────────
+// ── Prakriti Section ──────────────────────────────────────────────────────────
 function PrakritiPages({ data, number }: { data: any; number: string }) {
   const p = data.prakriti || data
   if (!p?.dominant) return null
 
   return (
     <Page size="A4" style={styles.page} wrap>
-      <GoldBorder />
+      <PageBorder />
       <ChapterHeader number={number} title="Prakriti — Ayurvedic Constitution" sanskrit="Prakriti Vigyan" />
 
       <InfoGrid cols={3} items={[
@@ -678,14 +711,13 @@ function PrakritiPages({ data, number }: { data: any; number: string }) {
         { label: 'Kapha', value: p.kapha != null ? `${p.kapha}%` : undefined },
       ]} />
 
-      {/* Dosha bars */}
       {[
         { label: 'Vata', value: p.vata, color: '#0284c7' },
         { label: 'Pitta', value: p.pitta, color: C.terracotta },
         { label: 'Kapha', value: p.kapha, color: C.emerald },
       ].filter(d => d.value != null).map((dosha) => (
-        <View key={dosha.label} style={{ marginBottom: 6 }}>
-          <View style={[styles.row, { justifyContent: 'space-between', marginBottom: 2 }]}>
+        <View key={dosha.label} style={{ marginBottom: 8 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 3 }}>
             <Text style={[styles.label, { color: dosha.color, marginBottom: 0 }]}>{dosha.label}</Text>
             <Text style={[styles.label, { marginBottom: 0 }]}>{dosha.value}%</Text>
           </View>
@@ -721,25 +753,25 @@ function PrakritiPages({ data, number }: { data: any; number: string }) {
   )
 }
 
-// ── Yantra & Colour Section ─────────────────────────────────────────────
+// ── Yantra Section ────────────────────────────────────────────────────────────
 function YantraPages({ data, number }: { data: any; number: string }) {
   const y = data.yantra || data.yantraColour || data
   if (!y?.primaryYantra) return null
 
   return (
     <Page size="A4" style={styles.page} wrap>
-      <GoldBorder />
+      <PageBorder />
       <ChapterHeader number={number} title="Yantra & Colour Therapy" sanskrit="Yantra Shastra" />
 
       <View style={styles.row}>
-        <View style={[styles.card, { flex: 1, borderLeft: `3pt solid ${C.saffron}` }]}>
+        <View style={[styles.highlight, { flex: 1, borderLeftColor: C.saffron }]}>
           <Text style={[styles.label, { color: C.saffron }]}>Personal Yantra</Text>
           <Text style={styles.value}>{y.primaryYantra?.name}</Text>
           {y.primaryYantra?.deity ? <Text style={styles.bodySmall}>Deity: {y.primaryYantra.deity}</Text> : null}
           {y.primaryYantra?.mantra ? <Text style={[styles.italic, { marginTop: 3 }]}>{y.primaryYantra.mantra}</Text> : null}
         </View>
         {y.gemstone?.primary ? (
-          <View style={[styles.card, { flex: 1, borderLeft: `3pt solid #f43f5e` }]}>
+          <View style={[styles.highlight, { flex: 1, borderLeftColor: '#f43f5e' }]}>
             <Text style={[styles.label, { color: '#f43f5e' }]}>Power Gemstone</Text>
             <Text style={styles.value}>{y.gemstone.primary}</Text>
             {y.gemstone.finger ? <Text style={styles.bodySmall}>Wear on {y.gemstone.finger} finger</Text> : null}
@@ -756,13 +788,13 @@ function YantraPages({ data, number }: { data: any; number: string }) {
       ) : null}
 
       {y.primaryYantra?.installation ? (
-        <View style={{ marginTop: 6 }}>
+        <View style={{ marginTop: 8 }}>
           <HighlightBox label="How to Install" text={y.primaryYantra.installation} />
         </View>
       ) : null}
 
       {y.colourTherapy ? (
-        <View style={{ marginTop: 8 }}>
+        <View style={{ marginTop: 10 }}>
           <SectionLabel>Colour Therapy</SectionLabel>
           <View style={styles.row}>
             {y.colourTherapy.power?.length ? (
@@ -798,7 +830,7 @@ function YantraPages({ data, number }: { data: any; number: string }) {
   )
 }
 
-// ── Mantra Section ──────────────────────────────────────────────────────
+// ── Mantra Section ────────────────────────────────────────────────────────────
 function MantraPages({ data, number }: { data: any; number: string }) {
   const m = data.mantras || data.mantra || data
   const ch = m?.chanting || m?.mantraChanting
@@ -807,7 +839,7 @@ function MantraPages({ data, number }: { data: any; number: string }) {
 
   return (
     <Page size="A4" style={styles.page} wrap>
-      <GoldBorder />
+      <PageBorder />
       <ChapterHeader number={number} title="Mantra Guidance" sanskrit="Mantra Sadhana" />
 
       {ch ? (
@@ -823,8 +855,8 @@ function MantraPages({ data, number }: { data: any; number: string }) {
           ]} />
           {ch.instructions ? <HighlightBox label="Instructions" text={ch.instructions} /> : null}
           {ch.benefits?.length ? (
-            <View style={{ marginTop: 4 }}>
-              <Text style={styles.label}>Benefits</Text>
+            <View style={{ marginTop: 6 }}>
+              <Text style={[styles.label, { marginBottom: 4 }]}>Benefits</Text>
               <BulletList items={ch.benefits.slice(0, 6)} />
             </View>
           ) : null}
@@ -832,7 +864,7 @@ function MantraPages({ data, number }: { data: any; number: string }) {
       ) : null}
 
       {wr ? (
-        <View style={{ marginTop: ch ? 10 : 0 }}>
+        <View style={{ marginTop: ch ? 12 : 0 }}>
           <SectionLabel>Likhit Japa (Writing Practice)</SectionLabel>
           <InfoGrid cols={2} items={[
             { label: 'Mantra to Write', value: wr.mantra || wr.likhitMantra },
@@ -851,19 +883,19 @@ function MantraPages({ data, number }: { data: any; number: string }) {
   )
 }
 
-// ── Psychology Section ──────────────────────────────────────────────────
+// ── Psychology Section ────────────────────────────────────────────────────────
 function PsychologyPages({ data, number }: { data: any; number: string }) {
   const ps = data.psychology || data
   if (!ps?.moonPersonalityType) return null
 
   return (
     <Page size="A4" style={styles.page} wrap>
-      <GoldBorder />
+      <PageBorder />
       <ChapterHeader number={number} title="Vedic Psychology" sanskrit="Manas Vigyan" />
 
-      <View style={[styles.highlight, { backgroundColor: '#1e293b', borderLeftColor: '#94a3b8' }]}>
-        <Text style={[styles.label, { color: '#94a3b8', marginBottom: 2 }]}>Moon Archetype</Text>
-        <Text style={[styles.h2, { color: C.white, marginBottom: 0 }]}>{ps.moonPersonalityType}</Text>
+      <View style={[styles.cardBlue, { marginBottom: 10 }]}>
+        <Text style={[styles.label, { color: C.goldLight, marginBottom: 3 }]}>Moon Archetype</Text>
+        <Text style={{ fontSize: 18, fontFamily: 'Helvetica-Bold', color: C.white }}>{ps.moonPersonalityType}</Text>
       </View>
 
       <InfoGrid cols={2} items={[
@@ -878,14 +910,13 @@ function PsychologyPages({ data, number }: { data: any; number: string }) {
       {ps.growthEdge ? <HighlightBox label="Growth Edge" text={ps.growthEdge} accent={C.saffron} /> : null}
 
       {ps.strengths?.length ? (
-        <View style={{ marginTop: 6 }}>
+        <View style={{ marginTop: 8 }}>
           <SectionLabel>Strengths</SectionLabel>
           <BulletList items={ps.strengths.slice(0, 6)} />
         </View>
       ) : null}
-
       {ps.shadowWork?.length ? (
-        <View style={{ marginTop: 6 }}>
+        <View style={{ marginTop: 8 }}>
           <SectionLabel>Shadow Work Themes</SectionLabel>
           <BulletList items={ps.shadowWork.slice(0, 5)} />
         </View>
@@ -896,30 +927,30 @@ function PsychologyPages({ data, number }: { data: any; number: string }) {
   )
 }
 
-// ── DMIT Section ────────────────────────────────────────────────────────
+// ── DMIT Section ──────────────────────────────────────────────────────────────
 function DmitPages({ data, canvasImg, number }: { data: any; canvasImg?: string; number: string }) {
   const dmit = data.dmit || data
   if (!dmit?.learningStyle && !dmit?.allIntelligences?.length) return null
 
   return (
     <Page size="A4" style={styles.page} wrap>
-      <GoldBorder />
+      <PageBorder />
       <ChapterHeader number={number} title="DMIT Intelligence Profile" sanskrit="Buddhimatta Profile" />
 
       {canvasImg ? (
-        <View style={{ alignItems: 'center', marginBottom: 8 }}>
-          <Image src={canvasImg} style={{ width: 130, height: 130 }} />
+        <View style={{ alignItems: 'center', marginBottom: 10 }}>
+          <Image src={canvasImg} style={{ width: 135, height: 135 }} />
         </View>
       ) : null}
 
       {dmit.learningStyle ? <HighlightBox label="Learning Style" text={dmit.learningStyle} /> : null}
 
       {dmit.allIntelligences?.length ? (
-        <View style={{ marginTop: 6 }}>
+        <View style={{ marginTop: 8 }}>
           <SectionLabel>Intelligence Profile</SectionLabel>
           {dmit.allIntelligences.map((intel: any, i: number) => (
-            <View key={i} style={{ marginBottom: 5 }}>
-              <View style={[styles.row, { justifyContent: 'space-between', marginBottom: 2 }]}>
+            <View key={i} style={{ marginBottom: 6 }}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 3 }}>
                 <Text style={[styles.label, { marginBottom: 0 }]}>{intel.type}</Text>
                 <Text style={[styles.label, { marginBottom: 0, color: intel.strength === 'Strong' ? C.emerald : C.amber }]}>
                   {intel.strength} · {intel.score}%
@@ -937,9 +968,9 @@ function DmitPages({ data, canvasImg, number }: { data: any; canvasImg?: string;
       ) : null}
 
       {dmit.recommendedStreams?.length ? (
-        <View style={{ marginTop: 8 }}>
-          <Text style={[styles.label, { marginBottom: 4 }]}>Recommended Academic Streams</Text>
-          <View style={styles.row}>
+        <View style={{ marginTop: 10 }}>
+          <Text style={[styles.label, { marginBottom: 5 }]}>Recommended Academic Streams</Text>
+          <View style={[styles.row, { flexWrap: 'wrap' }]}>
             {dmit.recommendedStreams.slice(0, 6).map((s: string, i: number) => (
               <View key={i} style={styles.tagNavy}>
                 <Text style={{ fontSize: 7.5, color: C.white }}>{s}</Text>
@@ -950,7 +981,7 @@ function DmitPages({ data, canvasImg, number }: { data: any; canvasImg?: string;
       ) : null}
 
       {dmit.careerAlignment?.length ? (
-        <View style={{ marginTop: 6 }}>
+        <View style={{ marginTop: 8 }}>
           <Text style={styles.label}>Career Alignment</Text>
           <TagRow items={dmit.careerAlignment.slice(0, 10)} />
         </View>
@@ -961,7 +992,7 @@ function DmitPages({ data, canvasImg, number }: { data: any; canvasImg?: string;
   )
 }
 
-// ── Colour Therapy Section ──────────────────────────────────────────────
+// ── Colour Therapy Section ────────────────────────────────────────────────────
 function ColourTherapyPages({ data, number }: { data: any; number: string }) {
   const ct = data.colourTherapy || data
   if (!ct?.healingColors && !ct?.chromotherapy) return null
@@ -975,7 +1006,7 @@ function ColourTherapyPages({ data, number }: { data: any; number: string }) {
 
   return (
     <Page size="A4" style={styles.page} wrap>
-      <GoldBorder />
+      <PageBorder />
       <ChapterHeader number={number} title="Colour Therapy" sanskrit="Ranga Chikitsa" />
 
       {healingCats.length ? (
@@ -996,7 +1027,7 @@ function ColourTherapyPages({ data, number }: { data: any; number: string }) {
       ) : null}
 
       {ct.chromotherapy ? (
-        <View style={{ marginTop: 8 }}>
+        <View style={{ marginTop: 10 }}>
           <SectionLabel>Chromotherapy</SectionLabel>
           <HighlightBox label={`Primary: ${ct.chromotherapy.primaryColor || ''}`} text={[
             ct.chromotherapy.sessions,
@@ -1015,19 +1046,19 @@ function ColourTherapyPages({ data, number }: { data: any; number: string }) {
   )
 }
 
-// ── Annual Prediction Section ───────────────────────────────────────────
+// ── Annual Prediction Section ─────────────────────────────────────────────────
 function AnnualPredictionPages({ data, number }: { data: any; number: string }) {
   const ap = data.annualPrediction || data
   if (!ap) return null
 
   return (
     <Page size="A4" style={styles.page} wrap>
-      <GoldBorder />
+      <PageBorder />
       <ChapterHeader number={number} title="Annual Prediction" sanskrit="Varshik Bhavisyavani" />
 
       {ap.overallTheme ? (
-        <View style={[styles.cardBlue, { marginBottom: 10 }]}>
-          <Text style={[styles.label, { color: '#93c5fd', marginBottom: 3 }]}>Annual Theme</Text>
+        <View style={[styles.cardBlue, { marginBottom: 12 }]}>
+          <Text style={[styles.label, { color: C.goldLight, marginBottom: 4 }]}>Annual Theme</Text>
           <Text style={[styles.body, { color: C.white }]}>{ap.overallTheme}</Text>
         </View>
       ) : null}
@@ -1036,8 +1067,9 @@ function AnnualPredictionPages({ data, number }: { data: any; number: string }) 
         <View>
           <SectionLabel>Quarterly Guidance</SectionLabel>
           {ap.quarters.map((q: any, i: number) => (
-            <View key={i} style={[styles.row, { borderBottom: `0.5pt solid ${C.grayLight}`, paddingVertical: 6 }]}>
-              <Text style={[styles.value, { width: 90, flexShrink: 0, color: C.terracotta }]}>{q.period}</Text>
+            <View key={i} style={{ flexDirection: 'row', borderBottom: `0.5pt solid ${C.grayLight}`, paddingVertical: 7 }}>
+              <View style={{ width: 4, backgroundColor: C.saffron, marginRight: 10, borderRadius: 2 }} />
+              <Text style={[styles.value, { width: 88, flexShrink: 0, color: C.terracotta, fontSize: 9 }]}>{q.period}</Text>
               <View style={{ flex: 1 }}>
                 {q.theme ? <Text style={[styles.label, { marginBottom: 2 }]}>{q.theme}</Text> : null}
                 {q.guidance ? <Text style={styles.body}>{q.guidance}</Text> : null}
@@ -1053,7 +1085,7 @@ function AnnualPredictionPages({ data, number }: { data: any; number: string }) 
   )
 }
 
-// ── Remedies Section ────────────────────────────────────────────────────
+// ── Remedies Section ──────────────────────────────────────────────────────────
 function RemediesPages({ data, number }: { data: any; number: string }) {
   const r = data.remediesSummary || data.remedies || data
   if (!r) return null
@@ -1063,16 +1095,21 @@ function RemediesPages({ data, number }: { data: any; number: string }) {
     const arr = Array.isArray(items) ? items : [items]
     if (!arr.length) return null
     return (
-      <View style={{ marginBottom: 8 }}>
-        <Text style={[styles.h3, { color: C.navy, marginBottom: 4 }]}>{label}</Text>
+      <View style={{ marginBottom: 10 }}>
+        <Text style={[styles.h3, { color: C.navyDark, marginBottom: 5 }]}>{label}</Text>
         {arr.map((item: any, i: number) => {
           if (typeof item === 'string') {
-            return <Text key={i} style={styles.bullet}>• {item}</Text>
+            return (
+              <View key={i} style={{ flexDirection: 'row', marginBottom: 3 }}>
+                <Text style={{ fontSize: 9, color: C.saffron, marginRight: 5 }}>▸</Text>
+                <Text style={[styles.bullet, { flex: 1 }]}>{item}</Text>
+              </View>
+            )
           }
           return (
-            <View key={i} style={[styles.card, { marginBottom: 3 }]}>
+            <View key={i} style={[styles.card, { marginBottom: 4 }]}>
               {item.name || item.deity || item.planet ? (
-                <Text style={[styles.label, { marginBottom: 2 }]}>{item.name || item.deity || item.planet}</Text>
+                <Text style={[styles.label, { marginBottom: 2, color: C.saffron }]}>{item.name || item.deity || item.planet}</Text>
               ) : null}
               {item.description || item.remedy || item.action ? (
                 <Text style={styles.body}>{item.description || item.remedy || item.action}</Text>
@@ -1088,8 +1125,8 @@ function RemediesPages({ data, number }: { data: any; number: string }) {
 
   return (
     <Page size="A4" style={styles.page} wrap>
-      <GoldBorder />
-      <ChapterHeader number={number} title="Remedies & Upaya" sanskrit="Upaya" />
+      <PageBorder />
+      <ChapterHeader number={number} title="Remedies & Upaya" sanskrit="Upaya Shastra" />
 
       {renderRemedyGroup('Planetary Remedies', r.planetary || r.planetaryRemedies)}
       {renderRemedyGroup('Mantra Remedies', r.mantra || r.mantraRemedies)}
@@ -1105,14 +1142,14 @@ function RemediesPages({ data, number }: { data: any; number: string }) {
   )
 }
 
-// ── Vastu Section ───────────────────────────────────────────────────────
+// ── Vastu Section ─────────────────────────────────────────────────────────────
 function VastuPages({ data, number }: { data: any; number: string }) {
   const v = data.vastu || data.vastuAnalysis || data
   if (!v?.homeDirection && !v?.recommendations?.length) return null
 
   return (
     <Page size="A4" style={styles.page} wrap>
-      <GoldBorder />
+      <PageBorder />
       <ChapterHeader number={number} title="Astro Vastu" sanskrit="Jyotisha Vastu" />
 
       <InfoGrid cols={2} items={[
@@ -1125,14 +1162,13 @@ function VastuPages({ data, number }: { data: any; number: string }) {
       {v.summary ? <HighlightBox label="Vastu Summary" text={v.summary} /> : null}
 
       {v.recommendations?.length ? (
-        <View style={{ marginTop: 8 }}>
+        <View style={{ marginTop: 10 }}>
           <SectionLabel>Vastu Recommendations</SectionLabel>
           <BulletList items={v.recommendations.slice(0, 10)} />
         </View>
       ) : null}
-
       {v.remedies?.length ? (
-        <View style={{ marginTop: 8 }}>
+        <View style={{ marginTop: 10 }}>
           <SectionLabel>Vastu Remedies</SectionLabel>
           <BulletList items={v.remedies.slice(0, 8)} />
         </View>
@@ -1143,7 +1179,7 @@ function VastuPages({ data, number }: { data: any; number: string }) {
   )
 }
 
-// ── Disclaimer Page ─────────────────────────────────────────────────────
+// ── Disclaimer Page ───────────────────────────────────────────────────────────
 function DisclaimerPage() {
   const items = [
     { title: 'Nature of This Report', body: 'This Tathastu report is prepared for informational, educational, and self-discovery purposes only. It is based on traditional Indian astrological, numerological, and Ayurvedic systems and should be treated as guidance for self-awareness rather than as definitive prediction or professional advice.' },
@@ -1155,19 +1191,19 @@ function DisclaimerPage() {
 
   return (
     <Page size="A4" style={styles.page}>
-      <GoldBorder />
-      <View style={{ borderBottom: `2pt solid ${C.gold}`, paddingBottom: 10, marginBottom: 14 }}>
-        <Text style={[styles.h1]}>Appendix: Disclaimer & Guidance Notes</Text>
-      </View>
+      <PageBorder />
+      <TitleHeader title="Disclaimer & Guidance Notes" subtitle="Appendix" />
 
       {items.map((item) => (
-        <View key={item.title} style={[styles.card, { marginBottom: 8 }]}>
-          <Text style={[styles.h3, { color: C.navy, marginBottom: 3 }]}>{item.title}</Text>
+        <View key={item.title} style={[styles.card, { marginBottom: 7 }]}>
+          <Text style={[styles.h3, { color: C.navyDark, marginBottom: 3 }]}>{item.title}</Text>
           <Text style={styles.body}>{item.body}</Text>
         </View>
       ))}
 
-      <View style={[styles.highlightGold, { marginTop: 10, alignItems: 'center' }]}>
+      <OrnamentDivider mt={14} mb={12} />
+
+      <View style={[styles.highlightGold, { alignItems: 'center' }]}>
         <Text style={{ fontSize: 18, color: C.red, textAlign: 'center', marginBottom: 6, fontFamily: 'Helvetica-Bold' }}>
           Om Tat Sat
         </Text>
@@ -1175,8 +1211,8 @@ function DisclaimerPage() {
           May this report guide you on your path to self-knowledge and dharmic living.{'\n'}
           Follow the remedies with faith, patience and devotion for 90 days minimum.
         </Text>
-        <Text style={[styles.bodySmall, { textAlign: 'center', color: C.navy, marginTop: 6, fontFamily: 'Helvetica-Bold' }]}>
-          - MahaTathastu · Tathastu Report System
+        <Text style={[styles.bodySmall, { textAlign: 'center', color: C.navyDark, marginTop: 6, fontFamily: 'Helvetica-Bold' }]}>
+          — MahaTathastu · Tathastu Report System
         </Text>
         <Text style={[styles.bodySmall, { textAlign: 'center', color: C.gray, marginTop: 3 }]}>
           Contents are copyright protected and owned by MahaTathastu
@@ -1188,7 +1224,7 @@ function DisclaimerPage() {
   )
 }
 
-// ── Chapter → component mapper ───────────────────────────────────────────
+// ── Metadata ──────────────────────────────────────────────────────────────────
 const ROMAN = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV']
 
 export interface ReportPDFProps {
@@ -1204,22 +1240,23 @@ export interface ReportPDFProps {
 }
 
 const REPORT_TITLES: Record<string, string> = {
-  full_tathastu: 'Full Tathastu Report',
-  astrology: 'Kundli & Birth Chart',
-  numerology: 'Numerology Analysis',
-  shakti_chakra: 'Shakti Chakra Report',
-  prakriti: 'Prakriti (Ayurveda)',
-  yantra_colour: 'Yantra & Colour Therapy',
+  full_tathastu:   'Full Tathastu Report',
+  astrology:       'Kundli & Birth Chart',
+  numerology:      'Numerology Analysis',
+  shakti_chakra:   'Shakti Chakra Report',
+  prakriti:        'Prakriti (Ayurveda)',
+  yantra_colour:   'Yantra & Colour Therapy',
   mantra_chanting: 'Mantra Chanting Guide',
-  mantra_writing: 'Likhit Japa Guide',
-  astro_vastu: 'Astro Vastu Report',
-  psychology: 'Vedic Psychology',
-  dmit: 'DMIT Intelligence Profile',
-  colour_therapy: 'Colour Therapy',
+  mantra_writing:  'Likhit Japa Guide',
+  astro_vastu:     'Astro Vastu Report',
+  psychology:      'Vedic Psychology',
+  dmit:            'DMIT Intelligence Profile',
+  colour_therapy:  'Colour Therapy',
   child_development: 'Child Development',
-  mobile_number: 'Mobile Number Analysis',
+  mobile_number:   'Mobile Number Analysis',
 }
 
+// ── Root document ─────────────────────────────────────────────────────────────
 export default function ReportPDF({ report, canvases = {} }: ReportPDFProps) {
   const d = report.report_content || {}
   const member = report.family_members
@@ -1292,13 +1329,14 @@ export default function ReportPDF({ report, canvases = {} }: ReportPDFProps) {
     },
   ]
 
-  // Assign correct roman numerals by counting visible sections
   let idx = 0
   const visibleSections = sections.filter(s => s.show)
-  visibleSections.forEach(s => { s.node = React.cloneElement(s.node as React.ReactElement<any>, { number: ROMAN[idx++] ?? String(idx) }) })
+  visibleSections.forEach(s => {
+    s.node = React.cloneElement(s.node as React.ReactElement<any>, { number: ROMAN[idx++] ?? String(idx) })
+  })
 
   return (
-    <Document title={title} author="MahaTathastu" subject={title} creator="Tathastu Report System">
+    <Document title={title} author="MahaTathastu" subject={title} creator="MahaTathastu Report System">
       <CoverPage report={report} member={member} title={title} />
       <GuidancePage />
       {visibleSections.map(s => s.node ? React.cloneElement(s.node, { key: s.id }) : null)}
