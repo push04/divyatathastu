@@ -1875,24 +1875,53 @@ export default function ReportDetailPage() {
       el.style.maxWidth = '794px'
       await document.fonts.ready
 
-      // ── Pre-patch oklch/oklab colors to rgb so html2canvas can parse them ──
-      // html2canvas handles <canvas> elements correctly (no black pages)
-      // but crashes on modern CSS color functions — convert them first using
-      // the browser's own canvas API as a color converter
+      // ── Pre-patch ALL modern CSS color functions to rgb() ──
+      // html2canvas crashes on oklab/oklch/lab/lch/color() — including inside gradients.
+      // Strategy: use a 1×1 browser canvas as a native color converter (the browser
+      // already knows how to resolve these), then string-replace them in every CSS value.
       const tmp = document.createElement('canvas')
       tmp.width = tmp.height = 1
-      const tmpCtx = tmp.getContext('2d')!
-      const toRgb = (v: string): string => {
+      const tmpCtx = tmp.getContext('2d', { willReadFrequently: true })!
+
+      // Convert a single modern color token to rgb()
+      const colorTokenToRgb = (token: string): string => {
         try {
           tmpCtx.clearRect(0, 0, 1, 1)
-          tmpCtx.fillStyle = v
+          tmpCtx.fillStyle = token
           tmpCtx.fillRect(0, 0, 1, 1)
           const [r, g, b, a] = tmpCtx.getImageData(0, 0, 1, 1).data
           return a < 255 ? `rgba(${r},${g},${b},${+(a / 255).toFixed(3)})` : `rgb(${r},${g},${b})`
-        } catch { return v }
+        } catch { return token }
       }
-      const COLOR_PROPS = ['color','background-color','border-top-color','border-right-color',
-        'border-bottom-color','border-left-color','outline-color','text-decoration-color','fill','stroke']
+
+      // Walk a CSS value string and replace every modern color function with rgb()
+      // Handles: oklab() oklch() lab() lch() color() — even inside linear-gradient()
+      const resolveModernColors = (val: string): string => {
+        if (!/\b(oklab|oklch|lab|lch|color)\s*\(/i.test(val)) return val
+        let out = ''; let i = 0
+        while (i < val.length) {
+          const m = /\b(oklab|oklch|lab|lch|color)\s*\(/ig.exec(val.slice(i))
+          if (!m) { out += val.slice(i); break }
+          out += val.slice(i, i + m.index)
+          // walk to balanced closing paren
+          let depth = 0, j = i + m.index
+          while (j < val.length) {
+            if (val[j] === '(') depth++
+            else if (val[j] === ')' && --depth === 0) { j++; break }
+            j++
+          }
+          out += colorTokenToRgb(val.slice(i + m.index, j))
+          i = j
+        }
+        return out
+      }
+
+      // Every CSS property html2canvas color-parses (flat + inside gradients)
+      const COLOR_PROPS = [
+        'color', 'background-color', 'background-image',
+        'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color',
+        'outline-color', 'text-decoration-color', 'box-shadow', 'text-shadow', 'fill', 'stroke',
+      ]
       type Patch = { el: HTMLElement; prop: string; prev: string }
       const patches: Patch[] = []
       ;[el, ...Array.from(el.querySelectorAll('*'))].forEach(node => {
@@ -1900,9 +1929,9 @@ export default function ReportDetailPage() {
         const cs = window.getComputedStyle(node)
         for (const prop of COLOR_PROPS) {
           const val = cs.getPropertyValue(prop)
-          if (!val || (!val.includes('oklab') && !val.includes('oklch'))) continue
+          if (!val || !/\b(oklab|oklch|lab|lch|color)\s*\(/i.test(val)) continue
           patches.push({ el: node, prop, prev: node.style.getPropertyValue(prop) })
-          node.style.setProperty(prop, toRgb(val), 'important')
+          node.style.setProperty(prop, resolveModernColors(val), 'important')
         }
       })
 
