@@ -504,10 +504,11 @@ function InfoGrid({ items, cols = 4 }: { items: { label: string; value?: any }[]
 
 // ── BulletList ────────────────────────────────────────────────────────────────
 function BulletList({ items, accent = C.saffron }: { items: string[]; accent?: string }) {
-  if (!items?.length) return null
+  const arr = Array.isArray(items) ? items : []
+  if (!arr.length) return null
   return (
     <View>
-      {items.map((item, i) => (
+      {arr.map((item, i) => (
         <View key={i} style={{ flexDirection: 'row', marginBottom: 3 }}>
           <Svg width={8} height={9} viewBox="0 0 24 24" style={{ marginTop: 2, marginRight: 6, flexShrink: 0 }}>
             <Path d="M12 2L22 20H2L12 2Z" fill={accent} />
@@ -1315,7 +1316,7 @@ function MantraPages({ data, number }: { data: any; number: string }) {
           ]} />
           {ch.instructions ? <HighlightBox label="Chanting Instructions" text={ch.instructions} /> : null}
           {ch.preparatoryRites ? <HighlightBox label="Preparatory Rites" text={ch.preparatoryRites} accent={C.gold} /> : null}
-          {ch.benefits?.length ? (
+          {Array.isArray(ch.benefits) && ch.benefits.length ? (
             <View style={{ marginTop: 5 }}>
               <Text style={[styles.label, { marginBottom: 3 }]}>Benefits of This Mantra Practice</Text>
               <BulletList items={ch.benefits.slice(0, 7)} />
@@ -1338,7 +1339,7 @@ function MantraPages({ data, number }: { data: any; number: string }) {
             { label: 'Special Notes', value: wr.notes },
           ]} />
           {wr.instructions ? <HighlightBox label="Writing Instructions" text={wr.instructions} /> : null}
-          {wr.benefits?.length ? (
+          {Array.isArray(wr.benefits) && wr.benefits.length ? (
             <View style={{ marginTop: 5 }}>
               <Text style={[styles.label, { marginBottom: 3 }]}>Benefits</Text>
               <BulletList items={wr.benefits.slice(0, 5)} />
@@ -1389,7 +1390,7 @@ function PsychologyPages({ data, number }: { data: any; number: string }) {
         right={{ label: 'Shadow Work Themes', items: ps.shadowWork?.slice(0, 6) || [] }}
       />
 
-      {ps.healingPractices?.length ? (
+      {Array.isArray(ps.healingPractices) && ps.healingPractices.length ? (
         <View style={{ marginTop: 6 }}>
           <SectionLabel>Recommended Healing Practices</SectionLabel>
           <BulletList items={ps.healingPractices.slice(0, 6)} />
@@ -1455,7 +1456,7 @@ function DmitPages({ data, canvasImg, number }: { data: any; canvasImg?: string;
         right={{ label: 'Career Alignment', items: dmit.careerAlignment?.slice(0, 5) || [] }}
       />
 
-      {dmit.parentingTips?.length ? (
+      {Array.isArray(dmit.parentingTips) && dmit.parentingTips.length ? (
         <View style={{ marginTop: 6 }}>
           <SectionLabel>Parenting & Coaching Guidance</SectionLabel>
           <BulletList items={dmit.parentingTips.slice(0, 6)} />
