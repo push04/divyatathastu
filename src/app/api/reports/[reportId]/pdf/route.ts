@@ -57,20 +57,48 @@ export async function POST(
     return new Response('Report not ready', { status: 422 })
   }
 
-  // Dynamic imports — keep @react-pdf/renderer server-only
-  const [{ default: ReportPDF }, reactPdf] = await Promise.all([
+  // Dynamic imports — keep @react-pdf/renderer server-only.
+  // React is imported dynamically here so we use the SAME React instance as
+  // @react-pdf/renderer (which is serverExternal → uses Node module cache).
+  // A top-level `import React` might give a bundled copy, breaking error-boundary detection.
+  const [{ default: ReportPDF }, reactPdf, React] = await Promise.all([
     import('@/components/pdf/ReportPDF'),
     import('@react-pdf/renderer'),
+    import('react'),
   ])
-
-  const { createElement } = await import('react')
 
   const props: ReportPDFProps = {
     report: report as ReportPDFProps['report'],
     canvases,
   }
 
-  const doc = createElement(ReportPDF, props)
+  // ── Error boundary ────────────────────────────────────────────────────────────
+  // react-pdf's reconciler-33.js (React 19) routes uncaught render errors through
+  // root.onUncaughtError, which is undefined → TypeError → setTimeout throw → lost.
+  // A class-based error boundary with getDerivedStateFromError fires synchronously
+  // inside React's render loop and captures the real error before it's lost.
+  const caughtErrors: string[] = []
+
+  class PDFErrorCatcher extends React.Component<
+    { children: React.ReactNode },
+    { hasError: boolean }
+  > {
+    constructor(props: { children: React.ReactNode }) {
+      super(props)
+      this.state = { hasError: false }
+    }
+    static getDerivedStateFromError(error: Error) {
+      caughtErrors.push(
+        `${error?.message || String(error)}\n${error?.stack || ''}`.slice(0, 1000)
+      )
+      return { hasError: true }
+    }
+    render(): React.ReactNode {
+      // Return null on error — container.document stays null but caughtErrors is populated.
+      // Return children on success — ReportPDF's Document gets committed normally.
+      return this.state.hasError ? null : this.props.children
+    }
+  }
 
   // Debug: verify font files are reachable before rendering
   const { existsSync } = await import('fs')
@@ -81,22 +109,13 @@ export async function POST(
   }).join(' ')
   console.log('[PDF] font check:', fontCheck)
 
-  // React 19 routes uncaught component errors through root.onUncaughtError → undefined →
-  // TypeError → caught → re-thrown via setTimeout(() => { throw e }).
-  // We install an uncaughtException handler BEFORE rendering, then wait 500 ms after the
-  // commit callback fires to let that async throw surface before we inspect it.
-  const componentErrors: string[] = []
-  const uncaughtHandler = (err: Error) => {
-    componentErrors.push(err?.stack || String(err))
-  }
-  process.on('uncaughtException', uncaughtHandler)
+  const doc = React.createElement(PDFErrorCatcher, null, React.createElement(ReportPDF, props))
 
   let buffer: Buffer
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const pdfInst = (reactPdf as any).pdf(null)  // null → skip auto-updateContainer
+    const pdfInst = (reactPdf as any).pdf(null)
 
-    // Wait for the reconciler to fully commit (sets container.document) or timeout
     await new Promise<void>((resolve, reject) => {
       const timer = setTimeout(
         () => reject(new Error('PDF reconciler timed out after 20s')),
@@ -110,16 +129,13 @@ export async function POST(
       }
     })
 
-    // Give React 19's setTimeout-based error re-throw time to fire and be captured
-    await new Promise(r => setTimeout(r, 500))
-    process.off('uncaughtException', uncaughtHandler)
-
-    if (componentErrors.length > 0) {
-      throw new Error(`React component error: ${componentErrors.join(' | ')}`)
+    // Error boundary fired — surface the actual component error
+    if (caughtErrors.length > 0) {
+      throw new Error(`PDF component error:\n${caughtErrors.join('\n---\n')}`)
     }
 
     if (!pdfInst.container?.document) {
-      throw new Error('container.document is null after reconciler commit — no component error captured')
+      throw new Error('container.document is null (error boundary did not fire — unknown cause)')
     }
 
     const pdfStream = await pdfInst.toBuffer()
@@ -130,9 +146,8 @@ export async function POST(
       pdfStream.on('error', (err: Error) => reject(err))
     })
   } catch (err) {
-    process.off('uncaughtException', uncaughtHandler)
     const msg = err instanceof Error ? err.message : String(err)
-    const stack = err instanceof Error ? err.stack?.slice(0, 1200) : ''
+    const stack = err instanceof Error ? err.stack?.slice(0, 800) : ''
     console.error('[PDF] generation failed:', err)
     return new Response(`PDF generation failed: ${msg}\n${stack}\nFonts: ${fontCheck}`, { status: 500 })
   }
