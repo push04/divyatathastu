@@ -1,0 +1,663 @@
+<!-- MahaTathastu - Enhanced Interior Layout -->
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>MahaTathastu - Vimshottari Dasha Analysis</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;700&amp;family=Playfair+Display:wght@400;700&amp;family=Sora:wght@600&amp;family=Cinzel:wght@600;700&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#251a00",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#1a0500",
+                        "surface-variant": "#e8e2d5",
+                        "surface-container": "#f3ede0",
+                        "surface-bright": "#fff9ec",
+                        "crimson-seal": "#B5220A",
+                        "surface": "#fff9ec",
+                        "secondary-container": "#fcce65",
+                        "surface-dim": "#dfdacd",
+                        "on-background": "#1d1c14",
+                        "primary": "#00072a",
+                        "primary-container": "#0b1d52",
+                        "on-tertiary-fixed": "#351000",
+                        "secondary": "#785a00",
+                        "on-primary-fixed": "#03164c",
+                        "on-surface": "#1d1c14",
+                        "primary-fixed": "#dce1ff",
+                        "inverse-on-surface": "#f6f0e3",
+                        "parchment-deep": "#E9DFCE",
+                        "on-tertiary-fixed-variant": "#7a3000",
+                        "outline": "#767680",
+                        "surface-container-high": "#ede8db",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#7886c1",
+                        "on-tertiary-container": "#e16312",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f9f3e6",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "inverse-primary": "#b6c4ff",
+                        "secondary-fixed": "#ffdf9c",
+                        "on-secondary-fixed-variant": "#5b4300",
+                        "tertiary-fixed-dim": "#ffb693",
+                        "outline-variant": "#c6c5d1",
+                        "on-primary-fixed-variant": "#354479",
+                        "secondary-fixed-dim": "#edc159",
+                        "surface-container-highest": "#e8e2d5",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#3e1500",
+                        "tertiary-fixed": "#ffdbcc",
+                        "inverse-surface": "#333028",
+                        "on-secondary-container": "#745700",
+                        "on-surface-variant": "#45464f",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "background": "#fff9ec",
+                        "surface-tint": "#4d5c93",
+                        "on-secondary": "#ffffff",
+                        "gold-leaf": "#D4A043",
+                        "saffron-accent": "#E36414"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "manuscript-padding": "40px",
+                        "gutter": "32px",
+                        "page-margin-mobile": "24px",
+                        "page-margin-desktop": "80px"
+                    },
+                    "fontFamily": {
+                        "label-refined": ["Sora"],
+                        "body-md": ["EB Garamond"],
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "display-ceremonial": ["Cinzel", "serif"],
+                        "body-lg": ["EB Garamond"],
+                        "subheading-caps": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "label-refined": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "display-ceremonial": ["48px", { "lineHeight": "56px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "body-lg": ["20px", { "lineHeight": "32px", "fontWeight": "400" }],
+                        "subheading-caps": ["14px", { "lineHeight": "20px", "letterSpacing": "0.2em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .manuscript-frame {
+            position: relative;
+            padding: 4px;
+            /* Space between borders */
+        }
+
+        .manuscript-frame::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border: 1px solid theme('colors.primary');
+            outline: 1px solid theme('colors.gold-leaf');
+            outline-offset: -6px;
+            pointer-events: none;
+        }
+
+        .manuscript-frame::after {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border: 1px solid theme('colors.gold-leaf');
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .diamond-corner {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: theme('colors.gold-leaf');
+            transform: rotate(45deg);
+            z-index: 10;
+        }
+
+        .dc-tl {
+            top: 2px;
+            left: 2px;
+        }
+
+        .dc-tr {
+            top: 2px;
+            right: 2px;
+        }
+
+        .dc-bl {
+            bottom: 2px;
+            left: 2px;
+        }
+
+        .dc-br {
+            bottom: 2px;
+            right: 2px;
+        }
+
+        .lotus-watermark {
+            background-color: theme('colors.surface');
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" opacity="0.02"><path d="M60 10 Q70 40 90 60 Q70 80 60 110 Q50 80 30 60 Q50 40 60 10 Z M60 20 Q75 50 100 60 Q75 70 60 100 Q45 70 20 60 Q45 50 60 20 Z" fill="%230b1d52"/></svg>');
+            background-repeat: repeat;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background min-h-screen font-body-md text-on-background flex flex-col items-center py-12 md:py-24 lotus-watermark">
+    <!-- Top Red Stripe -->
+    <div class="fixed top-0 left-0 w-full h-[3px] bg-saffron-accent z-50"></div>
+    <div class="w-full max-w-5xl px-page-margin-mobile md:px-page-margin-desktop relative">
+        <!-- Main Manuscript Frame -->
+        <div class="bg-surface/90 manuscript-frame relative p-manuscript-padding pb-24 shadow-sm backdrop-blur-sm">
+            <!-- Diamond Corners -->
+            <div class="diamond-corner dc-tl"></div>
+            <div class="diamond-corner dc-tr"></div>
+            <div class="diamond-corner dc-bl"></div>
+            <div class="diamond-corner dc-br"></div>
+            <!-- Chapter Header -->
+            <header
+                class="bg-primary-container border-y border-gold-leaf/40 -mx-manuscript-padding mt-[-36px] p-8 relative overflow-hidden mb-12 shadow-md">
+                <div class="absolute top-0 left-0 w-full h-full opacity-10"
+                    data-alt="Subtle geometric mandala pattern, illuminated manuscript style, gold on deep navy background, very faint, repeating texture. High-end traditional astrology motif."
+                    style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuARiYHQhggnv-XLgoRSb9SunbyBBdL6P5bNM11wBwsRFZhozVmYLRyZQuWDodnvhVuJT6-ak1zj5SoRtYmaY-ZhbizaBn9cjPqJn0nvJvbI61kBkE61tGjn7WsN-5x4eJWdxM6MIcrD5QBBaDpTaLycpKEfnU4htxSxZ_hKp_s721dKlandg5kMOAU4kZU68TU2VLBWQF2sydUyQVTdMU218HpwQ-6N7BWB-V9KXr5L2becm7PpFXdxwyfG9t6PI0KpIPrHWQUGMShr');">
+                </div>
+                <div class="relative z-10 flex flex-col items-center text-center">
+                    <!-- Saffron Circle Roman Numeral as Wax Seal -->
+                    <div
+                        class="w-14 h-14 rounded-full bg-gradient-to-br from-[#E36414] to-[#A33D00] flex items-center justify-center border-[2px] border-gold-leaf mb-4 shadow-[0_4px_10px_rgba(0,0,0,0.3)] ring-2 ring-saffron-accent/20">
+                        <span class="font-display-ceremonial text-on-primary text-2xl drop-shadow-md">I</span>
+                    </div>
+                    <h1
+                        class="font-display-ceremonial text-headline-lg-mobile md:text-headline-lg text-on-primary tracking-wide mb-2 uppercase">
+                        Vimshottari Dasha Analysis</h1>
+                    <p class="font-body-lg text-gold-leaf/80 italic mb-6">विंशोत्तरी दशा फलम्</p>
+                    <!-- Gold Rule -->
+                    <div class="w-32 h-[1px] bg-gold-leaf opacity-60"></div>
+                </div>
+            </header>
+            <!-- Main Content Area -->
+            <div class="max-w-3xl mx-auto space-y-12">
+                <!-- Section Label -->
+                <div class="border-l-[4px] border-saffron-accent pl-4 py-1">
+                    <h2
+                        class="font-display-ceremonial text-[24px] text-primary-container font-bold uppercase tracking-widest">
+                        Planetary Influences</h2>
+                </div>
+                <!-- Info Card (Glass/Manuscript Hybrid) -->
+                <div
+                    class="bg-surface-container-lowest border-t-[3px] border-gold-leaf border-x border-b border-outline-variant/30 p-8 relative shadow-[0_10px_40px_-10px_rgba(11,29,82,0.08)] rounded-b-sm">
+                    <h3 class="font-subheading-caps text-subheading-caps text-primary mb-4">Sun in the 10th House</h3>
+                    <p class="font-body-md text-on-surface-variant leading-[1.8]">
+                        The positioning of Surya in the Karma Bhava signifies a period of heightened authoritative
+                        presence and professional illumination. During this Dasha, the native is likely to experience
+                        significant recognition in public spheres. The radiant energy of the Sun demands adherence to
+                        dharma and structured leadership.
+                    </p>
+                    <div class="mt-6 flex items-center gap-3">
+                        <span class="material-symbols-outlined text-saffron-accent"
+                            style="font-variation-settings: 'FILL' 1;">wb_sunny</span>
+                        <span class="font-label-refined text-label-refined text-primary uppercase">Dominant Influence:
+                            Professional Ascent</span>
+                    </div>
+                </div>
+                <!-- Highlight Box -->
+                <div class="border-l-[4px] border-saffron-accent bg-surface-container-low p-6 shadow-sm">
+                    <div class="flex gap-4">
+                        <span class="material-symbols-outlined text-gold-leaf mt-1"
+                            style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                        <div>
+                            <h4 class="font-subheading-caps text-subheading-caps text-primary mb-2">Auspicious
+                                Indication</h4>
+                            <p class="font-body-md text-on-background italic leading-[1.8]">
+                                "When the Lord of Light occupies the zenith, the shadow of obscurity recedes. Focus
+                                intentions on career expansion between the phases of waxing moon in the upcoming
+                                quarter."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Divider -->
+                <div class="flex justify-center my-10">
+                    <img alt="Section Divider" class="h-5 opacity-90"
+                        src="https://lh3.googleusercontent.com/aida/AP1WRLt8KrOMcDfKy6FowIhxLfjccwG8HAqdUEHD5CLHGvk_tSzwbuzT8ibbHaa-BcXNdtCOtqN5x8dLTP7JeB98eZJ8IHSzfQvJhKQ-FCAgPLFprDvRMmJhB9eR023rHY-0l6-6rLRZJ3hEkqnKOOJAsPQWztN-qGUDVxb4UI6eGUVW7T9DosV2fu0AbpyIfbqG_wB1oxXwEmLN7wiCLhGEw8G8cag1vZzmxnzcJ6fzD9z2GvBPFKMWO8e2nnY" />
+                </div>
+                <!-- Data Table -->
+                <div
+                    class="overflow-x-auto border border-outline-variant/50 shadow-[0_4px_20px_-10px_rgba(11,29,82,0.05)]">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-primary-container text-on-primary">
+                                <th
+                                    class="py-4 px-6 font-subheading-caps text-[12px] border-b border-gold-leaf/30 uppercase">
+                                    Antardasha</th>
+                                <th
+                                    class="py-4 px-6 font-subheading-caps text-[12px] border-b border-gold-leaf/30 uppercase">
+                                    Duration</th>
+                                <th
+                                    class="py-4 px-6 font-subheading-caps text-[12px] border-b border-gold-leaf/30 uppercase">
+                                    Primary Effect</th>
+                            </tr>
+                        </thead>
+                        <tbody
+                            class="font-body-md text-on-surface-variant bg-surface-container-lowest divide-y divide-outline-variant/20">
+                            <tr class="hover:bg-surface-container-low transition-colors">
+                                <td class="py-4 px-6 border-r border-outline-variant/10">Sun - Moon</td>
+                                <td class="py-4 px-6 border-r border-outline-variant/10">Aug 2024 - Feb 2025</td>
+                                <td class="py-4 px-6 text-primary leading-[1.6]">Emotional balance impacting career
+                                    decisions.</td>
+                            </tr>
+                            <tr class="hover:bg-surface-container-low transition-colors bg-surface-container/30">
+                                <td class="py-4 px-6 border-r border-outline-variant/10 font-bold text-primary">Sun -
+                                    Mars</td>
+                                <td class="py-4 px-6 border-r border-outline-variant/10 font-bold text-primary">Feb 2025
+                                    - Jun 2025</td>
+                                <td class="py-4 px-6 text-saffron-accent font-bold leading-[1.6]">Aggressive pursuit of
+                                    status. Favorable for litigation.</td>
+                            </tr>
+                            <tr class="hover:bg-surface-container-low transition-colors">
+                                <td class="py-4 px-6 border-r border-outline-variant/10">Sun - Rahu</td>
+                                <td class="py-4 px-6 border-r border-outline-variant/10">Jun 2025 - May 2026</td>
+                                <td class="py-4 px-6 leading-[1.6]">Unexpected foreign connections or unconventional
+                                    approaches.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Divider -->
+                <div class="flex justify-center my-10">
+                    <img alt="Section Divider" class="h-5 opacity-90"
+                        src="https://lh3.googleusercontent.com/aida/AP1WRLt8KrOMcDfKy6FowIhxLfjccwG8HAqdUEHD5CLHGvk_tSzwbuzT8ibbHaa-BcXNdtCOtqN5x8dLTP7JeB98eZJ8IHSzfQvJhKQ-FCAgPLFprDvRMmJhB9eR023rHY-0l6-6rLRZJ3hEkqnKOOJAsPQWztN-qGUDVxb4UI6eGUVW7T9DosV2fu0AbpyIfbqG_wB1oxXwEmLN7wiCLhGEw8G8cag1vZzmxnzcJ6fzD9z2GvBPFKMWO8e2nnY" />
+                </div>
+                <!-- Bulleted List -->
+                <div>
+                    <h3
+                        class="font-subheading-caps text-subheading-caps text-primary mb-4 border-b border-outline-variant/30 pb-2 inline-block">
+                        Key Recommendations</h3>
+                    <ul class="space-y-4 mt-4">
+                        <li class="flex items-start gap-3">
+                            <svg class="w-4 h-4 text-saffron-accent mt-1.5 shrink-0" fill="currentColor"
+                                viewbox="0 0 24 24">
+                                <path d="M12 2L22 20H2L12 2Z"></path>
+                            </svg>
+                            <span class="font-body-md text-on-surface-variant leading-[1.8]">Perform Aditya Hrudayam
+                                Stotram recitation during sunrise.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <svg class="w-4 h-4 text-saffron-accent mt-1.5 shrink-0" fill="currentColor"
+                                viewbox="0 0 24 24">
+                                <path d="M12 2L22 20H2L12 2Z"></path>
+                            </svg>
+                            <span class="font-body-md text-on-surface-variant leading-[1.8]">Avoid direct confrontation
+                                with paternal figures or immediate superiors during the Rahu Antardasha.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <svg class="w-4 h-4 text-saffron-accent mt-1.5 shrink-0" fill="currentColor"
+                                viewbox="0 0 24 24">
+                                <path d="M12 2L22 20H2L12 2Z"></path>
+                            </svg>
+                            <span class="font-body-md text-on-surface-variant leading-[1.8]">Wear a high-quality Ruby
+                                (Manik) set in gold on the ring finger, only after proper consecration.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Footer within Document -->
+            <footer class="absolute bottom-0 left-0 w-full p-8">
+                <div class="h-[1px] w-full bg-gold-leaf/50 mb-6"></div>
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-center">
+                    <span
+                        class="font-label-refined text-label-refined text-primary uppercase">www.mahatathastu.com</span>
+                    <span
+                        class="font-display-ceremonial text-[16px] text-primary tracking-widest font-bold">MAHATATHASTU</span>
+                    <span class="font-label-refined text-label-refined text-primary">9858784784</span>
+                </div>
+            </footer>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<!-- MahaTathastu - Enhanced Luxury Cover Page -->
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>MAHATATHASTU Cover Page</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&amp;family=Playfair+Display:ital,wght@0,400..900;1,400..900&amp;family=Sora:wght@100..800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#251a00",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#1a0500",
+                        "surface-variant": "#e8e2d5",
+                        "surface-container": "#f3ede0",
+                        "surface-bright": "#fff9ec",
+                        "crimson-seal": "#B5220A",
+                        "surface": "#fff9ec",
+                        "secondary-container": "#fcce65",
+                        "surface-dim": "#dfdacd",
+                        "on-background": "#1d1c14",
+                        "primary": "#00072a",
+                        "primary-container": "#0b1d52",
+                        "on-tertiary-fixed": "#351000",
+                        "secondary": "#785a00",
+                        "on-primary-fixed": "#03164c",
+                        "on-surface": "#1d1c14",
+                        "primary-fixed": "#dce1ff",
+                        "inverse-on-surface": "#f6f0e3",
+                        "parchment-deep": "#E9DFCE",
+                        "on-tertiary-fixed-variant": "#7a3000",
+                        "outline": "#767680",
+                        "surface-container-high": "#ede8db",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#7886c1",
+                        "on-tertiary-container": "#e16312",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f9f3e6",
+                        "primary-fixed-dim": "#b6c4ff",
+                        "inverse-primary": "#b6c4ff",
+                        "secondary-fixed": "#ffdf9c",
+                        "on-secondary-fixed-variant": "#5b4300",
+                        "tertiary-fixed-dim": "#ffb693",
+                        "outline-variant": "#c6c5d1",
+                        "on-primary-fixed-variant": "#354479",
+                        "secondary-fixed-dim": "#edc159",
+                        "surface-container-highest": "#e8e2d5",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-container": "#3e1500",
+                        "tertiary-fixed": "#ffdbcc",
+                        "inverse-surface": "#333028",
+                        "on-secondary-container": "#745700",
+                        "on-surface-variant": "#45464f",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "background": "#fff9ec",
+                        "surface-tint": "#4d5c93",
+                        "on-secondary": "#ffffff",
+                        "gold-leaf": "#D4A043",
+                        "gold-accent": "#C49B37",
+                        "accent-orange": "#E36414",
+                        "parchment-light": "#FBF5E8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "manuscript-padding": "40px",
+                        "gutter": "32px",
+                        "page-margin-mobile": "24px",
+                        "page-margin-desktop": "80px"
+                    },
+                    "fontFamily": {
+                        "label-refined": ["Sora"],
+                        "body-md": ["EB Garamond"],
+                        "headline-lg-mobile": ["Playfair Display"],
+                        "display-ceremonial": ["Playfair Display"],
+                        "body-lg": ["EB Garamond"],
+                        "subheading-caps": ["Playfair Display"],
+                        "headline-lg": ["Playfair Display"]
+                    },
+                    "fontSize": {
+                        "label-refined": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "700" }],
+                        "display-ceremonial": ["48px", { "lineHeight": "56px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "body-lg": ["20px", { "lineHeight": "32px", "fontWeight": "400" }],
+                        "subheading-caps": ["14px", { "lineHeight": "20px", "letterSpacing": "0.2em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* A4 aspect ratio wrapper for printing/display */
+        .a4-wrapper {
+            aspect-ratio: 1 / 1.414;
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            background-color: white;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .metallic-gold-text {
+            background: linear-gradient(to right, #B38728, #FBF5B7, #DAA520, #FBF5B7, #B38728);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .metallic-gold-bg {
+            background: linear-gradient(to right, #B38728, #FBF5B7, #DAA520);
+        }
+
+        .metallic-gold-border {
+            border-image: linear-gradient(to right, #B38728, #FBF5B7, #DAA520) 1;
+        }
+
+        .double-border {
+            border: 2px solid transparent;
+            border-image: linear-gradient(to bottom right, #B38728, #FBF5B7, #DAA520) 1;
+            position: relative;
+        }
+
+        .double-border::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            right: 6px;
+            bottom: 6px;
+            border: 1px dashed #C49B37;
+            /* Chain/rope effect simulation */
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        .corner-diamond {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #FBF5B7, #DAA520);
+            transform: rotate(45deg);
+            z-index: 10;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .corner-tl {
+            top: -4px;
+            left: -4px;
+        }
+
+        .corner-tr {
+            top: -4px;
+            right: -4px;
+        }
+
+        .corner-bl {
+            bottom: -4px;
+            left: -4px;
+        }
+
+        .corner-br {
+            bottom: -4px;
+            right: -4px;
+        }
+
+        .watermark-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5c-1.5 8-6 13-11 15 5 2 9.5 7 11 15 1.5-8 6-13 11-15-5-2-9.5-7-11-15z' fill='%23C49B37' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            background-size: 80px 80px;
+        }
+
+        .parchment-texture {
+            background-color: #FBF5E8;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100' height='100' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+        }
+
+        .navy-watermark {
+            background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='60' cy='60' r='50' fill='none' stroke='%23C49B37' stroke-width='0.5' stroke-opacity='0.1'/%3E%3Ccircle cx='60' cy='60' r='40' fill='none' stroke='%23C49B37' stroke-width='0.5' stroke-opacity='0.1' stroke-dasharray='4 4'/%3E%3C/svg%3E");
+        }
+
+        .glow-effect {
+            box-shadow: 0 0 40px rgba(196, 155, 55, 0.4), inset 0 0 20px rgba(196, 155, 55, 0.2);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-surface-dim min-h-screen py-10 font-body-md text-on-surface antialiased flex items-center justify-center">
+    <div class="a4-wrapper w-full h-[1414px]">
+        <!-- Top 35% Section -->
+        <div
+            class="h-[35%] bg-[#081438] navy-watermark relative flex flex-col items-center justify-center px-12 pt-10 pb-12 z-10">
+            <!-- Sanskrit Mantra -->
+            <div class="absolute top-10 w-full text-center">
+                <p class="font-subheading-caps text-crimson-seal text-sm tracking-[0.4em] opacity-90">SHREE MATRA NAMAH
+                    · OM MAHAGANPATAYE NAMAH</p>
+            </div>
+            <!-- Central Icon -->
+            <div class="w-36 h-36 mb-10 mt-14 rounded-full overflow-hidden border-2 border-gold-accent/40 glow-effect">
+                <img alt="MahaTathastu Symbol" class="w-full h-full object-cover mix-blend-screen"
+                    src="https://lh3.googleusercontent.com/aida/AP1WRLt_0pFczY3BbW2SWFGePZ-3iuG4pnOPHHupHY29IV9PBI-1-mskaauzQ-1FNsdXkAUnGx1BBBL3902WUHB2NV3tt6r_wPgzmt_LtTSdZ9QFvMxMiWTOXyRbk8eDziKRs7sTNrC8-jFa5LSsSEbvQCkhkcmHJmdF7dSREF0gjaCPsbM5bgHwBt5mFthzMfkktSD3dULZUq2MdPsrQ-8KnEQgzaZj__RwNlb4S-xa_5BBpckH5bJOZdcfIEzD" />
+            </div>
+            <!-- Brand Typography -->
+            <div class="flex flex-col items-center relative w-full px-16">
+                <div class="w-full h-[1px] metallic-gold-bg opacity-70 mb-8"></div>
+                <h1
+                    class="font-display-ceremonial text-[48px] leading-tight tracking-[0.2em] mb-5 text-center metallic-gold-text">
+                    MAHATATHASTU
+                </h1>
+                <p class="font-label-refined text-accent-orange text-sm tracking-[0.3em] mb-8">
+                    DECODE YOUR LIFE. DESIGN YOUR FUTURE.
+                </p>
+                <div class="w-full h-[1px] metallic-gold-bg opacity-70 mt-2"></div>
+            </div>
+        </div>
+        <!-- 4pt Full-width Gold Band Separator -->
+        <div class="h-[4px] w-full metallic-gold-bg shrink-0 relative z-20 shadow-[0_4px_10px_rgba(0,0,0,0.3)]"></div>
+        <!-- Middle 45% Section (Parchment) -->
+        <div
+            class="h-[45%] parchment-texture watermark-pattern relative p-12 flex flex-col items-center justify-center z-10">
+            <!-- Inner Frame -->
+            <div
+                class="double-border w-full h-full max-w-[85%] mx-auto bg-white/60 p-12 flex flex-col items-center justify-center backdrop-blur-sm shadow-md relative">
+                <!-- Corner Ornaments Images inside frame -->
+                <img alt="Corner Ornament Top Left"
+                    class="absolute top-3 left-3 w-16 h-16 opacity-90 mix-blend-multiply"
+                    src="https://lh3.googleusercontent.com/aida/AP1WRLuq07nBDvRxrp2wNHu37MJGgFA_r1esWgv3SYRrjKY3E05XkAB-AMQ3ypWCS3uDqcqZIFWn-8czFD1T5tgZvd7AHv5vQMmoed7nPIghrQfPzvzBaBDUk95gm3IrrTZJhHcsYDkuy5D-0yHxNKwdn1NN9HeSTeDy7iopSPrGHvoJ8NIMuy_A1ISesmAJAe0O21my4YQUGwNTzJdUf9yE9wKDVt31Mk2Rrgn6FshwwyJhynEc5eSXIVctbeDR" />
+                <img alt="Corner Ornament Top Right"
+                    class="absolute top-3 right-3 w-16 h-16 opacity-90 mix-blend-multiply rotate-90"
+                    src="https://lh3.googleusercontent.com/aida/AP1WRLuq07nBDvRxrp2wNHu37MJGgFA_r1esWgv3SYRrjKY3E05XkAB-AMQ3ypWCS3uDqcqZIFWn-8czFD1T5tgZvd7AHv5vQMmoed7nPIghrQfPzvzBaBDUk95gm3IrrTZJhHcsYDkuy5D-0yHxNKwdn1NN9HeSTeDy7iopSPrGHvoJ8NIMuy_A1ISesmAJAe0O21my4YQUGwNTzJdUf9yE9wKDVt31Mk2Rrgn6FshwwyJhynEc5eSXIVctbeDR" />
+                <img alt="Corner Ornament Bottom Left"
+                    class="absolute bottom-3 left-3 w-16 h-16 opacity-90 mix-blend-multiply -rotate-90"
+                    src="https://lh3.googleusercontent.com/aida/AP1WRLuq07nBDvRxrp2wNHu37MJGgFA_r1esWgv3SYRrjKY3E05XkAB-AMQ3ypWCS3uDqcqZIFWn-8czFD1T5tgZvd7AHv5vQMmoed7nPIghrQfPzvzBaBDUk95gm3IrrTZJhHcsYDkuy5D-0yHxNKwdn1NN9HeSTeDy7iopSPrGHvoJ8NIMuy_A1ISesmAJAe0O21my4YQUGwNTzJdUf9yE9wKDVt31Mk2Rrgn6FshwwyJhynEc5eSXIVctbeDR" />
+                <img alt="Corner Ornament Bottom Right"
+                    class="absolute bottom-3 right-3 w-16 h-16 opacity-90 mix-blend-multiply rotate-180"
+                    src="https://lh3.googleusercontent.com/aida/AP1WRLuq07nBDvRxrp2wNHu37MJGgFA_r1esWgv3SYRrjKY3E05XkAB-AMQ3ypWCS3uDqcqZIFWn-8czFD1T5tgZvd7AHv5vQMmoed7nPIghrQfPzvzBaBDUk95gm3IrrTZJhHcsYDkuy5D-0yHxNKwdn1NN9HeSTeDy7iopSPrGHvoJ8NIMuy_A1ISesmAJAe0O21my4YQUGwNTzJdUf9yE9wKDVt31Mk2Rrgn6FshwwyJhynEc5eSXIVctbeDR" />
+                <div class="corner-diamond corner-tl"></div>
+                <div class="corner-diamond corner-tr"></div>
+                <div class="corner-diamond corner-bl"></div>
+                <div class="corner-diamond corner-br"></div>
+                <!-- Report Type Box -->
+                <div
+                    class="border border-gold-accent bg-transparent px-8 py-3 mb-12 shadow-[inset_0_0_10px_rgba(196,155,55,0.1)]">
+                    <span class="font-subheading-caps metallic-gold-text tracking-[0.25em] text-sm font-bold">FULL
+                        TATHASTU REPORT</span>
+                </div>
+                <!-- Recipient Details -->
+                <h2 class="font-display-ceremonial text-[32px] text-[#0b1d52] tracking-[0.15em] mb-6 font-bold">ARJUN
+                    SHARMA</h2>
+                <div
+                    class="font-label-refined text-[#333333] text-[11px] tracking-[0.15em] flex flex-col items-center gap-2 mb-10 opacity-80">
+                    <span>14 OCTOBER 1990 • 08:45 AM • NEW DELHI</span>
+                    <span>SCORPIO ASCENDANT • LEO MOON</span>
+                </div>
+                <!-- First Divider -->
+                <img alt="Ornamental Divider" class="h-6 w-56 mb-10 opacity-90"
+                    src="https://lh3.googleusercontent.com/aida/AP1WRLt8KrOMcDfKy6FowIhxLfjccwG8HAqdUEHD5CLHGvk_tSzwbuzT8ibbHaa-BcXNdtCOtqN5x8dLTP7JeB98eZJ8IHSzfQvJhKQ-FCAgPLFprDvRMmJhB9eR023rHY-0l6-6rLRZJ3hEkqnKOOJAsPQWztN-qGUDVxb4UI6eGUVW7T9DosV2fu0AbpyIfbqG_wB1oxXwEmLN7wiCLhGEw8G8cag1vZzmxnzcJ6fzD9z2GvBPFKMWO8e2nnY" />
+                <!-- Lineage -->
+                <div class="flex flex-col items-center gap-3 mb-10">
+                    <p class="font-body-md italic text-crimson-seal text-[15px] tracking-wide">Lineage of Maharishi
+                        Bhrigu</p>
+                    <p class="font-body-md italic text-crimson-seal text-[15px] tracking-wide">Tradition of Vashistha
+                    </p>
+                </div>
+                <!-- Second Divider -->
+                <img alt="Ornamental Divider" class="h-6 w-56 mb-12 opacity-90"
+                    src="https://lh3.googleusercontent.com/aida/AP1WRLt8KrOMcDfKy6FowIhxLfjccwG8HAqdUEHD5CLHGvk_tSzwbuzT8ibbHaa-BcXNdtCOtqN5x8dLTP7JeB98eZJ8IHSzfQvJhKQ-FCAgPLFprDvRMmJhB9eR023rHY-0l6-6rLRZJ3hEkqnKOOJAsPQWztN-qGUDVxb4UI6eGUVW7T9DosV2fu0AbpyIfbqG_wB1oxXwEmLN7wiCLhGEw8G8cag1vZzmxnzcJ6fzD9z2GvBPFKMWO8e2nnY" />
+                <!-- Initiative Footer inside frame -->
+                <p
+                    class="font-label-refined text-[#0b1d52] text-[10px] tracking-[0.25em] uppercase font-bold mt-auto opacity-90">
+                    AN INITIATIVE OF ANUSHTHAAN INDIA
+                </p>
+            </div>
+        </div>
+        <!-- 3pt Full-width Gold Band Separator -->
+        <div class="h-[3px] w-full metallic-gold-bg shrink-0 relative z-20 shadow-[0_-2px_8px_rgba(0,0,0,0.2)]"></div>
+        <!-- Bottom 20% Section -->
+        <div
+            class="h-[20%] bg-[#081438] navy-watermark relative flex flex-col items-center justify-end pb-14 z-10 pt-10">
+            <h3 class="font-label-refined text-white text-[13px] font-bold tracking-[0.25em] mb-5 opacity-90">
+                MAHATATHASTU
+            </h3>
+            <p class="font-label-refined metallic-gold-text text-xs tracking-[0.2em] opacity-90">
+                www.mahatathastu.com · 9858784784
+            </p>
+        </div>
+    </div>
+</body>
+
+</html>

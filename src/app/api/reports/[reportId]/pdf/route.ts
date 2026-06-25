@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import type { ReportPDFProps } from '@/components/pdf/ReportPDF'
-import { Component, createElement, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 export const maxDuration = 60
 
@@ -21,35 +21,8 @@ const REPORT_TITLE_SLUGS: Record<string, string> = {
   mobile_number: 'Mobile_Number_Analysis',
 }
 
-// Module-level error boundary — must be at top level for React reconciler to recognise it
-interface BoundaryProps {
-  children?: ReactNode
-  capture: { error: Error | null }
-  FallbackDoc: React.ElementType
-  FallbackPage: React.ElementType
-}
-class PDFErrorBoundary extends Component<BoundaryProps, { hasError: boolean }> {
-  constructor(props: BoundaryProps) {
-    super(props)
-    this.state = { hasError: false }
-  }
-  static getDerivedStateFromError() {
-    return { hasError: true }
-  }
-  componentDidCatch(error: Error) {
-    this.props.capture.error = error
-  }
-  render() {
-    if (this.state.hasError) {
-      const { FallbackDoc, FallbackPage } = this.props
-      return createElement(FallbackDoc, {}, createElement(FallbackPage, { size: 'A4' }))
-    }
-    return this.props.children
-  }
-}
-
 export async function GET() {
-  return new Response('pdf-route-alive-v2', { status: 200 })
+  return new Response('pdf-route-alive-v3', { status: 200 })
 }
 
 export async function POST(
@@ -76,19 +49,39 @@ export async function POST(
     if (!['generated', 'reviewed', 'delivered'].includes(String(report.status)))
       return new Response('Report not ready', { status: 422 })
 
-    const [{ default: ReportPDF }, { renderToBuffer, Document, Page }] = await Promise.all([
+    // Dynamic imports — avoids Turbopack's "Component in server component" static-analysis error
+    const [{ default: ReportPDF }, { renderToBuffer, Document, Page }, { Component, createElement }] = await Promise.all([
       import('@/components/pdf/ReportPDF'),
       import('@react-pdf/renderer'),
+      import('react'),
     ])
 
-    // Error capture object — shared between error boundary (render phase) and our handler
+    // Error capture shared between boundary (render) and handler
     const capture: { error: Error | null } = { error: null }
 
-    const doc = createElement(PDFErrorBoundary, {
-      capture,
-      FallbackDoc: Document,
-      FallbackPage: Page,
-    }, createElement(ReportPDF, { report: report as ReportPDFProps['report'], canvases }))
+    // Class defined at runtime (dynamic) — Turbopack never sees a static 'Component' import
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    class PDFErrorBoundary extends (Component as any) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      constructor(props: any) { super(props); this.state = { hasError: false } }
+      static getDerivedStateFromError() { return { hasError: true } }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      componentDidCatch(error: Error) { (this as any).props.capture.error = error }
+      render() {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if ((this as any).state.hasError) {
+          return createElement(Document as React.ElementType, {}, createElement(Page as React.ElementType, { size: 'A4' }))
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (this as any).props.children as ReactNode
+      }
+    }
+
+    const doc = createElement(
+      PDFErrorBoundary as React.ElementType,
+      { capture },
+      createElement(ReportPDF as React.ElementType, { report: report as ReportPDFProps['report'], canvases })
+    )
 
     const { existsSync } = await import('fs')
     const { join } = await import('path')
@@ -109,7 +102,7 @@ export async function POST(
       return new Response(`renderToBuffer error: ${msg}${capturedMsg}\n${stack}\nFonts: ${fontCheck}`, { status: 500 })
     }
 
-    // If error boundary caught a real component error, surface it now
+    // Error boundary caught a real component error — surface it
     if (capture.error) {
       const msg = capture.error.message
       const stack = (capture.error.stack || '').slice(0, 1200)
