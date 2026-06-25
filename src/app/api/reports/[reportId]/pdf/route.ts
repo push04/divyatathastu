@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
 import type { ReportPDFProps } from '@/components/pdf/ReportPDF'
-import type { ReactNode } from 'react'
 
 export const maxDuration = 60
 
@@ -22,7 +21,7 @@ const REPORT_TITLE_SLUGS: Record<string, string> = {
 }
 
 export async function GET() {
-  return new Response('pdf-route-alive-v3', { status: 200 })
+  return new Response('pdf-route-alive-v4', { status: 200 })
 }
 
 export async function POST(
@@ -49,40 +48,7 @@ export async function POST(
     if (!['generated', 'reviewed', 'delivered'].includes(String(report.status)))
       return new Response('Report not ready', { status: 422 })
 
-    // Dynamic imports — avoids Turbopack's "Component in server component" static-analysis error
-    const [{ default: ReportPDF }, { renderToBuffer, Document, Page }, { Component, createElement }] = await Promise.all([
-      import('@/components/pdf/ReportPDF'),
-      import('@react-pdf/renderer'),
-      import('react'),
-    ])
-
-    // Error capture shared between boundary (render) and handler
-    const capture: { error: Error | null } = { error: null }
-
-    // Class defined at runtime (dynamic) — Turbopack never sees a static 'Component' import
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    class PDFErrorBoundary extends (Component as any) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      constructor(props: any) { super(props); this.state = { hasError: false } }
-      static getDerivedStateFromError() { return { hasError: true } }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      componentDidCatch(error: Error) { (this as any).props.capture.error = error }
-      render() {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if ((this as any).state.hasError) {
-          return createElement(Document as React.ElementType, {}, createElement(Page as React.ElementType, { size: 'A4' }))
-        }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return (this as any).props.children as ReactNode
-      }
-    }
-
-    const doc = createElement(
-      PDFErrorBoundary as React.ElementType,
-      { capture },
-      createElement(ReportPDF as React.ElementType, { report: report as ReportPDFProps['report'], canvases })
-    )
-
+    // Font check
     const { existsSync } = await import('fs')
     const { join } = await import('path')
     const fontCheck = ['cg-400.woff2', 'cg-400i.woff2', 'cg-600.woff2', 'cg-700.woff2', 'cg-700i.woff2', 'lato-400.woff2', 'lato-700.woff2']
@@ -90,24 +56,29 @@ export async function POST(
       .join(' ')
     console.log('[PDF] fonts:', fontCheck)
 
+    // Dynamic imports — avoids Turbopack server-component static analysis issues
+    const [{ default: ReportPDF }, { renderToBuffer }] = await Promise.all([
+      import('@/components/pdf/ReportPDF'),
+      import('@react-pdf/renderer'),
+    ])
+
+    // createElement from react (safe — no class components imported)
+    const { createElement } = await import('react')
+
+    const doc = createElement(
+      ReportPDF as React.ElementType,
+      { report: report as ReportPDFProps['report'], canvases }
+    )
+
     let buffer: Buffer
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       buffer = await renderToBuffer(doc as any)
     } catch (renderErr) {
       const msg = renderErr instanceof Error ? renderErr.message : String(renderErr)
-      const stack = renderErr instanceof Error ? (renderErr.stack || '').slice(0, 1000) : ''
+      const stack = renderErr instanceof Error ? (renderErr.stack || '').slice(0, 1200) : ''
       console.error('[PDF] renderToBuffer threw:', msg)
-      const capturedMsg = capture.error ? ` | component: ${capture.error.message}` : ''
-      return new Response(`renderToBuffer error: ${msg}${capturedMsg}\n${stack}\nFonts: ${fontCheck}`, { status: 500 })
-    }
-
-    // Error boundary caught a real component error — surface it
-    if (capture.error) {
-      const msg = capture.error.message
-      const stack = (capture.error.stack || '').slice(0, 1200)
-      console.error('[PDF] component error (via boundary):', msg)
-      return new Response(`Component render error: ${msg}\n${stack}\nFonts: ${fontCheck}`, { status: 500 })
+      return new Response(`renderToBuffer error: ${msg}\n${stack}\nFonts: ${fontCheck}`, { status: 500 })
     }
 
     const member = report.family_members as { full_name: string } | null
