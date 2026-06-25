@@ -1866,175 +1866,86 @@ export default function ReportDetailPage() {
 
   async function handleDownload() {
     setDownloading(true)
-    const el = document.getElementById('rpa')
     try {
-      if (!el) return
+      // ── 1. Capture chart SVGs as PNG images from the hidden print container ──
+      const rpa = document.getElementById('rpa')
+      const canvases: Record<string, string> = {}
 
-      el.style.display = 'block'
-      el.style.width = '794px'
-      el.style.maxWidth = '794px'
-      await document.fonts.ready
+      if (rpa) {
+        rpa.style.display = 'block'
+        rpa.style.visibility = 'hidden'
+        // Two frames to ensure layout is computed
+        await new Promise<void>(r => requestAnimationFrame(() => requestAnimationFrame(() => r())))
 
-      // ── Pre-patch ALL modern CSS color functions to rgb() ──
-      // html2canvas crashes on oklab/oklch/lab/lch/color() — including inside gradients.
-      // Strategy: use a 1×1 browser canvas as a native color converter (the browser
-      // already knows how to resolve these), then string-replace them in every CSS value.
-      const tmp = document.createElement('canvas')
-      tmp.width = tmp.height = 1
-      const tmpCtx = tmp.getContext('2d', { willReadFrequently: true })!
+        const svgToDataUrl = (svg: SVGSVGElement): Promise<string> =>
+          new Promise((resolve) => {
+            try {
+              const vb = svg.viewBox.baseVal
+              const w = (vb.width > 0 ? vb.width : parseInt(svg.getAttribute('width') || '0')) || 300
+              const h = (vb.height > 0 ? vb.height : parseInt(svg.getAttribute('height') || '0')) || 300
+              const clone = svg.cloneNode(true) as SVGSVGElement
+              clone.setAttribute('width', String(w))
+              clone.setAttribute('height', String(h))
+              const xml = new XMLSerializer().serializeToString(clone)
+              const blob = new Blob([xml], { type: 'image/svg+xml;charset=utf-8' })
+              const url = URL.createObjectURL(blob)
+              const canvas = document.createElement('canvas')
+              const scale = 2
+              canvas.width = w * scale; canvas.height = h * scale
+              const ctx = canvas.getContext('2d')!
+              const img = new Image()
+              img.onload = () => {
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+                URL.revokeObjectURL(url)
+                resolve(canvas.toDataURL('image/png', 0.92))
+              }
+              img.onerror = () => { URL.revokeObjectURL(url); resolve('') }
+              img.src = url
+            } catch { resolve('') }
+          })
 
-      // Convert a single modern color token to rgb()
-      const colorTokenToRgb = (token: string): string => {
-        try {
-          tmpCtx.clearRect(0, 0, 1, 1)
-          tmpCtx.fillStyle = token
-          tmpCtx.fillRect(0, 0, 1, 1)
-          const [r, g, b, a] = tmpCtx.getImageData(0, 0, 1, 1).data
-          return a < 255 ? `rgba(${r},${g},${b},${+(a / 255).toFixed(3)})` : `rgb(${r},${g},${b})`
-        } catch { return token }
-      }
-
-      // Walk a CSS value string and replace every modern color function with rgb()
-      // Handles: oklab() oklch() lab() lch() color() — even inside linear-gradient()
-      const resolveModernColors = (val: string): string => {
-        if (!/\b(oklab|oklch|lab|lch|color)\s*\(/i.test(val)) return val
-        let out = ''; let i = 0
-        while (i < val.length) {
-          const m = /\b(oklab|oklch|lab|lch|color)\s*\(/ig.exec(val.slice(i))
-          if (!m) { out += val.slice(i); break }
-          out += val.slice(i, i + m.index)
-          // walk to balanced closing paren
-          let depth = 0, j = i + m.index
-          while (j < val.length) {
-            if (val[j] === '(') depth++
-            else if (val[j] === ')' && --depth === 0) { j++; break }
-            j++
+        // Capture first SVG from each chapter's left-panel container
+        const panels = rpa.querySelectorAll('[data-left-panel]')
+        for (const panel of panels) {
+          const id = panel.getAttribute('data-left-panel')
+          const svg = panel.querySelector('svg')
+          if (id && svg) {
+            const dataUrl = await svgToDataUrl(svg as SVGSVGElement)
+            if (dataUrl) canvases[id] = dataUrl
           }
-          out += colorTokenToRgb(val.slice(i + m.index, j))
-          i = j
         }
-        return out
+
+        rpa.style.display = ''
+        rpa.style.visibility = ''
       }
 
-      // Every CSS property html2canvas color-parses (flat + inside gradients)
-      const COLOR_PROPS = [
-        'color', 'background-color', 'background-image',
-        'border-top-color', 'border-right-color', 'border-bottom-color', 'border-left-color',
-        'outline-color', 'text-decoration-color', 'box-shadow', 'text-shadow', 'fill', 'stroke',
-      ]
-      type Patch = { el: HTMLElement; prop: string; prev: string }
-      const patches: Patch[] = []
-      ;[el, ...Array.from(el.querySelectorAll('*'))].forEach(node => {
-        if (!(node instanceof HTMLElement)) return
-        const cs = window.getComputedStyle(node)
-        for (const prop of COLOR_PROPS) {
-          const val = cs.getPropertyValue(prop)
-          if (!val || !/\b(oklab|oklch|lab|lch|color)\s*\(/i.test(val)) continue
-          patches.push({ el: node, prop, prev: node.style.getPropertyValue(prop) })
-          node.style.setProperty(prop, resolveModernColors(val), 'important')
-        }
+      // ── 2. Call the server-side PDF API ──
+      const resp = await fetch(`/api/reports/${reportId}/pdf`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ canvases }),
       })
 
-      // ── Measure section positions (while element is in layout) ──
-      const SCALE = 2
-      const elTop = el.getBoundingClientRect().top
-      const sections = Array.from(el.children) as HTMLElement[]
-      const sectionBounds = sections.map(s => {
-        const r = s.getBoundingClientRect()
-        return { top: Math.round((r.top - elTop) * SCALE), height: Math.round(r.height * SCALE) }
-      }).filter(b => b.height > 4)
-
-      // ── Capture with html2canvas (reads canvas pixels directly → no black pages) ──
-      const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
-        import('html2canvas'),
-        import('jspdf'),
-      ])
-      const fullCanvas = await html2canvas(el, {
-        scale: SCALE,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#FDFAF5',
-        logging: false,
-        windowWidth: 794,
-      })
-
-      // Restore patched colors & hide element
-      patches.forEach(({ el: e, prop, prev }) => {
-        if (prev) e.style.setProperty(prop, prev)
-        else e.style.removeProperty(prop)
-      })
-      el.style.display = ''
-      el.style.width = ''
-      el.style.maxWidth = ''
-
-      // ── Build PDF ──
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
-      const pdfW = pdf.internal.pageSize.getWidth()   // 210mm
-      const pdfH = pdf.internal.pageSize.getHeight()  // 297mm
-      const margin = 9
-      const contentW = pdfW - margin * 2   // 192mm
-      const contentH = pdfH - margin * 2   // 279mm
-      const mmPerPx = contentW / fullCanvas.width
-
-      // Gold double-border on every page
-      const drawBorder = () => {
-        pdf.setDrawColor(196, 155, 55)
-        pdf.setLineWidth(0.7)
-        pdf.rect(5, 5, pdfW - 10, pdfH - 10)
-        pdf.setDrawColor(218, 185, 95)
-        pdf.setLineWidth(0.25)
-        pdf.rect(7, 7, pdfW - 14, pdfH - 14)
+      if (!resp.ok) {
+        throw new Error(`PDF API returned ${resp.status}: ${await resp.text()}`)
       }
 
-      // Crop a horizontal strip from fullCanvas and place it on the current page
-      const placeStrip = (fromPx: number, toPx: number, atMmY: number) => {
-        const h = toPx - fromPx
-        if (h <= 0) return
-        const strip = document.createElement('canvas')
-        strip.width = fullCanvas.width
-        strip.height = h
-        strip.getContext('2d')!.drawImage(fullCanvas, 0, fromPx, fullCanvas.width, h, 0, 0, fullCanvas.width, h)
-        pdf.addImage(strip.toDataURL('image/jpeg', 0.95), 'JPEG', margin, atMmY, contentW, h * mmPerPx)
-      }
-
-      // ── Pack sections: never slice a card mid-way ──
-      let curY = margin
-      drawBorder()  // first page
-
-      for (const { top, height } of sectionBounds) {
-        const sectionMmH = height * mmPerPx
-
-        // Oversized section (taller than one page) → span across multiple pages naturally
-        if (sectionMmH > contentH) {
-          let sliceFrom = top
-          const sliceTo = top + height
-          while (sliceFrom < sliceTo) {
-            const availMm = pdfH - margin - curY
-            const availPx = Math.round(availMm / mmPerPx)
-            const chunkTo = Math.min(sliceFrom + availPx, sliceTo)
-            placeStrip(sliceFrom, chunkTo, curY)
-            curY += (chunkTo - sliceFrom) * mmPerPx
-            sliceFrom = chunkTo
-            if (sliceFrom < sliceTo) { pdf.addPage(); drawBorder(); curY = margin }
-          }
-          curY += 2
-          continue
-        }
-
-        // Normal section — start a new page if it won't fit
-        if (curY + sectionMmH > pdfH - margin) {
-          pdf.addPage(); drawBorder(); curY = margin
-        }
-
-        placeStrip(top, top + height, curY)
-        curY += sectionMmH + 2
-      }
-
+      // ── 3. Trigger download ──
+      const blob = await resp.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
       const safeName = (title ?? 'report').replace(/[^a-z0-9\s]/gi, '').trim().replace(/\s+/g, '_')
-      pdf.save(`${safeName || 'DivyaTathastu_Report'}.pdf`)
+      a.href = url
+      a.download = `${safeName || 'DivyaTathastu_Report'}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
     } catch (e) {
       console.error('PDF download failed:', e)
-      if (el) { el.style.cssText = '' }
+      // Ensure #rpa is hidden if something went wrong mid-extraction
+      const rpaEl = document.getElementById('rpa')
+      if (rpaEl) { rpaEl.style.display = ''; rpaEl.style.visibility = '' }
     } finally {
       setDownloading(false)
     }
@@ -2799,7 +2710,7 @@ export default function ReportDetailPage() {
               </div>
               {/* Visual chart (KundliWheel / ChakraChart / etc.) - included in PDF */}
               {c.leftPanel && (
-                <div style={{ background: '#f5ede0', padding: '14px 44px 6px', display: 'flex', justifyContent: 'center', position: 'relative', zIndex: 1 }}>
+                <div data-left-panel={c.id} style={{ background: '#f5ede0', padding: '14px 44px 6px', display: 'flex', justifyContent: 'center', position: 'relative', zIndex: 1 }}>
                   <div style={{ maxWidth: 360, width: '100%' }}>
                     {c.leftPanel}
                   </div>

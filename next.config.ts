@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Don't bundle astronomy-engine — let Node load it natively at runtime.
-  serverExternalPackages: ['astronomy-engine'],
+  // Don't bundle these — let Node load them natively at runtime.
+  serverExternalPackages: ['astronomy-engine', '@react-pdf/renderer'],
 
   // Belt-and-suspenders: explicitly alias astronomy-engine to its CJS file
   turbopack: {
