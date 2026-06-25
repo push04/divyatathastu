@@ -52,8 +52,8 @@ export async function POST(
     return new Response('Report not found', { status: 404 })
   }
 
-  // Status check — accept 'completed' regardless of enum shape
-  if (String(report.status) !== 'completed') {
+  // Status check — report must be in a ready state
+  if (!['generated', 'reviewed', 'delivered'].includes(String(report.status))) {
     return new Response('Report not ready', { status: 422 })
   }
 
