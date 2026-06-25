@@ -1,13 +1,16 @@
-// Static imports are safe now — the original Turbopack error was ONLY about
-// `import { Component } from 'react'` (class component). We no longer import
-// that, so react-pdf and ReportPDF can be imported statically.
-// Dynamic imports create a SEPARATE Turbopack chunk, giving @react-pdf/renderer
-// a different module instance than the one ReportPDF.tsx statically imports.
-// The reconciler's type-identity check then fails to recognise the Document
-// element type → appendChildToContainer never fires → container.document = null
-// → "Cannot read properties of null (reading 'props')".
+// @react-pdf/renderer is auto-externalized by Turbopack because it uses
+// Node.js built-ins (fs, buffer). When external, its bundled reconciler's
+// flushSyncWork() runs in an isolated scheduler context that Next.js's server
+// execution interferes with — making it a no-op. container.document stays null.
+//
+// FIX: Use pdf() directly with the event-based 'change' API.
+// react-pdf fires 'change' from resetAfterCommit (AFTER appendChildToContainer
+// sets container.document). By awaiting the change event before calling
+// toBuffer(), we bypass flushSyncWork entirely and work with either sync or
+// async reconciler commits.
 import { createClient } from '@/lib/supabase/server'
-import { renderToBuffer } from '@react-pdf/renderer'
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+import { pdf } from '@react-pdf/renderer'
 import ReportPDF, { type ReportPDFProps } from '@/components/pdf/ReportPDF'
 import { existsSync } from 'fs'
 import { join } from 'path'
@@ -32,7 +35,7 @@ const REPORT_TITLE_SLUGS: Record<string, string> = {
 }
 
 export async function GET() {
-  return new Response('pdf-route-alive-v5', { status: 200 })
+  return new Response('pdf-route-alive-v6', { status: 200 })
 }
 
 export async function POST(
@@ -65,37 +68,52 @@ export async function POST(
       .join(' ')
     console.log('[PDF] fonts:', fontCheck)
 
-    // Call ReportPDF directly (not createElement wrapper) so react-pdf's reconciler
-    // receives a concrete <Document> at the root — no scheduler deferral.
+    // Build the react-pdf element tree by calling the component directly
     const docElement = ReportPDF({ report: report as ReportPDFProps['report'], canvases })
 
-    // Intercept console.error — React 19's reconciler swallows component errors and
-    // calls onUncaughtError(console.error) instead of throwing. So the real error
-    // never reaches our try/catch; we only see the secondary "container.document null" crash.
-    const capturedErrors: string[] = []
-    const origConsoleError = console.error
+    // Create a pdf() instance WITHOUT an initial value so updateContainer
+    // hasn't been called yet and no reconciler work is queued.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    console.error = (...args: any[]) => {
-      capturedErrors.push(args.map(a => (a instanceof Error ? a.stack || a.message : String(a))).join(' '))
-      origConsoleError(...args)
-    }
+    const instance = (pdf as any)()
+
+    // Wait for the reconciler's resetAfterCommit hook to fire ('change' event).
+    // This is guaranteed to fire AFTER appendChildToContainer sets
+    // container.document. Works whether the commit is sync or async — no
+    // dependency on flushSyncWork being functional in the server context.
+    await new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(
+        () => reject(new Error(`PDF reconciler timeout — container.document=${JSON.stringify(instance.container?.document)}`)),
+        30_000
+      )
+      instance.on('change', () => { clearTimeout(timeout); resolve() })
+      instance.updateContainer(docElement)
+      // Guard: if the reconciler committed synchronously before we registered
+      // the listener (very rare in async server context, common locally):
+      if (instance.container?.document) { clearTimeout(timeout); resolve() }
+    })
+
+    console.log('[PDF] container.document set:', !!instance.container?.document)
 
     let buffer: Buffer
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      buffer = await renderToBuffer(docElement as any)
+      // toBuffer() calls render() which now safely reads container.document.props
+      const stream = await instance.toBuffer()
+      buffer = await new Promise<Buffer>((resolve, reject) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const chunks: Buffer[] = [];
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (stream as any).on('data', (c: Buffer) => chunks.push(c));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (stream as any).on('end', () => resolve(Buffer.concat(chunks)));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (stream as any).on('error', reject)
+      })
     } catch (renderErr) {
-      console.error = origConsoleError
       const msg = renderErr instanceof Error ? renderErr.message : String(renderErr)
-      const stack = renderErr instanceof Error ? (renderErr.stack || '').slice(0, 800) : ''
-      const captured = capturedErrors.join('\n').slice(0, 1200)
-      console.error('[PDF] renderToBuffer threw:', msg)
-      return new Response(
-        `renderToBuffer error: ${msg}\n${stack}\n\n=== RECONCILER ERRORS (real cause) ===\n${captured || '(none)'}\nFonts: ${fontCheck}`,
-        { status: 500 }
-      )
+      const stack = renderErr instanceof Error ? (renderErr.stack || '').slice(0, 1200) : ''
+      console.error('[PDF] toBuffer threw:', msg)
+      return new Response(`toBuffer error: ${msg}\n${stack}\nFonts: ${fontCheck}`, { status: 500 })
     }
-    console.error = origConsoleError
 
     const member = report.family_members as { full_name: string } | null
     const titleSlug = REPORT_TITLE_SLUGS[report.report_type] || 'Report'
