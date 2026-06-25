@@ -1,5 +1,16 @@
+// Static imports are safe now — the original Turbopack error was ONLY about
+// `import { Component } from 'react'` (class component). We no longer import
+// that, so react-pdf and ReportPDF can be imported statically.
+// Dynamic imports create a SEPARATE Turbopack chunk, giving @react-pdf/renderer
+// a different module instance than the one ReportPDF.tsx statically imports.
+// The reconciler's type-identity check then fails to recognise the Document
+// element type → appendChildToContainer never fires → container.document = null
+// → "Cannot read properties of null (reading 'props')".
 import { createClient } from '@/lib/supabase/server'
-import type { ReportPDFProps } from '@/components/pdf/ReportPDF'
+import { renderToBuffer } from '@react-pdf/renderer'
+import ReportPDF, { type ReportPDFProps } from '@/components/pdf/ReportPDF'
+import { existsSync } from 'fs'
+import { join } from 'path'
 
 export const maxDuration = 60
 
@@ -21,7 +32,7 @@ const REPORT_TITLE_SLUGS: Record<string, string> = {
 }
 
 export async function GET() {
-  return new Response('pdf-route-alive-v4', { status: 200 })
+  return new Response('pdf-route-alive-v5', { status: 200 })
 }
 
 export async function POST(
@@ -49,25 +60,14 @@ export async function POST(
       return new Response('Report not ready', { status: 422 })
 
     // Font check
-    const { existsSync } = await import('fs')
-    const { join } = await import('path')
     const fontCheck = ['cg-400.woff2', 'cg-400i.woff2', 'cg-600.woff2', 'cg-700.woff2', 'cg-700i.woff2', 'lato-400.woff2', 'lato-700.woff2']
       .map(f => `${f}:${existsSync(join(process.cwd(), 'public', 'fonts', f)) ? 'OK' : 'MISSING'}`)
       .join(' ')
     console.log('[PDF] fonts:', fontCheck)
 
-    // Dynamic imports — avoids Turbopack server-component static analysis issues
-    const [{ default: ReportPDF }, { renderToBuffer }] = await Promise.all([
-      import('@/components/pdf/ReportPDF'),
-      import('@react-pdf/renderer'),
-    ])
-
-    // Call ReportPDF directly so react-pdf gets a <Document> element at the root.
-    // Using createElement(ReportPDF, props) wraps it in a functional component,
-    // causing react-pdf's scheduler to defer the work — container.document stays
-    // null when render() reads it, producing "Cannot read properties of null".
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const docElement = (ReportPDF as any)({ report: report as ReportPDFProps['report'], canvases })
+    // Call ReportPDF directly (not createElement wrapper) so react-pdf's reconciler
+    // receives a concrete <Document> at the root — no scheduler deferral.
+    const docElement = ReportPDF({ report: report as ReportPDFProps['report'], canvases })
 
     let buffer: Buffer
     try {
