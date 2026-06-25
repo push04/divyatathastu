@@ -81,13 +81,44 @@ export async function POST(
   }).join(' ')
   console.log('[PDF] font check:', fontCheck)
 
+  // renderToBuffer() calls pdf(element) which calls updateContainer() WITHOUT a callback.
+  // In React 18, the reconciler schedules work asynchronously (microtask), so
+  // container.document is still null when render() fires immediately after pdf() returns.
+  // Fix: use the lower-level pdf() API with an explicit commit callback, then await it.
   let buffer: Buffer
   try {
-    buffer = Buffer.from(await reactPdf.renderToBuffer(doc as Parameters<typeof reactPdf.renderToBuffer>[0]))
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pdfInst = (reactPdf as any).pdf(null)  // null → skip auto-updateContainer
+
+    // Wait for the reconciler to fully commit (sets container.document) or timeout
+    await new Promise<void>((resolve, reject) => {
+      const timer = setTimeout(
+        () => reject(new Error('PDF reconciler timed out after 20s — a component likely threw silently')),
+        20000
+      )
+      try {
+        pdfInst.updateContainer(doc, () => { clearTimeout(timer); resolve() })
+      } catch (err) {
+        clearTimeout(timer)
+        reject(err)
+      }
+    })
+
+    if (!pdfInst.container?.document) {
+      throw new Error('container.document is null after reconciler commit — reconciler failed silently')
+    }
+
+    const pdfStream = await pdfInst.toBuffer()
+    buffer = await new Promise<Buffer>((resolve, reject) => {
+      const chunks: Buffer[] = []
+      pdfStream.on('data', (chunk: Buffer) => chunks.push(Buffer.from(chunk)))
+      pdfStream.on('end', () => resolve(Buffer.concat(chunks)))
+      pdfStream.on('error', (err: Error) => reject(err))
+    })
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err)
-    const stack = err instanceof Error ? err.stack?.slice(0, 600) : ''
-    console.error('[PDF] renderToBuffer failed:', err)
+    const stack = err instanceof Error ? err.stack?.slice(0, 800) : ''
+    console.error('[PDF] generation failed:', err)
     return new Response(`PDF generation failed: ${msg}\n${stack}\nFonts: ${fontCheck}`, { status: 500 })
   }
 
