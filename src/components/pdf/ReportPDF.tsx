@@ -8,23 +8,14 @@ import {
 // ── Premium font registration — reads from public/fonts/ (always in Vercel bundle)
 const f = (name: string) => path.join(process.cwd(), 'public', 'fonts', name)
 
-Font.register({
-  family: 'CormorantGaramond',
-  fonts: [
-    { src: f('cg-400.woff2'),  fontWeight: 400 },
-    { src: f('cg-400i.woff2'), fontWeight: 400, fontStyle: 'italic' },
-    { src: f('cg-600.woff2'),  fontWeight: 600 },
-    { src: f('cg-700.woff2'),  fontWeight: 700 },
-    { src: f('cg-700i.woff2'), fontWeight: 700, fontStyle: 'italic' },
-  ],
-})
-Font.register({
-  family: 'Lato',
-  fonts: [
-    { src: f('lato-400.woff2'), fontWeight: 400 },
-    { src: f('lato-700.woff2'), fontWeight: 700 },
-  ],
-})
+// Register each weight/style as its own family — avoids fontWeight resolution in react-pdf
+Font.register({ family: 'CG',       src: f('cg-400.woff2') })
+Font.register({ family: 'CGi',      src: f('cg-400i.woff2') })
+Font.register({ family: 'CGsb',     src: f('cg-600.woff2') })
+Font.register({ family: 'CGb',      src: f('cg-700.woff2') })
+Font.register({ family: 'CGbi',     src: f('cg-700i.woff2') })
+Font.register({ family: 'Lato',     src: f('lato-400.woff2') })
+Font.register({ family: 'LatoBold', src: f('lato-700.woff2') })
 Font.registerHyphenationCallback(word => [word])
 
 // ── Brand colours ─────────────────────────────────────────────────────────────
@@ -96,15 +87,15 @@ const styles = StyleSheet.create({
     fontFamily: 'Lato',
     position: 'relative',
   },
-  h1: { fontSize: 19, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.navy, marginBottom: 5 },
-  h2: { fontSize: 13, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.navy, marginBottom: 4 },
-  h3: { fontSize: 10.5, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.navy, marginBottom: 3 },
-  label: { fontSize: 7, fontFamily: 'Lato', fontWeight: 700, color: C.grayMid, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 },
-  value: { fontSize: 10, fontFamily: 'Lato', fontWeight: 700, color: C.navy },
+  h1: { fontSize: 19, fontFamily: 'CGb', color: C.navy, marginBottom: 5 },
+  h2: { fontSize: 13, fontFamily: 'CGb', color: C.navy, marginBottom: 4 },
+  h3: { fontSize: 10.5, fontFamily: 'CGb', color: C.navy, marginBottom: 3 },
+  label: { fontSize: 7, fontFamily: 'LatoBold', color: C.grayMid, textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 2 },
+  value: { fontSize: 10, fontFamily: 'LatoBold', color: C.navy },
   body: { fontSize: 9, fontFamily: 'Lato', color: C.charcoal, lineHeight: 1.6 },
   bodySmall: { fontSize: 8, fontFamily: 'Lato', color: C.text, lineHeight: 1.55 },
   bodyMuted: { fontSize: 8, fontFamily: 'Lato', color: C.gray, lineHeight: 1.5 },
-  italic: { fontSize: 8.5, fontFamily: 'Lato', color: C.gray, fontStyle: 'italic', lineHeight: 1.5 },
+  italic: { fontSize: 8.5, fontFamily: 'CGi', color: C.gray, lineHeight: 1.5 },
   bullet: { fontSize: 9, fontFamily: 'Lato', color: C.textDark, lineHeight: 1.6, marginBottom: 2 },
   row: { flexDirection: 'row', gap: 5 },
   dividerGold: { height: 1, backgroundColor: C.goldMid, marginVertical: 7 },
@@ -137,9 +128,9 @@ const styles = StyleSheet.create({
   tableHeader: { flexDirection: 'row', backgroundColor: C.navy, padding: '4pt 5pt' },
   tableRow: { flexDirection: 'row', padding: '3.5pt 5pt', borderBottom: `0.5pt solid ${C.grayLight}`, backgroundColor: C.offWhite },
   tableRowAlt: { flexDirection: 'row', padding: '3.5pt 5pt', borderBottom: `0.5pt solid ${C.grayLight}`, backgroundColor: '#fdf8f0' },
-  th: { fontSize: 7, fontFamily: 'Lato', fontWeight: 700, color: C.white, letterSpacing: 0.3 },
+  th: { fontSize: 7, fontFamily: 'LatoBold', color: C.white, letterSpacing: 0.3 },
   td: { fontSize: 8, fontFamily: 'Lato', color: C.text },
-  tdBold: { fontSize: 8, fontFamily: 'Lato', fontWeight: 700, color: C.navy },
+  tdBold: { fontSize: 8, fontFamily: 'LatoBold', color: C.navy },
   progressBg: { height: 6, backgroundColor: C.grayLight, borderRadius: 3, overflow: 'hidden', marginTop: 3 },
   progressFill: { height: 6, borderRadius: 3 },
   tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginTop: 3 },
@@ -434,7 +425,7 @@ function PageFooter() {
       <View style={{ height: 0.75, backgroundColor: C.goldBright, opacity: 0.5, marginBottom: 4 }} />
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <Text style={{ fontSize: 7, fontFamily: 'Lato', color: C.textMeta, letterSpacing: 0.3 }}>www.mahatathastu.com</Text>
-        <Text style={{ fontSize: 7.5, fontFamily: 'Lato', fontWeight: 700, color: C.navy, letterSpacing: 1.5 }}>MAHATATHASTU</Text>
+        <Text style={{ fontSize: 7.5, fontFamily: 'LatoBold', color: C.navy, letterSpacing: 1.5 }}>MAHATATHASTU</Text>
         <Text style={{ fontSize: 7, fontFamily: 'Lato', color: C.textMeta, letterSpacing: 0.3 }}>9858784784</Text>
       </View>
     </View>
@@ -451,14 +442,16 @@ function ChapterHeader({ number, title, sanskrit }: { number: string; title: str
           <View style={{ position: 'absolute', width: 46, height: 46, borderRadius: 23, border: `1pt solid ${C.saffronLight}`, opacity: 0.3 }} />
           <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: C.saffron, border: `1.5pt solid ${C.goldLight}`, alignItems: 'center', justifyContent: 'center' }}>
             <View style={{ position: 'absolute', width: 32, height: 32, borderRadius: 16, backgroundColor: C.saffronDark, opacity: 0.3 }} />
-            <Text style={{ fontSize: 13, fontFamily: 'Lato', fontWeight: 700, color: C.white }}>{number}</Text>
+            <Text style={{ fontSize: 13, fontFamily: 'LatoBold', color: C.white }}>{number}</Text>
           </View>
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 16, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.white, letterSpacing: 0.5 }}>{title}</Text>
-          {sanskrit ? <Text style={{ fontSize: 8, fontFamily: 'Lato', color: C.goldLight, marginTop: 2, letterSpacing: 1, fontStyle: 'italic' }}>{sanskrit}</Text> : null}
+          <Text style={{ fontSize: 16, fontFamily: 'CGb', color: C.white, letterSpacing: 0.5 }}>{title}</Text>
+          {sanskrit ? <Text style={{ fontSize: 8, fontFamily: 'CGi', color: C.goldLight, marginTop: 2, letterSpacing: 1 }}>{sanskrit}</Text> : null}
         </View>
-        <Text style={{ fontSize: 20, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.gold, opacity: 0.85 }}>OM</Text>
+        <View style={{ opacity: 0.85 }}>
+          <Text style={{ fontSize: 20, fontFamily: 'CGb', color: C.gold }}>OM</Text>
+        </View>
       </View>
       <View style={{ height: 2, backgroundColor: C.gold }} />
     </View>
@@ -471,8 +464,8 @@ function TitleHeader({ title, subtitle }: { title: string; subtitle?: string }) 
     <View style={{ marginBottom: 12 }}>
       <View style={{ height: 3, backgroundColor: C.gold }} />
       <View style={{ backgroundColor: C.navy, padding: '10pt 15pt', alignItems: 'center' }}>
-        <Text style={{ fontSize: 17, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.white, letterSpacing: 1.5 }}>{title}</Text>
-        {subtitle ? <Text style={{ fontSize: 8, fontFamily: 'Lato', color: C.goldLight, marginTop: 3, letterSpacing: 1, fontStyle: 'italic' }}>{subtitle}</Text> : null}
+        <Text style={{ fontSize: 17, fontFamily: 'CGb', color: C.white, letterSpacing: 1.5 }}>{title}</Text>
+        {subtitle ? <Text style={{ fontSize: 8, fontFamily: 'CGi', color: C.goldLight, marginTop: 3, letterSpacing: 1 }}>{subtitle}</Text> : null}
       </View>
       <View style={{ height: 2, backgroundColor: C.gold }} />
     </View>
@@ -485,7 +478,7 @@ function SectionLabel({ children }: { children: string }) {
     <View style={{ marginBottom: 7 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
         <View style={{ width: 4, height: 14, backgroundColor: C.saffron, borderRadius: 1, marginRight: 8 }} />
-        <Text style={{ fontSize: 11, fontFamily: 'Lato', fontWeight: 700, color: C.navy, letterSpacing: 0.3 }}>{children}</Text>
+        <Text style={{ fontSize: 11, fontFamily: 'LatoBold', color: C.navy, letterSpacing: 0.3 }}>{children}</Text>
       </View>
       <View style={{ height: 0.75, backgroundColor: C.goldPale }} />
     </View>
@@ -590,12 +583,12 @@ function CoverPage({ report, member, title }: { report: any; member: any; title:
         <NavyWatermarkCircles w={507} h={210} />
 
         {/* Sanskrit invocations — side by side with separator */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', zIndex: 1, marginBottom: 10 }}>
-          <Text style={{ fontSize: 7, fontFamily: 'Lato', color: C.textOnDark, letterSpacing: 1.8, opacity: 0.7 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', zIndex: 1, marginBottom: 10, opacity: 0.7 }}>
+          <Text style={{ fontSize: 7, fontFamily: 'Lato', color: C.textOnDark, letterSpacing: 1.8 }}>
             SHREE MATRA NAMAH
           </Text>
-          <View style={{ width: 0.5, height: 12, backgroundColor: C.goldLight, marginHorizontal: 10, opacity: 0.4 }} />
-          <Text style={{ fontSize: 7, fontFamily: 'Lato', color: C.textOnDark, letterSpacing: 1.8, opacity: 0.7 }}>
+          <View style={{ width: 0.5, height: 12, backgroundColor: C.goldLight, marginHorizontal: 10 }} />
+          <Text style={{ fontSize: 7, fontFamily: 'Lato', color: C.textOnDark, letterSpacing: 1.8 }}>
             OM MAHAGANPATAYE NAMAH
           </Text>
         </View>
@@ -609,7 +602,7 @@ function CoverPage({ report, member, title }: { report: any; member: any; title:
         <View style={{ width: 72, height: 0.5, backgroundColor: C.goldLight, opacity: 0.6, marginTop: 8, zIndex: 1 }} />
 
         {/* Brand name */}
-        <Text style={{ fontSize: 32, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.goldOnDark, letterSpacing: 5, marginTop: 8, zIndex: 1 }}>
+        <Text style={{ fontSize: 32, fontFamily: 'CGb', color: C.goldOnDark, letterSpacing: 5, marginTop: 8, zIndex: 1 }}>
           MAHATATHASTU
         </Text>
 
@@ -617,9 +610,11 @@ function CoverPage({ report, member, title }: { report: any; member: any; title:
         <View style={{ width: 56, height: 1, backgroundColor: C.goldBright, marginTop: 6, zIndex: 1 }} />
 
         {/* Tagline */}
-        <Text style={{ fontSize: 6.5, fontFamily: 'Lato', color: C.textOnDark, letterSpacing: 2, opacity: 0.65, marginTop: 6, zIndex: 1 }}>
-          DECODE YOUR LIFE  ·  DESIGN YOUR FUTURE
-        </Text>
+        <View style={{ opacity: 0.65, marginTop: 6 }}>
+          <Text style={{ fontSize: 6.5, fontFamily: 'Lato', color: C.textOnDark, letterSpacing: 2 }}>
+            DECODE YOUR LIFE  ·  DESIGN YOUR FUTURE
+          </Text>
+        </View>
       </View>
 
       {/* ── ZONE 2: DECORATIVE DIAMOND TRANSITION STRIP ── */}
@@ -636,14 +631,14 @@ function CoverPage({ report, member, title }: { report: any; member: any; title:
 
         {/* Report type label — vermillion pill */}
         <View style={{ border: `1.5pt solid ${C.vermillion}`, alignSelf: 'flex-start', paddingHorizontal: 10, paddingVertical: 4, marginBottom: 16 }}>
-          <Text style={{ fontSize: 8, fontFamily: 'Lato', fontWeight: 700, color: C.vermillion, letterSpacing: 2 }}>
+          <Text style={{ fontSize: 8, fontFamily: 'LatoBold', color: C.vermillion, letterSpacing: 2 }}>
             {title.toUpperCase()}
           </Text>
         </View>
 
         {/* Person name */}
         {member?.full_name ? (
-          <Text style={{ fontSize: 32, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.textPrimary, letterSpacing: 2, lineHeight: 1.2 }}>
+          <Text style={{ fontSize: 32, fontFamily: 'CGb', color: C.textPrimary, letterSpacing: 2, lineHeight: 1.2 }}>
             {member.full_name.toUpperCase()}
           </Text>
         ) : null}
@@ -671,11 +666,11 @@ function CoverPage({ report, member, title }: { report: any; member: any; title:
         <View style={{ marginTop: 28, border: `1pt solid ${C.borderSubtle}`, paddingHorizontal: 28, paddingVertical: 18, position: 'relative' }}>
           <LineageCorners size={11} />
 
-          <Text style={{ fontSize: 8, fontFamily: 'Lato', fontWeight: 700, color: C.goldOnCream, letterSpacing: 2, textAlign: 'center', marginBottom: 8 }}>
+          <Text style={{ fontSize: 8, fontFamily: 'LatoBold', color: C.goldOnCream, letterSpacing: 2, textAlign: 'center', marginBottom: 8 }}>
             LINEAGE & TRADITION
           </Text>
           <View style={{ width: 48, height: 0.5, backgroundColor: C.borderSubtle, alignSelf: 'center', marginBottom: 10 }} />
-          <Text style={{ fontSize: 11, fontFamily: 'CormorantGaramond', fontStyle: 'italic', color: C.textSecondary, textAlign: 'center', lineHeight: 1.7, marginBottom: 6 }}>
+          <Text style={{ fontSize: 11, fontFamily: 'CGi', color: C.textSecondary, textAlign: 'center', lineHeight: 1.7, marginBottom: 6 }}>
             Lineage of Maharishi Bhrigu  ·  Tradition of Vasishtha
           </Text>
           <Text style={{ fontSize: 9, fontFamily: 'Lato', color: C.textMeta, textAlign: 'center', letterSpacing: 0.5, lineHeight: 1.6 }}>
@@ -685,10 +680,10 @@ function CoverPage({ report, member, title }: { report: any; member: any; title:
 
         {/* ── Institution credit ── */}
         <View style={{ marginTop: 18, alignItems: 'center' }}>
-          <Text style={{ fontSize: 8, fontFamily: 'Lato', fontWeight: 700, color: C.goldOnCream, letterSpacing: 2, marginBottom: 4 }}>
+          <Text style={{ fontSize: 8, fontFamily: 'LatoBold', color: C.goldOnCream, letterSpacing: 2, marginBottom: 4 }}>
             AN INITIATIVE OF ANUSHTHAAN INDIA
           </Text>
-          <Text style={{ fontSize: 10, fontFamily: 'CormorantGaramond', fontStyle: 'italic', color: C.textMeta }}>
+          <Text style={{ fontSize: 10, fontFamily: 'CGi', color: C.textMeta }}>
             GYANAMEETHAM · Educating Society with Wisdom for a Better Life
           </Text>
         </View>
@@ -696,9 +691,9 @@ function CoverPage({ report, member, title }: { report: any; member: any; title:
 
       {/* ── FOOTER BAR (absolute, 44pt) ── */}
       <View style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 44, backgroundColor: C.bgDark, borderTop: `2pt solid ${C.goldBright}`, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 44, justifyContent: 'space-between' }}>
-        <Text style={{ fontSize: 9, fontFamily: 'Lato', fontWeight: 700, color: C.goldOnDark, letterSpacing: 1.8 }}>MAHATATHASTU</Text>
-        <Text style={{ fontSize: 8, fontFamily: 'Lato', color: C.textOnDark, opacity: 0.8 }}>www.mahatathastu.com</Text>
-        <Text style={{ fontSize: 8, fontFamily: 'Lato', color: C.textOnDark, opacity: 0.8 }}>9858784784</Text>
+        <Text style={{ fontSize: 9, fontFamily: 'LatoBold', color: C.goldOnDark, letterSpacing: 1.8 }}>MAHATATHASTU</Text>
+        <View style={{ opacity: 0.8 }}><Text style={{ fontSize: 8, fontFamily: 'Lato', color: C.textOnDark }}>www.mahatathastu.com</Text></View>
+        <View style={{ opacity: 0.8 }}><Text style={{ fontSize: 8, fontFamily: 'Lato', color: C.textOnDark }}>9858784784</Text></View>
       </View>
 
     </Page>
@@ -736,15 +731,19 @@ function GuidancePage() {
       {/* ── PAGE HEADER — navy, 80pt ── */}
       <View style={{ backgroundColor: C.bgDark, paddingTop: 16, paddingBottom: 18, paddingHorizontal: 44, position: 'relative' }}>
         <NavyWatermarkCircles w={507} h={80} />
-        <Text style={{ fontSize: 8, fontFamily: 'Lato', color: C.textOnDark, letterSpacing: 2.5, opacity: 0.6, zIndex: 1 }}>
-          MAHATATHASTU · ANUSHTHAAN INDIA
-        </Text>
-        <Text style={{ fontSize: 26, fontFamily: 'CormorantGaramond', fontWeight: 700, fontStyle: 'italic', color: C.goldOnDark, letterSpacing: 1.5, marginTop: 4, zIndex: 1 }}>
+        <View style={{ opacity: 0.6 }}>
+          <Text style={{ fontSize: 8, fontFamily: 'Lato', color: C.textOnDark, letterSpacing: 2.5 }}>
+            MAHATATHASTU · ANUSHTHAAN INDIA
+          </Text>
+        </View>
+        <Text style={{ fontSize: 26, fontFamily: 'CGbi', color: C.goldOnDark, letterSpacing: 1.5, marginTop: 4, zIndex: 1 }}>
           Divine Guidance
         </Text>
-        <Text style={{ fontSize: 9, fontFamily: 'Lato', color: C.textOnDark, opacity: 0.7, marginTop: 3, zIndex: 1 }}>
-          How to use this Report
-        </Text>
+        <View style={{ opacity: 0.7, marginTop: 3 }}>
+          <Text style={{ fontSize: 9, fontFamily: 'Lato', color: C.textOnDark }}>
+            How to use this Report
+          </Text>
+        </View>
       </View>
 
       {/* ── Thin gold rule ── */}
@@ -757,7 +756,7 @@ function GuidancePage() {
         <View style={{ flexDirection: 'row', marginBottom: 14 }}>
           {/* Drop cap */}
           <View style={{ width: 36, height: 36, backgroundColor: C.bgDark, alignItems: 'center', justifyContent: 'center', marginRight: 8, marginTop: 2 }}>
-            <Text style={{ fontSize: 26, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.goldOnDark, lineHeight: 1 }}>T</Text>
+            <Text style={{ fontSize: 26, fontFamily: 'CGb', color: C.goldOnDark, lineHeight: 1 }}>T</Text>
           </View>
           <View style={{ flex: 1 }}>
             <Text style={{ fontSize: 10.5, fontFamily: 'Lato', color: C.textSecondary, lineHeight: 1.85 }}>
@@ -777,13 +776,13 @@ function GuidancePage() {
             <View key={card.num} style={{ flexDirection: 'row', marginBottom: 14, alignItems: 'flex-start' }}>
               {/* Number badge */}
               <View style={{ width: 34, height: 34, borderRadius: 17, backgroundColor: C.bgDark, alignItems: 'center', justifyContent: 'center', marginRight: 14, flexShrink: 0 }}>
-                <Text style={{ fontSize: 9, fontFamily: 'Lato', fontWeight: 700, color: C.goldOnDark, letterSpacing: 0.5 }}>
+                <Text style={{ fontSize: 9, fontFamily: 'LatoBold', color: C.goldOnDark, letterSpacing: 0.5 }}>
                   {card.num}
                 </Text>
               </View>
               {/* Card body */}
               <View style={{ flex: 1, borderLeft: `2pt solid ${C.borderStrong}`, paddingLeft: 12, paddingVertical: 4 }}>
-                <Text style={{ fontSize: 12, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.textPrimary, marginBottom: 4, letterSpacing: 0.3 }}>
+                <Text style={{ fontSize: 12, fontFamily: 'CGb', color: C.textPrimary, marginBottom: 4, letterSpacing: 0.3 }}>
                   {card.title}
                 </Text>
                 <Text style={{ fontSize: 9.5, fontFamily: 'Lato', color: C.textSecondary, lineHeight: 1.75 }}>
@@ -798,13 +797,13 @@ function GuidancePage() {
 
         {/* Om Tat Sat closing block */}
         <View style={{ backgroundColor: C.bgCard, borderTop: `2pt solid ${C.borderStrong}`, borderBottom: `2pt solid ${C.borderStrong}`, paddingVertical: 16, paddingHorizontal: 24, alignItems: 'center' }}>
-          <Text style={{ fontSize: 20, fontFamily: 'CormorantGaramond', fontWeight: 700, fontStyle: 'italic', color: C.vermillion, letterSpacing: 2, marginBottom: 6 }}>
+          <Text style={{ fontSize: 20, fontFamily: 'CGbi', color: C.vermillion, letterSpacing: 2, marginBottom: 6 }}>
             Om Tat Sat
           </Text>
           <Text style={{ fontSize: 10, fontFamily: 'Lato', color: C.textSecondary, textAlign: 'center', lineHeight: 1.8 }}>
             May this report illuminate your path to self-knowledge, purpose, and dharmic living.
           </Text>
-          <Text style={{ fontSize: 9, fontFamily: 'Lato', fontWeight: 700, color: C.goldOnCream, textAlign: 'center', marginTop: 8, letterSpacing: 1 }}>
+          <Text style={{ fontSize: 9, fontFamily: 'LatoBold', color: C.goldOnCream, textAlign: 'center', marginTop: 8, letterSpacing: 1 }}>
             — MahaTathastu Team · Anushthaan India
           </Text>
         </View>
@@ -1095,7 +1094,7 @@ function ChakraPages({ data, number }: { data: any; number: string }) {
               Your chakra system is {overallBalance >= 70 ? 'well-balanced' : overallBalance >= 50 ? 'moderately balanced' : 'needs attention'}. Focus on the lower-percentage chakras with the prescribed remedies.
             </Text>
           </View>
-          <Text style={{ fontSize: 28, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.saffronLight, marginLeft: 10 }}>{overallBalance}%</Text>
+          <Text style={{ fontSize: 28, fontFamily: 'CGb', color: C.saffronLight, marginLeft: 10 }}>{overallBalance}%</Text>
         </View>
       ) : null}
 
@@ -1129,7 +1128,7 @@ function ChakraPages({ data, number }: { data: any; number: string }) {
             {c.affirmations?.length ? (
               <Text style={[styles.italic, { marginTop: 3 }]}>"{Array.isArray(c.affirmations) ? c.affirmations[0] : c.affirmations}"</Text>
             ) : null}
-            {c.remedy ? <Text style={[styles.bodySmall, { color: C.saffron, marginTop: 3, fontFamily: 'Lato', fontWeight: 700 }]}>Remedy: {c.remedy}</Text> : null}
+            {c.remedy ? <Text style={[styles.bodySmall, { color: C.saffron, marginTop: 3, fontFamily: 'LatoBold' }]}>Remedy: {c.remedy}</Text> : null}
           </View>
         )
       })}
@@ -1366,8 +1365,8 @@ function PsychologyPages({ data, number }: { data: any; number: string }) {
 
       <View style={[styles.cardBlue, { marginBottom: 10 }]}>
         <Text style={[styles.label, { color: C.goldLight, marginBottom: 3 }]}>Moon Archetype — Your Psychological Type</Text>
-        <Text style={{ fontSize: 20, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.white }}>{ps.moonPersonalityType}</Text>
-        {ps.moonArchetypeTagline ? <Text style={{ fontSize: 8.5, color: C.goldLight, marginTop: 3, fontStyle: 'italic' }}>{ps.moonArchetypeTagline}</Text> : null}
+        <Text style={{ fontSize: 20, fontFamily: 'CGb', color: C.white }}>{ps.moonPersonalityType}</Text>
+        {ps.moonArchetypeTagline ? <Text style={{ fontSize: 8.5, fontFamily: 'CGi', color: C.goldLight, marginTop: 3 }}>{ps.moonArchetypeTagline}</Text> : null}
       </View>
 
       <InfoGrid cols={2} items={[
@@ -1506,7 +1505,7 @@ function ColourTherapyPages({ data, number }: { data: any; number: string }) {
       {ct.powerColor ? (
         <View style={[styles.cardBlue, { marginBottom: 8 }]}>
           <Text style={[styles.label, { color: C.goldLight }]}>Your Power Colour</Text>
-          <Text style={{ fontSize: 18, fontFamily: 'CormorantGaramond', fontWeight: 700, color: C.white }}>{ct.powerColor}</Text>
+          <Text style={{ fontSize: 18, fontFamily: 'CGb', color: C.white }}>{ct.powerColor}</Text>
           {ct.powerColorMeaning ? <Text style={{ fontSize: 8.5, color: C.goldPale, marginTop: 3 }}>{ct.powerColorMeaning}</Text> : null}
         </View>
       ) : null}
@@ -1733,12 +1732,12 @@ function DisclaimerPage() {
       <OrnamentDivider mt={12} mb={12} />
 
       <View style={[styles.highlightGold, { alignItems: 'center' }]}>
-        <Text style={{ fontSize: 18, fontFamily: 'CormorantGaramond', fontWeight: 700, fontStyle: 'italic', color: C.crimson, textAlign: 'center', marginBottom: 5 }}>Om Tat Sat</Text>
+        <Text style={{ fontSize: 18, fontFamily: 'CGbi', color: C.crimson, textAlign: 'center', marginBottom: 5 }}>Om Tat Sat</Text>
         <Text style={[styles.body, { textAlign: 'center' }]}>
           May this report guide you on your path to self-knowledge and dharmic living.{'\n'}
           Follow the remedies with faith, patience and devotion for 90 days minimum.
         </Text>
-        <Text style={[styles.bodySmall, { textAlign: 'center', color: C.navy, marginTop: 5, fontFamily: 'Lato', fontWeight: 700 }]}>
+        <Text style={[styles.bodySmall, { textAlign: 'center', color: C.navy, marginTop: 5, fontFamily: 'LatoBold' }]}>
           — MahaTathastu · Anushthaan India
         </Text>
         <Text style={[styles.bodyMuted, { textAlign: 'center', marginTop: 3 }]}>
