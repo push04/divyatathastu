@@ -2,7 +2,7 @@
   "_meta": {
     "dataset": "Major Pilgrimage Circuits of India",
     "version": "1.0.0",
-    "total_circuits": 18,
+    "total_circuits": 25,
     "last_updated": "2026-05-21",
     "coordinate_source": "Wikipedia, Survey of India, Archaeological Survey of India, government tourism boards",
     "notes": "Temple sequences follow traditional/scriptural order. Distances are approximate road distances. Some temples appear in multiple circuits. All circuits reference temple IDs in mandirs.json."
@@ -1829,6 +1829,429 @@
             "longitude": 79.3564
           },
           "significance": "UNESCO site built by Raja Raja Chola II. Shaped like a stone chariot."
+        }
+      ]
+    },
+    {
+      "id": "PC019",
+      "name": "Himalayan Panch Prayag Yatra",
+      "local_name": "पंचप्रयाग यात्रा",
+      "circuit_type": "Panch Prayag",
+      "deity_focus": "Lord Vishnu & Holy Confluences",
+      "total_temples": 5,
+      "states_covered": [
+        "Uttarakhand"
+      ],
+      "base_city": "Rishikesh / Haridwar",
+      "best_months": [
+        "May to June",
+        "September to November"
+      ],
+      "approx_duration_days": 4,
+      "difficulty": "Moderate",
+      "significance": "A sacred circuit of the five holy confluences (Prayags) of the Alaknanda River in the Garhwal Himalayas. Each confluence represents a highly sacred geographic and spiritual junction where major rivers merge to form the Ganges.",
+      "traditional_route_order": "Devprayag → Rudraprayag → Karnaprayag → Nandaprayag → Vishnuprayag",
+      "temples": [
+        {
+          "stop_number": 1,
+          "temple_id": "T326",
+          "name": "Raghunathji Temple (Devprayag)",
+          "city": "Devprayag",
+          "coordinates": {
+            "latitude": 30.1447,
+            "longitude": 78.5983
+          },
+          "significance": "Confluence of Alaknanda and Bhagirathi rivers, where the Ganges officially begins."
+        },
+        {
+          "stop_number": 2,
+          "temple_id": "T327",
+          "name": "Chamunda Devi Temple (Rudraprayag)",
+          "city": "Rudraprayag",
+          "coordinates": {
+            "latitude": 30.2853,
+            "longitude": 78.9817
+          },
+          "significance": "Confluence of Alaknanda and Mandakini rivers."
+        },
+        {
+          "stop_number": 3,
+          "temple_id": "T328",
+          "name": "Uma Devi Temple (Karnaprayag)",
+          "city": "Karnaprayag",
+          "coordinates": {
+            "latitude": 30.2608,
+            "longitude": 79.2217
+          },
+          "significance": "Confluence of Alaknanda and Pindar rivers."
+        },
+        {
+          "stop_number": 4,
+          "temple_id": "T329",
+          "name": "Gopalji Temple (Nandaprayag)",
+          "city": "Nandaprayag",
+          "coordinates": {
+            "latitude": 30.3328,
+            "longitude": 79.3253
+          },
+          "significance": "Confluence of Alaknanda and Mandakini rivers."
+        },
+        {
+          "stop_number": 5,
+          "temple_id": "T330",
+          "name": "Laxmi Narayan Temple (Vishnuprayag)",
+          "city": "Vishnuprayag",
+          "coordinates": {
+            "latitude": 30.5647,
+            "longitude": 79.5683
+          },
+          "significance": "Confluence of Alaknanda and Dhauliganga rivers."
+        }
+      ]
+    },
+    {
+      "id": "PC020",
+      "name": "Hoysala Heritage Trail",
+      "local_name": "होयसला मंदिर विरासत यात्रा",
+      "circuit_type": "Heritage Trail",
+      "deity_focus": "Lord Vishnu & Lord Shiva",
+      "total_temples": 3,
+      "states_covered": [
+        "Karnataka"
+      ],
+      "base_city": "Hassan / Mysuru",
+      "best_months": [
+        "October to March"
+      ],
+      "approx_duration_days": 2,
+      "difficulty": "Easy",
+      "significance": "A heritage circuit covering the magnificent star-shaped soapstone temples built by the Hoysala Empire. These UNESCO World Heritage Sites are celebrated worldwide for their unmatched stone carving precision.",
+      "traditional_route_order": "Chennakeshava Temple (Belur) → Hoysaleswara Temple (Halebidu) → Keshava Temple (Somanathapura)",
+      "temples": [
+        {
+          "stop_number": 1,
+          "temple_id": "T331",
+          "name": "Chennakeshava Temple (Belur)",
+          "city": "Belur",
+          "coordinates": {
+            "latitude": 13.1617,
+            "longitude": 75.8597
+          },
+          "significance": "Famous for its ornate Dravidian-Hoysala facade and standard soapstone madanika figurines."
+        },
+        {
+          "stop_number": 2,
+          "temple_id": "T332",
+          "name": "Hoysaleswara Temple (Halebidu)",
+          "city": "Halebidu",
+          "coordinates": {
+            "latitude": 13.2139,
+            "longitude": 75.9931
+          },
+          "significance": "UNESCO World Heritage Site with spectacular twin shrines and massive monolith Nandi statues."
+        },
+        {
+          "stop_number": 3,
+          "temple_id": "T333",
+          "name": "Keshava Temple (Somanathapura)",
+          "city": "Somanathapura",
+          "coordinates": {
+            "latitude": 12.2764,
+            "longitude": 76.8819
+          },
+          "significance": "A beautifully complete star-shaped triple-shrine (Trikuta) temple dedicated to Lord Vishnu."
+        }
+      ]
+    },
+    {
+      "id": "PC021",
+      "name": "Mewar Forts and Shrines Circuit",
+      "local_name": "मेवाड़ पावन परिपथ",
+      "circuit_type": "Regional Pilgrimage",
+      "deity_focus": "Lord Krishna & Lord Vishnu",
+      "total_temples": 2,
+      "states_covered": [
+        "Rajasthan"
+      ],
+      "base_city": "Udaipur",
+      "best_months": [
+        "October to March"
+      ],
+      "approx_duration_days": 1,
+      "difficulty": "Easy",
+      "significance": "Covers two highly revered historic temples of the Mewar region which were patronized by Mewar royalty and continue to serve as major centers of devotion.",
+      "traditional_route_order": "Dwarkadhish Temple (Kankroli) → Charbhuja Temple (Garhbor)",
+      "temples": [
+        {
+          "stop_number": 1,
+          "temple_id": "T334",
+          "name": "Dwarkadhish Temple (Kankroli)",
+          "city": "Kankroli",
+          "coordinates": {
+            "latitude": 25.0717,
+            "longitude": 73.8833
+          },
+          "significance": "A key shrine of the Pushtimarg sect located next to the Rajsamand Lake."
+        },
+        {
+          "stop_number": 2,
+          "temple_id": "T335",
+          "name": "Charbhuja Temple (Garhbor)",
+          "city": "Garhbor",
+          "coordinates": {
+            "latitude": 25.1383,
+            "longitude": 73.5717
+          },
+          "significance": "Historic fortress temple dedicated to a four-armed form of Lord Vishnu."
+        }
+      ]
+    },
+    {
+      "id": "PC022",
+      "name": "Goa Temple Trail",
+      "local_name": "गोवा देवभूमि यात्रा",
+      "circuit_type": "Heritage & Devotional",
+      "deity_focus": "Lord Shiva & Goddess Durga",
+      "total_temples": 3,
+      "states_covered": [
+        "Goa"
+      ],
+      "base_city": "Ponda / Panaji",
+      "best_months": [
+        "November to February"
+      ],
+      "approx_duration_days": 2,
+      "difficulty": "Easy",
+      "significance": "A scenic circuit showcasing the unique Goan-Portuguese fusion temple architecture and the ancient basalt rock temples nestled in the Western Ghats.",
+      "traditional_route_order": "Mangueshi Temple → Shanta Durga Temple → Tambdi Surla Mahadev Temple",
+      "temples": [
+        {
+          "stop_number": 1,
+          "temple_id": "T336",
+          "name": "Mangueshi Temple (Priol)",
+          "city": "Priol",
+          "coordinates": {
+            "latitude": 15.4383,
+            "longitude": 73.9683
+          },
+          "significance": "Features a unique 7-story lamp tower (Deepasthambha) and stunning dome architecture."
+        },
+        {
+          "stop_number": 2,
+          "temple_id": "T337",
+          "name": "Shanta Durga Temple (Kavalem)",
+          "city": "Kavalem",
+          "coordinates": {
+            "latitude": 15.4217,
+            "longitude": 73.9183
+          },
+          "significance": "Dedicated to the peaceful form of Goddess Durga mediating between Shiva and Vishnu."
+        },
+        {
+          "stop_number": 3,
+          "temple_id": "T338",
+          "name": "Tambdi Surla Mahadev Temple",
+          "city": "Tambdi Surla",
+          "coordinates": {
+            "latitude": 15.4383,
+            "longitude": 74.2533
+          },
+          "significance": "The oldest surviving stone temple in Goa, built of black basalt in Kadamba style."
+        }
+      ]
+    },
+    {
+      "id": "PC023",
+      "name": "Vrindavan Dham Parikrama",
+      "local_name": "वृन्दावन धाम परिक्रमा",
+      "circuit_type": "Dham Parikrama",
+      "deity_focus": "Lord Krishna",
+      "total_temples": 4,
+      "states_covered": [
+        "Uttar Pradesh"
+      ],
+      "base_city": "Mathura / Vrindavan",
+      "best_months": [
+        "September to March"
+      ],
+      "approx_duration_days": 2,
+      "difficulty": "Easy",
+      "significance": "A devotional loop of the historic temples established by the Goswamis of Vrindavan. Pilgrims complete this trail to experience the core land of Lord Krishna's childhood pastimes.",
+      "traditional_route_order": "Bankey Bihari Temple → Radha Raman Temple → Radha Vallabh Temple → Radha Damodar Temple",
+      "temples": [
+        {
+          "stop_number": 1,
+          "temple_id": "T339",
+          "name": "Bankey Bihari Temple (Vrindavan)",
+          "city": "Vrindavan",
+          "coordinates": {
+            "latitude": 27.5714,
+            "longitude": 77.7017
+          },
+          "significance": "One of the most famous Krishna temples where the deity is worshipped with a curtain-based darshan."
+        },
+        {
+          "stop_number": 2,
+          "temple_id": "T340",
+          "name": "Radha Raman Temple (Vrindavan)",
+          "city": "Vrindavan",
+          "coordinates": {
+            "latitude": 27.5817,
+            "longitude": 77.7039
+          },
+          "significance": "Houses a self-manifested deity from a Saligram stone. The kitchen fire has burned for 480+ years."
+        },
+        {
+          "stop_number": 3,
+          "temple_id": "T341",
+          "name": "Radha Vallabh Temple (Vrindavan)",
+          "city": "Vrindavan",
+          "coordinates": {
+            "latitude": 27.5794,
+            "longitude": 77.7006
+          },
+          "significance": "Deity is represented by a golden crown alongside Radha."
+        },
+        {
+          "stop_number": 4,
+          "temple_id": "T342",
+          "name": "Radha Damodar Temple (Vrindavan)",
+          "city": "Vrindavan",
+          "coordinates": {
+            "latitude": 27.5783,
+            "longitude": 77.7028
+          },
+          "significance": "Houses the holy Govardhan Shila displaying the footprint of Lord Krishna."
+        }
+      ]
+    },
+    {
+      "id": "PC024",
+      "name": "Kashi Guard and Shakti Trail",
+      "local_name": "काशी रक्षक एवं शक्ति यात्रा",
+      "circuit_type": "City Pilgrimage",
+      "deity_focus": "Goddess Durga & Guardian Deities",
+      "total_temples": 3,
+      "states_covered": [
+        "Uttar Pradesh"
+      ],
+      "base_city": "Varanasi",
+      "best_months": [
+        "October to March"
+      ],
+      "approx_duration_days": 1,
+      "difficulty": "Easy",
+      "significance": "A local trail in Varanasi that connects the major guardian and Shakti temples of the city. Worshippers visit these to seek protective blessings and spiritual power.",
+      "traditional_route_order": "Kaal Bhairav Temple → Sankat Mochan Hanuman Temple → Durga Mandir",
+      "temples": [
+        {
+          "stop_number": 1,
+          "temple_id": "T345",
+          "name": "Kaal Bhairav Temple (Varanasi)",
+          "city": "Varanasi",
+          "coordinates": {
+            "latitude": 25.3217,
+            "longitude": 83.0139
+          },
+          "significance": "Dedicated to the spiritual police guardian (Kotwal) of Kashi."
+        },
+        {
+          "stop_number": 2,
+          "temple_id": "T343",
+          "name": "Sankat Mochan Hanuman Temple (Varanasi)",
+          "city": "Varanasi",
+          "coordinates": {
+            "latitude": 25.2806,
+            "longitude": 83.0006
+          },
+          "significance": "Established by saint poet Tulsidas, highly popular Hanuman shrine."
+        },
+        {
+          "stop_number": 3,
+          "temple_id": "T344",
+          "name": "Durga Mandir (Varanasi)",
+          "city": "Varanasi",
+          "coordinates": {
+            "latitude": 25.2853,
+            "longitude": 83.0039
+          },
+          "significance": "An 18th-century red sandstone temple displaying classical Nagara Shikhara design."
+        }
+      ]
+    },
+    {
+      "id": "PC025",
+      "name": "Gujarat Sacred Coast Circuit",
+      "local_name": "गुजरात पावन तटीय यात्रा",
+      "circuit_type": "Sacred Coast",
+      "deity_focus": "Lord Shiva & Lord Krishna",
+      "total_temples": 5,
+      "states_covered": [
+        "Gujarat"
+      ],
+      "base_city": "Rajkot / Ahmedabad",
+      "best_months": [
+        "October to March"
+      ],
+      "approx_duration_days": 4,
+      "difficulty": "Easy",
+      "significance": "A coastal route linking the highly famous Shiva and Krishna shrines along the Saurashtra and Kathiawar coastline, combining Jyotirlinga and oceanic pilgrimage spots.",
+      "traditional_route_order": "Somnath Temple → Bhalka Tirth → Dwarka Bhadkeshwar Mahadev → Nishkalank Mahadev → Gopnath Mahadev",
+      "temples": [
+        {
+          "stop_number": 1,
+          "temple_id": "T001",
+          "name": "Somnath Temple",
+          "city": "Prabhas Patan",
+          "coordinates": {
+            "latitude": 20.888,
+            "longitude": 70.4012
+          },
+          "significance": "The first among the twelve Jyotirlinga shrines of Lord Shiva, sitting directly on the beach."
+        },
+        {
+          "stop_number": 2,
+          "temple_id": "T395",
+          "name": "Bhalka Tirth (Veraval)",
+          "city": "Veraval",
+          "coordinates": {
+            "latitude": 20.8953,
+            "longitude": 70.4183
+          },
+          "significance": "The holy site where Lord Krishna left the earthly plane."
+        },
+        {
+          "stop_number": 3,
+          "temple_id": "T396",
+          "name": "Dwarka Bhadkeshwar Mahadev Temple",
+          "city": "Dwarka",
+          "coordinates": {
+            "latitude": 22.2417,
+            "longitude": 68.9556
+          },
+          "significance": "A gorgeous coastal temple situated on a hillock in the Arabian Sea near Dwarka."
+        },
+        {
+          "stop_number": 4,
+          "temple_id": "T349",
+          "name": "Nishkalank Mahadev Temple (Koliyak)",
+          "city": "Koliyak",
+          "coordinates": {
+            "latitude": 21.6117,
+            "longitude": 72.2856
+          },
+          "significance": "A unique sea temple where lingams emerge during low tide, allowing devotees to walk to them."
+        },
+        {
+          "stop_number": 5,
+          "temple_id": "T350",
+          "name": "Gopnath Mahadev Temple (Bhavnagar)",
+          "city": "Gopnath",
+          "coordinates": {
+            "latitude": 21.2008,
+            "longitude": 72.1117
+          },
+          "significance": "Coastal temple where Narsinh Mehta received a vision of Krishna's Raas Leela."
         }
       ]
     }
