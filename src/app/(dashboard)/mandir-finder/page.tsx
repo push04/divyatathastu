@@ -120,8 +120,10 @@ export default function MandirFinderPage() {
       </div>
 
       {/* India SVG Map Tab */}
-      <div className={`flex-1 overflow-hidden ${tab === 'map' ? '' : 'hidden'}`}>
-        <IndiaMandirMap />
+      <div className={`flex-1 overflow-hidden relative ${tab === 'map' ? '' : 'hidden'}`}>
+        <div className="absolute inset-0">
+          <IndiaMandirMap />
+        </div>
       </div>
 
       {/* Near Me Tab */}
