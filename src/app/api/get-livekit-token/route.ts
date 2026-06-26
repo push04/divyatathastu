@@ -16,6 +16,26 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'roomName and userName are required' }, { status: 400 })
   }
 
+  // Verify the requesting user is authorized to join this room.
+  // Consultation rooms are named `consult-{bookingId}`.
+  if (roomName.startsWith('consult-')) {
+    const bookingId = roomName.slice('consult-'.length)
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+    const isStaff = profile?.role === 'admin' || profile?.role === 'expert'
+    if (!isStaff) {
+      const { data: booking } = await (supabase as any)
+        .from('consultation_bookings')
+        .select('id')
+        .eq('id', bookingId)
+        .eq('user_id', user.id)
+        .eq('status', 'confirmed')
+        .maybeSingle()
+      if (!booking) {
+        return NextResponse.json({ error: 'Not authorized for this room' }, { status: 403 })
+      }
+    }
+  }
+
   // Read livekit_mode from platform_settings
   const { data: setting } = await (supabase as any)
     .from('platform_settings')
