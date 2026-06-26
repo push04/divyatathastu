@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
         is_blocked: false,
         duration_minutes: 45,
         specialization: specialization || 'Astrology',
-        price: 1100, // Default paid consultation price
+        price: 0,
       }).select('id, price').single()
 
       if (slotErr || !newSlot) {
@@ -315,7 +315,7 @@ export async function GET(req: NextRequest) {
       end: ps.end,
       is_booked: dbSlot?.is_booked || false,
       is_blocked: dbSlot?.is_blocked || false,
-      price: dbSlot?.price || 1100, // Default paid consultation price
+      price: dbSlot?.price || 0,
       slot_id: dbSlot?.id || null,
     }
   })
