@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { useServiceItems } from '@/lib/hooks/useServiceItems'
@@ -28,25 +28,53 @@ const BENEFITS = [
   { icon: 'auto_awesome', title: 'Mantra Amplification', desc: 'Amplifies the potency of your daily japa and sadhana practice when used before practice' },
 ]
 
+const FALLBACK_PRICE = 499
+const WHATSAPP_NUMBER = '919858784784'
+
 export default function ArdraJalamPage() {
-  const { items, loading } = useServiceItems('ardra_jalam')
+  const { items, loading, error } = useServiceItems('ardra_jalam')
   const [qty, setQty] = useState(1)
   const [booked, setBooked] = useState(false)
-  const { pay, bookingId } = useServicePayment()
+  const [ordering, setOrdering] = useState(false)
+  const { pay } = useServicePayment()
 
-  const product = items[0]
-  const ordering = !!bookingId
+  const product = items[0] ?? null
+  const unitPrice = product?.price ?? FALLBACK_PRICE
+  const totalPrice = unitPrice * qty
 
-  function handleOrder() {
-    if (!product) return
-    const totalPrice = product.price! * qty
-    pay(
-      { id: product.id, title: product.title, price: totalPrice },
-      {
-        notes: `Qty: ${qty} bottle(s) of Ardra Jalam`,
-        onSuccess: () => setBooked(true),
+  async function handleOrder() {
+    if (ordering || booked) return
+    setOrdering(true)
+    try {
+      if (!product) {
+        // No product in DB — fallback: open WhatsApp order
+        const msg = encodeURIComponent(
+          `Hi! I'd like to order ${qty} bottle(s) of Ardra Jalam. Please guide me on the next steps.`
+        )
+        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank')
+        setOrdering(false)
+        return
       }
+      await pay(
+        { id: product.id, title: product.title, price: totalPrice },
+        {
+          notes: `Qty: ${qty} bottle(s) of Ardra Jalam`,
+          onSuccess: () => setBooked(true),
+        }
+      )
+    } catch (err) {
+      console.error(err)
+      alert("Something went wrong. Please try ordering via WhatsApp instead.")
+    } finally {
+      setOrdering(false)
+    }
+  }
+
+  function handleWhatsAppOrder() {
+    const msg = encodeURIComponent(
+      `Hi! I'd like to order ${qty} bottle(s) of Ardra Jalam (₹${totalPrice.toLocaleString('en-IN')}). Please guide me.`
     )
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, '_blank')
   }
 
   return (
@@ -78,7 +106,7 @@ export default function ArdraJalamPage() {
                   ) : (
                     <div className="flex items-baseline gap-2">
                       <span className="text-3xl font-black text-[var(--terracotta)]" style={{ fontFamily: "'Playfair Display', serif" }}>
-                        ₹{(product?.price ?? 499).toLocaleString('en-IN')}
+                        ₹{unitPrice.toLocaleString('en-IN')}
                       </span>
                       {product?.original_price && (
                         <span className="text-sm text-[var(--warm-charcoal)]/40 line-through">₹{product.original_price.toLocaleString('en-IN')}</span>
@@ -88,20 +116,42 @@ export default function ArdraJalamPage() {
                   )}
                 </div>
               </div>
+
+              {/* DB error warning */}
+              {!loading && error && (
+                <div className="mb-4 text-xs bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-lg px-3 py-2">
+                  ⚠️ Product catalogue unavailable. You can still order via WhatsApp below.
+                </div>
+              )}
+
               {/* Quantity + Order */}
               {!booked ? (
-                <div className="flex items-center gap-3 flex-wrap">
-                  <div className="flex items-center gap-2 bg-white rounded-xl border border-emerald-200 p-1">
-                    <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-8 h-8 rounded-lg bg-[var(--warm-sand)] flex items-center justify-center font-bold text-[var(--indigo-deep)] hover:bg-emerald-100">−</button>
-                    <span className="w-8 text-center font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{qty}</span>
-                    <button onClick={() => setQty(q => Math.min(10, q + 1))} className="w-8 h-8 rounded-lg bg-[var(--warm-sand)] flex items-center justify-center font-bold text-[var(--indigo-deep)] hover:bg-emerald-100">+</button>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 flex-wrap">
+                    <div className="flex items-center gap-2 bg-white rounded-xl border border-emerald-200 p-1">
+                      <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-8 h-8 rounded-lg bg-[var(--warm-sand)] flex items-center justify-center font-bold text-[var(--indigo-deep)] hover:bg-emerald-100">−</button>
+                      <span className="w-8 text-center font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{qty}</span>
+                      <button onClick={() => setQty(q => Math.min(10, q + 1))} className="w-8 h-8 rounded-lg bg-[var(--warm-sand)] flex items-center justify-center font-bold text-[var(--indigo-deep)] hover:bg-emerald-100">+</button>
+                    </div>
+                    <button
+                      onClick={handleOrder}
+                      disabled={ordering || loading}
+                      className="flex-1 sm:flex-none btn-divine px-8 py-3 font-semibold disabled:opacity-50 inline-flex items-center justify-center gap-2"
+                    >
+                      {ordering ? (
+                        <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Placing Order…</>
+                      ) : (
+                        <><span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span> Order Now · ₹{totalPrice.toLocaleString('en-IN')}</>
+                      )}
+                    </button>
                   </div>
-                  <button onClick={handleOrder} disabled={ordering || loading} className="flex-1 sm:flex-none btn-divine px-8 py-3 font-semibold disabled:opacity-50 inline-flex items-center justify-center gap-2">
-                    {ordering ? (
-                      <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Placing Order…</>
-                    ) : (
-                      <><span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span> Order Now · ₹{((product?.price ?? 499) * qty).toLocaleString('en-IN')}</>
-                    )}
+                  {/* WhatsApp fallback */}
+                  <button
+                    onClick={handleWhatsAppOrder}
+                    className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-700 hover:text-emerald-900 transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">chat</span>
+                    Or order via WhatsApp →
                   </button>
                 </div>
               ) : (
@@ -216,10 +266,16 @@ export default function ArdraJalamPage() {
           <h2 className="text-2xl font-bold text-[#065f46] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Ready to Begin?</h2>
           <p className="text-sm text-[#065f46]/60 mb-6 max-w-md mx-auto">Each batch is prepared only during Ardra Nakshatra - approximately once every 27 days. Order now to secure your bottle from the next batch.</p>
           {!booked ? (
-            <button onClick={handleOrder} disabled={ordering || loading} className="btn-divine px-10 py-3.5 text-base font-semibold disabled:opacity-50 inline-flex items-center gap-2">
-              <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span>
-              Order Ardra Jalam · ₹{(product?.price ?? 499).toLocaleString('en-IN')}
-            </button>
+            <div className="flex flex-col items-center gap-3">
+              <button onClick={handleOrder} disabled={ordering || loading} className="btn-divine px-10 py-3.5 text-base font-semibold disabled:opacity-50 inline-flex items-center gap-2">
+                <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span>
+                Order Ardra Jalam · ₹{unitPrice.toLocaleString('en-IN')}
+              </button>
+              <button onClick={handleWhatsAppOrder} className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-900 transition-colors">
+                <span className="material-symbols-outlined text-[16px]">chat</span>
+                Order via WhatsApp instead
+              </button>
+            </div>
           ) : (
             <div className="inline-flex items-center gap-3 bg-white text-emerald-700 rounded-full px-6 py-3 font-semibold shadow-md">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
