@@ -2,11 +2,13 @@
   size = 'md',
   px,
   spin = true,
+  fast = false,
   className = '',
 }: {
   size?: 'sm' | 'md' | 'lg'
   px?: number
   spin?: boolean
+  fast?: boolean
   className?: string
 }) {
   const dim = px ?? (size === 'sm' ? 56 : size === 'lg' ? 108 : 80)
@@ -22,7 +24,8 @@
       height={dim}
       viewBox="0 0 200 200"
       xmlns="http://www.w3.org/2000/svg"
-      className={`${spin ? 'animate-spin-slow' : ''} ${className}`}
+      style={spin ? { willChange: 'transform' } : undefined}
+      className={`${spin ? (fast ? 'animate-spin-download' : 'animate-spin-slow') : ''} ${className}`}
       aria-label="Loading"
       role="img"
     >

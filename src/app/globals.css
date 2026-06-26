@@ -413,6 +413,7 @@ body {
 .animate-float         { animation: float 4s ease-in-out infinite; }
 .animate-float-x       { animation: float-x 5s ease-in-out infinite; }
 .animate-spin-slow     { animation: spin-slow 20s linear infinite; }
+.animate-spin-download { animation: spin-slow 3s  linear infinite; will-change: transform; }
 .animate-spin-reverse  { animation: spin-reverse 15s linear infinite; }
 .animate-ping-slow     { animation: ping-slow 2.5s ease-out infinite; }
 .animate-drift-1       { animation: drift-1  9s  ease-in-out infinite; }

@@ -1826,6 +1826,7 @@ export default function ReportDetailPage() {
   const [report, setReport] = useState<Report | null>(null)
   const [loading, setLoading] = useState(true)
   const [downloading, setDownloading] = useState(false)
+  const [elapsed, setElapsed] = useState(0)
   const [lang, setLang] = useState<'en' | 'hi'>('en')
   const printRef = useRef<HTMLDivElement>(null)
 
@@ -1863,6 +1864,12 @@ export default function ReportDetailPage() {
     }, 3000)
     return () => clearInterval(interval)
   }, [report?.status, reportId, supabase])
+
+  useEffect(() => {
+    if (!downloading) { setElapsed(0); return }
+    const id = setInterval(() => setElapsed(s => s + 1), 1000)
+    return () => clearInterval(id)
+  }, [downloading])
 
   async function handleDownload() {
     setDownloading(true)
@@ -1928,6 +1935,9 @@ export default function ReportDetailPage() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const doc = (ReportPDF as any)({ report, canvases })
       if (!doc) throw new Error('ReportPDF returned null')
+      // Yield to the browser so the overlay paints and the chakra starts spinning
+      // before the synchronous PDF layout engine blocks the main thread.
+      await new Promise(r => setTimeout(r, 80))
       const blob = await pdf(doc).toBlob()
 
       // ── 3. Trigger download ──
@@ -2436,11 +2446,14 @@ export default function ReportDetailPage() {
       {downloading && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center no-print"
           style={{ background: 'rgba(253,250,245,0.92)', backdropFilter: 'blur(6px)' }}>
-          <SudarshanLoader size="lg" />
+          <SudarshanLoader size="lg" fast />
           <p className="mt-5 font-bold text-[var(--indigo-deep)] text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
             Preparing Your Sacred Report…
           </p>
-          <p className="text-sm text-[var(--warm-charcoal)]/50 mt-1">This may take a few seconds</p>
+          <p className="mt-2 text-2xl font-black tabular-nums" style={{ color: 'var(--indigo-deep)', fontVariantNumeric: 'tabular-nums' }}>
+            {elapsed}s
+          </p>
+          <p className="text-sm text-[var(--warm-charcoal)]/50 mt-1">Rendering PDF in your browser — please wait</p>
         </div>
       )}
 
