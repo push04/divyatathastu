@@ -652,7 +652,6 @@ export default function AdminConsultationsPage() {
             <div className="space-y-2.5">
               {[
                 { label: 'Video Server URL', value: 'wss://mahatathastu-chyl883d.livekit.cloud', icon: 'link' },
-                { label: 'API Key', value: 'APIpzFzHWtWzyPS', icon: 'key' },
                 { label: 'Dev Token Server', value: 'https://mahatathastu-2hw6kd.sandbox.livekit.io', icon: 'token' },
                 { label: 'Dev Server ID', value: 'mahatathastu-2hw6kd', icon: 'tag' },
               ].map(row => (
@@ -666,6 +665,7 @@ export default function AdminConsultationsPage() {
                   </button>
                 </div>
               ))}
+              <p className="text-[10px] text-amber-600 mt-1">⚠ API keys are managed via Vercel environment variables and not shown here.</p>
             </div>
           </div>
 

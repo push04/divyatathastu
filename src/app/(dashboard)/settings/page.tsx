@@ -44,8 +44,9 @@ export default function SettingsPage() {
   }, [])
 
   async function saveProfile() {
+    if (!profile) return
     setSaving(true)
-    const { error } = await supabase.from('profiles').update({ full_name: form.full_name, phone: form.phone }).eq('id', profile!.id)
+    const { error } = await supabase.from('profiles').update({ full_name: form.full_name, phone: form.phone }).eq('id', profile.id)
     if (error) toast.error('Failed to save'); else toast.success('Profile updated!')
     setSaving(false)
   }

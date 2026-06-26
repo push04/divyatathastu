@@ -51,7 +51,11 @@ export function useFamily() {
 
   async function deleteMember(id: string) {
     const supabase = createClient()
-    await supabase.from('family_members').delete().eq('id', id)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) throw new Error('Unauthenticated')
+    const { data: family } = await supabase.from('families').select('id').eq('owner_id', user.id).single()
+    if (!family) throw new Error('No family found')
+    await supabase.from('family_members').delete().eq('id', id).eq('family_id', (family as any).id)
     setMembers(m => m.filter(x => x.id !== id))
   }
 

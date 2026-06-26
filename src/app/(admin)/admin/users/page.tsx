@@ -90,22 +90,28 @@ export default function AdminUsersPage() {
   }
 
   async function toggleActive(userId: string, active: boolean) {
-    const { error } = await supabase.from('profiles').update({ is_active: !active }).eq('id', userId)
-    if (error) toast.error('Failed')
-    else {
-      toast.success(active ? 'User deactivated' : 'User activated')
-      setUsers(prev => prev.map(u => u.id === userId ? { ...u, is_active: !active } : u))
-      if (detailUser?.id === userId) setDetailUser(d => d ? { ...d, is_active: !active } : d)
-    }
+    const res = await fetch('/api/admin/update-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, is_active: !active }),
+    })
+    const data = await res.json()
+    if (!res.ok) { toast.error(data.error || 'Failed'); return }
+    toast.success(active ? 'User deactivated' : 'User activated')
+    setUsers(prev => prev.map(u => u.id === userId ? { ...u, is_active: !active } : u))
+    if (detailUser?.id === userId) setDetailUser(d => d ? { ...d, is_active: !active } : d)
   }
 
   async function changeRole(userId: string, role: string) {
-    const { error } = await supabase.from('profiles').update({ role: role as User['role'] }).eq('id', userId)
-    if (error) toast.error('Failed to update role')
-    else {
-      toast.success('Role updated')
-      setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: role as User['role'] } : u))
-    }
+    const res = await fetch('/api/admin/update-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, role }),
+    })
+    const data = await res.json()
+    if (!res.ok) { toast.error(data.error || 'Failed to update role'); return }
+    toast.success('Role updated')
+    setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: role as User['role'] } : u))
   }
 
   async function hardDeleteUser(userId: string, name: string) {

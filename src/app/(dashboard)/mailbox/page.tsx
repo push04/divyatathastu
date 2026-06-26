@@ -34,14 +34,15 @@ export default function MailboxPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    let sub: ReturnType<typeof supabase.channel> | null = null
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
       setUserId(user.id)
       await loadThreads(user.id)
 
-      // Realtime subscription
-      const sub = supabase.channel('mailbox')
+      // Realtime subscription — stored outside async fn so cleanup can reach it
+      sub = supabase.channel('mailbox')
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mail_messages' }, payload => {
           const msg = payload.new as Message
           setMessages(prev => {
@@ -51,10 +52,9 @@ export default function MailboxPage() {
           setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100)
         })
         .subscribe()
-
-      return () => { supabase.removeChannel(sub) }
     }
     load()
+    return () => { if (sub) supabase.removeChannel(sub) }
   }, [])
 
   useEffect(() => {

@@ -1825,6 +1825,7 @@ export default function ReportDetailPage() {
   const supabase = useMemo(() => createClient(), [])
   const [report, setReport] = useState<Report | null>(null)
   const [loading, setLoading] = useState(true)
+  const [familyId, setFamilyId] = useState<string | null>(null)
 const [lang, setLang] = useState<'en' | 'hi'>('en')
   const printRef = useRef<HTMLDivElement>(null)
 
@@ -1834,11 +1835,12 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
       if (!user) { setLoading(false); return }
       const { data: family } = await supabase.from('families').select('id').eq('owner_id', user.id).single()
       if (!family) { setLoading(false); return }
+      setFamilyId((family as any).id)
       const { data } = await supabase
         .from('reports')
         .select('id,report_type,status,report_content,created_at,family_members(full_name,date_of_birth,place_of_birth)')
         .eq('id', reportId)
-        .eq('family_id', family.id)
+        .eq('family_id', (family as any).id)
         .single()
       if (data) setReport(data as Report)
       setLoading(false)
@@ -1846,14 +1848,15 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
     load()
   }, [reportId, supabase])
 
-  // Poll every 3s while report is processing
+  // Poll every 3s while report is processing — ownership filter matches initial load
   useEffect(() => {
-    if (report?.status !== 'processing') return
+    if (report?.status !== 'processing' || !familyId) return
     const interval = setInterval(async () => {
       const { data } = await supabase
         .from('reports')
         .select('id,report_type,status,report_content,created_at,family_members(full_name,date_of_birth,place_of_birth)')
         .eq('id', reportId)
+        .eq('family_id', familyId)
         .single()
       if (data && data.status !== 'processing') {
         setReport(data as Report)
@@ -1861,7 +1864,7 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
       }
     }, 3000)
     return () => clearInterval(interval)
-  }, [report?.status, reportId, supabase])
+  }, [report?.status, reportId, familyId, supabase])
 
   function handleDownload() {
     window.print()

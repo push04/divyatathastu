@@ -2,7 +2,7 @@
 
 import SudarshanLoader from '@/components/SudarshanLoader'
 
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
@@ -156,8 +156,8 @@ export default function AdminOrdersPage() {
             </thead>
             <tbody className="divide-y divide-[var(--warm-sand)]/60">
               {filtered.map(o => (
-                <>
-                  <tr key={o.id} className={`hover:bg-[var(--warm-sand)]/20 transition-colors ${expanded === o.id ? 'bg-amber-50/40' : ''}`}>
+                <React.Fragment key={o.id}>
+                  <tr className={`hover:bg-[var(--warm-sand)]/20 transition-colors ${expanded === o.id ? 'bg-amber-50/40' : ''}`}>
                     <td className="px-4 py-3">
                       <button onClick={() => toggleExpand(o.id, o)} className="flex items-center gap-1 font-mono font-medium text-[var(--indigo-deep)] text-xs hover:underline">
                         <span className="material-symbols-outlined text-[14px]">{expanded === o.id ? 'expand_less' : 'expand_more'}</span>
@@ -251,7 +251,7 @@ export default function AdminOrdersPage() {
                       </td>
                     </tr>
                   )}
-                </>
+                </React.Fragment>
               ))}
             </tbody>
           </table>

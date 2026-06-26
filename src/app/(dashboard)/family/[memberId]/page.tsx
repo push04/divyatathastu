@@ -46,8 +46,14 @@ export default function MemberProfilePage() {
 
   useEffect(() => {
     async function load() {
+      // Ownership: only load members that belong to the current user's family
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) { setLoading(false); return }
+      const { data: family } = await supabase.from('families').select('id').eq('owner_id', user.id).single()
+      if (!family) { setLoading(false); return }
+
       const [memberRes, reportsRes] = await Promise.all([
-        supabase.from('family_members').select('*').eq('id', memberId).single(),
+        supabase.from('family_members').select('*').eq('id', memberId).eq('family_id', (family as any).id).single(),
         supabase.from('reports').select('id,report_type,status,created_at').eq('family_member_id', memberId).order('created_at', { ascending: false }),
       ])
       if (memberRes.data) setMember(memberRes.data)
@@ -55,12 +61,16 @@ export default function MemberProfilePage() {
       setLoading(false)
     }
     load()
-  }, [memberId])
+  }, [memberId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleDelete() {
     if (!confirm(`Delete ${member?.full_name} and all their reports? This cannot be undone.`)) return
     setDeleting(true)
-    await supabase.from('family_members').delete().eq('id', memberId)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) { setDeleting(false); return }
+    const { data: family } = await supabase.from('families').select('id').eq('owner_id', user.id).single()
+    if (!family) { setDeleting(false); return }
+    await supabase.from('family_members').delete().eq('id', memberId).eq('family_id', (family as any).id)
     toast.success('Member removed')
     router.push('/family')
   }
