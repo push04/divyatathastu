@@ -59,7 +59,7 @@ export async function POST(
     console.log('[PDF] report_type:', report.report_type)
 
     // All React/PDF imports are dynamic to avoid Turbopack static-analysis restrictions
-    const [{ default: ReportPDF }, { pdf: pdfFactory }, { createElement }] = await Promise.all([
+    const [{ default: ReportPDF }, { renderToBuffer }, { createElement }] = await Promise.all([
       import('@/components/pdf/ReportPDF'),
       import('@react-pdf/renderer'),
       import('react'),
@@ -67,61 +67,10 @@ export async function POST(
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const doc = createElement(ReportPDF as any, { report: report as ReportPDFProps['report'], canvases })
-
-    // ROOT CAUSE FIX:
-    // @react-pdf/reconciler v4.5.1 (reconciler-33.js for React 19.2+) hardcodes
-    // ConcurrentMode (mode=1) in createContainer. This makes updateContainer async
-    // (scheduled via setImmediate by the React scheduler). renderToBuffer calls
-    // render() synchronously before the async work runs → container.document is null.
-    //
-    // Fix: use pdf() + updateContainer(doc, callback). The callback fires AFTER the
-    // reconciler commits, guaranteeing container.document is set before we call toBuffer().
     let buffer: Buffer
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const instance = (pdfFactory as any)()
-
-      // Capture component errors: React 19 ConcurrentMode swallows them and rethrows
-      // via setTimeout. We intercept to get the real error message.
-      const renderResult = await new Promise<'ok' | Error>((resolve) => {
-        const tid = setTimeout(() => {
-          process.off('uncaughtException', onErr)
-          resolve(new Error('PDF reconciler timeout (30s)'))
-        }, 30000)
-
-        const onErr = (e: Error) => {
-          clearTimeout(tid)
-          resolve(e)
-        }
-        process.once('uncaughtException', onErr)
-
-        // updateContainer(doc, callback) — callback fires after reconciler commits
-        instance.updateContainer(doc, () => {
-          clearTimeout(tid)
-          process.off('uncaughtException', onErr)
-          resolve('ok')
-        })
-      })
-
-      if (renderResult !== 'ok') {
-        const err = renderResult as Error
-        console.error('[PDF] component render error:', err.message)
-        return new Response(
-          `PDF render error: ${err.message}\n${(err.stack || '').slice(0, 800)}\nFonts: ${fontCheck}`,
-          { status: 500 }
-        )
-      }
-
-      // container.document is now committed — safe to render the PDF stream
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const stream = await (instance as any).toBuffer()
-      buffer = await new Promise<Buffer>((resolve, reject) => {
-        const chunks: Buffer[] = []
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        stream.on('data', (c: any) => chunks.push(Buffer.isBuffer(c) ? c : Buffer.from(c)))
-        stream.on('end', () => resolve(Buffer.concat(chunks)))
-        stream.on('error', reject)
-      })
+      buffer = await (renderToBuffer as any)(doc)
     } catch (renderErr) {
       const msg = renderErr instanceof Error ? renderErr.message : String(renderErr)
       const stack = renderErr instanceof Error ? (renderErr.stack || '').slice(0, 1200) : ''
