@@ -2321,24 +2321,22 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
         print-color-adjust: exact !important;
       }
 
-      /* ── 4. Cards: strip shadows, keep page flow ── */
+      /* ── 4. Cards: strip shadows, let content flow across pages ── */
       .card-divine {
         box-shadow: none !important;
-        page-break-inside: avoid;
-        break-inside: avoid;
         overflow: visible !important;
         margin-bottom: 8px;
+        border: none !important;
+        border-radius: 0 !important;
       }
+      /* Section heading: never orphaned from its first line of content */
+      .card-divine h2, .card-divine h3 { break-after: avoid; page-break-after: avoid; }
       /* Every element inside #rpa must let content flow through page boundaries */
       #rpa, #rpa * { overflow: visible !important; }
-      #rpa [style*="border-radius"], #rpa [style*="rounded"] {
-        break-inside: avoid; page-break-inside: avoid;
-      }
-      /* Month/remedy cards — avoid cutting mid-item */
-      #rpa [style*="marginBottom"][style*="background"],
-      #rpa [style*="margin-bottom"][style*="background"] {
-        break-inside: avoid; page-break-inside: avoid;
-      }
+      /* Small individual items: keep intact. py-2.5 = monthly prediction rows */
+      #rpa .py-2\.5, #rpa .border-b { break-inside: avoid; page-break-inside: avoid; }
+      /* Gemstone/remedy cards with background */
+      #rpa .rounded-xl { break-inside: avoid; page-break-inside: avoid; }
 
       /* ── 5. Tables ── */
       table { font-size: 9px !important; width: 100%; border-collapse: collapse; }
@@ -2422,50 +2420,54 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
         {/* Print-only: beautiful 30-page PDF layout */}
         <div id="rpa" ref={printRef}>
 
-          {/* COVER PAGE - Tathastu parchment style */}
-          <div style={{ minHeight: 'calc(29.7cm - 20mm)', background: '#f5ede0', pageBreakAfter: 'always', fontFamily: 'Georgia, serif', outline: '1px solid rgba(200,146,42,0.4)', outlineOffset: '-8px' }}>
+          {/* COVER PAGE */}
+          <div style={{ background: '#f5ede0', pageBreakAfter: 'always', fontFamily: 'Georgia, serif', outline: '1px solid rgba(200,146,42,0.4)', outlineOffset: '-8px', paddingBottom: 24 }}>
 
             {/* Top Sanskrit invocation */}
-            <div style={{ textAlign: 'center', padding: '28px 0 0', color: '#cc2200', fontSize: 13, fontWeight: 700 }}>
-              ॐ महागणपतये नमः | श्रीमात्रे नमः |
+            <div style={{ textAlign: 'center', padding: '20px 0 12px', color: '#cc2200', fontSize: 12, fontWeight: 700, borderBottom: '1px solid rgba(200,146,42,0.3)' }}>
+              ॐ महागणपतये नमः | श्रीमात्रे नमः | ॐ तत् सत्
             </div>
 
             {/* Two-column layout */}
-            <div style={{ display: 'flex', minHeight: '22cm', margin: '12px 24px 0' }}>
+            <div style={{ display: 'flex', margin: '0 16px' }}>
+
               {/* LEFT - Gyanampeetham */}
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRight: '1px solid #c8922a', padding: '24px 28px', gap: 20 }}>
+              <div style={{ flex: '0 0 42%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRight: '1px solid rgba(200,146,42,0.4)', padding: '28px 24px', gap: 18 }}>
                 {/* G logo circle */}
-                <div style={{ width: 100, height: 100, borderRadius: '50%', background: '#6b3a2a', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 48, fontWeight: 900, fontFamily: 'Georgia, serif', boxShadow: '0 4px 20px rgba(107,58,42,0.3)' }}>
+                <div style={{ width: 88, height: 88, borderRadius: '50%', background: 'linear-gradient(135deg,#6b3a2a,#3d1f0f)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 42, fontWeight: 900, fontFamily: 'Georgia, serif' }}>
                   G
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: '#2c1a0e', letterSpacing: '0.05em', fontFamily: 'Georgia, serif' }}>GYANAMPEETHAM</div>
-                  <div style={{ fontSize: 10, color: '#6b3a2a', letterSpacing: '0.25em', marginTop: 4 }}>"DISCOVER THE DIVINE WITHIN"</div>
+                  <div style={{ fontSize: 20, fontWeight: 900, color: '#2c1a0e', letterSpacing: '0.06em', fontFamily: 'Georgia, serif' }}>GYANAMPEETHAM</div>
+                  <div style={{ fontSize: 8.5, color: '#6b3a2a', letterSpacing: '0.2em', marginTop: 3 }}>"DISCOVER THE DIVINE WITHIN"</div>
                 </div>
                 {/* Lotus SVG */}
-                <svg width="90" height="90" viewBox="0 0 90 90" fill="none">
+                <svg width="80" height="80" viewBox="0 0 90 90" fill="none">
                   {[0,40,80,120,160,200,240,280,320].map((a, i) => (
                     <ellipse key={i} cx="45" cy="45" rx="10" ry="28" fill="#7c6db5" opacity="0.55" transform={`rotate(${a} 45 45)`} />
                   ))}
                   <circle cx="45" cy="45" r="10" fill="#7c6db5" opacity="0.8" />
                 </svg>
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 16, fontWeight: 900, color: '#7c6db5', letterSpacing: '0.2em', fontFamily: 'Georgia, serif' }}>ANUSHTHAAN INDIA</div>
-                  <div style={{ fontSize: 8, color: '#7c6db5', letterSpacing: '0.15em', marginTop: 3 }}>"EDUCATING SOCIETY WITH WISDOM FOR A BETTER LIFE"</div>
+                  <div style={{ fontSize: 13, fontWeight: 900, color: '#7c6db5', letterSpacing: '0.18em', fontFamily: 'Georgia, serif' }}>ANUSHTHAAN INDIA</div>
+                  <div style={{ fontSize: 7.5, color: '#7c6db5', letterSpacing: '0.1em', marginTop: 3 }}>"EDUCATING SOCIETY WITH WISDOM FOR A BETTER LIFE"</div>
                 </div>
-                <p style={{ fontSize: 8, color: '#888', textAlign: 'center', marginTop: 12, lineHeight: 1.5, maxWidth: 220 }}>
-                  "AI tools were utilized during development; however, all inventive steps, claims, and final outcomes are attributable to human ingenuity and supervision."
+                {/* Divider */}
+                <div style={{ width: '70%', height: 1, background: 'rgba(200,146,42,0.35)' }} />
+                <p style={{ fontSize: 7.5, color: '#999', textAlign: 'center', lineHeight: 1.5, maxWidth: 200 }}>
+                  AI tools were utilized during development; all inventive steps, claims, and final outcomes are attributable to human ingenuity and supervision.
                 </p>
               </div>
 
-              {/* RIGHT - Tathastu report */}
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 28px', gap: 14 }}>
-                {/* Sri Yantra top */}
-                <div style={{ display: 'flex', gap: 20, marginBottom: 4 }}>
+              {/* RIGHT - MahaTathastu report */}
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 28px', gap: 16 }}>
+
+                {/* Sri Yantra pair */}
+                <div style={{ display: 'flex', gap: 20 }}>
                   {[0, 1].map(k => (
-                    <svg key={k} width="52" height="52" viewBox="0 0 52 52">
+                    <svg key={k} width="50" height="50" viewBox="0 0 52 52">
                       <circle cx="26" cy="26" r="24" fill="none" stroke="#c8922a" strokeWidth="1" />
-                      <circle cx="26" cy="26" r="18" fill="none" stroke="#c8922a" strokeWidth="0.7" />
+                      <circle cx="26" cy="26" r="17" fill="none" stroke="#c8922a" strokeWidth="0.7" />
                       {[0,45,90,135,180,225,270,315].map((a, i) => (
                         <rect key={i} x="23" y="8" width="6" height="10" rx="3" fill="#c8922a" opacity="0.6" transform={`rotate(${a} 26 26)`} />
                       ))}
@@ -2474,50 +2476,54 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
                     </svg>
                   ))}
                 </div>
-                {/* © mark */}
-                <div style={{ alignSelf: 'flex-end', fontSize: 10, color: '#888', marginBottom: -8 }}>©</div>
-                {/* TATHASTU logo */}
+
+                {/* MAHATATHASTU brand block */}
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 38, fontWeight: 900, color: '#2c1a0e', letterSpacing: '0.1em', fontFamily: 'Georgia, serif' }}>TATHASTU</div>
-                  <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, #c8922a, transparent)', margin: '6px 0' }} />
-                  <div style={{ fontSize: 11, color: '#2c1a0e', letterSpacing: '0.1em' }}>Decode Your Life. Design Your Future.</div>
+                  <div style={{ fontSize: 11, color: '#c8922a', letterSpacing: '0.35em', textTransform: 'uppercase', marginBottom: 4 }}>An Initiative of Anushthaan India</div>
+                  <div style={{ fontSize: 10, color: '#888', letterSpacing: '0.1em', marginBottom: 8 }}>©</div>
+                  <div style={{ fontSize: 30, fontWeight: 900, color: '#1a3a8c', letterSpacing: '0.08em', fontFamily: 'Georgia, serif', lineHeight: 1 }}>MAHA</div>
+                  <div style={{ fontSize: 30, fontWeight: 900, color: '#2c1a0e', letterSpacing: '0.08em', fontFamily: 'Georgia, serif', lineHeight: 1 }}>TATHASTU</div>
+                  <div style={{ height: 2, background: 'linear-gradient(90deg, transparent, #c8922a 30%, #cc2200 50%, #c8922a 70%, transparent)', margin: '8px 0 6px' }} />
+                  <div style={{ fontSize: 10.5, color: '#2c1a0e', letterSpacing: '0.12em' }}>Decode Your Life. Design Your Future.</div>
                 </div>
 
                 {/* 18 Acharyas */}
-                <div style={{ textAlign: 'center', color: '#cc2200', fontSize: 10, lineHeight: 1.7 }}>
-                  <div style={{ fontWeight: 700, marginBottom: 2 }}>ज्योतिष शास्त्र (वेदांग ज्योतिष) के 18 आचार्य:</div>
+                <div style={{ textAlign: 'center', color: '#cc2200', fontSize: 9.5, lineHeight: 1.75 }}>
+                  <div style={{ fontWeight: 700, marginBottom: 2, color: '#1a3a8c' }}>ज्योतिष शास्त्र (वेदांग ज्योतिष) के 18 आचार्य:</div>
                   <div>सूर्य, पितामह (ब्रह्मा), व्यास, वशिष्ठ, अत्रि, पराशर, कश्यप, नारद, गर्ग,</div>
                   <div>मरीचि, मनु, अंगिरा, लोमश, पौलिश, च्यवन, यवन, भृगु और शौनक</div>
                 </div>
 
-                {/* Yantra grid symbol */}
-                <svg width="70" height="60" viewBox="0 0 70 60">
+                {/* Yantra grid */}
+                <svg width="64" height="56" viewBox="0 0 70 60">
                   {[0,1,2,3,4].map(r => [0,1,2,3,4].map(c => (
                     <polygon key={`${r}-${c}`} points={`${8+c*12},${30-r*10} ${14+c*12},${30-r*10+8} ${2+c*12},${30-r*10+8}`} fill="none" stroke="#cc2200" strokeWidth="1" />
                   )))}
                 </svg>
 
-                {/* Report type */}
-                <div style={{ background: 'rgba(200,146,42,0.12)', border: '1px solid #c8922a', borderRadius: 8, padding: '12px 20px', textAlign: 'center', width: '100%' }}>
-                  <div style={{ fontSize: 11, color: '#c8922a', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: 4 }}>{title}</div>
+                {/* Report + Member info box */}
+                <div style={{ background: 'rgba(200,146,42,0.1)', border: '1.5px solid #c8922a', borderRadius: 10, padding: '14px 20px', textAlign: 'center', width: '100%' }}>
+                  <div style={{ fontSize: 9, color: '#c8922a', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 6 }}>{title}</div>
+                  <div style={{ width: '60%', height: 1, background: 'rgba(200,146,42,0.4)', margin: '0 auto 8px' }} />
                   {member && (
                     <>
-                      <div style={{ fontSize: 18, fontWeight: 700, color: '#2c1a0e' }}>{member.full_name}</div>
-                      {member.date_of_birth && <div style={{ fontSize: 10, color: '#666', marginTop: 2 }}>Born: {new Date(member.date_of_birth).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</div>}
-                      {member.place_of_birth && <div style={{ fontSize: 10, color: '#888' }}>{member.place_of_birth}</div>}
+                      <div style={{ fontSize: 20, fontWeight: 700, color: '#1a3a8c', fontFamily: 'Georgia, serif' }}>{member.full_name}</div>
+                      {member.date_of_birth && <div style={{ fontSize: 9.5, color: '#555', marginTop: 4 }}>Born: {new Date(member.date_of_birth).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</div>}
+                      {member.place_of_birth && <div style={{ fontSize: 9.5, color: '#777' }}>{member.place_of_birth}</div>}
                     </>
                   )}
-                  <div style={{ fontSize: 9, color: '#888', marginTop: 6 }}>Generated: {new Date(report.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
+                  <div style={{ fontSize: 8, color: '#aaa', marginTop: 6 }}>Generated: {new Date(report.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
                 </div>
 
                 <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 11, fontWeight: 700, color: '#2c1a0e' }}>~AN INITIATIVE OF ANUSHTHAAN INDIA~</div>
-                  <div style={{ fontSize: 9, color: '#666', marginTop: 3 }}>Contents are copyright protected and owned by MahaTathastu</div>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: '#2c1a0e', letterSpacing: '0.05em' }}>~ AN INITIATIVE OF ANUSHTHAAN INDIA ~</div>
+                  <div style={{ fontSize: 8, color: '#999', marginTop: 3 }}>Contents are copyright protected and owned by MahaTathastu</div>
                 </div>
               </div>
             </div>
+
             {/* Bottom bar */}
-            <div style={{ textAlign: 'center', padding: '10px 0 20px', color: '#888', fontSize: 9 }}>
+            <div style={{ textAlign: 'center', borderTop: '1px solid rgba(200,146,42,0.3)', marginTop: 16, padding: '10px 0 0', color: '#999', fontSize: 8.5 }}>
               9858784784 · www.mahatathastu.com · info@mahatathastu.com
             </div>
           </div>
