@@ -35,6 +35,9 @@ export default function ConsultationsPage() {
   const supabase = createClient()
   const [slots, setSlots] = useState<Slot[]>([])
   const [bookings, setBookings] = useState<Booking[]>([])
+  const [dates, setDates] = useState<string[]>([])
+  const [selectedDate, setSelectedDate] = useState<string>('')
+  const [experts, setExperts] = useState<{ id: string; full_name: string }[]>([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<'book' | 'my'>('book')
   const [filter, setFilter] = useState('All')
@@ -42,62 +45,184 @@ export default function ConsultationsPage() {
   const [activeCallBookingId, setActiveCallBookingId] = useState<string | null>(null)
   const [profile, setProfile] = useState<{ full_name: string } | null>(null)
 
+  const PREDEFINED_SLOTS = [
+    { start: '17:00', end: '17:45' },
+    { start: '17:45', end: '18:30' },
+    { start: '18:30', end: '19:15' },
+    { start: '19:15', end: '20:00' },
+    { start: '20:00', end: '20:45' },
+    { start: '20:45', end: '21:30' },
+    { start: '21:30', end: '22:15' },
+    { start: '22:15', end: '23:00' },
+  ]
+
   useEffect(() => {
     createClient().auth.getUser().then(({ data: { user } }) => {
       if (user) createClient().from('profiles').select('full_name').eq('id', user.id).single().then(({ data }) => { if (data) setProfile(data as any) })
     })
   }, [])
 
+  // Generate 7-day date slider in IST
   useEffect(() => {
+    const list: string[] = []
+    const nowIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(nowIST)
+      d.setDate(d.getDate() + i)
+      const yyyy = d.getFullYear()
+      const mm = String(d.getMonth() + 1).padStart(2, '0')
+      const dd = String(d.getDate()).padStart(2, '0')
+      list.push(`${yyyy}-${mm}-${dd}`)
+    }
+    setDates(list)
+    setSelectedDate(list[0])
+  }, [])
+
+  // Fetch slot & expert bookings
+  useEffect(() => {
+    if (dates.length === 0) return
     async function load() {
-      const today = new Date().toISOString().split('T')[0]
-      const [slotsRes, { data: { user } }] = await Promise.all([
-        supabase.from('consultation_slots').select('*')
-          .eq('is_booked', false)
-          .gte('date', today)
-          .gte('start_time', '17:00')
-          .lte('start_time', '23:00')
-          .order('date')
-          .order('start_time'),
+      const todayStr = dates[0]
+      const endOfWeekStr = dates[dates.length - 1]
+      const [slotsRes, expertsRes, { data: { user } }] = await Promise.all([
+        supabase.from('consultation_slots')
+          .select('*')
+          .gte('date', todayStr)
+          .lte('date', endOfWeekStr),
+        supabase.from('profiles').select('id,full_name').or('role.eq.expert,role.eq.admin'),
         supabase.auth.getUser(),
       ])
-      if (slotsRes.data) setSlots(slotsRes.data)
+
+      if (slotsRes.data) setSlots(slotsRes.data as Slot[])
+      if (expertsRes.data) setExperts(expertsRes.data as any[])
 
       if (user) {
-        const { data: bks } = await supabase.from('consultation_bookings').select('*, consultation_slots(expert_id,date,start_time,end_time)').eq('user_id', user.id).order('booked_at', { ascending: false })
+        const { data: bks } = await supabase.from('consultation_bookings')
+          .select('*, consultation_slots(expert_id,date,start_time,end_time)')
+          .eq('user_id', user.id)
+          .order('booked_at', { ascending: false })
         if (bks) setBookings(bks as unknown as Booking[])
       }
       setLoading(false)
     }
     load()
-  }, [])
+  }, [dates]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  async function bookSlot(slotId: string) {
-    setBooking(slotId)
+  const isPast = (date: string, startTime: string) => {
+    const [sh, sm] = startTime.split(':').map(Number)
+    const nowIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
+    const slotDateTime = new Date(nowIST)
+    const [y, m, d] = date.split('-').map(Number)
+    slotDateTime.setFullYear(y, m - 1, d)
+    slotDateTime.setHours(sh, sm, 0, 0)
+    return slotDateTime.getTime() < nowIST.getTime()
+  }
+
+  const isSlotBooked = (date: string, startTime: string) => {
+    const normTime = startTime.substring(0, 5)
+    return slots.some(s => s.date === date && s.start_time.substring(0, 5) === normTime && s.is_booked)
+  }
+
+  const isSlotBlocked = (date: string, startTime: string) => {
+    const normTime = startTime.substring(0, 5)
+    return slots.some(s => s.date === date && s.start_time.substring(0, 5) === normTime && s.is_blocked)
+  }
+
+  const getBookingsCount = (date: string) => {
+    return slots.filter(s => s.date === date && s.is_booked).length
+  }
+
+  const isSpecializationMatch = (startTime: string) => {
+    if (filter === 'All') return true
+    const normTime = startTime.substring(0, 5)
+    const dbSlot = slots.find(s => s.date === selectedDate && s.start_time.substring(0, 5) === normTime)
+    if (!dbSlot) return true
+    return dbSlot.specialization === filter
+  }
+
+  async function bookSlot(date: string, startTime: string, endTime: string) {
+    const count = getBookingsCount(date)
+    if (count >= 5) {
+      toast.error('This day is fully booked. Please select another date.')
+      return
+    }
+
+    const bookingKey = `${date}_${startTime}`
+    setBooking(bookingKey)
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) { toast.error('Please login'); setBooking(null); return }
 
-    const { error } = await supabase.from('consultation_bookings').insert({ user_id: user.id, slot_id: slotId, status: 'confirmed' })
-    if (error) { toast.error('Booking failed. Slot may be taken.'); setBooking(null); return }
+    const normTime = startTime.substring(0, 5)
+    const dbSlot = slots.find(s => s.date === date && s.start_time.substring(0, 5) === normTime)
+    let slotId = dbSlot?.id
 
-    await supabase.from('consultation_slots').update({ is_booked: true }).eq('id', slotId)
-    setSlots(prev => prev.filter(s => s.id !== slotId))
+    if (!slotId) {
+      if (experts.length === 0) {
+        toast.error('No experts available for booking.')
+        setBooking(null)
+        return
+      }
+      const selectedExpertId = experts[0].id
+
+      const { data: newSlot, error: slotErr } = await supabase
+        .from('consultation_slots')
+        .insert({
+          expert_id: selectedExpertId,
+          date,
+          start_time: startTime,
+          end_time: endTime,
+          is_booked: true,
+          is_blocked: false,
+          duration_minutes: 45,
+          specialization: filter === 'All' ? 'Astrology' : filter
+        })
+        .select()
+        .single()
+
+      if (slotErr || !newSlot) {
+        toast.error('Booking failed. Could not register slot.')
+        setBooking(null)
+        return
+      }
+      slotId = newSlot.id
+      setSlots(prev => [...prev, newSlot as Slot])
+    } else {
+      const { error: slotUpdErr } = await supabase
+        .from('consultation_slots')
+        .update({ is_booked: true })
+        .eq('id', slotId)
+
+      if (slotUpdErr) {
+        toast.error('Booking failed. Slot may be taken.')
+        setBooking(null)
+        return
+      }
+      setSlots(prev => prev.map(s => s.id === slotId ? { ...s, is_booked: true } : s))
+    }
+
+    const { error: bookErr } = await supabase
+      .from('consultation_bookings')
+      .insert({ user_id: user.id, slot_id: slotId, status: 'confirmed' })
+
+    if (bookErr) {
+      toast.error('Booking failed. Please try again.')
+      await supabase.from('consultation_slots').update({ is_booked: false }).eq('id', slotId)
+      setSlots(prev => prev.map(s => s.id === slotId ? { ...s, is_booked: false } : s))
+      setBooking(null)
+      return
+    }
+
     toast.success('Consultation booked! Check your email for confirmation.')
     setBooking(null)
+
+    const { data: bks } = await supabase.from('consultation_bookings')
+      .select('*, consultation_slots(expert_id,date,start_time,end_time)')
+      .eq('user_id', user.id)
+      .order('booked_at', { ascending: false })
+    if (bks) setBookings(bks as unknown as Booking[])
+
     setTab('my')
   }
-
-  // Cap at 5 slots per day (business rule), then apply specialization filter
-  const slotsCappped = (() => {
-    const perDay: Record<string, number> = {}
-    return slots.filter(s => {
-      const count = perDay[s.date] || 0
-      if (count >= 5) return false
-      perDay[s.date] = count + 1
-      return true
-    })
-  })()
-  const filtered = filter === 'All' ? slotsCappped : slotsCappped.filter(s => (s as any).specialization === filter)
 
   const fmtTime = (t: string) => {
     if (!t) return t
@@ -107,6 +232,10 @@ export default function ConsultationsPage() {
   }
 
   if (loading) return <div className="flex items-center justify-center h-64"><SudarshanLoader size="sm" /></div>
+
+  const visiblePredefined = PREDEFINED_SLOTS.filter(ps => !isPast(selectedDate, ps.start) && isSpecializationMatch(ps.start))
+  const dayBookingsCount = getBookingsCount(selectedDate)
+  const isDayFull = dayBookingsCount >= 5
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
@@ -131,7 +260,7 @@ export default function ConsultationsPage() {
 
       {tab === 'book' ? (
         <>
-          {/* Filter */}
+          {/* Specialization Filter */}
           <div className="flex gap-2 overflow-x-auto pb-1">
             {SPECIALIZATIONS.map(s => (
               <button key={s} onClick={() => setFilter(s)}
@@ -141,44 +270,96 @@ export default function ConsultationsPage() {
             ))}
           </div>
 
-          {filtered.length === 0 ? (
+          {/* Date Selector slider */}
+          <div className="flex gap-3 overflow-x-auto pb-3 pt-1 scrollbar-hide">
+            {dates.map(dStr => {
+              const [y, m, dNum] = dStr.split('-')
+              const dateObj = new Date(+y, +m - 1, +dNum)
+              const weekday = dateObj.toLocaleDateString('en-US', { weekday: 'short' })
+              const day = dateObj.getDate()
+              const month = dateObj.toLocaleDateString('en-US', { month: 'short' })
+              const isSelected = selectedDate === dStr
+              const count = getBookingsCount(dStr)
+              const isFull = count >= 5
+
+              return (
+                <button
+                  key={dStr}
+                  onClick={() => setSelectedDate(dStr)}
+                  className={`flex flex-col items-center justify-center min-w-[80px] p-3 rounded-2xl border transition-all ${
+                    isSelected
+                      ? 'bg-[var(--indigo-deep)] text-white border-[var(--indigo-deep)] shadow-md scale-105'
+                      : isFull
+                      ? 'bg-red-50 border-red-100 text-red-700 opacity-80'
+                      : 'bg-white border-[var(--warm-sand)] text-[var(--warm-charcoal)] hover:border-[var(--indigo-deep)]'
+                  }`}
+                >
+                  <span className="text-[10px] uppercase font-bold tracking-wider opacity-60">{weekday}</span>
+                  <span className="text-xl font-extrabold my-1">{day}</span>
+                  <span className="text-[10px] font-semibold">{month}</span>
+                  {isFull && <span className="text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full font-bold mt-1 scale-90">FULL</span>}
+                </button>
+              )
+            })}
+          </div>
+
+          {/* Capping / Kind message if full */}
+          {isDayFull ? (
             <div className="card-divine p-12 text-center">
               <div className="flex justify-center mb-3">
                 <span className="material-symbols-outlined text-[40px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>event_busy</span>
               </div>
-              <p className="font-bold text-lg text-[var(--indigo-deep)] mb-2">Slots Currently Filled</p>
+              <p className="font-bold text-lg text-[var(--indigo-deep)] mb-2">Slots Fully Booked for This Date</p>
               <p className="text-sm text-[var(--warm-charcoal)]/75 max-w-md mx-auto leading-relaxed mb-3">
-                To ensure deep, high-quality focus for every session, our Vedic experts are capped at 5 consultations of 45 minutes each per day (between 5:00 PM and 11:00 PM IST).
+                To ensure deep, high-quality focus for every session, our Vedic experts limit their availability to exactly 5 consultations per day.
               </p>
               <p className="text-sm text-[var(--indigo-deep)] font-medium max-w-md mx-auto">
-                We kindly invite you to check back tomorrow to book your consultation, or write to us in the <Link href="/mailbox" className="text-[var(--terracotta)] hover:underline font-semibold">Mailbox</Link> if you have an urgent query.
+                We kindly invite you to select another date above, check back tomorrow, or write to us in the <Link href="/mailbox" className="text-[var(--terracotta)] hover:underline font-semibold">Mailbox</Link> if you have an urgent query.
               </p>
+            </div>
+          ) : visiblePredefined.length === 0 ? (
+            <div className="card-divine p-8 text-center text-sm text-[var(--warm-charcoal)]/60">
+              <span className="material-symbols-outlined text-[32px] text-[var(--warm-charcoal)]/40 block mb-2">bedtime</span>
+              Sessions for this date are fully booked or have already concluded. Please select another date above.
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {filtered.map(slot => (
-                <div key={slot.id} className="card-divine p-5">
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="w-12 h-12 rounded-full bg-[var(--indigo-deep)] flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
-                      <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>person</span>
+              {visiblePredefined.map(ps => {
+                const isBooked = isSlotBooked(selectedDate, ps.start)
+                const isBlocked = isSlotBlocked(selectedDate, ps.start)
+                const isAvailable = !isBooked && !isBlocked
+
+                return (
+                  <div key={ps.start} className={`card-divine p-5 transition-all ${!isAvailable ? 'opacity-60 bg-gray-50' : 'hover:shadow-md'}`}>
+                    <div className="flex items-center justify-between gap-3 mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[20px] text-[var(--indigo-deep)]" style={{ fontVariationSettings: "'FILL' 1" }}>schedule</span>
+                        <span className="font-bold text-[var(--indigo-deep)]">{fmtTime(ps.start)}</span>
+                      </div>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                        isBooked
+                          ? 'bg-red-50 text-red-700 border-red-200'
+                          : isBlocked
+                          ? 'bg-gray-100 text-gray-500 border-gray-200'
+                          : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      }`}>
+                        {isBooked ? 'Booked' : isBlocked ? 'Blocked' : 'Available'}
+                      </span>
                     </div>
+                    <p className="text-xs text-[var(--warm-charcoal)]/50 mb-3">45 minutes session with a Vedic expert</p>
+                    
+                    {isAvailable && (
+                      <button
+                        onClick={() => bookSlot(selectedDate, ps.start, ps.end)}
+                        disabled={booking === `${selectedDate}_${ps.start}`}
+                        className="btn-divine w-full py-2.5 text-sm mt-3 disabled:opacity-50"
+                      >
+                        {booking === `${selectedDate}_${ps.start}` ? 'Booking...' : 'Book Now'}
+                      </button>
+                    )}
                   </div>
-                  <h3 className="font-bold text-[var(--indigo-deep)]">Expert Consultation</h3>
-
-                  <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-[var(--warm-charcoal)]/60">
-                    <div className="bg-[var(--warm-sand)] rounded-lg p-2"><p className="font-medium text-[var(--indigo-deep)] inline-flex items-center gap-1"><span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>calendar_today</span> Date</p><p>{(() => { const [y,m,d] = slot.date.split('-'); return new Date(+y,+m-1,+d).toLocaleDateString('en-IN',{day:'numeric',month:'short'}) })()}</p></div>
-                    <div className="bg-[var(--warm-sand)] rounded-lg p-2"><p className="font-medium text-[var(--indigo-deep)] inline-flex items-center gap-1"><span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>schedule</span> Time</p><p>{fmtTime(slot.start_time)}</p></div>
-                  </div>
-
-                  <button
-                    onClick={() => bookSlot(slot.id)}
-                    disabled={booking === slot.id}
-                    className="btn-divine w-full py-2.5 text-sm mt-3 disabled:opacity-50"
-                  >
-                    {booking === slot.id ? 'Booking...' : 'Book Now'}
-                  </button>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </>
@@ -205,7 +386,7 @@ export default function ConsultationsPage() {
                       <p className="text-sm text-[var(--warm-charcoal)]/60">{slot ? `${(() => { const [y,m,d] = slot.date.split('-'); return new Date(+y,+m-1,+d).toLocaleDateString('en-IN') })()}  at ${slot.start_time}` : new Date(b.booked_at).toLocaleDateString('en-IN')}</p>
                     </div>
                     <div className="flex items-center gap-2 flex-wrap justify-end">
-                      <span className={`text-xs px-3 py-1 rounded-full font-medium ${b.status === 'confirmed' ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>{b.status}</span>
+                      <span className={`text-xs px-3 py-1 rounded-full font-medium ${b.status === 'confirmed' ? 'bg-emerald-100 text-emerald-700' : 'bg-emerald-50 text-emerald-700'}`}>{b.status}</span>
                       {b.status === 'confirmed' && b.meeting_link && (
                         <a
                           href={b.meeting_link}

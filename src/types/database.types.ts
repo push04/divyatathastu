@@ -743,6 +743,8 @@ export type Database = {
           is_booked: boolean
           is_blocked: boolean
           created_at: string
+          duration_minutes: number
+          specialization: string | null
         }
         Insert: {
           expert_id?: string | null
@@ -751,6 +753,8 @@ export type Database = {
           end_time: string
           is_booked?: boolean
           is_blocked?: boolean
+          duration_minutes?: number
+          specialization?: string | null
         }
         Update: {
           expert_id?: string | null
@@ -759,6 +763,8 @@ export type Database = {
           end_time?: string
           is_booked?: boolean
           is_blocked?: boolean
+          duration_minutes?: number
+          specialization?: string | null
         }
         Relationships: []
       }
