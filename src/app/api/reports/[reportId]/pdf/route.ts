@@ -59,19 +59,30 @@ export async function POST(
     console.log('[PDF] fonts:', fontCheck)
     console.log('[PDF] report_type:', report.report_type)
 
-    // All React/PDF imports are dynamic to avoid Turbopack static-analysis restrictions
-    const [{ default: ReportPDF }, { createElement }] = await Promise.all([
-      import('@/components/pdf/ReportPDF'),
-      import('react'),
-    ])
+    // CRITICAL: Call ReportPDF() as a PLAIN FUNCTION, not as a React element.
+    // When we do createElement(ReportPDF, props), the reconciler must call the
+    // function-component itself during its async render phase. On Vercel production,
+    // this async function-component resolution doesn't complete before the scheduler
+    // moves on, leaving container.document null.
+    //
+    // By calling ReportPDF() directly here, we get a pre-resolved element tree
+    // rooted at Document (a host element / string type 'DOCUMENT'). The reconciler
+    // only needs to mount host elements — no async function-component resolution
+    // needed — and appendChildToContainer is reliably called.
+    //
+    // This is the same pattern used in commit b50ca65 which was previously confirmed
+    // to work for this exact scenario.
+    const { default: ReportPDF } = await import('@/components/pdf/ReportPDF')
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const doc = createElement(ReportPDF as any, { report: report as ReportPDFProps['report'], canvases })
+    const doc = (ReportPDF as any)({ report: report as ReportPDFProps['report'], canvases })
+    if (!doc) {
+      return new Response('ReportPDF() returned null — no content to render', { status: 500 })
+    }
+    console.log('[PDF] doc element type:', doc?.type, 'props keys:', Object.keys(doc?.props || {}).join(','))
+
     let buffer: Buffer
     try {
-      // Use renderToBufferSafe which uses a callback-based updateContainer.
-      // This avoids the flushSyncWork timing issue on Vercel where react-pdf's
-      // isolated scheduler context can't flush synchronously.
       buffer = await renderToBufferSafe(doc)
     } catch (renderErr) {
       const msg = renderErr instanceof Error ? renderErr.message : String(renderErr)
