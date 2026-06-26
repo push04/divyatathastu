@@ -1825,9 +1825,7 @@ export default function ReportDetailPage() {
   const supabase = useMemo(() => createClient(), [])
   const [report, setReport] = useState<Report | null>(null)
   const [loading, setLoading] = useState(true)
-  const [downloading, setDownloading] = useState(false)
-  const [elapsed, setElapsed] = useState(0)
-  const [lang, setLang] = useState<'en' | 'hi'>('en')
+const [lang, setLang] = useState<'en' | 'hi'>('en')
   const printRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -1865,99 +1863,8 @@ export default function ReportDetailPage() {
     return () => clearInterval(interval)
   }, [report?.status, reportId, supabase])
 
-  useEffect(() => {
-    if (!downloading) { setElapsed(0); return }
-    const id = setInterval(() => setElapsed(s => s + 1), 1000)
-    return () => clearInterval(id)
-  }, [downloading])
-
-  async function handleDownload() {
-    setDownloading(true)
-    try {
-      // ── 1. Capture chart SVGs as PNG images from the hidden print container ──
-      const rpa = document.getElementById('rpa')
-      const canvases: Record<string, string> = {}
-
-      if (rpa) {
-        rpa.style.display = 'block'
-        rpa.style.visibility = 'hidden'
-        // Two frames to ensure layout is computed
-        await new Promise<void>(r => requestAnimationFrame(() => requestAnimationFrame(() => r())))
-
-        const svgToDataUrl = (svg: SVGSVGElement): Promise<string> =>
-          new Promise((resolve) => {
-            try {
-              const vb = svg.viewBox.baseVal
-              const w = (vb.width > 0 ? vb.width : parseInt(svg.getAttribute('width') || '0')) || 300
-              const h = (vb.height > 0 ? vb.height : parseInt(svg.getAttribute('height') || '0')) || 300
-              const clone = svg.cloneNode(true) as SVGSVGElement
-              clone.setAttribute('width', String(w))
-              clone.setAttribute('height', String(h))
-              const xml = new XMLSerializer().serializeToString(clone)
-              const blob = new Blob([xml], { type: 'image/svg+xml;charset=utf-8' })
-              const url = URL.createObjectURL(blob)
-              const canvas = document.createElement('canvas')
-              const scale = 2
-              canvas.width = w * scale; canvas.height = h * scale
-              const ctx = canvas.getContext('2d')!
-              const img = new Image()
-              img.onload = () => {
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
-                URL.revokeObjectURL(url)
-                resolve(canvas.toDataURL('image/png', 0.92))
-              }
-              img.onerror = () => { URL.revokeObjectURL(url); resolve('') }
-              img.src = url
-            } catch { resolve('') }
-          })
-
-        // Capture first SVG from each chapter's left-panel container
-        const panels = rpa.querySelectorAll('[data-left-panel]')
-        for (const panel of panels) {
-          const id = panel.getAttribute('data-left-panel')
-          const svg = panel.querySelector('svg')
-          if (id && svg) {
-            const dataUrl = await svgToDataUrl(svg as SVGSVGElement)
-            if (dataUrl) canvases[id] = dataUrl
-          }
-        }
-
-        rpa.style.display = ''
-        rpa.style.visibility = ''
-      }
-
-      // ── 2. Generate PDF client-side (avoids Vercel Hobby 10s limit) ──
-      const [{ pdf, Font }, { default: ReportPDF }] = await Promise.all([
-        import('@react-pdf/renderer'),
-        import('@/components/pdf/ReportPDF'),
-      ])
-      Font.registerHyphenationCallback((word: string) => [word])
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const doc = (ReportPDF as any)({ report, canvases })
-      if (!doc) throw new Error('ReportPDF returned null')
-      // Yield to the browser so the overlay paints and the chakra starts spinning
-      // before the synchronous PDF layout engine blocks the main thread.
-      await new Promise(r => setTimeout(r, 80))
-      const blob = await pdf(doc).toBlob()
-
-      // ── 3. Trigger download ──
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      const safeName = (title ?? 'report').replace(/[^a-z0-9\s]/gi, '').trim().replace(/\s+/g, '_')
-      a.href = url
-      a.download = `${safeName || 'DivyaTathastu_Report'}.pdf`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
-    } catch (e) {
-      console.error('PDF download failed:', e)
-      // Ensure #rpa is hidden if something went wrong mid-extraction
-      const rpaEl = document.getElementById('rpa')
-      if (rpaEl) { rpaEl.style.display = ''; rpaEl.style.visibility = '' }
-    } finally {
-      setDownloading(false)
-    }
+  function handleDownload() {
+    window.print()
   }
 
   if (loading) return <div className="flex items-center justify-center h-64"><SudarshanLoader size="md" /></div>
@@ -2442,20 +2349,6 @@ export default function ReportDetailPage() {
     <>
       <style>{PRINT_CSS + BOOK_ANIM_STYLES}</style>
 
-      {/* PDF generation overlay — covers page so #rpa never flashes visibly */}
-      {downloading && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center no-print"
-          style={{ background: 'rgba(253,250,245,0.92)', backdropFilter: 'blur(6px)' }}>
-          <SudarshanLoader size="lg" fast />
-          <p className="mt-5 font-bold text-[var(--indigo-deep)] text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
-            Preparing Your Sacred Report…
-          </p>
-          <p className="mt-2 text-2xl font-black tabular-nums" style={{ color: 'var(--indigo-deep)', fontVariantNumeric: 'tabular-nums' }}>
-            {elapsed}s
-          </p>
-          <p className="text-sm text-[var(--warm-charcoal)]/50 mt-1">Rendering PDF in your browser — please wait</p>
-        </div>
-      )}
 
       <div id="report-page-wrap" className="p-4 sm:p-6 max-w-5xl mx-auto">
         {/* Screen header */}
@@ -2480,10 +2373,10 @@ export default function ReportDetailPage() {
               {report.status}
             </span>
             {isGenerated && (
-              <button onClick={handleDownload} disabled={downloading}
-                className="flex items-center gap-2 px-4 py-2 bg-[var(--indigo-deep)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity disabled:opacity-50">
-                <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>download</span>
-                {downloading ? 'Preparing…' : 'Download PDF'}
+              <button onClick={handleDownload}
+                className="flex items-center gap-2 px-4 py-2 bg-[var(--indigo-deep)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity">
+                <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>print</span>
+                Save as PDF
               </button>
             )}
           </div>
