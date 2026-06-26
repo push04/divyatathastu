@@ -2285,10 +2285,19 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
     @media print {
       @page { size: A4 portrait; margin: 12mm 10mm; }
 
+      /* ── 0. DashboardShell has h-screen overflow-hidden + main overflow-y-auto
+              These clip everything after page 1. Reset ALL ancestors. ── */
+      html, body { height: auto !important; overflow: visible !important; }
+      body > *, body > * > *, body > * > * > * {
+        height: auto !important;
+        overflow: visible !important;
+      }
+      main { height: auto !important; overflow: visible !important; }
+
       /* ── 1. Hide ALL screen-only UI (removes from layout, no space taken) ── */
       .no-print { display: none !important; }
       /* Hide sidebar, topbar, and any other DashboardShell chrome */
-      nav, aside, header { display: none !important; }
+      nav, aside, header, footer { display: none !important; }
       body > * > * > *:not(#report-page-wrap) { display: none !important; }
 
       /* ── 2. Reset the outer page wrapper constraints ── */
@@ -2296,6 +2305,8 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
         padding: 0 !important;
         max-width: 100% !important;
         margin: 0 !important;
+        overflow: visible !important;
+        height: auto !important;
       }
 
       /* ── 3. Show and size print container ── */
