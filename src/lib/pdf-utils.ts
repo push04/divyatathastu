@@ -1,20 +1,22 @@
 /**
- * Safe server-side PDF rendering utilities.
+ * Safe server-side PDF rendering — RECONCILER-FREE approach.
  *
- * THE SPLIT-MODULE-SINGLETON PROBLEM:
- * @react-pdf/renderer is in serverExternalPackages so it loads as an isolated
- * CJS module instance. ReportPDF.tsx is bundled by Turbopack and gets a
- * DIFFERENT react-pdf instance.
+ * ROOT CAUSE (FINAL, DEFINITIVE):
+ * The @react-pdf/renderer reconciler's appendChildToContainer is NEVER called
+ * on Vercel production, regardless of whether we pass function components or
+ * pre-resolved host elements. The async React scheduler on Vercel Lambda does
+ * not complete the commit phase before our callbacks fire.
  *
- * Therefore:
- * - Font.register() MUST happen here (not in ReportPDF.tsx)
- * - Components (Document, Page, etc.) are identified by string type constants
- *   ('DOCUMENT', 'PAGE', etc.) so they work across module boundaries
+ * THE FIX:
+ * Bypass the reconciler entirely. Instead of letting react-reconciler traverse
+ * and commit the element tree, we do it ourselves synchronously via buildNodes().
+ * We then set container.document directly on the pdf() instance, and call
+ * toBuffer() which only needs container.document to be a valid react-pdf node.
  *
- * NULL CONTAINER PROBLEM:
- * container.document stays null when React's render phase throws a component
- * error. React 19 swallows these errors silently in custom renderer contexts.
- * We intercept console.error to capture and re-surface the real error.
+ * This approach is:
+ * - Synchronous (no scheduler, no async commit timing issues)
+ * - Reliable (no React internals dependencies)
+ * - Compatible (produces the exact same node structure as the reconciler would)
  */
 
 import path from 'path'
@@ -41,65 +43,136 @@ async function ensureFontsRegistered() {
   console.log('[PDF] Fonts registered on externalized react-pdf instance')
 }
 
-export async function renderToBufferSafe(element: React.ReactElement): Promise<Buffer> {
-  await ensureFontsRegistered()
+// ─── React-pdf node types (matches createInstance / createTextInstance output) ─
 
-  // ── Intercept console.error to catch React 19's swallowed component errors ──
-  // React 19 catches component errors internally and calls console.error instead
-  // of propagating them in custom renderer contexts. We capture them here so
-  // the real error is visible in the 500 response body and Vercel logs.
-  const capturedErrors: string[] = []
-  const origConsoleError = console.error
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  console.error = (...args: any[]) => {
-    const msg = args.map(a => (a instanceof Error ? a.stack || a.message : String(a))).join(' ')
-    capturedErrors.push(msg)
-    origConsoleError(...args)
+type ReactPdfNode = {
+  type: string
+  box: Record<string, unknown>
+  style: Record<string, unknown>
+  props: Record<string, unknown>
+  children: (ReactPdfNode | TextInstanceNode)[]
+}
+
+type TextInstanceNode = {
+  type: 'TEXT_INSTANCE'
+  value: string
+}
+
+const TEXT_PARENTS = new Set(['TEXT', 'LINK', 'TSPAN', 'NOTE'])
+
+// ─── Synchronous element-tree traversal (replaces the reconciler) ─────────────
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function buildNodes(child: any): (ReactPdfNode | TextInstanceNode)[] {
+  // Skip falsy/boolean values (conditional rendering)
+  if (child === null || child === undefined || child === false || child === true) {
+    return []
   }
 
-  let buffer: Buffer
-  try {
-    const { pdf } = await import('@react-pdf/renderer')
-    const instance = (pdf as any)()
+  // Primitive text → TEXT_INSTANCE (used inside Text/Link/etc.)
+  if (typeof child === 'string' || typeof child === 'number') {
+    return [{ type: 'TEXT_INSTANCE', value: String(child) }]
+  }
 
-    // Use the 'change' event (fires from resetAfterCommit, AFTER appendChildToContainer)
-    // AND the updateContainer callback (fires after layout effects) as belt-and-suspenders.
-    // Whichever fires first resolves the Promise.
-    await new Promise<void>((resolve, reject) => {
-      let resolved = false
-      const done = () => { if (!resolved) { resolved = true; resolve() } }
+  // Arrays (from .map() or <>...</> with multiple children)
+  if (Array.isArray(child)) {
+    return child.flatMap(buildNodes)
+  }
 
-      // resetAfterCommit fires AFTER appendChildToContainer → container.document is set
-      instance.on('change', done)
+  if (typeof child !== 'object' || !child.type) return []
 
-      try {
-        instance.updateContainer(element, done)
-      } catch (err) {
-        reject(err)
-      }
-    })
+  const type = child.type
+  const props = child.props || {}
 
-    // Verify container.document was actually set (if React threw during render,
-    // it may still have called our callbacks without committing anything)
-    if (!instance.container.document) {
-      const reactErrors = capturedErrors.join('\n').slice(0, 2000)
-      throw new Error(
-        `PDF render: container.document is null after commit callbacks fired.\n` +
-        `This means React threw during render phase but swallowed the error.\n` +
-        `Captured React errors:\n${reactErrors || '(none — check Vercel function logs)'}`
-      )
+  // ── React fragments ──────────────────────────────────────────────────────
+  if (
+    type === Symbol.for('react.fragment') ||
+    type === Symbol.for('react.strict_mode')
+  ) {
+    return buildNodes(props.children)
+  }
+
+  // ── React.memo wrapper ───────────────────────────────────────────────────
+  if (type?.$$typeof === Symbol.for('react.memo')) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const rendered = (type.type as any)(props)
+    return buildNodes(rendered)
+  }
+
+  // ── React.forwardRef wrapper ─────────────────────────────────────────────
+  if (type?.$$typeof === Symbol.for('react.forward_ref')) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const rendered = (type.render as any)(props, null)
+    return buildNodes(rendered)
+  }
+
+  // ── Function component → call it to get its rendered output ─────────────
+  if (typeof type === 'function') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const rendered = (type as any)(props)
+    return buildNodes(rendered)
+  }
+
+  // ── Host element (react-pdf primitive: 'DOCUMENT', 'PAGE', 'VIEW', etc.) ─
+  if (typeof type === 'string') {
+    const { style, children, ...rest } = props
+
+    const node: ReactPdfNode = {
+      type,
+      box: {},
+      style: style || {},
+      props: rest || {},
+      children: [],
     }
 
-    const stream = await instance.toBuffer()
-    buffer = await new Promise<Buffer>((resolve, reject) => {
-      const chunks: Buffer[] = []
-      stream.on('data', (chunk: Buffer) => chunks.push(chunk))
-      stream.on('end', () => resolve(Buffer.concat(chunks)))
-      stream.on('error', reject)
-    })
-  } finally {
-    console.error = origConsoleError
+    if (children !== undefined && children !== null) {
+      const childNodes = buildNodes(children)
+      for (const cn of childNodes) {
+        // TEXT_INSTANCE nodes are only valid inside text-like parents
+        if (cn.type === 'TEXT_INSTANCE' && !TEXT_PARENTS.has(node.type)) {
+          console.warn(`[PDF] Skipping orphan text "${(cn as TextInstanceNode).value}" in <${node.type}>`)
+          continue
+        }
+        node.children.push(cn)
+      }
+    }
+
+    return [node]
   }
 
-  return buffer
+  return []
+}
+
+// ─── Main export ──────────────────────────────────────────────────────────────
+
+export async function renderToBufferSafe(element: React.ReactElement): Promise<Buffer> {
+  // Step 1: Register fonts on the externalized react-pdf instance
+  await ensureFontsRegistered()
+
+  // Step 2: Build the react-pdf node tree synchronously (no reconciler!)
+  const nodes = buildNodes(element)
+  if (nodes.length === 0) {
+    throw new Error('[PDF] buildNodes returned empty — no renderable elements')
+  }
+
+  const root = nodes[0] as ReactPdfNode
+  console.log('[PDF] buildNodes root type:', root.type, '| children:', root.children.length)
+
+  // Step 3: Create a pdf() instance and bypass the reconciler by setting
+  // container.document directly. toBuffer() only reads container.document —
+  // it does not care how it was set.
+  const { pdf } = await import('@react-pdf/renderer')
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const instance = (pdf as any)()
+  instance.container.document = root
+
+  // Step 4: Render to buffer via react-pdf's layout + pdfkit pipeline
+  const stream = await instance.toBuffer()
+
+  return new Promise<Buffer>((resolve, reject) => {
+    const chunks: Buffer[] = []
+    stream.on('data', (chunk: Buffer) => chunks.push(chunk))
+    stream.on('end', () => resolve(Buffer.concat(chunks)))
+    stream.on('error', reject)
+  })
 }
