@@ -15,7 +15,7 @@ const navLinks = [
   { href: '/ebooks', label: 'Ebooks' },
   { href: '/panchang', label: 'Panchang' },
   { href: '/blog', label: 'Blog' },
-  { href: '/about', label: 'About' },
+  { href: '/ardra-jalam', label: 'Ardra Jalam', featured: true },
 ]
 
 export default function Navbar() {
@@ -99,20 +99,36 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-1">
-            {navLinks.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className={cn(
-                  'px-3.5 py-2 rounded-lg text-xs font-semibold tracking-widest uppercase transition-all duration-200 font-label',
-                  pathname === href || pathname.startsWith(href + '/')
-                    ? 'text-[var(--terracotta)] bg-[var(--warm-sand)]'
-                    : 'text-[var(--indigo-deep)]/60 hover:text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/60'
-                )}
-                style={{ fontFamily: "'Sora', sans-serif" }}
-              >
-                {label}
-              </Link>
+            {navLinks.map(({ href, label, featured }) => (
+              featured ? (
+                <Link
+                  key={href}
+                  href={href}
+                  className={cn(
+                    'px-3.5 py-2 rounded-lg text-xs font-semibold tracking-widest uppercase transition-all duration-200 border',
+                    pathname === href || pathname.startsWith(href + '/')
+                      ? 'bg-[var(--saffron)]/20 border-[var(--saffron)]/60'
+                      : 'bg-[var(--saffron)]/10 border-[var(--saffron)]/30 hover:bg-[var(--saffron)]/20 hover:border-[var(--saffron)]/50'
+                  )}
+                  style={{ fontFamily: "'Sora', sans-serif" }}
+                >
+                  <span className="shimmer-text">{label}</span>
+                </Link>
+              ) : (
+                <Link
+                  key={href}
+                  href={href}
+                  className={cn(
+                    'px-3.5 py-2 rounded-lg text-xs font-semibold tracking-widest uppercase transition-all duration-200 font-label',
+                    pathname === href || pathname.startsWith(href + '/')
+                      ? 'text-[var(--terracotta)] bg-[var(--warm-sand)]'
+                      : 'text-[var(--indigo-deep)]/60 hover:text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/60'
+                  )}
+                  style={{ fontFamily: "'Sora', sans-serif" }}
+                >
+                  {label}
+                </Link>
+              )
             ))}
           </div>
 
@@ -192,21 +208,38 @@ export default function Navbar() {
                 </div>
               )}
 
-              {navLinks.map(({ href, label }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={() => setMobileOpen(false)}
-                  className={cn(
-                    'block px-4 py-3 rounded-xl text-xs font-semibold tracking-widest uppercase transition-all',
-                    pathname === href
-                      ? 'text-[var(--terracotta)] bg-[var(--warm-sand)]'
-                      : 'text-[var(--indigo-deep)]/60 hover:text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/60'
-                  )}
-                  style={{ fontFamily: "'Sora', sans-serif" }}
-                >
-                  {label}
-                </Link>
+              {navLinks.map(({ href, label, featured }) => (
+                featured ? (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setMobileOpen(false)}
+                    className={cn(
+                      'block px-4 py-3 rounded-xl text-xs font-semibold tracking-widest uppercase transition-all border',
+                      pathname === href
+                        ? 'bg-[var(--saffron)]/20 border-[var(--saffron)]/60'
+                        : 'bg-[var(--saffron)]/10 border-[var(--saffron)]/30'
+                    )}
+                    style={{ fontFamily: "'Sora', sans-serif" }}
+                  >
+                    <span className="shimmer-text">{label}</span>
+                  </Link>
+                ) : (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setMobileOpen(false)}
+                    className={cn(
+                      'block px-4 py-3 rounded-xl text-xs font-semibold tracking-widest uppercase transition-all',
+                      pathname === href
+                        ? 'text-[var(--terracotta)] bg-[var(--warm-sand)]'
+                        : 'text-[var(--indigo-deep)]/60 hover:text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/60'
+                    )}
+                    style={{ fontFamily: "'Sora', sans-serif" }}
+                  >
+                    {label}
+                  </Link>
+                )
               ))}
               <div className="pt-4 border-t border-[var(--outline-variant)]/30 flex flex-col gap-2.5">
                 {user ? (
