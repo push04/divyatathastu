@@ -47,13 +47,23 @@ export function useServiceItems(category?: ServiceCategory, onlyActive = true) {
 
   const fetch = useCallback(async () => {
     setLoading(true)
-    let q = (supabase as any).from('service_items').select('*').order('display_order')
-    if (category) q = q.eq('category', category)
-    if (onlyActive) q = q.eq('is_active', true)
-    const { data, error: err } = await q
-    if (err) setError(err.message)
-    else setItems((data ?? []) as ServiceItem[])
-    setLoading(false)
+    setError(null)
+    try {
+      let q = (supabase as any).from('service_items').select('*').order('display_order')
+      if (category) q = q.eq('category', category)
+      if (onlyActive) q = q.eq('is_active', true)
+      const { data, error: err } = await q
+      if (err) {
+        setError(err.message)
+      } else {
+        setItems((data ?? []) as ServiceItem[])
+      }
+    } catch (err: any) {
+      console.error('[useServiceItems] fetch error:', err)
+      setError(err?.message || 'Failed to fetch items')
+    } finally {
+      setLoading(false)
+    }
   }, [supabase, category, onlyActive])
 
   useEffect(() => { fetch() }, [fetch])
