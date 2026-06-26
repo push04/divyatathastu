@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
 
     const name = (user.user_metadata?.full_name as string) || user.email?.split('@')[0] || 'Seeker'
     try {
-      await sendCourseEnrollmentEmail(user.email!, name, courseTitle || 'Course', 0, instructor)
+      await sendCourseEnrollmentEmail(user.email!, name, courseTitle || 'Course', 0, instructor, courseId)
     } catch (e: any) {
       console.warn('[courses/payment] Email failed:', e.message)
     }
@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
 
     const name = (user.user_metadata?.full_name as string) || user.email?.split('@')[0] || 'Seeker'
     try {
-      await sendCourseEnrollmentEmail(user.email!, name, courseTitle || 'Course', coursePrice ?? 0, instructor)
+      await sendCourseEnrollmentEmail(user.email!, name, courseTitle || 'Course', coursePrice ?? 0, instructor, courseId)
     } catch (e: any) {
       console.warn('[courses/payment] Email failed:', e.message)
     }

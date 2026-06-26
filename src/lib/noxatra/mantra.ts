@@ -330,5 +330,96 @@ export function calculateMantraGuidance(
         'Offer the written pages to a river or sacred fire after 40 days',
       ],
     },
+    mangalacharana: GANPATI_MANTRAS,
   }
 }
+
+// ─── Ganpati / Ganesha Mantras ───────────────────────────────────────────────
+// These are Mangalacharana (auspicious opening) mantras recited before any
+// spiritual work, sadhana, or report consultation. They are UNIVERSAL — all
+// seekers are encouraged to chant these regardless of their personal chart.
+
+export const GANPATI_MANTRAS = {
+  title: 'श्री गणपति मंत्र — Mangalacharana',
+  subtitle: 'Auspicious Invocation — Chant before beginning any sadhana or reading this report',
+  mantras: [
+    {
+      name: 'Vakratunda Shloka (Before Any Auspicious Work)',
+      sanskrit: 'वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ ।\nनिर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा ॥',
+      transliteration: 'Vakratuṇḍa Mahākāya Sūryakoṭi Samaprabha |\nNirvighnaṃ Kuru Me Deva Sarvakāryeṣu Sarvadā ||',
+      meaning: 'O Lord Ganesha of curved trunk, mighty-bodied, with the brilliance of a million suns — please make all my works obstacle-free, always.',
+      count: 11,
+      bestTime: 'Any time — especially before starting this report',
+    },
+    {
+      name: 'Beej Mantra (Seed Mantra — Most Powerful)',
+      sanskrit: 'ॐ गं गणपतये नमः',
+      transliteration: 'Om Gaṃ Gaṇapataye Namaḥ',
+      meaning: 'I bow to Lord Ganesha, the remover of all obstacles, the lord of all beginnings.',
+      count: 108,
+      bestTime: 'Wednesday morning, or any morning at sunrise',
+    },
+    {
+      name: 'Maha Ganpati Mantra (Supreme Invocation)',
+      sanskrit: 'ॐ श्री महागणपतये नमः',
+      transliteration: 'Om Shrī Mahāgaṇapataye Namaḥ',
+      meaning: 'I bow to the great Lord Ganesha, the supreme remover of obstacles and granter of wisdom.',
+      count: 108,
+      bestTime: 'Chaturthi (4th lunar day), Ganesh Chaturthi festival',
+    },
+    {
+      name: 'Ganesh Gayatri Mantra (For Wisdom & Intellect)',
+      sanskrit: 'ॐ एकदन्ताय विद्महे\nवक्रतुण्डाय धीमहि ।\nतन्नो दन्तिः प्रचोदयात् ॥',
+      transliteration: 'Om Ekadantāya Vidmahe\nVakratuṇḍāya Dhīmahi |\nTanno Dantiḥ Pracodayāt ||',
+      meaning: 'We meditate on the one-tusked Lord Ganesha. May that elephant-faced one inspire and illuminate our intellect.',
+      count: 108,
+      bestTime: 'Early morning meditation, especially Wednesdays',
+    },
+    {
+      name: 'Dvadasha Nama (12 Sacred Names of Ganesha)',
+      sanskrit: 'सुमुख श्चैकदन्तश्च कपिलो गजकर्णकः ।\nलम्बोदरश्च विकटो विघ्ननाशो गणाधिपः ।।\nधूमकेतुर्गणाध्यक्षः फालचन्द्रो गजाननः ।\nद्वादशैतानि नामानि यः पठेच्छृणुयादपि ।।',
+      transliteration: 'Sumukhaścaikadantaśca Kapilo Gajakarṇakaḥ |\nLambodaṛaśca Vikaṭo Vighnanāśo Gaṇādhipaḥ ||\nDhūmaketurgaṇādhyakṣaḥ Phālacandro Gajānanaḥ |\nDvādaśaitāni Nāmāni Yaḥ Paṭhecchr̥ṇuyādapi ||',
+      meaning: 'Sumukha (pleasant-faced), Ekadanta (one-tusked), Kapila (tawny), Gajakarnaka (elephant-eared), Lambodara (pot-bellied), Vikata (huge-bodied), Vighnashana (obstacle-destroyer), Ganadhipa (lord of ganas), Dhumaketu (smoke-bannered), Ganadhyaksha (chief of ganas), Phalachandra (moon-crested), Gajanana (elephant-faced) — these twelve names, when read or heard, bestow supreme auspiciousness.',
+      count: 1,
+      bestTime: 'Morning prayers, before exams, interviews, or any new beginning',
+    },
+    {
+      name: 'Sankatanashana Ganesha Stotram (Destroyer of All Sorrows)',
+      sanskrit: 'नागानन गणाध्यक्ष सर्वसिद्धिप्रद प्रभो ।\nसर्वविघ्नहर देवेश सर्वसंकट भंजन ।।',
+      transliteration: 'Nāgānana Gaṇādhyakṣa Sarvasiddhiprada Prabho |\nSarvavighnhara Deveśa Sarvasaṃkaṭa Bhaṃjana ||',
+      meaning: 'O snake-faced Lord Ganesha, leader of all celestial beings, bestower of all achievements, O master of all! You remove all obstacles, O lord of all divine beings, and you break through all crises and sorrows.',
+      count: 21,
+      bestTime: 'Sankashti Chaturthi (every month), or times of difficulty',
+    },
+    {
+      name: 'Ashtavinayak Vandana (Eight Forms of Ganesha)',
+      sanskrit: 'मयूरेश्वर मोरेश्वर सिद्धिविनायक ।\nमहागणपति विघ्नेश्वर लेण्याद्री गिरिजात्मज ।।\nओझर सुप्रसिद्ध गिरिजापुत्र नमोस्तुते ।\nरांजणगाव महागणपति रक्ष माम् सर्वदा ।।',
+      transliteration: 'Mayūreśvara Moreśvara Siddhivināyaka |\nMahāgaṇapati Vighneśvara Leṇyādrī Girijātmaja ||\nOjhara Suprasiddha Girijāputra Namostute |\nRāṃjaṇagāva Mahāgaṇapati Rakṣa Mām Sarvadā ||',
+      meaning: 'Salutations to the eight forms of Ganesha — Mayureshwar, Siddhivinayak, Mahaganapati, Vighnahar, Girijatmaj, Vighneshwar, Ozhar, and Ranjangaon Mahaganapati. O son of Goddess Girija, protect me always.',
+      count: 8,
+      bestTime: 'Ashtavinayak Yatra pilgrimage days, Ganesh Chaturthi',
+    },
+  ],
+  likhitJapa: {
+    mantra: 'ॐ गं गणपतये नमः',
+    count: 108,
+    pen: 'Red ink pen',
+    paper: 'Yellow or white paper',
+    inkColor: 'Red or saffron',
+    posture: 'Sit facing East on a yellow cloth, Wednesday morning',
+    auspiciousDays: ['Wednesday', 'Chaturthi', 'Ganesh Chaturthi', 'Sankashti Chaturthi'],
+    instructions: [
+      'Wake before sunrise on Wednesday or Chaturthi',
+      'Bathe and wear fresh yellow or white clothing',
+      'Place a picture or idol of Lord Ganesha in front of you',
+      'Light a ghee lamp and offer modak (sweet) or durva grass',
+      'Sit facing East on a yellow mat or cloth',
+      'Use red ink pen on yellow paper (or a dedicated notebook)',
+      'Write "ॐ गं गणपतये नमः" exactly 108 times — one line at a time, mindfully',
+      'After writing, sit silently for 5 minutes in gratitude',
+      'Keep the written pages and offer at a Ganesha temple after 21 days',
+    ],
+  },
+}
+
+export { PLANET_MANTRA_DATA, NAKSHATRA_PADA_SYLLABLES, NAKSHATRA_BEEJ }

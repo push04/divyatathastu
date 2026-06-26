@@ -467,7 +467,7 @@ export async function sendEventRegistrationEmail(
 
 // ─── Course Enrollment Email ─────────────────────────────────────────────────
 
-export function courseEnrollmentHtml(name: string, courseTitle: string, price: number, instructor?: string): string {
+export function courseEnrollmentHtml(name: string, courseTitle: string, price: number, instructor?: string, courseId?: string): string {
   const header = hdr('Course Enrolled')
 
   const body = `
@@ -508,8 +508,8 @@ export function courseEnrollmentHtml(name: string, courseTitle: string, price: n
     <hr style="border:none;border-top:1px solid #EDE6DC;margin:6px 0 28px">
 
     <div style="text-align:center">
-      <a href="${APP}/dashboard" style="display:inline-block;background:#2F2A44;color:#ffffff;padding:16px 44px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:15px;font-family:Arial,sans-serif;letter-spacing:.02em">
-        Go to Your Dashboard
+      <a href="${courseId ? `${APP}/my-courses/${courseId}` : `${APP}/my-courses`}" style="display:inline-block;background:#2F2A44;color:#ffffff;padding:16px 44px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:15px;font-family:Arial,sans-serif;letter-spacing:.02em">
+        Access Your Course
       </a>
     </div>
 
@@ -526,11 +526,91 @@ export async function sendCourseEnrollmentEmail(
   courseTitle: string,
   price: number,
   instructor?: string,
+  courseId?: string,
 ): Promise<void> {
   await sendEmail(
     to,
     `Enrolled in ${courseTitle} — MahaTathastu`,
-    courseEnrollmentHtml(name, courseTitle, price, instructor),
+    courseEnrollmentHtml(name, courseTitle, price, instructor, courseId),
+  )
+}
+
+// ─── Webinar Invite Email ────────────────────────────────────────────────────
+
+export function webinarInviteHtml(
+  name: string,
+  webinarTitle: string,
+  hostName: string,
+  scheduledAt: string | null,
+  durationMinutes: number,
+  joinUrl: string,
+): string {
+  const header = hdr('Live Webinar Invitation')
+  const dateStr = scheduledAt
+    ? new Date(scheduledAt).toLocaleString('en-IN', { dateStyle: 'full', timeStyle: 'short', timeZone: 'Asia/Kolkata' })
+    : 'Date & time to be announced'
+
+  const body = `
+    <h1 style="font-family:Georgia,serif;font-size:26px;color:#1A1535;font-weight:bold;margin:0 0 5px;line-height:1.25">
+      You're Invited, ${escHtml(name)}!
+    </h1>
+    <p style="font-size:14px;color:#9A96AA;margin:0 0 26px;font-family:Arial,sans-serif;line-height:1.6">
+      Join us for a live session: <strong style="color:#2F2A44">${escHtml(webinarTitle)}</strong>
+    </p>
+
+    <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"
+      style="background:#F0F4FF;border:1px solid #C7D2FE;border-radius:12px;padding:22px 24px;margin-bottom:24px">
+      <tr><td>
+        <div style="font-size:10px;color:#6366F1;letter-spacing:.14em;text-transform:uppercase;font-family:Arial,sans-serif;margin-bottom:6px">Live Session</div>
+        <div style="font-size:20px;font-weight:bold;color:#1A1535;font-family:Georgia,serif;margin-bottom:10px">${escHtml(webinarTitle)}</div>
+        <div style="font-size:13px;color:#4A5568;font-family:Arial,sans-serif;margin-bottom:6px">
+          <strong>Host:</strong> ${escHtml(hostName)}
+        </div>
+        <div style="font-size:13px;color:#4A5568;font-family:Arial,sans-serif;margin-bottom:6px">
+          <strong>Date & Time:</strong> ${escHtml(dateStr)}
+        </div>
+        <div style="font-size:13px;color:#4A5568;font-family:Arial,sans-serif">
+          <strong>Duration:</strong> ${durationMinutes} minutes
+        </div>
+      </td></tr>
+    </table>
+
+    <div style="background:#FFF8E7;border:1px solid #F6D860;border-radius:10px;padding:14px 18px;margin-bottom:24px;font-size:13px;color:#6B4C00;font-family:Arial,sans-serif;line-height:1.7">
+      <strong>How to join:</strong> Click the button below at the session time. No download needed — your browser is all you need.
+    </div>
+
+    <hr style="border:none;border-top:1px solid #EDE6DC;margin:6px 0 28px">
+
+    <div style="text-align:center">
+      <a href="${joinUrl}" style="display:inline-block;background:#4F46E5;color:#ffffff;padding:16px 44px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:15px;font-family:Arial,sans-serif;letter-spacing:.02em">
+        Join Live Session
+      </a>
+    </div>
+    <p style="font-size:11px;color:#B9B0CC;text-align:center;margin:10px 0 0;font-family:Arial,sans-serif">
+      Or paste this link in your browser:<br>
+      <a href="${joinUrl}" style="color:#6366F1;font-size:10px;word-break:break-all">${joinUrl}</a>
+    </p>
+
+    <p style="font-size:12px;color:#C0B8CC;text-align:center;line-height:1.65;margin:18px 0 0;font-family:Arial,sans-serif">
+      Questions? <a href="https://wa.me/919858784784" style="color:#C67D53;text-decoration:none">WhatsApp +91 98587 84784</a>
+    </p>
+  `
+  return layout('#4F46E5', header, body)
+}
+
+export async function sendWebinarInviteEmail(
+  to: string,
+  name: string,
+  webinarTitle: string,
+  hostName: string,
+  scheduledAt: string | null,
+  durationMinutes: number,
+  joinUrl: string,
+): Promise<void> {
+  await sendEmail(
+    to,
+    `You're Invited: ${webinarTitle} — MahaTathastu Live`,
+    webinarInviteHtml(name, webinarTitle, hostName, scheduledAt, durationMinutes, joinUrl),
   )
 }
 

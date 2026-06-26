@@ -2647,6 +2647,44 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
             </div>
           </div>
 
+          {/* GANPATI MANTRAS PAGE - Mangalacharana */}
+          <div style={{ pageBreakAfter: 'always', background: '#fffdf7', fontFamily: 'Georgia, serif', padding: '36px 44px', outline: '1px solid rgba(200,146,42,0.4)', outlineOffset: '-8px' }}>
+            <div style={{ textAlign: 'center', marginBottom: 20, paddingBottom: 14, borderBottom: '2px solid #c8922a' }}>
+              <div style={{ fontSize: 28, color: '#cc2200', marginBottom: 4 }}>ॐ गं गणपतये नमः</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: '#1a3a8c' }}>श्री गणपति मंत्र — Mangalacharana</div>
+              <div style={{ fontSize: 10, color: '#c8922a', marginTop: 4, letterSpacing: '0.15em' }}>AUSPICIOUS INVOCATION · CHANT BEFORE BEGINNING ANY SADHANA</div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+              {[
+                { name: 'Vakratunda Shloka', sanskrit: 'वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ ।\nनिर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा ॥', count: '11×', note: 'Before any auspicious work' },
+                { name: 'Beej Mantra', sanskrit: 'ॐ गं गणपतये नमः', count: '108×', note: 'Most powerful seed mantra' },
+                { name: 'Maha Ganpati', sanskrit: 'ॐ श्री महागणपतये नमः', count: '108×', note: 'Supreme invocation' },
+                { name: 'Ganesh Gayatri', sanskrit: 'ॐ एकदन्ताय विद्महे\nवक्रतुण्डाय धीमहि ।\nतन्नो दन्तिः प्रचोदयात् ॥', count: '108×', note: 'For wisdom & intellect' },
+                { name: 'Sankatanashana Mantra', sanskrit: 'नागानन गणाध्यक्ष सर्वसिद्धिप्रद प्रभो ।\nसर्वविघ्नहर देवेश सर्वसंकट भंजन ।।', count: '21×', note: 'Destroyer of all sorrows' },
+                { name: 'Likhit Japa Mantra', sanskrit: 'ॐ गं गणपतये नमः', count: '108× daily', note: 'Write in red ink on yellow paper, facing East, Wednesdays' },
+              ].map(m => (
+                <div key={m.name} style={{ background: 'rgba(200,146,42,0.06)', border: '1px solid rgba(200,146,42,0.3)', borderRadius: 8, padding: '10px 12px', breakInside: 'avoid', pageBreakInside: 'avoid' }}>
+                  <div style={{ fontSize: 9.5, fontWeight: 700, color: '#1a3a8c', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{m.name}</div>
+                  <div style={{ fontSize: 13, color: '#cc2200', lineHeight: 1.7, whiteSpace: 'pre-line', marginBottom: 5 }}>{m.sanskrit}</div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: 8.5, color: '#888', fontStyle: 'italic' }}>{m.note}</span>
+                    <span style={{ fontSize: 9, fontWeight: 700, color: '#c8922a', background: 'rgba(200,146,42,0.15)', padding: '2px 8px', borderRadius: 4 }}>{m.count}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            {/* Dvadasha Nama - full width */}
+            <div style={{ marginTop: 14, background: '#1a3a8c', borderRadius: 10, padding: '14px 18px', color: 'white' }}>
+              <div style={{ fontSize: 10, fontWeight: 700, color: '#c8922a', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.15em' }}>Dvadasha Nama — 12 Sacred Names of Ganesha</div>
+              <div style={{ fontSize: 12, color: '#f5ede0', lineHeight: 1.9 }}>
+                सुमुख • एकदन्त • कपिल • गजकर्णक • लम्बोदर • विकट • विघ्ननाश • गणाधिप • धूमकेतु • गणाध्यक्ष • फालचन्द्र • गजानन
+              </div>
+              <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.6)', marginTop: 6 }}>
+                Recite these 12 names each morning for complete obstacle removal and divine blessings.
+              </div>
+            </div>
+          </div>
+
           {/* TABLE OF CONTENTS */}
           <div style={{ padding: '44px', pageBreakAfter: 'always' }}>
             <div style={{ borderBottom: '2px solid #D4A017', paddingBottom: 14, marginBottom: 28 }}>
