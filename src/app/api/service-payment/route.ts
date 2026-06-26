@@ -26,11 +26,12 @@ export async function POST(req: NextRequest) {
     // Fetch authoritative price — prevents client-side tampering
     const { data: item, error: itemErr } = await (supabase as any)
       .from('service_items')
-      .select('id, title, price, is_active')
+      .select('id, title, price, is_active, is_bookable')
       .eq('id', service_item_id)
       .eq('is_active', true)
+      .eq('is_bookable', true)
       .single()
-    if (itemErr || !item) return NextResponse.json({ error: 'Service not found' }, { status: 404 })
+    if (itemErr || !item) return NextResponse.json({ error: 'Service not found or not available for booking' }, { status: 404 })
 
     const totalAmount = (item.price ?? amount ?? 0) as number
     const receipt = `SVC-${Date.now()}`

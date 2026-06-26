@@ -98,23 +98,38 @@ export default function ArdraJalamPage() {
               <p className="text-sm text-[#065f46]/60 mb-6 leading-relaxed">
                 Charged under the divine frequencies of <strong>Ardra Nakshatra</strong> - the star of transformation ruled by Lord Rudra. Each batch is prepared through specific Vedic rituals, mantras, and cosmic alignment. Available only once every 27 days.
               </p>
-              {/* Price */}
-              <div className="flex items-center gap-4 mb-6">
-                <div>
-                  {loading ? (
-                    <div className="h-8 w-24 bg-white/50 rounded animate-pulse" />
-                  ) : (
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-3xl font-black text-[var(--terracotta)]" style={{ fontFamily: "'Playfair Display', serif" }}>
+              {/* Price Block */}
+              <div className="mb-6">
+                {loading ? (
+                  <div className="h-12 w-40 bg-white/50 rounded-xl animate-pulse" />
+                ) : (
+                  <div className="inline-flex flex-col gap-1">
+                    <div className="flex items-baseline gap-3">
+                      <span className="text-5xl font-black text-[var(--terracotta)]" style={{ fontFamily: "'Playfair Display', serif" }}>
                         ₹{unitPrice.toLocaleString('en-IN')}
                       </span>
                       {product?.original_price && (
-                        <span className="text-sm text-[var(--warm-charcoal)]/40 line-through">₹{product.original_price.toLocaleString('en-IN')}</span>
+                        <span className="text-xl text-[var(--warm-charcoal)]/40 line-through font-semibold">
+                          ₹{product.original_price.toLocaleString('en-IN')}
+                        </span>
                       )}
-                      <span className="text-xs text-[#065f46]/50">per bottle (500ml)</span>
                     </div>
-                  )}
-                </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-[#065f46]/60 font-medium">per bottle (500ml)</span>
+                      {product?.original_price && (
+                        <span className="inline-flex items-center gap-1 bg-emerald-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">
+                          Save ₹{(product.original_price - unitPrice).toLocaleString('en-IN')}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Scarcity / Urgency */}
+              <div className="flex items-center gap-2 mb-5 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-4 py-2 w-fit">
+                <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping inline-block" />
+                Limited batch — only once every 27 days
               </div>
 
               {/* DB error warning */}
@@ -126,40 +141,69 @@ export default function ArdraJalamPage() {
 
               {/* Quantity + Order */}
               {!booked ? (
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 flex-wrap">
-                    <div className="flex items-center gap-2 bg-white rounded-xl border border-emerald-200 p-1">
-                      <button onClick={() => setQty(q => Math.max(1, q - 1))} className="w-8 h-8 rounded-lg bg-[var(--warm-sand)] flex items-center justify-center font-bold text-[var(--indigo-deep)] hover:bg-emerald-100">−</button>
-                      <span className="w-8 text-center font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{qty}</span>
-                      <button onClick={() => setQty(q => Math.min(10, q + 1))} className="w-8 h-8 rounded-lg bg-[var(--warm-sand)] flex items-center justify-center font-bold text-[var(--indigo-deep)] hover:bg-emerald-100">+</button>
+                <div className="space-y-4">
+                  {/* Qty selector */}
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-semibold text-[#065f46]/60 uppercase tracking-wider">Qty:</span>
+                    <div className="flex items-center gap-1 bg-white rounded-2xl border-2 border-emerald-300 p-1 shadow-sm">
+                      <button
+                        onClick={() => setQty(q => Math.max(1, q - 1))}
+                        className="w-9 h-9 rounded-xl bg-emerald-50 hover:bg-emerald-100 flex items-center justify-center font-black text-emerald-700 text-lg transition-colors"
+                      >−</button>
+                      <span className="w-10 text-center font-black text-[var(--indigo-deep)] text-lg" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{qty}</span>
+                      <button
+                        onClick={() => setQty(q => Math.min(10, q + 1))}
+                        className="w-9 h-9 rounded-xl bg-emerald-50 hover:bg-emerald-100 flex items-center justify-center font-black text-emerald-700 text-lg transition-colors"
+                      >+</button>
                     </div>
+                    {qty > 1 && (
+                      <span className="text-xs text-[#065f46]/50 font-medium">= ₹{totalPrice.toLocaleString('en-IN')} total</span>
+                    )}
+                  </div>
+
+                  {/* PRIMARY CTA */}
+                  <div className="relative">
+                    {/* Glow ring */}
+                    <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-emerald-500 opacity-60 blur-md animate-pulse" />
                     <button
                       onClick={handleOrder}
                       disabled={ordering || loading}
-                      className="flex-1 sm:flex-none btn-divine px-8 py-3 font-semibold disabled:opacity-50 inline-flex items-center justify-center gap-2"
+                      className="relative w-full sm:w-auto flex items-center justify-center gap-3 px-10 py-4 rounded-2xl font-black text-lg text-white shadow-xl transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+                      style={{
+                        background: 'linear-gradient(135deg, #059669 0%, #10b981 50%, #34d399 100%)',
+                        boxShadow: '0 8px 32px rgba(16,185,129,0.45)',
+                      }}
                     >
                       {ordering ? (
-                        <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Placing Order…</>
+                        <>
+                          <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          <span>Placing Order…</span>
+                        </>
                       ) : (
-                        <><span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span> Order Now · ₹{totalPrice.toLocaleString('en-IN')}</>
+                        <>
+                          <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span>
+                          <span>Order Now · ₹{totalPrice.toLocaleString('en-IN')}</span>
+                          <span className="material-symbols-outlined text-[18px] ml-1">arrow_forward</span>
+                        </>
                       )}
                     </button>
                   </div>
+
                   {/* WhatsApp fallback */}
                   <button
                     onClick={handleWhatsAppOrder}
                     className="inline-flex items-center gap-2 text-xs font-semibold text-emerald-700 hover:text-emerald-900 transition-colors"
                   >
                     <span className="material-symbols-outlined text-[16px]">chat</span>
-                    Or order via WhatsApp →
+                    Or order via WhatsApp instead →
                   </button>
                 </div>
               ) : (
-                <div className="flex items-center gap-3 bg-emerald-100 text-emerald-800 rounded-2xl px-5 py-4">
-                  <span className="material-symbols-outlined text-[28px]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                <div className="flex items-center gap-3 bg-emerald-100 text-emerald-800 rounded-2xl px-5 py-4 border border-emerald-200">
+                  <span className="material-symbols-outlined text-[32px]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
                   <div>
-                    <p className="font-bold">Order Placed Successfully!</p>
-                    <p className="text-xs mt-0.5">Our team will contact you within 24 hours to confirm delivery.</p>
+                    <p className="font-black text-base">Order Placed Successfully! 🙏</p>
+                    <p className="text-xs mt-0.5 text-emerald-700/70">Our team will contact you within 24 hours to confirm delivery.</p>
                   </div>
                 </div>
               )}
@@ -260,29 +304,70 @@ export default function ArdraJalamPage() {
           </section>
         )}
 
-        {/* Order CTA */}
-        <section className="text-center py-8" style={{ background: 'linear-gradient(135deg, #ecfdf5, #d1fae5)', borderRadius: 20 }}>
-          <div className="mb-3 flex justify-center"><span className="material-symbols-outlined text-4xl" style={{ color: '#065f46', fontVariationSettings: "'FILL' 1" }}>water_drop</span></div>
-          <h2 className="text-2xl font-bold text-[#065f46] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Ready to Begin?</h2>
-          <p className="text-sm text-[#065f46]/60 mb-6 max-w-md mx-auto">Each batch is prepared only during Ardra Nakshatra - approximately once every 27 days. Order now to secure your bottle from the next batch.</p>
-          {!booked ? (
-            <div className="flex flex-col items-center gap-3">
-              <button onClick={handleOrder} disabled={ordering || loading} className="btn-divine px-10 py-3.5 text-base font-semibold disabled:opacity-50 inline-flex items-center gap-2">
-                <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span>
-                Order Ardra Jalam · ₹{unitPrice.toLocaleString('en-IN')}
-              </button>
-              <button onClick={handleWhatsAppOrder} className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-700 hover:text-emerald-900 transition-colors">
-                <span className="material-symbols-outlined text-[16px]">chat</span>
-                Order via WhatsApp instead
-              </button>
+        {/* Order CTA Bottom */}
+        <section className="relative text-center py-12 overflow-hidden" style={{ background: 'linear-gradient(135deg, #064e3b 0%, #065f46 60%, #047857 100%)', borderRadius: 24 }}>
+          {/* Background shimmer */}
+          <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
+
+          <div className="relative z-10">
+            <div className="mb-4 flex justify-center">
+              <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center">
+                <span className="material-symbols-outlined text-5xl text-emerald-300" style={{ fontVariationSettings: "'FILL' 1" }}>water_drop</span>
+              </div>
             </div>
-          ) : (
-            <div className="inline-flex items-center gap-3 bg-white text-emerald-700 rounded-full px-6 py-3 font-semibold shadow-md">
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-              Order Placed - We'll Contact You Soon
-            </div>
-          )}
-          <p className="text-xs text-[#065f46]/40 mt-4">Contact: 9858784784 · levitatelabs.online@gmail.com</p>
+            <h2 className="text-3xl font-black text-white mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Ready to Begin?</h2>
+            <p className="text-sm text-white/60 mb-8 max-w-md mx-auto leading-relaxed">
+              Each batch is prepared only during Ardra Nakshatra — approximately once every 27 days.
+              Order now to secure your bottle from the next batch.
+            </p>
+
+            {!booked ? (
+              <div className="flex flex-col items-center gap-4">
+                {/* Glowing primary CTA */}
+                <div className="relative">
+                  <div className="absolute -inset-1.5 rounded-2xl bg-gradient-to-r from-emerald-300 via-teal-200 to-emerald-300 opacity-50 blur-lg animate-pulse" />
+                  <button
+                    onClick={handleOrder}
+                    disabled={ordering || loading}
+                    className="relative flex items-center gap-3 px-14 py-5 rounded-2xl font-black text-xl text-white transition-all hover:scale-105 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+                    style={{
+                      background: 'linear-gradient(135deg, #10b981 0%, #34d399 50%, #6ee7b7 100%)',
+                      boxShadow: '0 12px 40px rgba(52,211,153,0.5)',
+                    }}
+                  >
+                    {ordering ? (
+                      <><span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Placing Order…</>
+                    ) : (
+                      <>
+                        <span className="material-symbols-outlined text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_bag</span>
+                        <span>Buy Ardra Jalam — ₹{unitPrice.toLocaleString('en-IN')}</span>
+                        <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+
+                {/* Trust signals */}
+                <div className="flex items-center gap-6 text-white/50 text-xs">
+                  <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">verified</span> Secure Payment</span>
+                  <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">local_shipping</span> Pan India Delivery</span>
+                  <span className="flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">stars</span> Vedic Certified</span>
+                </div>
+
+                <button onClick={handleWhatsAppOrder} className="inline-flex items-center gap-2 text-sm font-semibold text-emerald-300 hover:text-white transition-colors">
+                  <span className="material-symbols-outlined text-[16px]">chat</span>
+                  Order via WhatsApp instead
+                </button>
+              </div>
+            ) : (
+              <div className="inline-flex items-center gap-3 bg-white text-emerald-700 rounded-full px-8 py-4 font-black text-base shadow-xl">
+                <span className="material-symbols-outlined text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                Order Placed — We'll Contact You Soon!
+              </div>
+            )}
+
+            <p className="text-xs text-white/30 mt-6">📞 9858784784 · info@mahatathastu.com</p>
+          </div>
         </section>
       </div>
     </div>
