@@ -8,6 +8,21 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
+declare global {
+  interface Window { Razorpay: any }
+}
+
+async function loadRazorpayScript(): Promise<void> {
+  if (typeof window === 'undefined' || window.Razorpay) return
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script')
+    s.src = 'https://checkout.razorpay.com/v1/checkout.js'
+    s.onload = () => resolve()
+    s.onerror = () => reject(new Error('Failed to load payment gateway'))
+    document.head.appendChild(s)
+  })
+}
+
 interface Slot {
   id: string
   expert_id: string
@@ -138,6 +153,24 @@ export default function ConsultationsPage() {
     return (s as any).specialization === filter
   }
 
+  async function refreshBookingsAndSlots(date: string, startTime: string, endTime: string, bookingId: string) {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      const { data: bks } = await supabase.from('consultation_bookings')
+        .select('*, consultation_slots(expert_id,date,start_time,end_time)')
+        .eq('user_id', user.id)
+        .order('booked_at', { ascending: false })
+      if (bks) setBookings(bks as unknown as Booking[])
+    }
+    setSlots(prev => {
+      const norm = startTime.substring(0, 5)
+      const exists = prev.find(s => s.date === date && s.start_time.substring(0, 5) === norm)
+      if (exists) return prev.map(s => s.date === date && s.start_time.substring(0, 5) === norm ? { ...s, is_booked: true } : s)
+      return [...prev, { id: bookingId, date, start_time: startTime, end_time: endTime, is_booked: true, is_blocked: false } as Slot]
+    })
+    setTab('my')
+  }
+
   async function bookSlot(date: string, startTime: string, endTime: string) {
     const bookingKey = `${date}_${startTime}`
     setBooking(bookingKey)
@@ -158,27 +191,63 @@ export default function ConsultationsPage() {
         return
       }
 
-      toast.success('Consultation booked! Check your email for confirmation.')
-
-      // Refresh bookings and slot states
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const { data: bks } = await supabase.from('consultation_bookings')
-          .select('*, consultation_slots(expert_id,date,start_time,end_time)')
-          .eq('user_id', user.id)
-          .order('booked_at', { ascending: false })
-        if (bks) setBookings(bks as unknown as Booking[])
+      if (data.mock) {
+        toast.success('Consultation booked! Check your email for confirmation.')
+        await refreshBookingsAndSlots(date, startTime, endTime, data.booking_id)
+        return
       }
-      // Mark slot as booked in local state
-      setSlots(prev => {
-        const norm = startTime.substring(0, 5)
-        const exists = prev.find(s => s.date === date && s.start_time.substring(0, 5) === norm)
-        if (exists) return prev.map(s => s.date === date && s.start_time.substring(0, 5) === norm ? { ...s, is_booked: true } : s)
-        return [...prev, { id: data.booking_id, date, start_time: startTime, end_time: endTime, is_booked: true, is_blocked: false } as Slot]
+
+      await loadRazorpayScript()
+      await new Promise<void>((resolve, reject) => {
+        const rzp = new window.Razorpay({
+          key: data.key,
+          amount: data.amount,
+          currency: 'INR',
+          order_id: data.order_id,
+          name: 'MahaTathastu',
+          description: `Consultation on ${date} at ${startTime}`,
+          prefill: {
+            name: profile?.full_name || '',
+            email: '',
+          },
+          theme: { color: '#6b21a8' },
+          handler: async (response: any) => {
+            try {
+              const vRes = await fetch('/api/consultation-booking?action=verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  booking_id: data.booking_id,
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                }),
+              })
+              if (vRes.ok) {
+                toast.success('Payment confirmed! Consultation booked.')
+                await refreshBookingsAndSlots(date, startTime, endTime, data.booking_id)
+                resolve()
+              } else {
+                toast.error('Payment verification failed.')
+                reject(new Error('Verification failed'))
+              }
+            } catch (e: any) {
+              reject(e)
+            }
+          },
+          modal: {
+            ondismiss: () => {
+              toast.info('Payment cancelled.')
+              reject(new Error('dismissed'))
+            },
+          },
+        })
+        rzp.open()
       })
-      setTab('my')
-    } catch {
-      toast.error('Network error. Please try again.')
+    } catch (e: any) {
+      if (e.message !== 'dismissed') {
+        toast.error('Network error. Please try again.')
+      }
     } finally {
       setBooking(null)
     }

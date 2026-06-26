@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { sendEmail } from '@/lib/email'
+import crypto from 'crypto'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.mahatathastu.com'
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'info@mahatathastu.com'
@@ -17,14 +18,25 @@ const PREDEFINED_SLOTS = [
 ]
 
 function fmtTime(t: string) {
+  if (!t) return t
   const [h, m] = t.split(':').map(Number)
   return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'} IST`
 }
 
 function formatDate(d: string) {
+  if (!d) return d
   const [y, mo, day] = d.split('-').map(Number)
   return new Date(y, mo - 1, day).toLocaleDateString('en-IN', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+  })
+}
+
+function getRazorpay() {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const Razorpay = require('razorpay')
+  return new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
   })
 }
 
@@ -34,98 +46,208 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { date, start_time, end_time, specialization, notes } = await req.json()
-  if (!date || !start_time || !end_time) {
-    return NextResponse.json({ error: 'date, start_time, end_time required' }, { status: 400 })
-  }
+  const url = new URL(req.url)
+  const action = url.searchParams.get('action') || 'create'
 
   const admin = await createAdminClient()
 
-  // Count booked slots for the day
-  const { data: daySlots } = await (admin as any).from('consultation_slots')
-    .select('id, is_booked')
-    .eq('date', date)
-  const bookedCount = (daySlots || []).filter((s: any) => s.is_booked).length
-  if (bookedCount >= 5) {
-    return NextResponse.json({ error: 'This day is fully booked. Please choose another date.' }, { status: 400 })
-  }
+  if (action === 'create') {
+    const { date, start_time, end_time, specialization, notes } = await req.json()
+    if (!date || !start_time || !end_time) {
+      return NextResponse.json({ error: 'date, start_time, end_time required' }, { status: 400 })
+    }
 
-  // Find existing slot for this time
-  const normStart = start_time.substring(0, 5)
-  const normEnd = end_time.substring(0, 5)
-  const { data: slot } = await (admin as any).from('consultation_slots')
-    .select('id, is_booked, is_blocked, price')
-    .eq('date', date)
-    .like('start_time', `${normStart}%`)
-    .maybeSingle()
+    // Count booked slots for the day
+    const { data: daySlots } = await (admin as any).from('consultation_slots')
+      .select('id, is_booked')
+      .eq('date', date)
+    const bookedCount = (daySlots || []).filter((s: any) => s.is_booked).length
+    if (bookedCount >= 5) {
+      return NextResponse.json({ error: 'This day is fully booked. Please choose another date.' }, { status: 400 })
+    }
 
-  if (slot?.is_blocked) return NextResponse.json({ error: 'This slot is not available.' }, { status: 400 })
-  if (slot?.is_booked) return NextResponse.json({ error: 'This slot is already booked.' }, { status: 400 })
-
-  let slotId: string
-  let slotPrice = 0
-
-  if (!slot) {
-    // Auto-create the slot using admin client (bypasses RLS)
-    const { data: expert } = await (admin as any).from('profiles')
-      .select('id')
-      .or('role.eq.expert,role.eq.admin')
-      .limit(1)
+    // Find existing slot for this time
+    const normStart = start_time.substring(0, 5)
+    const normEnd = end_time.substring(0, 5)
+    const { data: slot } = await (admin as any).from('consultation_slots')
+      .select('id, is_booked, is_blocked, price')
+      .eq('date', date)
+      .like('start_time', `${normStart}%`)
       .maybeSingle()
 
-    const { data: newSlot, error: slotErr } = await (admin as any).from('consultation_slots').insert({
-      expert_id: expert?.id || null,
-      date,
-      start_time: normStart,
-      end_time: normEnd,
-      is_booked: true,
-      is_blocked: false,
-      duration_minutes: 45,
-      specialization: specialization || 'Astrology',
-      price: 0,
-    }).select('id, price').single()
+    if (slot?.is_blocked) return NextResponse.json({ error: 'This slot is not available.' }, { status: 400 })
+    if (slot?.is_booked) return NextResponse.json({ error: 'This slot is already booked.' }, { status: 400 })
 
-    if (slotErr || !newSlot) {
-      return NextResponse.json({ error: 'Failed to create slot: ' + slotErr?.message }, { status: 500 })
+    let slotId: string
+    let slotPrice = 0
+
+    if (!slot) {
+      // Auto-create the slot using admin client (bypasses RLS)
+      const { data: expert } = await (admin as any).from('profiles')
+        .select('id')
+        .or('role.eq.expert,role.eq.admin')
+        .limit(1)
+        .maybeSingle()
+
+      const { data: newSlot, error: slotErr } = await (admin as any).from('consultation_slots').insert({
+        expert_id: expert?.id || null,
+        date,
+        start_time: normStart,
+        end_time: normEnd,
+        is_booked: true,
+        is_blocked: false,
+        duration_minutes: 45,
+        specialization: specialization || 'Astrology',
+        price: 0,
+      }).select('id, price').single()
+
+      if (slotErr || !newSlot) {
+        return NextResponse.json({ error: 'Failed to create slot: ' + slotErr?.message }, { status: 500 })
+      }
+      slotId = newSlot.id
+      slotPrice = newSlot.price || 0
+    } else {
+      // Atomic claim: only update if still available (guards against concurrent booking of same slot)
+      const { data: claimed } = await (admin as any).from('consultation_slots')
+        .update({ is_booked: true })
+        .eq('id', slot.id)
+        .eq('is_booked', false)
+        .select('id')
+        .maybeSingle()
+      if (!claimed) {
+        return NextResponse.json({ error: 'This slot was just booked. Please choose another time.' }, { status: 409 })
+      }
+      slotId = slot.id
+      slotPrice = slot.price || 0
     }
-    slotId = newSlot.id
-    slotPrice = newSlot.price || 0
-  } else {
-    // Atomic claim: only update if still available (guards against concurrent booking of same slot)
-    const { data: claimed } = await (admin as any).from('consultation_slots')
-      .update({ is_booked: true })
-      .eq('id', slot.id)
-      .eq('is_booked', false)
-      .select('id')
-      .maybeSingle()
-    if (!claimed) {
-      return NextResponse.json({ error: 'This slot was just booked. Please choose another time.' }, { status: 409 })
+
+    if (slotPrice === 0) {
+      // Free slot — book immediately
+      const { data: booking, error: bookErr } = await (admin as any).from('consultation_bookings').insert({
+        user_id: user.id,
+        slot_id: slotId,
+        status: 'confirmed',
+        payment_status: 'paid',
+        notes: notes || null,
+      }).select('id').single()
+
+      if (bookErr || !booking) {
+        await (admin as any).from('consultation_slots').update({ is_booked: false }).eq('id', slotId)
+        return NextResponse.json({ error: 'Booking failed. Please try again.' }, { status: 500 })
+      }
+      
+      await sendConfirmationEmails(admin, user.id, user.email, date, start_time, end_time, slotPrice)
+      return NextResponse.json({ success: true, booking_id: booking.id, mock: true })
     }
-    slotId = slot.id
-    slotPrice = slot.price || 0
+
+    // Paid slot — initialize Razorpay
+    if (!process.env.RAZORPAY_KEY_ID) {
+      // Mock mode
+      const { data: booking, error: bookErr } = await (admin as any).from('consultation_bookings').insert({
+        user_id: user.id,
+        slot_id: slotId,
+        status: 'confirmed',
+        payment_status: 'paid',
+        razorpay_order_id: 'mock_' + Date.now(),
+        razorpay_payment_id: 'mock_pay_' + Date.now(),
+        notes: notes || null,
+      }).select('id').single()
+
+      if (bookErr || !booking) {
+        await (admin as any).from('consultation_slots').update({ is_booked: false }).eq('id', slotId)
+        return NextResponse.json({ error: 'Booking failed. Please try again.' }, { status: 500 })
+      }
+      await sendConfirmationEmails(admin, user.id, user.email, date, start_time, end_time, slotPrice)
+      return NextResponse.json({ success: true, booking_id: booking.id, mock: true })
+    }
+
+    const razorpay = getRazorpay()
+    let order: any
+    try {
+      order = await razorpay.orders.create({
+        amount: Math.round(slotPrice * 100),
+        currency: 'INR',
+        receipt: `CONS-${Date.now()}`,
+        notes: { user_id: user.id, slot_id: slotId },
+      })
+    } catch (err: any) {
+      await (admin as any).from('consultation_slots').update({ is_booked: false }).eq('id', slotId)
+      return NextResponse.json({ error: err?.error?.description || 'Payment gateway error. Please try again.' }, { status: 500 })
+    }
+
+    const { data: booking, error: bookErr } = await (admin as any).from('consultation_bookings').insert({
+      user_id: user.id,
+      slot_id: slotId,
+      status: 'pending',
+      payment_status: 'pending',
+      razorpay_order_id: order.id,
+      notes: notes || null,
+    }).select('id').single()
+
+    if (bookErr || !booking) {
+      await (admin as any).from('consultation_slots').update({ is_booked: false }).eq('id', slotId)
+      return NextResponse.json({ error: 'Booking failed. Please try again.' }, { status: 500 })
+    }
+
+    return NextResponse.json({
+      success: true,
+      order_id: order.id,
+      amount: order.amount,
+      booking_id: booking.id,
+      key: process.env.RAZORPAY_KEY_ID,
+    })
   }
 
-  // Create consultation booking
-  const { data: booking, error: bookErr } = await (admin as any).from('consultation_bookings').insert({
-    user_id: user.id,
-    slot_id: slotId,
-    status: 'confirmed',
-    notes: notes || null,
-  }).select('id').single()
+  if (action === 'verify') {
+    const { booking_id, razorpay_order_id, razorpay_payment_id, razorpay_signature } = await req.json()
 
-  if (bookErr || !booking) {
-    await (admin as any).from('consultation_slots').update({ is_booked: false }).eq('id', slotId)
-    return NextResponse.json({ error: 'Booking failed. Please try again.' }, { status: 500 })
+    const secret = process.env.RAZORPAY_KEY_SECRET
+    if (!secret) return NextResponse.json({ error: 'Payment not configured' }, { status: 503 })
+
+    const body = razorpay_order_id + '|' + razorpay_payment_id
+    const expectedSig = crypto.createHmac('sha256', secret).update(body).digest('hex')
+    if (expectedSig !== razorpay_signature) {
+      return NextResponse.json({ error: 'Invalid payment signature' }, { status: 400 })
+    }
+
+    const { data: booking } = await (admin as any).from('consultation_bookings')
+      .select('user_id, razorpay_order_id, slot_id, consultation_slots(date, start_time, end_time, price)')
+      .eq('id', booking_id)
+      .single()
+
+    if (!booking || booking.user_id !== user.id) {
+      return NextResponse.json({ error: 'Booking not found' }, { status: 404 })
+    }
+    if (booking.razorpay_order_id !== razorpay_order_id) {
+      return NextResponse.json({ error: 'Order mismatch' }, { status: 400 })
+    }
+
+    await (admin as any).from('consultation_bookings').update({
+      payment_status: 'paid',
+      status: 'confirmed',
+      razorpay_payment_id,
+    }).eq('id', booking_id)
+
+    const slotDate = booking.consultation_slots?.date
+    const slotStart = booking.consultation_slots?.start_time
+    const slotEnd = booking.consultation_slots?.end_time
+    const slotPrice = booking.consultation_slots?.price || 0
+    await sendConfirmationEmails(admin, user.id, user.email, slotDate, slotStart, slotEnd, slotPrice)
+
+    return NextResponse.json({ success: true })
   }
 
+  return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
+}
+
+async function sendConfirmationEmails(admin: any, userId: string, userEmail: string | undefined, date: string, start_time: string, end_time: string, slotPrice: number) {
   // Fetch user profile for email
-  const { data: profile } = await (admin as any).from('profiles')
+  const { data: profile } = await admin.from('profiles')
     .select('full_name')
-    .eq('id', user.id)
+    .eq('id', userId)
     .maybeSingle()
 
-  const userName = profile?.full_name || user.email || 'Devotee'
-  const userEmail = user.email || ''
+  const userName = profile?.full_name || userEmail || 'Devotee'
   const priceText = slotPrice > 0 ? `₹${slotPrice.toLocaleString('en-IN')}` : 'Complimentary'
   const dateText = formatDate(date)
   const timeText = `${fmtTime(start_time)} – ${fmtTime(end_time)}`
@@ -165,8 +287,6 @@ export async function POST(req: NextRequest) {
       <a href="${APP_URL}/admin/consultations" style="display:inline-block;padding:12px 28px;background:#166534;color:white;text-decoration:none;border-radius:8px;font-size:14px;font-weight:bold">View in Admin →</a>
     </div>`
   ).catch(() => {})
-
-  return NextResponse.json({ success: true, booking_id: booking.id })
 }
 
 // GET /api/consultation-booking?date=YYYY-MM-DD — fetch slot status for a date

@@ -780,6 +780,9 @@ export type Database = {
           notes: string | null
           order_id: string | null
           booked_at: string
+          payment_status: string | null
+          razorpay_order_id: string | null
+          razorpay_payment_id: string | null
         }
         Insert: {
           slot_id?: string | null
@@ -790,6 +793,9 @@ export type Database = {
           status?: string
           notes?: string | null
           order_id?: string | null
+          payment_status?: string | null
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
         }
         Update: {
           slot_id?: string | null
@@ -800,6 +806,9 @@ export type Database = {
           status?: string
           notes?: string | null
           order_id?: string | null
+          payment_status?: string | null
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
         }
         Relationships: []
       }
