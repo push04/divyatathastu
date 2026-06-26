@@ -5,6 +5,10 @@ import { createClient } from '@/lib/supabase/client'
 import ConsultationRoom from '@/components/consultation/ConsultationRoom'
 import SudarshanLoader from '@/components/SudarshanLoader'
 
+declare global {
+  interface Window { Razorpay: any }
+}
+
 interface Webinar {
   id: string
   title: string
@@ -18,16 +22,24 @@ interface Webinar {
   status: 'upcoming' | 'live' | 'ended'
 }
 
+interface Registration {
+  payment_status: 'pending' | 'paid'
+}
+
 export default function WebinarJoinPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const supabase = createClient()
 
   const [webinar, setWebinar] = useState<Webinar | null>(null)
+  const [reg, setReg] = useState<Registration | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(true)
   const [joining, setJoining] = useState(false)
+  const [paying, setPaying] = useState(false)
   const [liveToken, setLiveToken] = useState<string | null>(null)
   const [wsUrl, setWsUrl] = useState<string | null>(null)
   const [userName, setUserName] = useState('Seeker')
+  const [userEmail, setUserEmail] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [now, setNow] = useState(Date.now())
 
@@ -38,50 +50,134 @@ export default function WebinarJoinPage({ params }: { params: Promise<{ id: stri
 
   useEffect(() => {
     async function load() {
-      // Resolve display name
       const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const name = (user.user_metadata?.full_name as string) || user.email?.split('@')[0] || 'Seeker'
-        setUserName(name)
+      if (!user) { setError('Please log in to join webinars.'); setLoading(false); return }
+
+      const name = (user.user_metadata?.full_name as string) || user.email?.split('@')[0] || 'Seeker'
+      setUserName(name)
+      setUserEmail(user.email || '')
+
+      // Check role
+      const { data: profile } = await supabase
+        .from('profiles').select('role').eq('id', user.id).single()
+      const admin = profile?.role === 'admin'
+      setIsAdmin(admin)
+
+      // Fetch webinar
+      const { data: w, error: wErr } = await supabase
+        .from('webinars').select('*').eq('id', id).single()
+      if (wErr || !w) { setError('Webinar not found.'); setLoading(false); return }
+      setWebinar(w as Webinar)
+
+      // Fetch registration (only for non-admins)
+      if (!admin) {
+        const { data: r } = await (supabase as any)
+          .from('webinar_registrations')
+          .select('payment_status')
+          .eq('webinar_id', id)
+          .eq('user_id', user.id)
+          .maybeSingle()
+        setReg(r || null)
       }
 
-      // Load webinar
-      const { data, error: err } = await supabase
-        .from('webinars')
-        .select('*')
-        .eq('id', id)
-        .single()
-
-      if (err || !data) {
-        setError('Webinar not found.')
-      } else {
-        setWebinar(data as Webinar)
-        // Auto-join if already live
-        if (data.status === 'live') {
-          joinNow(data as Webinar, name)
-        }
-      }
       setLoading(false)
     }
     load()
   }, [id]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  async function joinNow(w: Webinar, name: string) {
+  const hasAccess = isAdmin || webinar?.price === 0 || reg?.payment_status === 'paid'
+
+  async function joinLive() {
+    if (!webinar) return
     setJoining(true)
     try {
       const res = await fetch('/api/get-livekit-token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ roomName: w.livekit_room_name, userName: name }),
+        body: JSON.stringify({ roomName: webinar.livekit_room_name, userName }),
       })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error || 'Failed to get token')
       setLiveToken(json.token)
       setWsUrl(json.wsUrl)
-    } catch (e: any) {
-      setError(e.message)
-    }
+    } catch (e: any) { setError(e.message) }
     setJoining(false)
+  }
+
+  async function handleFreeRegister() {
+    setPaying(true)
+    const res = await fetch('/api/webinars/payment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'free', webinarId: id }),
+    })
+    if (res.ok) {
+      setReg({ payment_status: 'paid' })
+    } else {
+      const json = await res.json()
+      setError(json.error)
+    }
+    setPaying(false)
+  }
+
+  async function handlePaidRegister() {
+    if (!webinar) return
+    setPaying(true)
+
+    // 1. Create Razorpay order
+    const res = await fetch('/api/webinars/payment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'create', webinarId: id }),
+    })
+    const orderData = await res.json()
+    if (!res.ok) { setError(orderData.error); setPaying(false); return }
+
+    // 2. Load Razorpay SDK if needed
+    if (!window.Razorpay) {
+      await new Promise<void>(resolve => {
+        const s = document.createElement('script')
+        s.src = 'https://checkout.razorpay.com/v1/checkout.js'
+        s.onload = () => resolve()
+        document.head.appendChild(s)
+      })
+    }
+
+    // 3. Open payment dialog
+    const rzp = new window.Razorpay({
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+      amount: orderData.amount,
+      currency: orderData.currency,
+      name: 'MahaTathastu',
+      description: webinar.title,
+      order_id: orderData.orderId,
+      prefill: { name: userName, email: userEmail },
+      theme: { color: '#1a3a8c' },
+      handler: async (response: any) => {
+        // 4. Verify on server
+        const vRes = await fetch('/api/webinars/payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'verify',
+            webinarId: id,
+            razorpayOrderId: response.razorpay_order_id,
+            razorpayPaymentId: response.razorpay_payment_id,
+            razorpaySignature: response.razorpay_signature,
+          }),
+        })
+        if (vRes.ok) {
+          setReg({ payment_status: 'paid' })
+        } else {
+          const json = await vRes.json()
+          setError('Payment verification failed: ' + json.error)
+        }
+        setPaying(false)
+      },
+    })
+    rzp.on('payment.failed', () => { setError('Payment failed. Please try again.'); setPaying(false) })
+    rzp.on('modal.dismissed', () => setPaying(false))
+    rzp.open()
   }
 
   function countdown(target: string): string {
@@ -90,9 +186,7 @@ export default function WebinarJoinPage({ params }: { params: Promise<{ id: stri
     const h = Math.floor(diff / 3600000)
     const m = Math.floor((diff % 3600000) / 60000)
     const s = Math.floor((diff % 60000) / 1000)
-    if (h > 0) return `${h}h ${m}m ${s}s`
-    if (m > 0) return `${m}m ${s}s`
-    return `${s}s`
+    return h > 0 ? `${h}h ${m}m ${s}s` : m > 0 ? `${m}m ${s}s` : `${s}s`
   }
 
   if (loading) return (
@@ -112,7 +206,7 @@ export default function WebinarJoinPage({ params }: { params: Promise<{ id: stri
 
   if (!webinar) return null
 
-  // Active session
+  // Active LiveKit session
   if (liveToken && wsUrl) {
     return (
       <ConsultationRoom
@@ -128,7 +222,6 @@ export default function WebinarJoinPage({ params }: { params: Promise<{ id: stri
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--kutch-white)] to-[var(--warm-sand)]/30 p-4">
       <div className="max-w-md w-full">
-        {/* Branding */}
         <div className="text-center mb-6">
           <div className="text-3xl text-[var(--saffron)] mb-1">ॐ</div>
           <div className="text-xs text-[var(--warm-charcoal)]/40 tracking-widest uppercase">MahaTathastu · Live Session</div>
@@ -136,47 +229,56 @@ export default function WebinarJoinPage({ params }: { params: Promise<{ id: stri
 
         <div className="card-divine p-6 text-center">
           {/* Status badge */}
-          {webinar.status === 'live' && (
-            <div className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-200 mb-4">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              Live Now
-            </div>
-          )}
-          {webinar.status === 'upcoming' && (
-            <div className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 text-xs font-semibold px-3 py-1 rounded-full border border-amber-200 mb-4">
-              <span className="material-symbols-outlined text-[13px]">schedule</span>
-              Upcoming
-            </div>
-          )}
-          {webinar.status === 'ended' && (
-            <div className="inline-flex items-center gap-1.5 bg-gray-100 text-gray-500 text-xs font-semibold px-3 py-1 rounded-full border border-gray-200 mb-4">
-              <span className="material-symbols-outlined text-[13px]">event_busy</span>
-              Session Ended
-            </div>
-          )}
+          {{
+            live: (
+              <div className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold px-3 py-1 rounded-full border border-emerald-200 mb-4">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Live Now
+              </div>
+            ),
+            upcoming: (
+              <div className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 text-xs font-semibold px-3 py-1 rounded-full border border-amber-200 mb-4">
+                <span className="material-symbols-outlined text-[13px]">schedule</span>
+                Upcoming
+              </div>
+            ),
+            ended: (
+              <div className="inline-flex items-center gap-1.5 bg-gray-100 text-gray-500 text-xs font-semibold px-3 py-1 rounded-full border border-gray-200 mb-4">
+                Session Ended
+              </div>
+            ),
+          }[webinar.status]}
 
           <h1 className="text-xl font-bold text-[var(--indigo-deep)] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
             {webinar.title}
           </h1>
           <p className="text-sm text-[var(--warm-charcoal)]/60 mb-1">Hosted by {webinar.host_name}</p>
+
+          {/* Price */}
+          <div className="my-3">
+            {webinar.price > 0
+              ? <span className="text-2xl font-bold text-[var(--indigo-deep)]">₹{webinar.price}</span>
+              : <span className="text-lg font-bold text-emerald-600">Free Entry</span>}
+          </div>
+
           {webinar.description && (
-            <p className="text-sm text-[var(--warm-charcoal)]/70 mt-3 mb-4 leading-relaxed">{webinar.description}</p>
+            <p className="text-sm text-[var(--warm-charcoal)]/70 mb-4 leading-relaxed">{webinar.description}</p>
           )}
 
-          {/* Session details */}
-          <div className="bg-[var(--warm-sand)]/40 rounded-xl p-3 mb-5 text-sm">
+          {/* Details */}
+          <div className="bg-[var(--warm-sand)]/40 rounded-xl p-3 mb-4 text-sm">
             <div className="flex justify-between mb-1.5">
               <span className="text-[var(--warm-charcoal)]/50">Duration</span>
               <span className="font-medium">{webinar.duration_minutes} min</span>
             </div>
             <div className="flex justify-between mb-1.5">
-              <span className="text-[var(--warm-charcoal)]/50">Max participants</span>
-              <span className="font-medium">{webinar.max_participants}</span>
+              <span className="text-[var(--warm-charcoal)]/50">Capacity</span>
+              <span className="font-medium">{webinar.max_participants} participants</span>
             </div>
             {webinar.scheduled_at && (
               <div className="flex justify-between">
                 <span className="text-[var(--warm-charcoal)]/50">Schedule</span>
-                <span className="font-medium text-right">
+                <span className="font-medium text-right text-xs">
                   {new Date(webinar.scheduled_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kolkata' })}
                 </span>
               </div>
@@ -185,42 +287,99 @@ export default function WebinarJoinPage({ params }: { params: Promise<{ id: stri
 
           {/* Countdown */}
           {webinar.status === 'upcoming' && webinar.scheduled_at && (
-            <div className="bg-amber-50 rounded-xl p-4 mb-5 border border-amber-100">
-              <div className="text-xs text-amber-600 uppercase tracking-wider mb-1">Session starts in</div>
+            <div className="bg-amber-50 rounded-xl p-4 mb-4 border border-amber-100">
+              <div className="text-xs text-amber-600 uppercase tracking-wider mb-1">Starts in</div>
               <div className="text-3xl font-bold text-amber-700 font-mono">{countdown(webinar.scheduled_at)}</div>
-              <div className="text-xs text-amber-500/70 mt-1">Refresh this page at session time to join</div>
             </div>
           )}
 
-          {/* Action */}
-          {webinar.status === 'live' && (
-            <button
-              onClick={() => joinNow(webinar, userName)}
-              disabled={joining}
-              className="w-full py-3 rounded-xl bg-emerald-500 text-white font-bold hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2"
-            >
-              {joining
-                ? <><SudarshanLoader px={20} /><span>Joining…</span></>
-                : <><span className="material-symbols-outlined text-[18px]">videocam</span><span>Join Live Session</span></>
-              }
-            </button>
-          )}
-
-          {webinar.status === 'upcoming' && (
-            <div className="text-sm text-[var(--warm-charcoal)]/50 py-2">
-              The &ldquo;Join&rdquo; button will appear when the host starts the session.
-            </div>
-          )}
-
+          {/* ── ENDED ── */}
           {webinar.status === 'ended' && (
-            <div className="text-sm text-[var(--warm-charcoal)]/50 py-2">
+            <div className="text-sm text-[var(--warm-charcoal)]/50 py-3">
               This session has ended. Thank you for joining MahaTathastu.
             </div>
+          )}
+
+          {/* ── NOT ENDED: show payment/join flow ── */}
+          {webinar.status !== 'ended' && (
+            <>
+              {/* Has access — show join (only active when live) */}
+              {hasAccess && (
+                <div className="space-y-2">
+                  {reg?.payment_status === 'paid' && webinar.price > 0 && (
+                    <div className="flex items-center justify-center gap-1.5 text-emerald-600 text-sm font-medium mb-2">
+                      <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                      Registered — ₹{webinar.price} paid
+                    </div>
+                  )}
+                  {webinar.price === 0 && reg?.payment_status === 'paid' && (
+                    <div className="flex items-center justify-center gap-1.5 text-emerald-600 text-sm font-medium mb-2">
+                      <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                      Registered
+                    </div>
+                  )}
+                  <button
+                    onClick={joinLive}
+                    disabled={joining || webinar.status !== 'live'}
+                    className={`w-full py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${
+                      webinar.status === 'live'
+                        ? 'bg-emerald-500 text-white hover:bg-emerald-600'
+                        : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/40 cursor-not-allowed'
+                    }`}
+                  >
+                    {joining
+                      ? <><SudarshanLoader px={18} /><span>Joining…</span></>
+                      : webinar.status === 'live'
+                        ? <><span className="material-symbols-outlined text-[18px]">videocam</span><span>Join Live Now</span></>
+                        : <span>Waiting for host to start…</span>
+                    }
+                  </button>
+                  {webinar.status !== 'live' && (
+                    <p className="text-xs text-[var(--warm-charcoal)]/40">
+                      You&apos;re registered! The join button activates when the host starts the session.
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* No access — show register/pay button */}
+              {!hasAccess && (
+                <div>
+                  {webinar.price === 0 ? (
+                    <button
+                      onClick={handleFreeRegister}
+                      disabled={paying}
+                      className="w-full py-3 rounded-xl bg-[var(--indigo-deep)] text-white font-bold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                    >
+                      {paying ? <SudarshanLoader px={18} /> : <span className="material-symbols-outlined text-[18px]">how_to_reg</span>}
+                      Register Free
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handlePaidRegister}
+                      disabled={paying}
+                      className="w-full py-3 rounded-xl bg-[var(--indigo-deep)] text-white font-bold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                    >
+                      {paying ? <SudarshanLoader px={18} /> : <span className="material-symbols-outlined text-[18px]">payments</span>}
+                      {paying ? 'Processing…' : `Pay ₹${webinar.price} & Register`}
+                    </button>
+                  )}
+                  <p className="text-xs text-[var(--warm-charcoal)]/40 mt-2">
+                    {webinar.price > 0
+                      ? 'Secure payment via Razorpay. You\'ll be able to join once the host starts the session.'
+                      : 'Free registration. Join once the host starts the session.'}
+                  </p>
+                </div>
+              )}
+            </>
           )}
         </div>
 
         <p className="text-center text-xs text-[var(--warm-charcoal)]/30 mt-4">
-          Need help? <a href="https://wa.me/919858784784" className="text-[var(--terracotta)]">WhatsApp us</a>
+          Need help?{' '}
+          <a href="https://wa.me/919858784784" className="text-[var(--terracotta)] hover:underline">
+            WhatsApp +91 98587 84784
+          </a>
         </p>
       </div>
     </div>
