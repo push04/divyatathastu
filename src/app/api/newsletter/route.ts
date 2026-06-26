@@ -55,10 +55,11 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ success: true })
 }
 
-// Allow admin to list subscribers
+// Allow admin to list subscribers — protected by NEWSLETTER_ADMIN_SECRET env var
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization')
-  if (authHeader !== `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`) {
+  const secret = process.env.NEWSLETTER_ADMIN_SECRET || process.env.ADMIN_API_SECRET
+  if (!secret || authHeader !== `Bearer ${secret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

@@ -48,12 +48,18 @@ export async function POST(req: NextRequest) {
     if (webinar.price <= 0) return NextResponse.json({ error: 'Webinar is free' }, { status: 400 })
 
     const rz = getRazorpay()
-    const order = await rz.orders.create({
-      amount: Math.round(webinar.price * 100),
-      currency: 'INR',
-      receipt: `wbn-${Date.now()}`,
-      notes: { webinar_id: webinarId, user_id: user.id },
-    })
+    let order: any
+    try {
+      order = await rz.orders.create({
+        amount: Math.round(webinar.price * 100),
+        currency: 'INR',
+        receipt: `wbn-${Date.now()}`,
+        notes: { webinar_id: webinarId, user_id: user.id },
+      })
+    } catch (err: any) {
+      console.error('[webinars/payment] Razorpay error:', err?.error?.description || err.message)
+      return NextResponse.json({ error: err?.error?.description || 'Payment gateway error. Please try again.' }, { status: 500 })
+    }
 
     // Insert pending registration
     await (supabase as any).from('webinar_registrations').upsert(

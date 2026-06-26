@@ -54,12 +54,18 @@ export async function POST(req: NextRequest) {
     }
 
     const razorpay = getRazorpay()
-    const order = await razorpay.orders.create({
-      amount: Math.round(totalAmount * 100),
-      currency: 'INR',
-      receipt,
-      notes: { user_id: user.id, service_item_id },
-    })
+    let order: any
+    try {
+      order = await razorpay.orders.create({
+        amount: Math.round(totalAmount * 100),
+        currency: 'INR',
+        receipt,
+        notes: { user_id: user.id, service_item_id },
+      })
+    } catch (err: any) {
+      console.error('[service-payment/create] Razorpay error:', err?.error?.description || err.message)
+      return NextResponse.json({ error: err?.error?.description || 'Payment gateway error. Please try again.' }, { status: 500 })
+    }
 
     const { data: booking, error: bookErr } = await (supabase as any).from('service_bookings').insert({
       service_item_id,

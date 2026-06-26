@@ -63,6 +63,7 @@ export async function POST(req: NextRequest) {
 
     if (!process.env.RAZORPAY_KEY_ID) {
       // Mock mode — return dummy order for testing
+      const mockOrderId = 'mock_' + Date.now()
       const { data: order } = await supabase.from('orders').insert({
         user_id: user.id,
         order_number: orderNumber,
@@ -73,12 +74,12 @@ export async function POST(req: NextRequest) {
         total,
         status: 'pending',
         payment_method: 'razorpay',
-        razorpay_order_id: 'mock_' + Date.now(),
+        razorpay_order_id: mockOrderId,
       }).select().single()
 
       return NextResponse.json({
         success: true,
-        order_id: 'mock_' + Date.now(),
+        order_id: mockOrderId,
         amount: total * 100,
         currency: 'INR',
         db_order_id: order?.id,
@@ -87,12 +88,18 @@ export async function POST(req: NextRequest) {
     }
 
     const razorpay = getRazorpay()
-    const razorpayOrder = await razorpay.orders.create({
-      amount: Math.round(total * 100),
-      currency: 'INR',
-      receipt: orderNumber,
-      notes: { user_id: user.id },
-    })
+    let razorpayOrder: any
+    try {
+      razorpayOrder = await razorpay.orders.create({
+        amount: Math.round(total * 100),
+        currency: 'INR',
+        receipt: orderNumber,
+        notes: { user_id: user.id },
+      })
+    } catch (err: any) {
+      console.error('[payment/create] Razorpay error:', err?.error?.description || err.message)
+      return NextResponse.json({ error: err?.error?.description || 'Payment gateway error. Please try again.' }, { status: 500 })
+    }
 
     const { data: order, error: orderErr } = await supabase.from('orders').insert({
       user_id: user.id,

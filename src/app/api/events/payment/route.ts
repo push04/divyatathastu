@@ -17,6 +17,8 @@ export async function POST(req: NextRequest) {
   const { action, eventId, name, email, phone, amount } = body
 
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   if (action === 'verify') {
     // Verify Razorpay signature and register user
