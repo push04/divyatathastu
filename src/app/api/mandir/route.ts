@@ -6,6 +6,13 @@ interface Mandir {
   id: string; name: string; city: string; state: string; deity: string
   lat: number; lng: number; timing: string; specialPuja: string
   rating: number; category: string; distance: number
+  local_name?: string; deity_type?: string; categories?: string[]
+  district?: string; coordinates?: { latitude: number; longitude: number }
+  darshan_timings?: string; best_time_to_visit?: string; significance?: string
+  special_events?: string[]; nearest_airport?: string; nearest_railway?: string
+  pilgrimage_circuits?: string[]; architecture_style?: string
+  open_year_round?: boolean; deity_description?: string; history_and_legend?: string
+  travel_tips?: string[]
 }
 
 function getFamousMandirs(): Mandir[] {
@@ -25,15 +32,32 @@ function getFamousMandirs(): Mandir[] {
     return temples.map((t: any) => ({
       id: t.id,
       name: t.name,
-      city: t.city,
-      state: t.state,
+      local_name: t.local_name || '',
       deity: t.deity,
+      deity_type: t.deity_type || '',
+      categories: t.categories || [],
+      city: t.city,
+      district: t.district || '',
+      state: t.state,
+      coordinates: t.coordinates || { latitude: 0, longitude: 0 },
       lat: t.coordinates?.latitude || 0,
       lng: t.coordinates?.longitude || 0,
       timing: t.darshan_timings || '',
+      darshan_timings: t.darshan_timings || '',
+      best_time_to_visit: t.best_time_to_visit || '',
+      significance: t.significance || '',
+      special_events: t.special_events || [],
       specialPuja: t.special_events?.join(', ') || '',
+      nearest_airport: t.nearest_airport || '',
+      nearest_railway: t.nearest_railway || '',
+      architecture_style: t.architecture_style || '',
+      open_year_round: t.open_year_round !== false,
       rating: 4.8,
-      category: t.categories?.[0] || ''
+      category: t.categories?.[0] || '',
+      deity_description: t.deity_description || '',
+      history_and_legend: t.history_and_legend || '',
+      travel_tips: t.travel_tips || [],
+      distance: 0
     }))
   } catch (e) {
     console.error('Error loading mandirs.json:', e)

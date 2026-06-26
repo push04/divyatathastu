@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { toast } from 'sonner'
-import { createClient } from '@/lib/supabase/client'
 import dynamic from 'next/dynamic'
+import TempleDetailModal, { Temple } from '@/components/mandir/TempleDetailModal'
 
 const IndiaMandirMap = dynamic(() => import('@/components/IndiaMandirMap'), { ssr: false })
 
@@ -11,6 +11,13 @@ interface Mandir {
   id: string; name: string; city: string; state: string; deity: string
   lat: number; lng: number; timing: string; specialPuja: string
   rating: number; category: string; distance: number
+  local_name: string; deity_type: string; categories: string[]
+  district?: string; coordinates: { latitude: number; longitude: number }
+  darshan_timings: string; best_time_to_visit: string; significance: string
+  special_events: string[]; nearest_airport?: string; nearest_railway?: string
+  pilgrimage_circuits: string[]; architecture_style?: string
+  open_year_round?: boolean; deity_description?: string; history_and_legend?: string
+  travel_tips?: string[]
 }
 
 export default function MandirFinderPage() {
@@ -25,15 +32,13 @@ export default function MandirFinderPage() {
   const [selected, setSelected] = useState<Mandir | null>(null)
   const [userLat, setUserLat] = useState(20.5937)
   const [userLng, setUserLng] = useState(78.9629)
-  const [saved, setSaved] = useState<Set<string>>(new Set())
-  const supabase = createClient()
+  const [popupTemple, setPopupTemple] = useState<Mandir | null>(null)
 
   useEffect(() => {
     navigator.geolocation?.getCurrentPosition(
       pos => { setUserLat(pos.coords.latitude); setUserLng(pos.coords.longitude) },
       () => {}
     )
-    loadSaved()
   }, [])
 
   useEffect(() => {
@@ -67,13 +72,6 @@ export default function MandirFinderPage() {
     fetchNearby()
   }
 
-  async function loadSaved() {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-    const { data } = await supabase.from('saved_mandirs').select('google_place_id').eq('user_id', user.id)
-    if (data) setSaved(new Set(data.map((s: any) => s.google_place_id)))
-  }
-
   async function fetchNearby() {
     setLoading(true)
     try {
@@ -104,20 +102,6 @@ export default function MandirFinderPage() {
         mapInstanceRef.current?.flyTo([m.lat, m.lng], 13)
       })
     })
-  }
-
-  async function toggleSave(mandir: Mandir) {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { toast.error('Please login'); return }
-    if (saved.has(mandir.id)) {
-      await supabase.from('saved_mandirs').delete().eq('user_id', user.id).eq('google_place_id', mandir.id)
-      setSaved(prev => { const s = new Set(prev); s.delete(mandir.id); return s })
-      toast.success('Removed')
-    } else {
-      await supabase.from('saved_mandirs').insert({ user_id: user.id, google_place_id: mandir.id, mandir_name: mandir.name, city: mandir.city, state: mandir.state, lat: mandir.lat, lng: mandir.lng } as any)
-      setSaved(prev => new Set([...prev, mandir.id]))
-      toast.success('Saved!')
-    }
   }
 
   return (
@@ -163,8 +147,8 @@ export default function MandirFinderPage() {
                         <p className="text-xs text-[var(--warm-charcoal)]/60">{m.city}, {m.state}</p>
                         <p className="text-xs text-[var(--terracotta)]">{m.distance} km away</p>
                       </div>
-                      <button onClick={e => { e.stopPropagation(); toggleSave(m) }} className="flex-shrink-0">
-                        <span className={`material-symbols-outlined text-[18px] ${saved.has(m.id) ? 'text-[var(--terracotta)]' : 'text-[var(--warm-charcoal)]/30'}`} style={{ fontVariationSettings: saved.has(m.id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
+                      <button onClick={e => { e.stopPropagation(); setPopupTemple(m) }} className="flex-shrink-0 self-center text-[var(--warm-charcoal)]/30 hover:text-[var(--indigo-deep)] transition-colors p-1">
+                        <span className="material-symbols-outlined text-[20px]">info</span>
                       </button>
                     </div>
                   </button>
@@ -183,11 +167,14 @@ export default function MandirFinderPage() {
                 </div>
                 <p className="text-xs text-[var(--warm-charcoal)]/60 mb-3"><span className="font-medium">Timing:</span> {selected.timing}</p>
                 <div className="flex gap-2">
-                  <button onClick={() => toggleSave(selected)} className={`flex-1 py-1.5 rounded-lg text-xs font-medium border transition-all ${saved.has(selected.id) ? 'bg-[var(--terracotta)] text-white border-[var(--terracotta)]' : 'border-[var(--warm-sand)] hover:border-[var(--terracotta)] text-[var(--warm-charcoal)]'}`}>
-                    {saved.has(selected.id) ? 'Saved' : 'Save'}
-                  </button>
                   <a href={`https://www.openstreetmap.org/directions?to=${selected.lat},${selected.lng}`} target="_blank" rel="noopener noreferrer"
-                    className="flex-1 py-1.5 rounded-lg text-xs font-medium bg-[var(--indigo-deep)] text-white text-center">Directions</a>
+                    className="flex-1 py-1.5 rounded-lg text-xs font-medium bg-[var(--indigo-deep)] text-white text-center flex items-center justify-center gap-1"><span className="material-symbols-outlined text-[12px]">directions</span>Directions</a>
+                  <button 
+                    onClick={() => setPopupTemple(selected)}
+                    className="flex-1 py-1.5 rounded-lg text-xs font-medium bg-[var(--saffron)] hover:bg-[var(--saffron)]/90 text-white text-center flex items-center justify-center gap-1"
+                  >
+                    <span className="material-symbols-outlined text-[12px]">info</span>Details
+                  </button>
                 </div>
               </div>
             )}
@@ -209,6 +196,13 @@ export default function MandirFinderPage() {
           )}
         </div>
       </div>
+
+      {/* Temple Detail Modal */}
+      <TempleDetailModal
+        temple={popupTemple as unknown as Temple}
+        isOpen={!!popupTemple}
+        onClose={() => setPopupTemple(null)}
+      />
     </div>
   )
 }

@@ -2,17 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import indiaMap from '@svg-maps/india'
-import { createClient } from '@/lib/supabase/client'
-import { toast } from 'sonner'
-
-interface Temple {
-  id: string; name: string; local_name: string; deity: string; deity_type: string
-  categories: string[]; city: string; district?: string; state: string
-  coordinates: { latitude: number; longitude: number }
-  darshan_timings: string; best_time_to_visit: string; significance: string
-  special_events: string[]; nearest_airport?: string; nearest_railway?: string
-  pilgrimage_circuits: string[]; architecture_style?: string
-}
+import TempleDetailModal, { Temple } from './mandir/TempleDetailModal'
 
 interface Circuit {
   id: string; name: string; local_name: string; circuit_type: string
@@ -62,11 +52,10 @@ export default function IndiaMandirMap() {
   const [hoveredState, setHoveredState] = useState<string | null>(null)
   const [selectedState, setSelectedState] = useState<string | null>(null)
   const [selectedCircuit, setSelectedCircuit] = useState<Circuit | null>(null)
-  const [savedIds, setSavedIds] = useState<Set<string>>(new Set())
+  const [selectedTemple, setSelectedTemple] = useState<Temple | null>(null)
   const [temples, setTemples] = useState<Temple[]>([])
   const [circuits, setCircuits] = useState<Circuit[]>([])
   const [mobileView, setMobileView] = useState<'map' | 'list'>('map')
-  const supabase = createClient()
 
   useEffect(() => {
     if (selectedState || selectedCircuit) {
@@ -82,12 +71,6 @@ export default function IndiaMandirMap() {
       setTemples(mandirData.temples as Temple[])
       setCircuits(routeData.pilgrimage_circuits as Circuit[])
     }).catch(() => {})
-
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) return
-      supabase.from('saved_mandirs').select('google_place_id').eq('user_id', user.id)
-        .then(({ data }) => { if (data) setSavedIds(new Set(data.map((r: any) => r.google_place_id))) })
-    })
   }, [])
 
   const stateTemples = useMemo(() => {
@@ -116,24 +99,6 @@ export default function IndiaMandirMap() {
   const activeStateName = selectedState
     ? indiaMap.locations.find(l => l.id === selectedState)?.name || ''
     : ''
-
-  async function saveTemple(temple: Temple) {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { toast.error('Please login to save'); return }
-    if (savedIds.has(temple.id)) {
-      await supabase.from('saved_mandirs').delete().eq('user_id', user.id).eq('google_place_id', temple.id)
-      setSavedIds(prev => { const s = new Set(prev); s.delete(temple.id); return s })
-      toast.success('Removed')
-    } else {
-      await supabase.from('saved_mandirs').insert({
-        user_id: user.id, google_place_id: temple.id, mandir_name: temple.name,
-        city: temple.city, state: temple.state,
-        lat: temple.coordinates.latitude, lng: temple.coordinates.longitude
-      } as any)
-      setSavedIds(prev => new Set([...prev, temple.id]))
-      toast.success('Saved!')
-    }
-  }
 
   return (
     <div className="flex h-full flex-col lg:flex-row gap-0 overflow-hidden relative">
@@ -241,15 +206,16 @@ export default function IndiaMandirMap() {
               {activeTemples.length === 0 ? (
                 <p className="p-4 text-sm text-[var(--warm-charcoal)]/40 text-center">No temples in dataset for this state</p>
               ) : activeTemples.map(t => (
-                <div key={t.id} className="p-3 hover:bg-[var(--warm-sand)]/20 transition-colors">
+                <div
+                  key={t.id}
+                  onClick={() => setSelectedTemple(t)}
+                  className="p-3 hover:bg-[var(--warm-sand)]/20 transition-colors cursor-pointer"
+                >
                   <div className="flex items-start justify-between gap-2 mb-1">
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-bold text-[var(--indigo-deep)] leading-tight">{t.name}</p>
                       <p className="text-xs text-[var(--saffron)] font-medium">{t.local_name}</p>
                     </div>
-                    <button onClick={() => saveTemple(t)} className="flex-shrink-0 mt-0.5">
-                      <span className={`material-symbols-outlined text-[18px] ${savedIds.has(t.id) ? 'text-[var(--terracotta)]' : 'text-[var(--warm-charcoal)]/30 hover:text-[var(--terracotta)]'}`} style={{ fontVariationSettings: savedIds.has(t.id) ? "'FILL' 1" : "'FILL' 0" }}>favorite</span>
-                    </button>
                   </div>
                   <div className="flex flex-wrap gap-1 mb-2">
                     {t.categories.slice(0, 2).map(cat => (
@@ -265,6 +231,7 @@ export default function IndiaMandirMap() {
                   <a
                     href={`https://www.openstreetmap.org/?mlat=${t.coordinates.latitude}&mlon=${t.coordinates.longitude}&zoom=14`}
                     target="_blank" rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
                     className="mt-2 inline-flex items-center gap-1 text-xs text-[var(--indigo-deep)] hover:underline font-medium"
                   >
                     <span className="material-symbols-outlined text-[12px]">map</span>View on Map
@@ -288,7 +255,11 @@ export default function IndiaMandirMap() {
               {(selectedCircuit.temples || []).map(stop => {
                 const temple = temples.find(t => t.id === stop.temple_id)
                 return (
-                  <div key={stop.stop_number} className="p-3 hover:bg-[var(--warm-sand)]/20 transition-colors">
+                  <div
+                    key={stop.stop_number}
+                    onClick={() => { if (temple) setSelectedTemple(temple) }}
+                    className="p-3 hover:bg-[var(--warm-sand)]/20 transition-colors cursor-pointer"
+                  >
                     <div className="flex items-start gap-2">
                       <div className="w-5 h-5 rounded-full bg-[var(--terracotta)] text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">{stop.stop_number}</div>
                       <div className="flex-1 min-w-0">
@@ -298,6 +269,7 @@ export default function IndiaMandirMap() {
                         <a
                           href={`https://www.openstreetmap.org/?mlat=${stop.coordinates.latitude}&mlon=${stop.coordinates.longitude}&zoom=13`}
                           target="_blank" rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
                           className="mt-1 inline-flex items-center gap-1 text-xs text-[var(--indigo-deep)] hover:underline"
                         >
                           <span className="material-symbols-outlined text-[12px]">map</span>Map
@@ -340,6 +312,13 @@ export default function IndiaMandirMap() {
           </button>
         </div>
       )}
+
+      {/* Temple Detail Modal */}
+      <TempleDetailModal
+        temple={selectedTemple}
+        isOpen={!!selectedTemple}
+        onClose={() => setSelectedTemple(null)}
+      />
     </div>
   )
 }
