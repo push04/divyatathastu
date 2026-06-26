@@ -100,7 +100,7 @@ export default function IndiaMandirMap() {
       }
     })
     return map
-  }, [])
+  }, [temples])
 
   const circuitStateIds = useMemo(() => {
     if (!selectedCircuit) return new Set<string>()
@@ -159,7 +159,7 @@ export default function IndiaMandirMap() {
           {selectedCircuit && (
             <div className="absolute top-4 left-4 right-4 z-10 bg-white/95 rounded-xl border border-[var(--warm-sand)] p-3 shadow-md pointer-events-none">
               <p className="text-xs font-bold text-[var(--indigo-deep)]">{selectedCircuit.name}</p>
-              <p className="text-xs text-[var(--warm-charcoal)]/60 mt-0.5">{selectedCircuit.significance.slice(0, 120)}...</p>
+              <p className="text-xs text-[var(--warm-charcoal)]/60 mt-0.5">{(selectedCircuit.significance || '').slice(0, 120)}...</p>
               <p className="text-xs text-[var(--terracotta)] mt-1 font-medium">{selectedCircuit.total_temples} temples · {selectedCircuit.approx_duration_days} days · {selectedCircuit.difficulty}</p>
               {selectedCircuit.traditional_route_order && (
                 <p className="text-xs text-[var(--warm-charcoal)]/50 mt-0.5 font-mono">{selectedCircuit.traditional_route_order}</p>
@@ -285,7 +285,7 @@ export default function IndiaMandirMap() {
               </button>
             </div>
             <div className="flex-1 overflow-y-auto divide-y divide-[var(--warm-sand)]/60">
-              {selectedCircuit.temples.map(stop => {
+              {(selectedCircuit.temples || []).map(stop => {
                 const temple = temples.find(t => t.id === stop.temple_id)
                 return (
                   <div key={stop.stop_number} className="p-3 hover:bg-[var(--warm-sand)]/20 transition-colors">

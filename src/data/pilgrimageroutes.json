@@ -8,7 +8,6 @@
     "notes": "Temple sequences follow traditional/scriptural order. Distances are approximate road distances. Some temples appear in multiple circuits. All circuits reference temple IDs in mandirs.json."
   },
   "pilgrimage_circuits": [
-
     {
       "id": "PC001",
       "name": "Himalayan Char Dham Yatra",
@@ -16,9 +15,16 @@
       "circuit_type": "Char Dham",
       "deity_focus": "Multi-deity (Yamuna, Ganga, Shiva, Vishnu)",
       "total_temples": 4,
-      "states_covered": ["Uttarakhand"],
+      "states_covered": [
+        "Uttarakhand"
+      ],
       "base_city": "Haridwar / Rishikesh",
-      "best_months": ["May", "June", "September", "October"],
+      "best_months": [
+        "May",
+        "June",
+        "September",
+        "October"
+      ],
       "season_open": "April/May to October/November (temples closed in winter)",
       "approx_duration_days": 10,
       "total_road_distance_km": 1607,
@@ -35,13 +41,20 @@
           "name": "Yamunotri Temple",
           "deity": "Goddess Yamuna",
           "city": "Yamunotri",
-          "coordinates": { "latitude": 30.9944, "longitude": 78.4596 },
+          "coordinates": {
+            "latitude": 30.9944,
+            "longitude": 78.4596
+          },
           "altitude_m": 3293,
           "distance_from_base_km": 232,
           "nearest_base_for_trek": "Janki Chatti",
           "trek_distance_km": 6,
           "significance": "Origin of river Yamuna. First dham on the circuit. Hot spring (Surya Kund) where pilgrims cook rice and potatoes to offer to the deity.",
-          "nearby_attractions": ["Surya Kund (natural hot spring)", "Divya Shila (sacred rock)", "Janki Chatti"]
+          "nearby_attractions": [
+            "Surya Kund (natural hot spring)",
+            "Divya Shila (sacred rock)",
+            "Janki Chatti"
+          ]
         },
         {
           "stop_number": 2,
@@ -49,11 +62,18 @@
           "name": "Gangotri Temple",
           "deity": "Goddess Ganga (Bhagirathi)",
           "city": "Gangotri",
-          "coordinates": { "latitude": 30.9940, "longitude": 78.9375 },
+          "coordinates": {
+            "latitude": 30.994,
+            "longitude": 78.9375
+          },
           "altitude_m": 3100,
           "distance_from_previous_km": 230,
           "significance": "Origin of River Ganga. Most accessible dham — road reaches temple directly. Gaumukh glacier (actual source) is 18 km further.",
-          "nearby_attractions": ["Gaumukh Glacier (18 km trek)", "Tapovan meadows", "Bhagirathi River banks"]
+          "nearby_attractions": [
+            "Gaumukh Glacier (18 km trek)",
+            "Tapovan meadows",
+            "Bhagirathi River banks"
+          ]
         },
         {
           "stop_number": 3,
@@ -61,14 +81,21 @@
           "name": "Kedarnath Temple",
           "deity": "Lord Shiva (Kedarnath) — Jyotirlinga #5",
           "city": "Kedarnath",
-          "coordinates": { "latitude": 30.7352, "longitude": 79.0669 },
+          "coordinates": {
+            "latitude": 30.7352,
+            "longitude": 79.0669
+          },
           "altitude_m": 3583,
           "distance_from_previous_km": 325,
           "nearest_base_for_trek": "Gaurikund",
           "trek_distance_km": 20,
           "helicopter_available": true,
           "significance": "Highest Jyotirlinga at 3,583 m. One of the Panch Kedars. The only Jyotirlinga in the Char Dham circuit. Temple dates to 8th century (rebuilt by Adi Shankaracharya).",
-          "nearby_attractions": ["Vasuki Tal (alpine lake)", "Bhairav Temple", "Shankaracharya Samadhi"]
+          "nearby_attractions": [
+            "Vasuki Tal (alpine lake)",
+            "Bhairav Temple",
+            "Shankaracharya Samadhi"
+          ]
         },
         {
           "stop_number": 4,
@@ -76,15 +103,23 @@
           "name": "Badrinath Temple",
           "deity": "Lord Vishnu (Badri Narayan)",
           "city": "Badrinath",
-          "coordinates": { "latitude": 30.7447, "longitude": 79.4912 },
+          "coordinates": {
+            "latitude": 30.7447,
+            "longitude": 79.4912
+          },
           "altitude_m": 3100,
           "distance_from_previous_km": 223,
           "significance": "Final and most important dham. Also part of Maha Char Dham and Panch Badri. Directly accessible by road. Tapt Kund (hot spring) at entrance used for ritual bathing.",
-          "nearby_attractions": ["Mana Village (last Indian village before Tibet)", "Vyas Cave", "Bhim Pul", "Brahma Kapal", "Satopanth Lake (25 km)"]
+          "nearby_attractions": [
+            "Mana Village (last Indian village before Tibet)",
+            "Vyas Cave",
+            "Bhim Pul",
+            "Brahma Kapal",
+            "Satopanth Lake (25 km)"
+          ]
         }
       ]
     },
-
     {
       "id": "PC002",
       "name": "Maha Char Dham (Pan-India)",
@@ -92,9 +127,21 @@
       "circuit_type": "Char Dham",
       "deity_focus": "Multi-deity (Vishnu/Shiva at four cardinal directions of India)",
       "total_temples": 4,
-      "states_covered": ["Uttarakhand", "Odisha", "Tamil Nadu", "Gujarat"],
+      "states_covered": [
+        "Uttarakhand",
+        "Odisha",
+        "Tamil Nadu",
+        "Gujarat"
+      ],
       "base_city": "Flexible — typically Haridwar or Delhi",
-      "best_months": ["October", "November", "December", "January", "February", "March"],
+      "best_months": [
+        "October",
+        "November",
+        "December",
+        "January",
+        "February",
+        "March"
+      ],
       "approx_duration_days": 15,
       "difficulty": "Easy to Moderate (all accessible by road or air)",
       "significance": "The original Char Dham established by Adi Shankaracharya in the 8th century to unite India spiritually. Pilgrims visit one temple at each cardinal direction: North (Badrinath), East (Puri), South (Rameswaram), West (Dwarka). Completing all four is believed to grant moksha.",
@@ -107,7 +154,10 @@
           "deity": "Lord Vishnu (Badri Narayan)",
           "direction": "North",
           "city": "Badrinath, Uttarakhand",
-          "coordinates": { "latitude": 30.7447, "longitude": 79.4912 },
+          "coordinates": {
+            "latitude": 30.7447,
+            "longitude": 79.4912
+          },
           "significance": "Northern dham. Part of Himalayan Char Dham. One of 108 Divya Desams."
         },
         {
@@ -117,7 +167,10 @@
           "deity": "Lord Krishna (Dwarkadhish)",
           "direction": "West",
           "city": "Dwarka, Gujarat",
-          "coordinates": { "latitude": 22.2378, "longitude": 68.9678 },
+          "coordinates": {
+            "latitude": 22.2378,
+            "longitude": 68.9678
+          },
           "significance": "Western dham. Legendary capital of Lord Krishna. Located at land's end in Gujarat."
         },
         {
@@ -127,7 +180,10 @@
           "deity": "Lord Shiva (Ramanathaswamy) — Jyotirlinga #11",
           "direction": "South",
           "city": "Rameswaram, Tamil Nadu",
-          "coordinates": { "latitude": 9.2884, "longitude": 79.3173 },
+          "coordinates": {
+            "latitude": 9.2884,
+            "longitude": 79.3173
+          },
           "significance": "Southern dham. Located on Pamban Island. World's longest temple corridor (1,200 m). Also a Jyotirlinga."
         },
         {
@@ -137,12 +193,14 @@
           "deity": "Lord Jagannath (Vishnu/Krishna)",
           "direction": "East",
           "city": "Puri, Odisha",
-          "coordinates": { "latitude": 19.8028, "longitude": 85.8177 },
+          "coordinates": {
+            "latitude": 19.8028,
+            "longitude": 85.8177
+          },
           "significance": "Eastern dham. Famous for world-renowned Rath Yatra chariot festival."
         }
       ]
     },
-
     {
       "id": "PC003",
       "name": "12 Jyotirlinga Circuit",
@@ -150,29 +208,152 @@
       "circuit_type": "Jyotirlinga",
       "deity_focus": "Lord Shiva",
       "total_temples": 12,
-      "states_covered": ["Gujarat", "Andhra Pradesh", "Madhya Pradesh", "Uttarakhand", "Maharashtra", "Uttar Pradesh", "Jharkhand", "Tamil Nadu"],
+      "states_covered": [
+        "Gujarat",
+        "Andhra Pradesh",
+        "Madhya Pradesh",
+        "Uttarakhand",
+        "Maharashtra",
+        "Uttar Pradesh",
+        "Jharkhand",
+        "Tamil Nadu"
+      ],
       "base_city": "Flexible — typically Haridwar or Mumbai",
-      "best_months": ["October", "November", "December", "January", "February", "March"],
+      "best_months": [
+        "October",
+        "November",
+        "December",
+        "January",
+        "February",
+        "March"
+      ],
       "approx_duration_days": 25,
       "difficulty": "Moderate (Kedarnath requires strenuous 20 km trek)",
       "significance": "The 12 abodes of Shiva as radiant columns of divine light (Jyoti). Mentioned in the Shiva Purana and the Dwadasha Jyotirlinga Stotra. Completing all 12 is believed to wash away all sins and grant moksha. Traditional clockwise order shown below.",
       "traditional_route_order": "Somnath → Mallikarjuna → Mahakaleshwar → Omkareshwar → Kedarnath → Bhimashankar → Kashi Vishwanath → Trimbakeshwar → Vaidyanath → Nageshwar → Ramanathaswamy → Grishneshwar",
       "temples": [
-        { "stop_number": 1, "temple_id": "T001", "name": "Somnath", "city": "Veraval, Gujarat", "coordinates": { "latitude": 20.8883, "longitude": 70.4013 } },
-        { "stop_number": 2, "temple_id": "T002", "name": "Mallikarjuna (Srisailam)", "city": "Srisailam, Andhra Pradesh", "coordinates": { "latitude": 16.0724, "longitude": 78.8680 } },
-        { "stop_number": 3, "temple_id": "T003", "name": "Mahakaleshwar", "city": "Ujjain, Madhya Pradesh", "coordinates": { "latitude": 23.1828, "longitude": 75.7683 } },
-        { "stop_number": 4, "temple_id": "T004", "name": "Omkareshwar", "city": "Mandhata Island, Madhya Pradesh", "coordinates": { "latitude": 22.2431, "longitude": 76.1500 } },
-        { "stop_number": 5, "temple_id": "T005", "name": "Kedarnath", "city": "Kedarnath, Uttarakhand", "coordinates": { "latitude": 30.7352, "longitude": 79.0669 } },
-        { "stop_number": 6, "temple_id": "T006", "name": "Bhimashankar", "city": "Pune, Maharashtra", "coordinates": { "latitude": 19.0726, "longitude": 73.5355 } },
-        { "stop_number": 7, "temple_id": "T007", "name": "Kashi Vishwanath", "city": "Varanasi, Uttar Pradesh", "coordinates": { "latitude": 25.3109, "longitude": 83.0107 } },
-        { "stop_number": 8, "temple_id": "T008", "name": "Trimbakeshwar", "city": "Nashik, Maharashtra", "coordinates": { "latitude": 19.9393, "longitude": 73.5285 } },
-        { "stop_number": 9, "temple_id": "T009", "name": "Vaidyanath (Baidyanath Dham)", "city": "Deoghar, Jharkhand", "coordinates": { "latitude": 24.4850, "longitude": 86.6940 } },
-        { "stop_number": 10, "temple_id": "T010", "name": "Nageshwar", "city": "Dwarka, Gujarat", "coordinates": { "latitude": 22.2429, "longitude": 68.9574 } },
-        { "stop_number": 11, "temple_id": "T011", "name": "Ramanathaswamy (Rameswaram)", "city": "Rameswaram, Tamil Nadu", "coordinates": { "latitude": 9.2884, "longitude": 79.3173 } },
-        { "stop_number": 12, "temple_id": "T012", "name": "Grishneshwar", "city": "Ellora, Maharashtra", "coordinates": { "latitude": 20.0264, "longitude": 75.1782 } }
+        {
+          "stop_number": 1,
+          "temple_id": "T001",
+          "name": "Somnath",
+          "city": "Veraval, Gujarat",
+          "coordinates": {
+            "latitude": 20.8883,
+            "longitude": 70.4013
+          }
+        },
+        {
+          "stop_number": 2,
+          "temple_id": "T002",
+          "name": "Mallikarjuna (Srisailam)",
+          "city": "Srisailam, Andhra Pradesh",
+          "coordinates": {
+            "latitude": 16.0724,
+            "longitude": 78.868
+          }
+        },
+        {
+          "stop_number": 3,
+          "temple_id": "T003",
+          "name": "Mahakaleshwar",
+          "city": "Ujjain, Madhya Pradesh",
+          "coordinates": {
+            "latitude": 23.1828,
+            "longitude": 75.7683
+          }
+        },
+        {
+          "stop_number": 4,
+          "temple_id": "T004",
+          "name": "Omkareshwar",
+          "city": "Mandhata Island, Madhya Pradesh",
+          "coordinates": {
+            "latitude": 22.2431,
+            "longitude": 76.15
+          }
+        },
+        {
+          "stop_number": 5,
+          "temple_id": "T005",
+          "name": "Kedarnath",
+          "city": "Kedarnath, Uttarakhand",
+          "coordinates": {
+            "latitude": 30.7352,
+            "longitude": 79.0669
+          }
+        },
+        {
+          "stop_number": 6,
+          "temple_id": "T006",
+          "name": "Bhimashankar",
+          "city": "Pune, Maharashtra",
+          "coordinates": {
+            "latitude": 19.0726,
+            "longitude": 73.5355
+          }
+        },
+        {
+          "stop_number": 7,
+          "temple_id": "T007",
+          "name": "Kashi Vishwanath",
+          "city": "Varanasi, Uttar Pradesh",
+          "coordinates": {
+            "latitude": 25.3109,
+            "longitude": 83.0107
+          }
+        },
+        {
+          "stop_number": 8,
+          "temple_id": "T008",
+          "name": "Trimbakeshwar",
+          "city": "Nashik, Maharashtra",
+          "coordinates": {
+            "latitude": 19.9393,
+            "longitude": 73.5285
+          }
+        },
+        {
+          "stop_number": 9,
+          "temple_id": "T009",
+          "name": "Vaidyanath (Baidyanath Dham)",
+          "city": "Deoghar, Jharkhand",
+          "coordinates": {
+            "latitude": 24.485,
+            "longitude": 86.694
+          }
+        },
+        {
+          "stop_number": 10,
+          "temple_id": "T010",
+          "name": "Nageshwar",
+          "city": "Dwarka, Gujarat",
+          "coordinates": {
+            "latitude": 22.2429,
+            "longitude": 68.9574
+          }
+        },
+        {
+          "stop_number": 11,
+          "temple_id": "T011",
+          "name": "Ramanathaswamy (Rameswaram)",
+          "city": "Rameswaram, Tamil Nadu",
+          "coordinates": {
+            "latitude": 9.2884,
+            "longitude": 79.3173
+          }
+        },
+        {
+          "stop_number": 12,
+          "temple_id": "T012",
+          "name": "Grishneshwar",
+          "city": "Ellora, Maharashtra",
+          "coordinates": {
+            "latitude": 20.0264,
+            "longitude": 75.1782
+          }
+        }
       ]
     },
-
     {
       "id": "PC004",
       "name": "51 Shakti Peetha Circuit (Major India-based)",
@@ -181,139 +362,163 @@
       "deity_focus": "Goddess Shakti (Devi Sati)",
       "total_temples_worldwide": 51,
       "total_temples_india": 42,
-      "states_covered": ["West Bengal", "Rajasthan", "Uttar Pradesh", "Jammu & Kashmir", "Himachal Pradesh", "Assam", "Gujarat", "Andhra Pradesh", "Maharashtra", "Karnataka", "Tamil Nadu", "Odisha", "Tripura"],
-      "countries_in_full_circuit": ["India", "Nepal", "Bangladesh", "Pakistan", "Sri Lanka"],
-      "best_months": ["October", "November", "March", "April"],
+      "states_covered": [
+        "West Bengal",
+        "Rajasthan",
+        "Uttar Pradesh",
+        "Jammu & Kashmir",
+        "Himachal Pradesh",
+        "Assam",
+        "Gujarat",
+        "Andhra Pradesh",
+        "Maharashtra",
+        "Karnataka",
+        "Tamil Nadu",
+        "Odisha",
+        "Tripura"
+      ],
+      "countries_in_full_circuit": [
+        "India",
+        "Nepal",
+        "Bangladesh",
+        "Pakistan",
+        "Sri Lanka"
+      ],
+      "best_months": [
+        "October",
+        "November",
+        "March",
+        "April"
+      ],
       "approx_duration_days": 45,
       "difficulty": "Varies — some are accessible, Vaishno Devi requires 14 km trek",
       "significance": "Sacred spots where body parts of Goddess Sati (Shiva's consort) fell after Lord Vishnu dismembered her body with the Sudarshana Chakra to release grief-stricken Shiva from her corpse. Each site has a presiding Shakti (goddess form) and her Bhairava (Shiva form). Considered the most powerful pilgrimage for Devi devotees.",
-      "major_peethas": [
+      "additional_peethas_note": "The full 51 Shakti Peetha circuit also includes temples in Nepal (Guhyeshwari, Manasa), Bangladesh (Sugandha, Bhavani), and Sri Lanka (Mangalore). Major Indian peethas above cover the key pilgrimage sites.",
+      "temples": [
         {
           "stop_number": 1,
-          "name": "Kamakhya Temple",
           "temple_id": "T016",
-          "body_part": "Womb (Yoni)",
-          "shakti_name": "Kamakhya",
-          "bhairava_name": "Umananda",
+          "name": "Kamakhya Temple",
           "city": "Guwahati, Assam",
-          "coordinates": { "latitude": 26.1663, "longitude": 91.7056 },
+          "coordinates": {
+            "latitude": 26.1663,
+            "longitude": 91.7056
+          },
           "significance": "Most powerful Shakti Peetha. Womb/reproductive organ of Sati. Annual Ambubachi Mela (June) draws 500,000+ tantric sadhus and pilgrims."
         },
         {
           "stop_number": 2,
-          "name": "Kalighat Temple",
           "temple_id": "T043",
-          "body_part": "Right toes",
-          "shakti_name": "Kali (Dakshina Kali)",
-          "bhairava_name": "Nakuleshwar",
+          "name": "Kalighat Temple",
           "city": "Kolkata, West Bengal",
-          "coordinates": { "latitude": 22.5195, "longitude": 88.3432 }
+          "coordinates": {
+            "latitude": 22.5195,
+            "longitude": 88.3432
+          }
         },
         {
           "stop_number": 3,
-          "name": "Ambaji Temple",
           "temple_id": "T044",
-          "body_part": "Heart",
-          "shakti_name": "Ambaji (Amba)",
-          "bhairava_name": "Batuk Bhairav",
+          "name": "Ambaji Temple",
           "city": "Banaskantha, Gujarat",
-          "coordinates": { "latitude": 24.3343, "longitude": 72.8498 }
+          "coordinates": {
+            "latitude": 24.3343,
+            "longitude": 72.8498
+          }
         },
         {
           "stop_number": 4,
-          "name": "Vaishno Devi Temple",
           "temple_id": "T015",
-          "body_part": "Right arm (considered a Shakti Peetha by many traditions)",
-          "shakti_name": "Vaishno Devi (Maha Kali-Lakshmi-Saraswati)",
-          "bhairava_name": "Bhairava (Bhairavnath)",
+          "name": "Vaishno Devi Temple",
           "city": "Katra, Jammu & Kashmir",
-          "coordinates": { "latitude": 33.0278, "longitude": 74.9467 }
+          "coordinates": {
+            "latitude": 33.0278,
+            "longitude": 74.9467
+          }
         },
         {
           "stop_number": 5,
-          "name": "Jwalamukhi Temple",
           "temple_id": "T051",
-          "body_part": "Tongue",
-          "shakti_name": "Jwalamukhi (Siddhida)",
-          "bhairava_name": "Unmatt Bhairava",
+          "name": "Jwalamukhi Temple",
           "city": "Kangra, Himachal Pradesh",
-          "coordinates": { "latitude": 31.8773, "longitude": 76.1497 }
+          "coordinates": {
+            "latitude": 31.8773,
+            "longitude": 76.1497
+          }
         },
         {
           "stop_number": 6,
-          "name": "Naina Devi Temple",
           "temple_id": "T052",
-          "body_part": "Eyes",
-          "shakti_name": "Naina Devi",
-          "bhairava_name": "Krodhish Bhairava",
+          "name": "Naina Devi Temple",
           "city": "Bilaspur, Himachal Pradesh",
-          "coordinates": { "latitude": 31.3956, "longitude": 76.6557 }
+          "coordinates": {
+            "latitude": 31.3956,
+            "longitude": 76.6557
+          }
         },
         {
           "stop_number": 7,
-          "name": "Vishalakshi Temple",
           "temple_id": "T054",
-          "body_part": "Earring (or face — varying traditions)",
-          "shakti_name": "Vishalakshi (Wide-eyed Devi)",
-          "bhairava_name": "Kashi Vishwanath",
+          "name": "Vishalakshi Temple",
           "city": "Varanasi, Uttar Pradesh",
-          "coordinates": { "latitude": 25.3065, "longitude": 83.0127 }
+          "coordinates": {
+            "latitude": 25.3065,
+            "longitude": 83.0127
+          }
         },
         {
           "stop_number": 8,
-          "name": "Mahalakshmi Temple (Kolhapur)",
           "temple_id": "T045",
-          "body_part": "Eyes (some traditions say breast)",
-          "shakti_name": "Mahalakshmi (Ambabai)",
-          "bhairava_name": "Krodhish Bhairava",
+          "name": "Mahalakshmi Temple (Kolhapur)",
           "city": "Kolhapur, Maharashtra",
-          "coordinates": { "latitude": 16.7025, "longitude": 74.2338 }
+          "coordinates": {
+            "latitude": 16.7025,
+            "longitude": 74.2338
+          }
         },
         {
           "stop_number": 9,
-          "name": "Mallikarjuna (Srisailam)",
           "temple_id": "T002",
-          "body_part": "Neck",
-          "shakti_name": "Bhramaramba",
-          "bhairava_name": "Mallikarjuna (Shiva himself)",
+          "name": "Mallikarjuna (Srisailam)",
           "city": "Srisailam, Andhra Pradesh",
-          "coordinates": { "latitude": 16.0724, "longitude": 78.8680 }
+          "coordinates": {
+            "latitude": 16.0724,
+            "longitude": 78.868
+          }
         },
         {
           "stop_number": 10,
-          "name": "Chamundeshwari Temple",
           "temple_id": "T053",
-          "body_part": "Hair (tresses)",
-          "shakti_name": "Chamundeshwari",
-          "bhairava_name": "Kapali",
+          "name": "Chamundeshwari Temple",
           "city": "Mysuru, Karnataka",
-          "coordinates": { "latitude": 12.2728, "longitude": 76.6640 }
+          "coordinates": {
+            "latitude": 12.2728,
+            "longitude": 76.664
+          }
         },
         {
           "stop_number": 11,
+          "temple_id": null,
           "name": "Karani Mata Temple",
-          "body_part": "Left small finger",
-          "shakti_name": "Karani Mata (Rat Mother)",
-          "bhairava_name": "Bhairav",
           "city": "Deshnok, Bikaner, Rajasthan",
-          "coordinates": { "latitude": 27.7935, "longitude": 73.3426 },
-          "special_note": "Famous for 25,000+ sacred rats (kabbas) who live inside the temple"
+          "coordinates": {
+            "latitude": 27.7935,
+            "longitude": 73.3426
+          }
         },
         {
           "stop_number": 12,
+          "temple_id": null,
           "name": "Hinglaj Mata Temple",
-          "body_part": "Head",
-          "shakti_name": "Hinglaj (Kotari)",
-          "bhairava_name": "Bhimlochan",
           "city": "Hinglaj, Balochistan (Pakistan)",
-          "country": "Pakistan",
-          "coordinates": { "latitude": 25.5085, "longitude": 63.5335 },
-          "special_note": "Northernmost major Shakti Peetha. Accessible for Indian pilgrims on special occasion; largest multi-faith annual gathering in Pakistan."
+          "coordinates": {
+            "latitude": 25.5085,
+            "longitude": 63.5335
+          }
         }
       ],
-      "additional_peethas_note": "The full 51 Shakti Peetha circuit also includes temples in Nepal (Guhyeshwari, Manasa), Bangladesh (Sugandha, Bhavani), and Sri Lanka (Mangalore). Major Indian peethas above cover the key pilgrimage sites."
+      "total_temples": 12
     },
-
     {
       "id": "PC005",
       "name": "Panch Kedar Yatra",
@@ -321,9 +526,16 @@
       "circuit_type": "Panch Kedar",
       "deity_focus": "Lord Shiva (five body parts)",
       "total_temples": 5,
-      "states_covered": ["Uttarakhand"],
+      "states_covered": [
+        "Uttarakhand"
+      ],
       "base_city": "Rishikesh",
-      "best_months": ["May", "June", "September", "October"],
+      "best_months": [
+        "May",
+        "June",
+        "September",
+        "October"
+      ],
       "season_open": "May to November (Kalpeshwar open year-round)",
       "approx_duration_days": 14,
       "total_route_km": 170,
@@ -338,7 +550,10 @@
           "name": "Kedarnath Temple",
           "body_part_of_shiva": "Hump (Koop — upper back)",
           "city": "Kedarnath, Rudraprayag",
-          "coordinates": { "latitude": 30.7352, "longitude": 79.0669 },
+          "coordinates": {
+            "latitude": 30.7352,
+            "longitude": 79.0669
+          },
           "altitude_m": 3583,
           "trek_from": "Gaurikund",
           "trek_km": 20
@@ -349,7 +564,10 @@
           "name": "Madhyamaheshwar Temple",
           "body_part_of_shiva": "Navel (Nabhi — middle)",
           "city": "Rudraprayag district",
-          "coordinates": { "latitude": 30.6318, "longitude": 79.2193 },
+          "coordinates": {
+            "latitude": 30.6318,
+            "longitude": 79.2193
+          },
           "altitude_m": 3497,
           "trek_from": "Ransi",
           "trek_km": 24
@@ -360,7 +578,10 @@
           "name": "Tungnath Temple",
           "body_part_of_shiva": "Arms (Bahu)",
           "city": "Rudraprayag district",
-          "coordinates": { "latitude": 30.4839, "longitude": 79.2160 },
+          "coordinates": {
+            "latitude": 30.4839,
+            "longitude": 79.216
+          },
           "altitude_m": 3680,
           "trek_from": "Chopta",
           "trek_km": 4
@@ -371,7 +592,10 @@
           "name": "Rudranath Temple",
           "body_part_of_shiva": "Face (Mukha)",
           "city": "Chamoli district",
-          "coordinates": { "latitude": 30.5289, "longitude": 79.3239 },
+          "coordinates": {
+            "latitude": 30.5289,
+            "longitude": 79.3239
+          },
           "altitude_m": 2286,
           "trek_from": "Sagar village",
           "trek_km": 24
@@ -382,7 +606,10 @@
           "name": "Kalpeshwar Temple",
           "body_part_of_shiva": "Matted Hair (Jata)",
           "city": "Urgam Valley, Chamoli",
-          "coordinates": { "latitude": 30.5440, "longitude": 79.4020 },
+          "coordinates": {
+            "latitude": 30.544,
+            "longitude": 79.402
+          },
           "altitude_m": 2134,
           "trek_from": "Helang",
           "trek_km": 10,
@@ -390,7 +617,6 @@
         }
       ]
     },
-
     {
       "id": "PC006",
       "name": "Panch Badri Yatra",
@@ -398,9 +624,16 @@
       "circuit_type": "Panch Badri",
       "deity_focus": "Lord Vishnu (Badri forms)",
       "total_temples": 5,
-      "states_covered": ["Uttarakhand"],
+      "states_covered": [
+        "Uttarakhand"
+      ],
       "base_city": "Rishikesh / Joshimath",
-      "best_months": ["May", "June", "September", "October"],
+      "best_months": [
+        "May",
+        "June",
+        "September",
+        "October"
+      ],
       "approx_duration_days": 8,
       "difficulty": "Moderate (Bhavishya Badri requires some trek; others accessible by road)",
       "significance": "Five sacred abodes of Lord Vishnu in his Badri (jujube berry) form. The Badri Kshetra (the valley of the Alaknanda river) is considered Vishnu's eternal abode. Completing all five is considered equivalent to completing all Divya Desams.",
@@ -410,7 +643,10 @@
           "temple_id": "T018",
           "name": "Badri Vishal (Badrinath)",
           "city": "Badrinath, Chamoli",
-          "coordinates": { "latitude": 30.7447, "longitude": 79.4912 },
+          "coordinates": {
+            "latitude": 30.7447,
+            "longitude": 79.4912
+          },
           "altitude_m": 3100,
           "significance": "Main and supreme Badri. Part of both Himalayan Char Dham and Maha Char Dham."
         },
@@ -418,40 +654,54 @@
           "stop_number": 2,
           "name": "Bhavishya Badri Temple",
           "city": "Subhain, Tapovan, Chamoli",
-          "coordinates": { "latitude": 30.4863, "longitude": 79.6516 },
+          "coordinates": {
+            "latitude": 30.4863,
+            "longitude": 79.6516
+          },
           "altitude_m": 2744,
           "significance": "Future abode of Badrinath — scriptures say when Joshimath's Narasimha idol loses its arm, Badrinath will shift here. Requires a 6 km trek from Tapovan.",
           "trek_from": "Tapovan",
-          "trek_km": 6
+          "trek_km": 6,
+          "temple_id": "T064"
         },
         {
           "stop_number": 3,
           "name": "Vridh Badri Temple",
           "city": "Animath, Chamoli",
-          "coordinates": { "latitude": 30.3900, "longitude": 79.4200 },
+          "coordinates": {
+            "latitude": 30.39,
+            "longitude": 79.42
+          },
           "altitude_m": 1380,
-          "significance": "Ancient form of Badrinath worshipped by sages. Lord Vishnu appeared as an old man (Vridh) here to grant blessings."
+          "significance": "Ancient form of Badrinath worshipped by sages. Lord Vishnu appeared as an old man (Vridh) here to grant blessings.",
+          "temple_id": "T065"
         },
         {
           "stop_number": 4,
           "name": "Yogdhyan Badri Temple",
           "city": "Pandukeshwar, Chamoli",
-          "coordinates": { "latitude": 30.6170, "longitude": 79.4730 },
+          "coordinates": {
+            "latitude": 30.617,
+            "longitude": 79.473
+          },
           "altitude_m": 1920,
-          "significance": "Pandavas meditated here. Lord Vishnu is worshipped in a meditative (yogic) posture."
+          "significance": "Pandavas meditated here. Lord Vishnu is worshipped in a meditative (yogic) posture.",
+          "temple_id": "T063"
         },
         {
           "stop_number": 5,
           "temple_id": "T041",
           "name": "Adi Badri Temple",
           "city": "Adi Badri, Chamoli",
-          "coordinates": { "latitude": 30.3946, "longitude": 79.4742 },
+          "coordinates": {
+            "latitude": 30.3946,
+            "longitude": 79.4742
+          },
           "altitude_m": 1400,
           "significance": "Oldest and most accessible. Complex of 14 temples. Open year-round unlike Badrinath."
         }
       ]
     },
-
     {
       "id": "PC007",
       "name": "Sapta Puri (Seven Sacred Cities)",
@@ -459,97 +709,106 @@
       "circuit_type": "Sapta Puri / Moksha Puri",
       "deity_focus": "Multi-deity",
       "total_cities": 7,
-      "states_covered": ["Uttar Pradesh", "Uttarakhand", "Tamil Nadu", "Gujarat", "Madhya Pradesh"],
-      "best_months": ["October", "November", "December", "January", "February", "March"],
+      "states_covered": [
+        "Uttar Pradesh",
+        "Uttarakhand",
+        "Tamil Nadu",
+        "Gujarat",
+        "Madhya Pradesh"
+      ],
+      "best_months": [
+        "October",
+        "November",
+        "December",
+        "January",
+        "February",
+        "March"
+      ],
       "approx_duration_days": 20,
       "difficulty": "Easy to Moderate",
       "significance": "The seven holiest cities of Hinduism (Sapta Moksha Puri — seven cities of liberation). Visiting all seven is believed to grant moksha even without completing any specific ritual. Mentioned in the Vishnu Smriti and Garuda Purana.",
       "shloka": "Ayodhyā Mathurā Māyā Kāśī Kāñcī Avantikā | Purī Dvārakā caiva saptaitā mokṣadāyikāḥ ||",
-      "cities": [
+      "temples": [
         {
           "stop_number": 1,
-          "name": "Ayodhya",
-          "local_name": "अयोध्या",
-          "state": "Uttar Pradesh",
-          "coordinates": { "latitude": 26.7950, "longitude": 82.1942 },
-          "deity": "Lord Rama",
-          "primary_temple": "Ram Mandir",
-          "primary_temple_id": "T031",
-          "significance": "Birthplace of Lord Rama. One of the most sacred cities in Hinduism. Now home to the newly inaugurated Ram Mandir (2024).",
-          "other_key_sites": ["Ram Janmabhoomi", "Hanuman Garhi", "Kanak Bhawan", "Saryu Ghat", "Nageshwarnath Temple"]
+          "temple_id": "T031",
+          "name": "Ram Mandir",
+          "city": "Ayodhya",
+          "coordinates": {
+            "latitude": 26.795,
+            "longitude": 82.1942
+          },
+          "significance": "Birthplace of Lord Rama. One of the most sacred cities in Hinduism. Now home to the newly inaugurated Ram Mandir (2024)."
         },
         {
           "stop_number": 2,
-          "name": "Mathura",
-          "local_name": "मथुरा",
-          "state": "Uttar Pradesh",
-          "coordinates": { "latitude": 27.4924, "longitude": 77.6737 },
-          "deity": "Lord Krishna",
-          "primary_temple": "Shri Krishna Janmabhoomi",
-          "significance": "Birthplace of Lord Krishna. One of the holiest cities. Mathura–Vrindavan is the Braj region (Krishna's childhood home).",
-          "other_key_sites": ["Shri Krishna Janmabhoomi", "Dwarkadhish Temple (Mathura)", "Vishram Ghat", "Govardhan Hill (26 km)", "Vrindavan (12 km)"]
+          "temple_id": null,
+          "name": "Shri Krishna Janmabhoomi",
+          "city": "Mathura",
+          "coordinates": {
+            "latitude": 27.4924,
+            "longitude": 77.6737
+          },
+          "significance": "Birthplace of Lord Krishna. One of the holiest cities. Mathura–Vrindavan is the Braj region (Krishna's childhood home)."
         },
         {
           "stop_number": 3,
-          "name": "Haridwar",
-          "local_name": "हरिद्वार",
-          "state": "Uttarakhand",
-          "coordinates": { "latitude": 29.9457, "longitude": 78.1642 },
-          "deity": "Lord Vishnu (Har ki Pauri — Vishnu's footprint)",
-          "primary_temple": "Mansa Devi Temple & Har ki Pauri (Ghat)",
-          "significance": "Gateway to the four Himalayan Dhams. Kumbh Mela every 12 years. Ganga Aarti at Har ki Pauri is one of India's most iconic rituals.",
-          "other_key_sites": ["Har ki Pauri (Ganga Aarti)", "Mansa Devi Temple", "Chandi Devi Temple", "Maya Devi Temple", "Rajaji National Park"]
+          "temple_id": null,
+          "name": "Mansa Devi Temple & Har ki Pauri (Ghat)",
+          "city": "Haridwar",
+          "coordinates": {
+            "latitude": 29.9457,
+            "longitude": 78.1642
+          },
+          "significance": "Gateway to the four Himalayan Dhams. Kumbh Mela every 12 years. Ganga Aarti at Har ki Pauri is one of India's most iconic rituals."
         },
         {
           "stop_number": 4,
-          "name": "Varanasi (Kashi)",
-          "local_name": "काशी / वाराणसी",
-          "state": "Uttar Pradesh",
-          "coordinates": { "latitude": 25.3176, "longitude": 82.9739 },
-          "deity": "Lord Shiva (Kashi Vishwanath)",
-          "primary_temple": "Kashi Vishwanath Temple",
-          "primary_temple_id": "T007",
-          "significance": "Oldest living city in the world. Dying in Kashi grants moksha. 84 ghats line the Ganga. The city never sleeps — Ganga Aarti at Dashashwamedh Ghat (daily).",
-          "other_key_sites": ["Kashi Vishwanath Temple", "Dashashwamedh Ghat (Ganga Aarti)", "Manikarnika Ghat (cremation)", "Sarnath (5 km — where Buddha gave first sermon)", "Ramnagar Fort"]
+          "temple_id": "T007",
+          "name": "Kashi Vishwanath Temple",
+          "city": "Varanasi (Kashi)",
+          "coordinates": {
+            "latitude": 25.3176,
+            "longitude": 82.9739
+          },
+          "significance": "Oldest living city in the world. Dying in Kashi grants moksha. 84 ghats line the Ganga. The city never sleeps — Ganga Aarti at Dashashwamedh Ghat (daily)."
         },
         {
           "stop_number": 5,
-          "name": "Kanchipuram",
-          "local_name": "कांचीपुरम",
-          "state": "Tamil Nadu",
-          "coordinates": { "latitude": 12.8352, "longitude": 79.7036 },
-          "deity": "Lord Shiva (Ekambareswarar) & Lord Vishnu (Varadharaja)",
-          "primary_temple": "Ekambareswarar Temple & Kamakshi Amman Temple",
-          "significance": "City of 1,000 temples (108 Shaivite, 108 Vaishnavite). One of the seven Mukti Kshetras. Headquarters of Shankaracharya for South India. Famous for silk weaving.",
-          "other_key_sites": ["Ekambareswarar Temple (Prithvi Linga)", "Kamakshi Amman Temple (Shakti Peetha)", "Varadharaja Perumal Temple (Divya Desam)", "Kailasanathar Temple (8th century)"]
+          "temple_id": null,
+          "name": "Ekambareswarar Temple & Kamakshi Amman Temple",
+          "city": "Kanchipuram",
+          "coordinates": {
+            "latitude": 12.8352,
+            "longitude": 79.7036
+          },
+          "significance": "City of 1,000 temples (108 Shaivite, 108 Vaishnavite). One of the seven Mukti Kshetras. Headquarters of Shankaracharya for South India. Famous for silk weaving."
         },
         {
           "stop_number": 6,
-          "name": "Ujjain (Avantika)",
-          "local_name": "उज्जैन / अवंतिका",
-          "state": "Madhya Pradesh",
-          "coordinates": { "latitude": 23.1765, "longitude": 75.7885 },
-          "deity": "Lord Shiva (Mahakaleshwar)",
-          "primary_temple": "Mahakaleshwar Temple",
-          "primary_temple_id": "T003",
-          "significance": "Ancient city on the Tropic of Cancer. Ujjain was once the prime meridian of ancient India. Kumbh Mela (Simhastha) every 12 years. Home of Mahakaleshwar Jyotirlinga.",
-          "other_key_sites": ["Mahakaleshwar Temple (Jyotirlinga)", "Kal Bhairav Temple", "Sandipani Ashram (where Krishna studied)", "Ram Ghat (Ganga Aarti)", "Vedha Shala (ancient observatory)"]
+          "temple_id": "T003",
+          "name": "Mahakaleshwar Temple",
+          "city": "Ujjain (Avantika)",
+          "coordinates": {
+            "latitude": 23.1765,
+            "longitude": 75.7885
+          },
+          "significance": "Ancient city on the Tropic of Cancer. Ujjain was once the prime meridian of ancient India. Kumbh Mela (Simhastha) every 12 years. Home of Mahakaleshwar Jyotirlinga."
         },
         {
           "stop_number": 7,
-          "name": "Dwarka",
-          "local_name": "द्वारका",
-          "state": "Gujarat",
-          "coordinates": { "latitude": 22.2378, "longitude": 68.9678 },
-          "deity": "Lord Krishna (Dwarkadhish)",
-          "primary_temple": "Dwarkadhish Temple",
-          "primary_temple_id": "T021",
-          "significance": "Legendary capital of Lord Krishna. Considered the westernmost Char Dham. The ancient city is believed to be submerged in the Arabian Sea (Dwarka Nagari).",
-          "other_key_sites": ["Dwarkadhish Temple (Maha Char Dham)", "Nageshwar Jyotirlinga (17 km)", "Beyt Dwarka Island", "Rukmini Devi Temple", "Gopi Talav"]
+          "temple_id": "T021",
+          "name": "Dwarkadhish Temple",
+          "city": "Dwarka",
+          "coordinates": {
+            "latitude": 22.2378,
+            "longitude": 68.9678
+          },
+          "significance": "Legendary capital of Lord Krishna. Considered the westernmost Char Dham. The ancient city is believed to be submerged in the Arabian Sea (Dwarka Nagari)."
         }
-      ]
+      ],
+      "total_temples": 7
     },
-
     {
       "id": "PC008",
       "name": "Ashtavinayak Yatra (Maharashtra)",
@@ -557,9 +816,13 @@
       "circuit_type": "Ashtavinayak (8 Ganesha temples)",
       "deity_focus": "Lord Ganesha (8 Swayambhu forms)",
       "total_temples": 8,
-      "states_covered": ["Maharashtra"],
+      "states_covered": [
+        "Maharashtra"
+      ],
       "base_city": "Pune",
-      "best_months": ["September to March; Ganesh Chaturthi (Sep)"],
+      "best_months": [
+        "September to March; Ganesh Chaturthi (Sep)"
+      ],
       "approx_duration_days": 5,
       "total_road_distance_km": 480,
       "difficulty": "Easy (all motorable, within 200 km of Pune)",
@@ -572,7 +835,10 @@
           "name": "Moreshwar Temple (Morgaon)",
           "ganesha_name": "Moreshwar (Peacock Lord)",
           "city": "Morgaon, Pune district",
-          "coordinates": { "latitude": 18.2690, "longitude": 74.3180 },
+          "coordinates": {
+            "latitude": 18.269,
+            "longitude": 74.318
+          },
           "significance": "First and last Ashtavinayak. The starting point of the circuit. Ganesha rides a peacock here."
         },
         {
@@ -580,60 +846,87 @@
           "name": "Siddhatek — Siddhi Vinayak Temple",
           "ganesha_name": "Siddhi Vinayak",
           "city": "Siddhatek, Ahmednagar",
-          "coordinates": { "latitude": 18.0960, "longitude": 74.5840 },
-          "significance": "Lord Vishnu worshipped Ganesha here to gain Siddhi (power) to defeat demons. The idol faces east (right side) — unique in the circuit."
+          "coordinates": {
+            "latitude": 18.096,
+            "longitude": 74.584
+          },
+          "significance": "Lord Vishnu worshipped Ganesha here to gain Siddhi (power) to defeat demons. The idol faces east (right side) — unique in the circuit.",
+          "temple_id": "T068"
         },
         {
           "stop_number": 3,
           "name": "Pali — Ballaleshwar Temple",
           "ganesha_name": "Ballaleshwar",
           "city": "Pali, Raigad",
-          "coordinates": { "latitude": 18.4570, "longitude": 73.2000 },
-          "significance": "Only Ashtavinayak where Ganesha is named after a devotee (Ballal). Both Ganesha and Ballal's eyes are closed."
+          "coordinates": {
+            "latitude": 18.457,
+            "longitude": 73.2
+          },
+          "significance": "Only Ashtavinayak where Ganesha is named after a devotee (Ballal). Both Ganesha and Ballal's eyes are closed.",
+          "temple_id": "T069"
         },
         {
           "stop_number": 4,
           "name": "Mahad — Varadavinayak Temple",
           "ganesha_name": "Varadavinayak (Wish-granting Ganesha)",
           "city": "Mahad, Raigad",
-          "coordinates": { "latitude": 18.2540, "longitude": 73.4220 },
-          "significance": "The boon-granting Ganesha. An eternal lamp (Nandadeep) has been burning here continuously since 1892."
+          "coordinates": {
+            "latitude": 18.254,
+            "longitude": 73.422
+          },
+          "significance": "The boon-granting Ganesha. An eternal lamp (Nandadeep) has been burning here continuously since 1892.",
+          "temple_id": "T070"
         },
         {
           "stop_number": 5,
           "name": "Theur — Chintamani Temple",
           "ganesha_name": "Chintamani (Wish-fulfilling gem)",
           "city": "Theur, Pune",
-          "coordinates": { "latitude": 18.5100, "longitude": 74.0980 },
-          "significance": "Ganesha retrieved the Chintamani gem from demon Guna for the sage Kapila. Peshwa Madhavrao spent his last days here. Highly revered by the Peshwa rulers."
+          "coordinates": {
+            "latitude": 18.51,
+            "longitude": 74.098
+          },
+          "significance": "Ganesha retrieved the Chintamani gem from demon Guna for the sage Kapila. Peshwa Madhavrao spent his last days here. Highly revered by the Peshwa rulers.",
+          "temple_id": "T071"
         },
         {
           "stop_number": 6,
           "name": "Lenyadri — Girijatmaj Temple",
           "ganesha_name": "Girijatmaj (Son of Parvati)",
           "city": "Lenyadri, Junnar, Pune",
-          "coordinates": { "latitude": 19.2380, "longitude": 73.8420 },
-          "significance": "Only Ashtavinayak inside a cave (Buddhist caves complex). 283 steps to reach. Parvati performed penance here for 12 years to get Ganesha as her son."
+          "coordinates": {
+            "latitude": 19.238,
+            "longitude": 73.842
+          },
+          "significance": "Only Ashtavinayak inside a cave (Buddhist caves complex). 283 steps to reach. Parvati performed penance here for 12 years to get Ganesha as her son.",
+          "temple_id": "T072"
         },
         {
           "stop_number": 7,
           "name": "Ozar — Vighnahar Temple",
           "ganesha_name": "Vighnahar (Remover of Obstacles)",
           "city": "Ozar, Nashik",
-          "coordinates": { "latitude": 19.6160, "longitude": 73.8650 },
-          "significance": "Ganesha defeated the demon Vighasur here. The idol's trunk turns left (inauspicious, powerful form) — hence requires strict ritual compliance."
+          "coordinates": {
+            "latitude": 19.616,
+            "longitude": 73.865
+          },
+          "significance": "Ganesha defeated the demon Vighasur here. The idol's trunk turns left (inauspicious, powerful form) — hence requires strict ritual compliance.",
+          "temple_id": "T073"
         },
         {
           "stop_number": 8,
           "name": "Ranjangaon — Mahaganapati Temple",
           "ganesha_name": "Mahaganapati (The Great Ganesha)",
           "city": "Ranjangaon, Pune",
-          "coordinates": { "latitude": 18.9020, "longitude": 74.2830 },
-          "significance": "Shiva prayed to Ganesha here before his battle against Tripurasura. The idol has 10 trunks and 20 arms. A hidden chamber contains a larger, more ancient idol."
+          "coordinates": {
+            "latitude": 18.902,
+            "longitude": 74.283
+          },
+          "significance": "Shiva prayed to Ganesha here before his battle against Tripurasura. The idol has 10 trunks and 20 arms. A hidden chamber contains a larger, more ancient idol.",
+          "temple_id": "T074"
         }
       ]
     },
-
     {
       "id": "PC009",
       "name": "Pancha Bhuta Stala Circuit (Tamil Nadu)",
@@ -641,9 +934,14 @@
       "circuit_type": "Pancha Bhuta Stala",
       "deity_focus": "Lord Shiva (5 elements of Nature)",
       "total_temples": 5,
-      "states_covered": ["Tamil Nadu", "Andhra Pradesh"],
+      "states_covered": [
+        "Tamil Nadu",
+        "Andhra Pradesh"
+      ],
       "base_city": "Chennai / Puducherry",
-      "best_months": ["October to March"],
+      "best_months": [
+        "October to March"
+      ],
       "approx_duration_days": 7,
       "total_road_distance_km": 1100,
       "difficulty": "Easy (all accessible by road)",
@@ -656,7 +954,10 @@
           "element": "Akasha (Space / Ether)",
           "shiva_form": "Akasheshwara",
           "city": "Chidambaram, Tamil Nadu",
-          "coordinates": { "latitude": 11.3999, "longitude": 79.6938 },
+          "coordinates": {
+            "latitude": 11.3999,
+            "longitude": 79.6938
+          },
           "significance": "Shiva worshipped as formless space. The Chidambara Rahasyam (inner sanctum secret) is a curtain representing the sky — the invisible form of Shiva."
         },
         {
@@ -665,7 +966,10 @@
           "element": "Jal (Water)",
           "shiva_form": "Jambukeshwara (Appu Lingam)",
           "city": "Srirangam / Thiruvanaikaval, Trichy",
-          "coordinates": { "latitude": 10.8537, "longitude": 78.7043 },
+          "coordinates": {
+            "latitude": 10.8537,
+            "longitude": 78.7043
+          },
           "significance": "The Shivalinga is always submerged in naturally-springing water inside the Garbha Griha (sanctum). The water level never drops. One of the oldest temples in Tamil Nadu."
         },
         {
@@ -674,7 +978,10 @@
           "element": "Agni (Fire)",
           "shiva_form": "Arunachaleswarar (Agni Lingam)",
           "city": "Tiruvannamalai, Tamil Nadu",
-          "coordinates": { "latitude": 12.2325, "longitude": 79.0668 },
+          "coordinates": {
+            "latitude": 12.2325,
+            "longitude": 79.0668
+          },
           "significance": "Lord Shiva manifested as a column of fire to settle a dispute between Brahma and Vishnu. The hill Arunachala IS the Shivalinga. Deepam festival lights a fire visible for miles. Sri Ramana Maharshi's ashram is here."
         },
         {
@@ -684,7 +991,10 @@
           "element": "Prithvi (Earth)",
           "shiva_form": "Ekambareswarar (Prithvi Lingam)",
           "city": "Kanchipuram, Tamil Nadu",
-          "coordinates": { "latitude": 12.8476, "longitude": 79.7028 },
+          "coordinates": {
+            "latitude": 12.8476,
+            "longitude": 79.7028
+          },
           "significance": "Shiva worshipped as Earth element. The Shivalinga is made of sand (Prithvi). An ancient mango tree with four branches represents the four Vedas."
         },
         {
@@ -693,12 +1003,14 @@
           "element": "Vayu (Air / Wind)",
           "shiva_form": "Kalahasteeswara (Vayu Lingam)",
           "city": "Srikalahasti, Andhra Pradesh",
-          "coordinates": { "latitude": 13.7482, "longitude": 79.6983 },
+          "coordinates": {
+            "latitude": 13.7482,
+            "longitude": 79.6983
+          },
           "significance": "The only Pancha Bhuta Stala in Andhra Pradesh. The flame inside flickers constantly (showing moving air) despite no windows or vents. Famous for Rahu-Ketu Dosha (Rahukala puja) remedies."
         }
       ]
     },
-
     {
       "id": "PC010",
       "name": "Divya Desam South India Circuit",
@@ -707,24 +1019,111 @@
       "deity_focus": "Lord Vishnu (108 forms)",
       "total_desams_worldwide": 108,
       "total_desams_in_india": 106,
-      "states_covered": ["Tamil Nadu", "Kerala", "Andhra Pradesh", "Uttarakhand"],
-      "best_months": ["October to March"],
+      "states_covered": [
+        "Tamil Nadu",
+        "Kerala",
+        "Andhra Pradesh",
+        "Uttarakhand"
+      ],
+      "best_months": [
+        "October to March"
+      ],
       "approx_duration_days": 30,
       "difficulty": "Easy to Moderate",
       "significance": "108 sacred Vishnu temples glorified in the Tamil Prabandham by the 12 Alvars (Vaishnava poet-saints). First of the 108 is Srirangam, last is Tirupati. Completing all 108 is a lifetime spiritual goal for Vaishnavites.",
-      "major_desams_south_india": [
-        { "number": 1, "name": "Ranganathaswamy Temple (Srirangam)", "temple_id": "T023", "city": "Srirangam, Trichy, TN", "coordinates": { "latitude": 10.8654, "longitude": 78.6862 } },
-        { "number": 2, "name": "Venkateswara Temple (Tirupati)", "temple_id": "T013", "city": "Tirumala, AP", "coordinates": { "latitude": 13.6833, "longitude": 79.3472 } },
-        { "number": 3, "name": "Padmanabhaswamy Temple", "temple_id": "T022", "city": "Thiruvananthapuram, Kerala", "coordinates": { "latitude": 8.4882, "longitude": 76.9504 } },
-        { "number": 4, "name": "Guruvayur Temple", "temple_id": "T032", "city": "Guruvayur, Kerala", "coordinates": { "latitude": 10.5942, "longitude": 76.0358 } },
-        { "number": 5, "name": "Badrinath Temple", "temple_id": "T018", "city": "Badrinath, Uttarakhand", "coordinates": { "latitude": 30.7447, "longitude": 79.4912 } },
-        { "number": 6, "name": "Azhvar Thirunagari (Nava Tirupati)", "city": "Tirunelveli, TN", "coordinates": { "latitude": 8.4220, "longitude": 78.0030 } },
-        { "number": 7, "name": "Thirukkurungudi Temple", "city": "Tirunelveli, TN", "coordinates": { "latitude": 8.5250, "longitude": 77.6180 } },
-        { "number": 8, "name": "Nammalvar's Thiruvananthapuram (Azhwar Thirunagari)", "city": "Tirunelveli, TN", "coordinates": { "latitude": 8.4220, "longitude": 78.0030 } }
+      "note": "Full 108 Divya Desam itinerary is a lifetime circuit. Above lists the key major Desams. Tirupati (AP) and Srirangam (TN) are the most visited.",
+      "temples": [
+        {
+          "stop_number": 1,
+          "temple_id": "T023",
+          "name": "Ranganathaswamy Temple (Srirangam)",
+          "city": "Srirangam, Trichy, TN",
+          "coordinates": {
+            "latitude": 10.8654,
+            "longitude": 78.6862
+          },
+          "significance": "One of the major Divya Desam temples in South India."
+        },
+        {
+          "stop_number": 2,
+          "temple_id": "T013",
+          "name": "Venkateswara Temple (Tirupati)",
+          "city": "Tirumala, AP",
+          "coordinates": {
+            "latitude": 13.6833,
+            "longitude": 79.3472
+          },
+          "significance": "One of the major Divya Desam temples in South India."
+        },
+        {
+          "stop_number": 3,
+          "temple_id": "T022",
+          "name": "Padmanabhaswamy Temple",
+          "city": "Thiruvananthapuram, Kerala",
+          "coordinates": {
+            "latitude": 8.4882,
+            "longitude": 76.9504
+          },
+          "significance": "One of the major Divya Desam temples in South India."
+        },
+        {
+          "stop_number": 4,
+          "temple_id": "T032",
+          "name": "Guruvayur Temple",
+          "city": "Guruvayur, Kerala",
+          "coordinates": {
+            "latitude": 10.5942,
+            "longitude": 76.0358
+          },
+          "significance": "One of the major Divya Desam temples in South India."
+        },
+        {
+          "stop_number": 5,
+          "temple_id": "T018",
+          "name": "Badrinath Temple",
+          "city": "Badrinath, Uttarakhand",
+          "coordinates": {
+            "latitude": 30.7447,
+            "longitude": 79.4912
+          },
+          "significance": "One of the major Divya Desam temples in South India."
+        },
+        {
+          "stop_number": 6,
+          "temple_id": "T081",
+          "name": "Azhvar Thirunagari (Nava Tirupati)",
+          "city": "Tirunelveli, TN",
+          "coordinates": {
+            "latitude": 8.422,
+            "longitude": 78.003
+          },
+          "significance": "One of the major Divya Desam temples in South India."
+        },
+        {
+          "stop_number": 7,
+          "temple_id": "T080",
+          "name": "Thirukkurungudi Temple",
+          "city": "Tirunelveli, TN",
+          "coordinates": {
+            "latitude": 8.525,
+            "longitude": 77.618
+          },
+          "significance": "One of the major Divya Desam temples in South India."
+        },
+        {
+          "stop_number": 8,
+          "temple_id": "T081",
+          "name": "Nammalvar's Thiruvananthapuram (Azhwar Thirunagari)",
+          "city": "Tirunelveli, TN",
+          "coordinates": {
+            "latitude": 8.422,
+            "longitude": 78.003
+          },
+          "significance": "One of the major Divya Desam temples in South India."
+        }
       ],
-      "note": "Full 108 Divya Desam itinerary is a lifetime circuit. Above lists the key major Desams. Tirupati (AP) and Srirangam (TN) are the most visited."
+      "total_temples": 8
     },
-
     {
       "id": "PC011",
       "name": "Braj Parikrama (Mathura-Vrindavan Circuit)",
@@ -732,24 +1131,93 @@
       "circuit_type": "Parikrama (Circumambulation)",
       "deity_focus": "Lord Krishna",
       "total_sites": 40,
-      "states_covered": ["Uttar Pradesh"],
+      "states_covered": [
+        "Uttar Pradesh"
+      ],
       "base_city": "Mathura / Vrindavan",
-      "best_months": ["October", "November", "December", "January", "February", "March"],
+      "best_months": [
+        "October",
+        "November",
+        "December",
+        "January",
+        "February",
+        "March"
+      ],
       "best_occasion": "Kartik month (October–November) — lakhs do the parikrama on foot",
       "approx_duration_days": 30,
       "total_parikrama_distance_km": 336,
       "difficulty": "Moderate (long foot pilgrimage; shorter Panchakroshi Parikrama in 5 days also popular)",
       "significance": "The sacred land of Lord Krishna's childhood. The 84 Kos Braj Parikrama circumambulates the entire Braj Mandal covering 12 forests where Krishna played. Devotees walk the route barefoot, singing bhajans.",
-      "key_stops": [
-        { "name": "Mathura — Krishna Janmabhoomi", "coordinates": { "latitude": 27.4924, "longitude": 77.6737 }, "significance": "Birthplace of Krishna" },
-        { "name": "Vrindavan", "coordinates": { "latitude": 27.5757, "longitude": 77.6793 }, "significance": "Krishna's childhood forest — the eternal Vrindavan" },
-        { "name": "Govardhan Hill", "coordinates": { "latitude": 27.5020, "longitude": 77.4680 }, "significance": "Hill lifted by Krishna to protect Braj from Indra's rains (Govardhan Puja)" },
-        { "name": "Barsana", "coordinates": { "latitude": 27.6545, "longitude": 77.3785 }, "significance": "Birthplace of Radha Rani. Famous for Lathmar Holi" },
-        { "name": "Nandagaon", "coordinates": { "latitude": 27.7176, "longitude": 77.3928 }, "significance": "Krishna's foster father Nanda Baba's village" },
-        { "name": "Gokul", "coordinates": { "latitude": 27.4509, "longitude": 77.7104 }, "significance": "Where baby Krishna was raised by Yashoda and Nanda" }
-      ]
+      "temples": [
+        {
+          "stop_number": 1,
+          "temple_id": null,
+          "name": "Mathura — Krishna Janmabhoomi",
+          "city": "Mathura",
+          "coordinates": {
+            "latitude": 27.4924,
+            "longitude": 77.6737
+          },
+          "significance": "Birthplace of Krishna"
+        },
+        {
+          "stop_number": 2,
+          "temple_id": "T058",
+          "name": "Vrindavan",
+          "city": "Vrindavan",
+          "coordinates": {
+            "latitude": 27.5757,
+            "longitude": 77.6793
+          },
+          "significance": "Krishna's childhood forest — the eternal Vrindavan"
+        },
+        {
+          "stop_number": 3,
+          "temple_id": null,
+          "name": "Govardhan Hill",
+          "city": "Braj Region",
+          "coordinates": {
+            "latitude": 27.502,
+            "longitude": 77.468
+          },
+          "significance": "Hill lifted by Krishna to protect Braj from Indra's rains (Govardhan Puja)"
+        },
+        {
+          "stop_number": 4,
+          "temple_id": null,
+          "name": "Barsana",
+          "city": "Braj Region",
+          "coordinates": {
+            "latitude": 27.6545,
+            "longitude": 77.3785
+          },
+          "significance": "Birthplace of Radha Rani. Famous for Lathmar Holi"
+        },
+        {
+          "stop_number": 5,
+          "temple_id": null,
+          "name": "Nandagaon",
+          "city": "Braj Region",
+          "coordinates": {
+            "latitude": 27.7176,
+            "longitude": 77.3928
+          },
+          "significance": "Krishna's foster father Nanda Baba's village"
+        },
+        {
+          "stop_number": 6,
+          "temple_id": null,
+          "name": "Gokul",
+          "city": "Braj Region",
+          "coordinates": {
+            "latitude": 27.4509,
+            "longitude": 77.7104
+          },
+          "significance": "Where baby Krishna was raised by Yashoda and Nanda"
+        }
+      ],
+      "total_temples": 6
     },
-
     {
       "id": "PC012",
       "name": "Odisha Golden Triangle Pilgrimage",
@@ -757,9 +1225,13 @@
       "circuit_type": "Regional Pilgrimage + Heritage",
       "deity_focus": "Lord Jagannath (Vishnu), Lord Shiva, Lord Surya",
       "total_temples": 5,
-      "states_covered": ["Odisha"],
+      "states_covered": [
+        "Odisha"
+      ],
       "base_city": "Bhubaneswar",
-      "best_months": ["October to March"],
+      "best_months": [
+        "October to March"
+      ],
       "approx_duration_days": 4,
       "total_road_distance_km": 140,
       "difficulty": "Easy (all accessible by road)",
@@ -770,14 +1242,20 @@
           "temple_id": "T028",
           "name": "Lingaraja Temple",
           "city": "Bhubaneswar",
-          "coordinates": { "latitude": 20.2390, "longitude": 85.8340 },
+          "coordinates": {
+            "latitude": 20.239,
+            "longitude": 85.834
+          },
           "significance": "Largest and finest temple of Bhubaneswar's 700+ temples. 11th century Kalinga architecture."
         },
         {
           "stop_number": 2,
           "name": "Mukteshwar Temple",
           "city": "Bhubaneswar",
-          "coordinates": { "latitude": 20.2485, "longitude": 85.8330 },
+          "coordinates": {
+            "latitude": 20.2485,
+            "longitude": 85.833
+          },
           "significance": "Gem of Odisha temple architecture (10th century). Intricate carvings. The torana (arch) at entrance is unparalleled in Indian temple art."
         },
         {
@@ -785,7 +1263,10 @@
           "temple_id": "T017",
           "name": "Jagannath Temple (Puri)",
           "city": "Puri",
-          "coordinates": { "latitude": 19.8028, "longitude": 85.8177 },
+          "coordinates": {
+            "latitude": 19.8028,
+            "longitude": 85.8177
+          },
           "significance": "Maha Char Dham. World-renowned Rath Yatra. The Mahaprasad (consecrated food) is believed to be cooked by Goddess Lakshmi herself."
         },
         {
@@ -793,18 +1274,23 @@
           "temple_id": "T029",
           "name": "Konark Sun Temple",
           "city": "Konark",
-          "coordinates": { "latitude": 19.8876, "longitude": 86.0946 },
+          "coordinates": {
+            "latitude": 19.8876,
+            "longitude": 86.0946
+          },
           "significance": "UNESCO World Heritage. The Black Pagoda. 13th century chariot of the Sun with 24 giant carved wheels."
         },
         {
           "stop_number": 5,
           "name": "Sakshi Gopal Temple",
           "city": "Sakhigopal (near Puri)",
-          "coordinates": { "latitude": 19.9271, "longitude": 85.7445 },
+          "coordinates": {
+            "latitude": 19.9271,
+            "longitude": 85.7445
+          },
           "significance": "Krishna bore witness (Sakshi) to a promise made by a devotee — a living account of divine intervention. One of the most revered Vishnu temples in Odisha."
         }
       ]
     }
-
   ]
 }
