@@ -65,7 +65,14 @@ export default function IndiaMandirMap() {
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set())
   const [temples, setTemples] = useState<Temple[]>([])
   const [circuits, setCircuits] = useState<Circuit[]>([])
+  const [mobileView, setMobileView] = useState<'map' | 'list'>('map')
   const supabase = createClient()
+
+  useEffect(() => {
+    if (selectedState || selectedCircuit) {
+      setMobileView('list')
+    }
+  }, [selectedState, selectedCircuit])
 
   useEffect(() => {
     Promise.all([
@@ -129,9 +136,9 @@ export default function IndiaMandirMap() {
   }
 
   return (
-    <div className="flex h-full flex-col lg:flex-row gap-0 overflow-hidden">
+    <div className="flex h-full flex-col lg:flex-row gap-0 overflow-hidden relative">
       {/* SVG Map Panel */}
-      <div className="flex-1 bg-[var(--kutch-white)] flex flex-col">
+      <div className={`flex-1 bg-[var(--kutch-white)] flex flex-col ${mobileView === 'map' ? 'flex' : 'hidden lg:flex'}`}>
         {/* Circuit filter strip */}
         <div className="p-3 border-b border-[var(--warm-sand)] bg-white flex gap-2 overflow-x-auto">
           <button
@@ -218,7 +225,7 @@ export default function IndiaMandirMap() {
       </div>
 
       {/* Right Panel */}
-      <div className="w-full lg:w-80 flex-shrink-0 border-t lg:border-t-0 lg:border-l border-[var(--warm-sand)] bg-white flex flex-col overflow-hidden max-h-64 lg:max-h-none">
+      <div className={`w-full lg:w-80 flex-shrink-0 border-t lg:border-t-0 lg:border-l border-[var(--warm-sand)] bg-white flex flex-col overflow-hidden flex-1 lg:flex-initial lg:max-h-none ${mobileView === 'list' ? 'flex' : 'hidden lg:flex'}`}>
         {selectedState ? (
           <>
             <div className="px-4 py-3 border-b border-[var(--warm-sand)] flex items-center justify-between">
@@ -226,7 +233,7 @@ export default function IndiaMandirMap() {
                 <p className="font-bold text-[var(--indigo-deep)] text-sm">{activeStateName}</p>
                 <p className="text-xs text-[var(--warm-charcoal)]/50">{activeTemples.length} sacred sites</p>
               </div>
-              <button onClick={() => setSelectedState(null)} className="text-[var(--warm-charcoal)]/40 hover:text-[var(--warm-charcoal)]">
+              <button onClick={() => { setSelectedState(null); setMobileView('map') }} className="text-[var(--warm-charcoal)]/40 hover:text-[var(--warm-charcoal)]">
                 <span className="material-symbols-outlined text-[18px]">close</span>
               </button>
             </div>
@@ -268,9 +275,14 @@ export default function IndiaMandirMap() {
           </>
         ) : selectedCircuit ? (
           <>
-            <div className="px-4 py-3 border-b border-[var(--warm-sand)]">
-              <p className="font-bold text-[var(--indigo-deep)] text-sm">{selectedCircuit.name}</p>
-              <p className="text-xs text-[var(--warm-charcoal)]/50">{selectedCircuit.total_temples} temples · {selectedCircuit.approx_duration_days} days</p>
+            <div className="px-4 py-3 border-b border-[var(--warm-sand)] flex items-center justify-between">
+              <div>
+                <p className="font-bold text-[var(--indigo-deep)] text-sm">{selectedCircuit.name}</p>
+                <p className="text-xs text-[var(--warm-charcoal)]/50">{selectedCircuit.total_temples} temples · {selectedCircuit.approx_duration_days} days</p>
+              </div>
+              <button onClick={() => { setSelectedCircuit(null); setMobileView('map') }} className="text-[var(--warm-charcoal)]/40 hover:text-[var(--warm-charcoal)]">
+                <span className="material-symbols-outlined text-[18px]">close</span>
+              </button>
             </div>
             <div className="flex-1 overflow-y-auto divide-y divide-[var(--warm-sand)]/60">
               {selectedCircuit.temples.map(stop => {
@@ -313,6 +325,21 @@ export default function IndiaMandirMap() {
           </div>
         )}
       </div>
+
+      {/* Floating Toggle Button on Mobile */}
+      {(selectedState || selectedCircuit) && (
+        <div className="lg:hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-30">
+          <button
+            onClick={() => setMobileView(prev => prev === 'map' ? 'list' : 'map')}
+            className="bg-[var(--indigo-deep)] text-white px-4 py-2.5 rounded-full shadow-lg text-xs font-semibold flex items-center gap-1.5 border border-white/20 active:scale-95 transition-transform"
+          >
+            <span className="material-symbols-outlined text-[16px]">
+              {mobileView === 'map' ? 'format_list_bulleted' : 'map'}
+            </span>
+            {mobileView === 'map' ? 'Show List' : 'Show Map'}
+          </button>
+        </div>
+      )}
     </div>
   )
 }

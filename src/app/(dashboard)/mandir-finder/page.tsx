@@ -15,6 +15,7 @@ interface Mandir {
 
 export default function MandirFinderPage() {
   const [tab, setTab] = useState<'map' | 'nearby'>('map')
+  const [viewMode, setViewMode] = useState<'map' | 'list'>('map')
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<any>(null)
   const markersRef = useRef<any[]>([])
@@ -36,8 +37,23 @@ export default function MandirFinderPage() {
   }, [])
 
   useEffect(() => {
-    if (tab === 'nearby') initMap()
-  }, [tab])
+    if (tab === 'nearby') {
+      if (!mapInstanceRef.current) {
+        initMap()
+      } else {
+        setTimeout(() => {
+          mapInstanceRef.current?.invalidateSize()
+        }, 200)
+      }
+    }
+  }, [tab]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (mapInstanceRef.current && userLat !== 20.5937 && userLng !== 78.9629) {
+      mapInstanceRef.current.setView([userLat, userLng], 8)
+      fetchNearby()
+    }
+  }, [userLat, userLng]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function initMap() {
     if (mapInstanceRef.current || !mapRef.current) return
@@ -63,7 +79,11 @@ export default function MandirFinderPage() {
     try {
       const res = await fetch(`/api/mandir?lat=${userLat}&lng=${userLng}${query ? `&q=${query}` : ''}`)
       const data = await res.json()
-      if (data.success) { setMandirs(data.data); updateMarkers(data.data) }
+      if (data.success) {
+        setMandirs(data.data)
+        updateMarkers(data.data)
+        if (data.data.length > 0) setViewMode('list')
+      }
     } catch { toast.error('Failed to load') }
     setLoading(false)
   }
@@ -79,7 +99,10 @@ export default function MandirFinderPage() {
         html: `<div style="background:#C67D53;color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"><span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1">temple_hindu</span></div>`,
         iconSize: [32, 32], iconAnchor: [16, 16],
       })
-      return L.marker([m.lat, m.lng], { icon }).addTo(mapInstanceRef.current).on('click', () => setSelected(m))
+      return L.marker([m.lat, m.lng], { icon }).addTo(mapInstanceRef.current).on('click', () => {
+        setSelected(m)
+        mapInstanceRef.current?.flyTo([m.lat, m.lng], 13)
+      })
     })
   }
 
@@ -124,13 +147,14 @@ export default function MandirFinderPage() {
             <span className="material-symbols-outlined text-[16px]">search</span>
           </button>
         </div>
-        <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
-          <div className="lg:w-72 flex-shrink-0 overflow-y-auto border-b lg:border-b-0 lg:border-r border-[var(--warm-sand)] max-h-48 lg:max-h-none">
+        <div className="flex flex-col lg:flex-row flex-1 overflow-hidden relative">
+          {/* List panel */}
+          <div className={`lg:w-72 flex-shrink-0 overflow-y-auto border-b lg:border-b-0 lg:border-r border-[var(--warm-sand)] flex-1 lg:flex-initial lg:max-h-none ${viewMode === 'list' ? 'flex flex-col' : 'hidden lg:flex lg:flex-col'}`}>
             {loading ? <div className="flex items-center justify-center h-24 text-[var(--warm-charcoal)]/40 text-sm">Loading...</div>
               : mandirs.length === 0
-                ? <div className="p-4 text-sm text-[var(--warm-charcoal)]/40 text-center">Search to find nearby temples</div>
+                ? <div className="p-4 text-sm text-[var(--warm-charcoal)]/40 text-center flex-1 flex items-center justify-center">Search to find nearby temples</div>
                 : mandirs.map(m => (
-                  <button key={m.id} onClick={() => { setSelected(m); mapInstanceRef.current?.flyTo([m.lat, m.lng], 13) }}
+                  <button key={m.id} onClick={() => { setSelected(m); mapInstanceRef.current?.flyTo([m.lat, m.lng], 13); setViewMode('map') }}
                     className={`w-full text-left p-3 border-b border-[var(--warm-sand)] hover:bg-[var(--warm-sand)] transition-all ${selected?.id === m.id ? 'bg-[var(--warm-sand)]' : ''}`}>
                     <div className="flex items-start gap-2">
                       <span className="material-symbols-outlined text-[18px] flex-shrink-0 text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>temple_hindu</span>
@@ -147,10 +171,12 @@ export default function MandirFinderPage() {
                 ))
             }
           </div>
-          <div className="flex-1 relative">
-            <div ref={mapRef} className="w-full h-full" />
+
+          {/* Map panel */}
+          <div className={`flex-1 relative ${viewMode === 'map' ? 'flex flex-col' : 'hidden lg:flex lg:flex-col'}`}>
+            <div ref={mapRef} className="w-full h-full min-h-[300px] lg:min-h-none" />
             {selected && (
-              <div className="absolute bottom-4 right-4 w-72 bg-white rounded-2xl shadow-xl border border-[var(--warm-sand)] p-4 z-[1000]">
+              <div className="absolute bottom-16 lg:bottom-4 right-4 left-4 lg:left-auto lg:w-72 bg-white rounded-2xl shadow-xl border border-[var(--warm-sand)] p-4 z-[1000]">
                 <div className="flex items-start justify-between mb-2">
                   <div><p className="font-bold text-[var(--indigo-deep)] text-sm">{selected.name}</p><p className="text-xs text-[var(--warm-charcoal)]/60">{selected.city}, {selected.state}</p></div>
                   <button onClick={() => setSelected(null)}><span className="material-symbols-outlined text-[18px] text-[var(--warm-charcoal)]/40">close</span></button>
@@ -166,6 +192,21 @@ export default function MandirFinderPage() {
               </div>
             )}
           </div>
+
+          {/* Floating toggle button on mobile for Near Me */}
+          {mandirs.length > 0 && (
+            <div className="lg:hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-[1000]">
+              <button
+                onClick={() => setViewMode(prev => prev === 'map' ? 'list' : 'map')}
+                className="bg-[var(--indigo-deep)] text-white px-4 py-2.5 rounded-full shadow-lg text-xs font-semibold flex items-center gap-1.5 border border-white/20 active:scale-95 transition-transform"
+              >
+                <span className="material-symbols-outlined text-[16px]">
+                  {viewMode === 'map' ? 'format_list_bulleted' : 'map'}
+                </span>
+                {viewMode === 'map' ? 'Show List' : 'Show Map'}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
