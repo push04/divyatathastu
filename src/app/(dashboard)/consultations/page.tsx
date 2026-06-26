@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import SudarshanLoader from '@/components/SudarshanLoader'
 import ConsultationRoom from '@/components/consultation/ConsultationRoom'
 
@@ -142,9 +143,16 @@ export default function ConsultationsPage() {
 
           {filtered.length === 0 ? (
             <div className="card-divine p-12 text-center">
-              <div className="flex justify-center mb-3"><span className="material-symbols-outlined text-[40px] text-[var(--indigo-deep)]" style={{ fontVariationSettings: "'FILL' 1" }}>calendar_today</span></div>
-              <p className="font-bold text-[var(--indigo-deep)] mb-1">No slots available</p>
-              <p className="text-sm text-[var(--warm-charcoal)]/60">Check back later or contact us via Mailbox</p>
+              <div className="flex justify-center mb-3">
+                <span className="material-symbols-outlined text-[40px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>event_busy</span>
+              </div>
+              <p className="font-bold text-lg text-[var(--indigo-deep)] mb-2">Slots Currently Filled</p>
+              <p className="text-sm text-[var(--warm-charcoal)]/75 max-w-md mx-auto leading-relaxed mb-3">
+                To ensure deep, high-quality focus for every session, our Vedic experts are capped at 5 consultations of 45 minutes each per day (between 5:00 PM and 11:00 PM IST).
+              </p>
+              <p className="text-sm text-[var(--indigo-deep)] font-medium max-w-md mx-auto">
+                We kindly invite you to check back tomorrow to book your consultation, or write to us in the <Link href="/mailbox" className="text-[var(--terracotta)] hover:underline font-semibold">Mailbox</Link> if you have an urgent query.
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
