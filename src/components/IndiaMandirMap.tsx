@@ -56,6 +56,7 @@ export default function IndiaMandirMap() {
   const [selectedState, setSelectedState] = useState<string | null>(null)
   const [selectedCircuit, setSelectedCircuit] = useState<Circuit | null>(null)
   const [selectedTemple, setSelectedTemple] = useState<Temple | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const [temples, setTemples] = useState<Temple[]>([])
   const [circuits, setCircuits] = useState<Circuit[]>([])
   const [mobileView, setMobileView] = useState<'map' | 'list'>('map')
@@ -211,7 +212,7 @@ export default function IndiaMandirMap() {
               ) : activeTemples.map(t => (
                 <div
                   key={t.id}
-                  onClick={() => setSelectedTemple(t)}
+                  onClick={() => { setSelectedTemple(t); setIsModalOpen(true) }}
                   className="p-3 hover:bg-[var(--warm-sand)]/20 transition-colors cursor-pointer"
                 >
                   <div className="flex items-start justify-between gap-2 mb-1">
@@ -260,7 +261,7 @@ export default function IndiaMandirMap() {
                 return (
                   <div
                     key={stop.stop_number}
-                    onClick={() => { if (temple) setSelectedTemple(temple) }}
+                    onClick={() => { if (temple) { setSelectedTemple(temple); setIsModalOpen(true) } }}
                     className="p-3 hover:bg-[var(--warm-sand)]/20 transition-colors cursor-pointer"
                   >
                     <div className="flex items-start gap-2">
@@ -319,8 +320,13 @@ export default function IndiaMandirMap() {
       {/* Temple Detail Modal */}
       <TempleDetailModal
         temple={selectedTemple}
-        isOpen={!!selectedTemple}
-        onClose={() => setSelectedTemple(null)}
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false)
+          // Delay clearing temple data so AnimatePresence exit animation
+          // can render real content while fading out (prevents flash/vanish)
+          setTimeout(() => setSelectedTemple(null), 400)
+        }}
       />
     </div>
   )

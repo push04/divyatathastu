@@ -1,5 +1,6 @@
 'use client'
 
+import { useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, MapPin, Calendar, Clock, Plane, Train, Compass, Landmark, ShieldAlert, Footprints } from 'lucide-react'
 
@@ -51,27 +52,42 @@ const CATEGORY_COLORS: Record<string, string> = {
 }
 
 export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDetailModalProps) {
-  if (!temple) return null
+  // Keep a ref to the last valid temple so the exit animation always has content to render.
+  // Without this, when onClose sets temple=null, the content disappears instantly
+  // before AnimatePresence can animate the exit — causing the "flash then vanish" bug.
+  const lastTempleRef = useRef<Temple | null>(null)
+  useEffect(() => {
+    if (temple) {
+      lastTempleRef.current = temple
+    }
+  }, [temple])
+
+  // Use the current temple or the cached one so exit animation always has real content
+  const displayTemple = temple ?? lastTempleRef.current
 
   return (
     <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-0 sm:p-4">
+      {isOpen && displayTemple && (
+        <div
+          key={displayTemple.id}
+          className="fixed inset-0 z-[9999] flex items-center justify-center p-0 sm:p-4"
+        >
           {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
             onClick={onClose}
-            className="absolute inset-0 bg-black/60 backdrop-blur-xs"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           />
 
           {/* Modal Container */}
           <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            initial={{ opacity: 0, y: 48, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 50, scale: 0.95 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+            exit={{ opacity: 0, y: 48, scale: 0.96 }}
+            transition={{ type: 'spring', damping: 26, stiffness: 320 }}
             className="relative w-full sm:max-w-2xl bg-white sm:rounded-2xl shadow-2xl flex flex-col h-full sm:h-auto sm:max-h-[90vh] overflow-hidden z-10 border border-[var(--warm-sand)]"
           >
             {/* Header top colored bar */}
@@ -81,16 +97,16 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
             <div className="px-5 py-4 border-b border-[var(--warm-sand)]/60 flex items-start justify-between gap-4 bg-amber-50/10">
               <div className="flex-1 min-w-0">
                 <h2 className="text-xl sm:text-2xl font-bold font-serif text-[var(--indigo-deep)] leading-tight">
-                  {temple.name}
+                  {displayTemple.name}
                 </h2>
-                {temple.local_name && (
+                {displayTemple.local_name && (
                   <p className="text-xs sm:text-sm text-[var(--saffron)] font-medium font-sans mt-0.5">
-                    {temple.local_name}
+                    {displayTemple.local_name}
                   </p>
                 )}
                 {/* Categories */}
                 <div className="flex flex-wrap gap-1.5 mt-2">
-                  {(temple.categories || []).map(cat => (
+                  {(displayTemple.categories || []).map(cat => (
                     <span
                       key={cat}
                       className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${
@@ -100,14 +116,14 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
                       {cat}
                     </span>
                   ))}
-                  {temple.architecture_style && (
+                  {displayTemple.architecture_style && (
                     <span className="text-[10px] px-2 py-0.5 rounded-full font-medium border border-orange-100 bg-orange-50/40 text-[var(--terracotta)]">
-                      {temple.architecture_style}
+                      {displayTemple.architecture_style}
                     </span>
                   )}
                 </div>
               </div>
-              
+
               {/* Close Button */}
               <button
                 onClick={onClose}
@@ -126,14 +142,14 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
                     <Landmark className="w-4 h-4 text-[var(--terracotta)] mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="text-[10px] text-[var(--warm-charcoal)]/50 uppercase tracking-wider font-semibold">Presiding Deity</p>
-                      <p className="text-sm font-medium text-[var(--indigo-deep)]">{temple.deity}</p>
+                      <p className="text-sm font-medium text-[var(--indigo-deep)]">{displayTemple.deity}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-2.5">
                     <Clock className="w-4 h-4 text-[var(--terracotta)] mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="text-[10px] text-[var(--warm-charcoal)]/50 uppercase tracking-wider font-semibold">Darshan Timings</p>
-                      <p className="text-sm font-medium text-[var(--indigo-deep)]">{temple.darshan_timings}</p>
+                      <p className="text-sm font-medium text-[var(--indigo-deep)]">{displayTemple.darshan_timings}</p>
                     </div>
                   </div>
                 </div>
@@ -144,7 +160,7 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
                     <div>
                       <p className="text-[10px] text-[var(--warm-charcoal)]/50 uppercase tracking-wider font-semibold">Location</p>
                       <p className="text-sm font-medium text-[var(--indigo-deep)]">
-                        {temple.city}{temple.district ? `, ${temple.district}` : ''}, {temple.state}
+                        {displayTemple.city}{displayTemple.district ? `, ${displayTemple.district}` : ''}, {displayTemple.state}
                       </p>
                     </div>
                   </div>
@@ -152,21 +168,21 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
                     <Calendar className="w-4 h-4 text-[var(--terracotta)] mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="text-[10px] text-[var(--warm-charcoal)]/50 uppercase tracking-wider font-semibold">Best Time to Visit</p>
-                      <p className="text-sm font-medium text-[var(--indigo-deep)]">{temple.best_time_to_visit}</p>
+                      <p className="text-sm font-medium text-[var(--indigo-deep)]">{displayTemple.best_time_to_visit}</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Deity Description */}
-              {temple.deity_description && (
+              {displayTemple.deity_description && (
                 <div className="space-y-2">
                   <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--indigo-deep)] border-b border-[var(--warm-sand)]/60 pb-1 flex items-center gap-1.5">
                     <span className="w-1.5 h-3 bg-[var(--terracotta)] rounded-sm" />
-                    Deity & Iconography
+                    Deity &amp; Iconography
                   </h3>
                   <p className="text-sm text-[var(--warm-charcoal)]/80 leading-relaxed font-sans font-[350]">
-                    {temple.deity_description}
+                    {displayTemple.deity_description}
                   </p>
                 </div>
               )}
@@ -175,27 +191,27 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
               <div className="space-y-2">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--indigo-deep)] border-b border-[var(--warm-sand)]/60 pb-1 flex items-center gap-1.5">
                   <span className="w-1.5 h-3 bg-[var(--terracotta)] rounded-sm" />
-                  Significance & History
+                  Significance &amp; History
                 </h3>
                 <p className="text-sm text-[var(--warm-charcoal)]/80 leading-relaxed font-sans font-[350]">
-                  {temple.significance}
+                  {displayTemple.significance}
                 </p>
-                {temple.history_and_legend && (
+                {displayTemple.history_and_legend && (
                   <p className="text-sm text-[var(--warm-charcoal)]/80 leading-relaxed mt-2 font-sans font-[350]">
-                    {temple.history_and_legend}
+                    {displayTemple.history_and_legend}
                   </p>
                 )}
               </div>
 
               {/* Special Events */}
-              {temple.special_events && temple.special_events.length > 0 && (
+              {displayTemple.special_events && displayTemple.special_events.length > 0 && (
                 <div className="space-y-2">
                   <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--indigo-deep)] border-b border-[var(--warm-sand)]/60 pb-1 flex items-center gap-1.5">
                     <span className="w-1.5 h-3 bg-[var(--terracotta)] rounded-sm" />
-                    Festivals & Special Events
+                    Festivals &amp; Special Events
                   </h3>
                   <div className="flex flex-wrap gap-2 pt-1">
-                    {(temple.special_events || []).map(event => (
+                    {(displayTemple.special_events || []).map(event => (
                       <span
                         key={event}
                         className="text-xs px-3 py-1 rounded-lg bg-[var(--warm-sand)]/30 text-[var(--indigo-deep)] border border-[var(--warm-sand)] font-medium"
@@ -211,24 +227,24 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
               <div className="space-y-3">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-[var(--indigo-deep)] border-b border-[var(--warm-sand)]/60 pb-1 flex items-center gap-1.5">
                   <span className="w-1.5 h-3 bg-[var(--terracotta)] rounded-sm" />
-                  Travel & Connectivity
+                  Travel &amp; Connectivity
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-                  {temple.nearest_airport && (
+                  {displayTemple.nearest_airport && (
                     <div className="flex items-start gap-2.5 p-3 rounded-lg border border-[var(--warm-sand)]/50 bg-gray-50/30">
                       <Plane className="w-4 h-4 text-sky-600 mt-0.5 flex-shrink-0" />
                       <div>
                         <p className="text-[10px] text-[var(--warm-charcoal)]/50 font-bold uppercase">Nearest Airport</p>
-                        <p className="text-xs text-[var(--warm-charcoal)]/80 mt-0.5 leading-snug">{temple.nearest_airport}</p>
+                        <p className="text-xs text-[var(--warm-charcoal)]/80 mt-0.5 leading-snug">{displayTemple.nearest_airport}</p>
                       </div>
                     </div>
                   )}
-                  {temple.nearest_railway && (
+                  {displayTemple.nearest_railway && (
                     <div className="flex items-start gap-2.5 p-3 rounded-lg border border-[var(--warm-sand)]/50 bg-gray-50/30">
                       <Train className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
                       <div>
                         <p className="text-[10px] text-[var(--warm-charcoal)]/50 font-bold uppercase">Nearest Railway</p>
-                        <p className="text-xs text-[var(--warm-charcoal)]/80 mt-0.5 leading-snug">{temple.nearest_railway}</p>
+                        <p className="text-xs text-[var(--warm-charcoal)]/80 mt-0.5 leading-snug">{displayTemple.nearest_railway}</p>
                       </div>
                     </div>
                   )}
@@ -236,14 +252,14 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
               </div>
 
               {/* Travel Tips Section */}
-              {temple.travel_tips && temple.travel_tips.length > 0 && (
+              {displayTemple.travel_tips && displayTemple.travel_tips.length > 0 && (
                 <div className="space-y-2 bg-orange-50/20 border border-orange-100/50 rounded-xl p-4">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-[var(--terracotta)] flex items-center gap-1.5 mb-2">
                     <ShieldAlert className="w-4 h-4" />
                     Important Visitor Guidelines
                   </h4>
                   <ul className="space-y-2 text-xs text-[var(--warm-charcoal)]/80 leading-relaxed font-sans">
-                    {(temple.travel_tips || []).map((tip, idx) => (
+                    {(displayTemple.travel_tips || []).map((tip, idx) => (
                       <li key={idx} className="flex items-start gap-2">
                         <Footprints className="w-3.5 h-3.5 text-[var(--saffron)] flex-shrink-0 mt-0.5" />
                         <span>{tip}</span>
@@ -263,7 +279,7 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
                 Close Details
               </button>
               <a
-                href={`https://www.openstreetmap.org/directions?to=${temple.coordinates?.latitude || 0},${temple.coordinates?.longitude || 0}`}
+                href={`https://www.openstreetmap.org/directions?to=${displayTemple.coordinates?.latitude || 0},${displayTemple.coordinates?.longitude || 0}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 py-2 text-xs font-semibold rounded-lg bg-[var(--indigo-deep)] text-white hover:bg-[var(--indigo-deep)]/90 transition-all flex items-center gap-1.5 shadow-md active:scale-[0.98]"

@@ -34,6 +34,7 @@ export default function MandirFinderPage() {
   const [userLat, setUserLat] = useState(20.5937)
   const [userLng, setUserLng] = useState(78.9629)
   const [popupTemple, setPopupTemple] = useState<Mandir | null>(null)
+  const [isPopupOpen, setIsPopupOpen] = useState(false)
 
   useEffect(() => {
     navigator.geolocation?.getCurrentPosition(
@@ -148,7 +149,7 @@ export default function MandirFinderPage() {
                         <p className="text-xs text-[var(--warm-charcoal)]/60">{m.city}, {m.state}</p>
                         <p className="text-xs text-[var(--terracotta)]">{m.distance} km away</p>
                       </div>
-                      <button onClick={e => { e.stopPropagation(); setPopupTemple(m) }} className="flex-shrink-0 self-center text-[var(--warm-charcoal)]/30 hover:text-[var(--indigo-deep)] transition-colors p-1">
+                      <button onClick={e => { e.stopPropagation(); setPopupTemple(m); setIsPopupOpen(true) }} className="flex-shrink-0 self-center text-[var(--warm-charcoal)]/30 hover:text-[var(--indigo-deep)] transition-colors p-1">
                         <span className="material-symbols-outlined text-[20px]">info</span>
                       </button>
                     </div>
@@ -171,7 +172,7 @@ export default function MandirFinderPage() {
                   <a href={`https://www.openstreetmap.org/directions?to=${selected.lat},${selected.lng}`} target="_blank" rel="noopener noreferrer"
                     className="flex-1 py-1.5 rounded-lg text-xs font-medium bg-[var(--indigo-deep)] text-white text-center flex items-center justify-center gap-1"><span className="material-symbols-outlined text-[12px]">directions</span>Directions</a>
                   <button 
-                    onClick={() => setPopupTemple(selected)}
+                    onClick={() => { setPopupTemple(selected); setIsPopupOpen(true) }}
                     className="flex-1 py-1.5 rounded-lg text-xs font-medium bg-[var(--saffron)] hover:bg-[var(--saffron)]/90 text-white text-center flex items-center justify-center gap-1"
                   >
                     <span className="material-symbols-outlined text-[12px]">info</span>Details
@@ -201,8 +202,11 @@ export default function MandirFinderPage() {
       {/* Temple Detail Modal */}
       <TempleDetailModal
         temple={popupTemple as unknown as Temple}
-        isOpen={!!popupTemple}
-        onClose={() => setPopupTemple(null)}
+        isOpen={isPopupOpen}
+        onClose={() => {
+          setIsPopupOpen(false)
+          setTimeout(() => setPopupTemple(null), 400)
+        }}
       />
     </div>
   )
