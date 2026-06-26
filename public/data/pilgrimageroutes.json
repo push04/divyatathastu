@@ -2,7 +2,7 @@
   "_meta": {
     "dataset": "Major Pilgrimage Circuits of India",
     "version": "1.0.0",
-    "total_circuits": 12,
+    "total_circuits": 13,
     "last_updated": "2026-05-21",
     "coordinate_source": "Wikipedia, Survey of India, Archaeological Survey of India, government tourism boards",
     "notes": "Temple sequences follow traditional/scriptural order. Distances are approximate road distances. Some temples appear in multiple circuits. All circuits reference temple IDs in mandirs.json."
@@ -1256,7 +1256,8 @@
             "latitude": 20.2485,
             "longitude": 85.833
           },
-          "significance": "Gem of Odisha temple architecture (10th century). Intricate carvings. The torana (arch) at entrance is unparalleled in Indian temple art."
+          "significance": "Gem of Odisha temple architecture (10th century). Intricate carvings. The torana (arch) at entrance is unparalleled in Indian temple art.",
+          "temple_id": "T088"
         },
         {
           "stop_number": 3,
@@ -1288,7 +1289,95 @@
             "latitude": 19.9271,
             "longitude": 85.7445
           },
-          "significance": "Krishna bore witness (Sakshi) to a promise made by a devotee — a living account of divine intervention. One of the most revered Vishnu temples in Odisha."
+          "significance": "Krishna bore witness (Sakshi) to a promise made by a devotee — a living account of divine intervention. One of the most revered Vishnu temples in Odisha.",
+          "temple_id": "T089"
+        }
+      ]
+    },
+    {
+      "id": "PC013",
+      "name": "Six Abodes of Lord Murugan (Arupadai Veedu)",
+      "local_name": "அறுபடை வீடு யாத்திரை",
+      "circuit_type": "Regional Pilgrimage",
+      "deity_focus": "Lord Murugan (Kartikeya)",
+      "total_temples": 6,
+      "states_covered": [
+        "Tamil Nadu"
+      ],
+      "base_city": "Madurai / Trichy / Chennai",
+      "best_months": [
+        "October to March; Thaipusam"
+      ],
+      "approx_duration_days": 6,
+      "difficulty": "Easy",
+      "significance": "Arupadai Veedu refers to the six sacred temples of Lord Murugan in Tamil Nadu, India. The six temples are located in various directions representing key events in his divine life, including battles and marriage.",
+      "traditional_route_order": "Thiruparankundram → Tiruchendur → Palani → Swamimalai → Thiruttani → Pazhamudircholai",
+      "temples": [
+        {
+          "stop_number": 1,
+          "temple_id": "T119",
+          "name": "Subramaniya Swamy Temple (Thiruparankundram)",
+          "city": "Thiruparankundram",
+          "coordinates": {
+            "latitude": 9.8789,
+            "longitude": 78.0717
+          },
+          "significance": "First abode, where Lord Murugan married Goddess Deivayanai, the daughter of Indra."
+        },
+        {
+          "stop_number": 2,
+          "temple_id": "T114",
+          "name": "Subramaniyaswamy Temple (Tiruchendur)",
+          "city": "Tiruchendur",
+          "coordinates": {
+            "latitude": 8.4967,
+            "longitude": 78.1283
+          },
+          "significance": "Second abode, located on the seashore. Where he defeated the demon Soorapadman."
+        },
+        {
+          "stop_number": 3,
+          "temple_id": "T115",
+          "name": "Dhandayuthapani Swamy Temple (Palani)",
+          "city": "Palani",
+          "coordinates": {
+            "latitude": 10.4439,
+            "longitude": 77.5208
+          },
+          "significance": "Third abode. Where he renounced the world as a boy after a dispute over a divine fruit."
+        },
+        {
+          "stop_number": 4,
+          "temple_id": "T116",
+          "name": "Swaminatha Swamy Temple (Swamimalai)",
+          "city": "Swamimalai",
+          "coordinates": {
+            "latitude": 10.9575,
+            "longitude": 79.3283
+          },
+          "significance": "Fourth abode. Where child Murugan explained the meaning of Aum to his father, Lord Shiva."
+        },
+        {
+          "stop_number": 5,
+          "temple_id": "T117",
+          "name": "Thiruthani Murugan Temple (Thiruttani)",
+          "city": "Thiruttani",
+          "coordinates": {
+            "latitude": 13.1897,
+            "longitude": 79.6203
+          },
+          "significance": "Fifth abode. Where the Lord retired to pacify his anger after fighting demons."
+        },
+        {
+          "stop_number": 6,
+          "temple_id": "T118",
+          "name": "Solaimalai Murugan Temple (Pazhamudircholai)",
+          "city": "Pazhamudircholai",
+          "coordinates": {
+            "latitude": 10.0764,
+            "longitude": 78.2253
+          },
+          "significance": "Sixth and final abode, situated on a peaceful forest hill near Madurai."
         }
       ]
     }

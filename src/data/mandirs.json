@@ -2,7 +2,7 @@
   "_meta": {
     "dataset": "Famous Mandirs & Temples of India",
     "version": "1.0.0",
-    "total_temples": 86,
+    "total_temples": 120,
     "coordinate_source": "Wikipedia, Survey of India, Google Maps verified",
     "last_updated": "2026-05-21",
     "categories": [
@@ -3113,6 +3113,1222 @@
       ],
       "open_year_round": true,
       "image_ref": "ksheerarama_palakollu"
+    },
+    {
+      "id": "T087",
+      "name": "Kailasa Temple (Ellora Caves)",
+      "local_name": "कैलाश मंदिर, एलोरा",
+      "deity": "Lord Shiva (Kailasanathar)",
+      "deity_type": "Shiva",
+      "categories": [
+        "Heritage Temple",
+        "Major Pilgrimage"
+      ],
+      "city": "Ellora (near Aurangabad)",
+      "district": "Chhatrapati Sambhajinagar",
+      "state": "Maharashtra",
+      "country": "India",
+      "coordinates": {
+        "latitude": 20.0238,
+        "longitude": 75.1793
+      },
+      "altitude_m": 595,
+      "architecture_style": "Rashtrakuta Rock-cut Monolithic",
+      "darshan_timings": "6:00 AM – 6:00 PM (Closed on Tuesdays)",
+      "best_time_to_visit": "October to March",
+      "significance": "The largest rock-cut monolithic structure in the world, carved out of a single basalt cliff face from top to bottom by the Rashtrakutas in the 8th century.",
+      "special_events": [
+        "Ellora Ajanta Festival",
+        "Mahashivratri"
+      ],
+      "nearest_airport": "Aurangabad Airport (35 km)",
+      "nearest_railway": "Aurangabad Railway Station (30 km)",
+      "pilgrimage_circuits": [
+        "Maharashtra Heritage Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "kailasa_temple_ellora"
+    },
+    {
+      "id": "T088",
+      "name": "Mukteshwar Temple (Bhubaneswar)",
+      "local_name": "मुक्तेश्वर मंदिर, भुवनेश्वर",
+      "deity": "Lord Shiva (Mukteshwar)",
+      "deity_type": "Shiva",
+      "categories": [
+        "Heritage Temple",
+        "Major Pilgrimage"
+      ],
+      "city": "Bhubaneswar",
+      "district": "Khordha",
+      "state": "Odisha",
+      "country": "India",
+      "coordinates": {
+        "latitude": 20.2485,
+        "longitude": 85.833
+      },
+      "altitude_m": 45,
+      "architecture_style": "Kalinga (Sila-Kala)",
+      "darshan_timings": "6:30 AM – 7:00 PM",
+      "best_time_to_visit": "October to March",
+      "significance": "Regarded as the 'Gem of Odisha Architecture' (circa 950 AD) for its exquisite archway (Torana) and detailed ceiling carvings showing Ganesha and the Saptamatrikas.",
+      "special_events": [
+        "Mukteswar Dance Festival (January)",
+        "Mahashivratri"
+      ],
+      "nearest_airport": "Biju Patnaik International Airport (4 km)",
+      "nearest_railway": "Bhubaneswar Railway Station (3 km)",
+      "pilgrimage_circuits": [
+        "Odisha Golden Triangle Pilgrimage"
+      ],
+      "open_year_round": true,
+      "image_ref": "mukteshwar_bhubaneswar"
+    },
+    {
+      "id": "T089",
+      "name": "Sakshi Gopal Temple",
+      "local_name": "साक्षी गोपाल मंदिर, पुरी",
+      "deity": "Lord Krishna (Sakshi Gopal) & Goddess Radha",
+      "deity_type": "Vishnu / Krishna",
+      "categories": [
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Sakhigopal (near Puri)",
+      "district": "Puri",
+      "state": "Odisha",
+      "country": "India",
+      "coordinates": {
+        "latitude": 19.9271,
+        "longitude": 85.7445
+      },
+      "altitude_m": 12,
+      "architecture_style": "Kalinga",
+      "darshan_timings": "6:00 AM – 9:00 PM",
+      "best_time_to_visit": "September to March; Anla Navami",
+      "significance": "Houses a life-size idol of Lord Krishna. Traditionally, pilgrimage to Puri Jagannath Temple is considered incomplete without visiting Sakshi Gopal to bear witness.",
+      "special_events": [
+        "Anla Navami (Only day Radha's feet are displayed)",
+        "Janmashtami",
+        "Rath Yatra (associated)"
+      ],
+      "nearest_airport": "Biju Patnaik International Airport (50 km)",
+      "nearest_railway": "Sakhigopal Railway Station (1 km)",
+      "pilgrimage_circuits": [
+        "Odisha Golden Triangle Pilgrimage"
+      ],
+      "open_year_round": true,
+      "image_ref": "sakshigopal_temple"
+    },
+    {
+      "id": "T090",
+      "name": "Rajarani Temple (Bhubaneswar)",
+      "local_name": "राजारानी मंदिर, भुवनेश्वर",
+      "deity": "Lord Shiva (Indreswara - historical association)",
+      "deity_type": "Shiva",
+      "categories": [
+        "Heritage Temple"
+      ],
+      "city": "Bhubaneswar",
+      "district": "Khordha",
+      "state": "Odisha",
+      "country": "India",
+      "coordinates": {
+        "latitude": 20.2514,
+        "longitude": 85.8436
+      },
+      "altitude_m": 43,
+      "architecture_style": "Kalinga (Pancharatha style)",
+      "darshan_timings": "6:00 AM – 8:00 PM",
+      "best_time_to_visit": "October to March",
+      "significance": "Built in the 11th century using local red-gold sandstone called 'Rajarani'. Known for its elegant carvings of Dikpalas (direction guardians) and erotic couples, it has no active worship or main idol today.",
+      "special_events": [
+        "Rajarani Music Festival (January)"
+      ],
+      "nearest_airport": "Biju Patnaik International Airport (5 km)",
+      "nearest_railway": "Bhubaneswar Railway Station (4 km)",
+      "pilgrimage_circuits": [
+        "Odisha Heritage Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "rajarani_bhubaneswar"
+    },
+    {
+      "id": "T091",
+      "name": "Karni Mata Temple (Deshnoke)",
+      "local_name": "करणी माता मंदिर, देशनोक",
+      "deity": "Goddess Karni Mata (Avatar of Hinglaj/Durga)",
+      "deity_type": "Shakti",
+      "categories": [
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Deshnoke (near Bikaner)",
+      "district": "Bikaner",
+      "state": "Rajasthan",
+      "country": "India",
+      "coordinates": {
+        "latitude": 27.7904,
+        "longitude": 73.3409
+      },
+      "altitude_m": 222,
+      "architecture_style": "Rajput Marble & Silver carvings",
+      "darshan_timings": "4:00 AM – 10:00 PM",
+      "best_time_to_visit": "October to March; Navratri",
+      "significance": "Famous worldwide as the 'Rat Temple', housing over 25,000 sacred black rats (Kabbas). Seeing a rare white rat is considered extremely auspicious.",
+      "special_events": [
+        "Karni Mata Fair (twice a year during Navratri)",
+        "Kartik Purnima"
+      ],
+      "nearest_airport": "Jodhpur Airport (220 km)",
+      "nearest_railway": "Deshnoke Railway Station (0.5 km)",
+      "pilgrimage_circuits": [
+        "Rajasthan Heritage Circuit",
+        "51 Shakti Peetha Circuit (associated)"
+      ],
+      "open_year_round": true,
+      "image_ref": "karnimata_deshnoke"
+    },
+    {
+      "id": "T092",
+      "name": "Salasar Balaji Temple",
+      "local_name": "सालासर बालाजी मंदिर",
+      "deity": "Lord Hanuman (Salasar Balaji)",
+      "deity_type": "Hanuman",
+      "categories": [
+        "Major Pilgrimage"
+      ],
+      "city": "Salasar",
+      "district": "Churu",
+      "state": "Rajasthan",
+      "country": "India",
+      "coordinates": {
+        "latitude": 27.7317,
+        "longitude": 74.7214
+      },
+      "altitude_m": 290,
+      "architecture_style": "Modern Rajput Temple style",
+      "darshan_timings": "4:00 AM – 10:00 PM",
+      "best_time_to_visit": "October to April; Hanuman Jayanti",
+      "significance": "Highly revered temple of Lord Hanuman, uniquely depicted here with a full beard and mustache. It is believed the self-manifested idol was found in a farmer's field in 1754.",
+      "special_events": [
+        "Hanuman Jayanti (huge fairs)",
+        "Ashvin Purnima",
+        "Chaitra Purnima"
+      ],
+      "nearest_airport": "Jaipur International Airport (185 km)",
+      "nearest_railway": "Sujangarh Railway Station (27 km)",
+      "pilgrimage_circuits": [
+        "Shekhawati Temple Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "salasar_balaji"
+    },
+    {
+      "id": "T093",
+      "name": "Mehandipur Balaji Temple",
+      "local_name": "मेहंदीपुर बालाजी मंदिर",
+      "deity": "Lord Hanuman (Balaji)",
+      "deity_type": "Hanuman",
+      "categories": [
+        "Major Pilgrimage"
+      ],
+      "city": "Mehandipur",
+      "district": "Dausa / Karauli",
+      "state": "Rajasthan",
+      "country": "India",
+      "coordinates": {
+        "latitude": 27.1683,
+        "longitude": 76.9631
+      },
+      "altitude_m": 250,
+      "architecture_style": "Nagara style",
+      "darshan_timings": "6:00 AM – 9:00 PM",
+      "best_time_to_visit": "October to March",
+      "significance": "Famous for spiritual healing and ritualistic exorcism of negative energies and evil spirits. Features three deities: Balaji, Pretraj Sarkar (King of Spirits), and Bhairav.",
+      "special_events": [
+        "Hanuman Jayanti",
+        "Holi",
+        "Dussehra"
+      ],
+      "nearest_airport": "Jaipur International Airport (110 km)",
+      "nearest_railway": "Bandikui Junction (36 km)",
+      "pilgrimage_circuits": [
+        "Rajasthan Devotional Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "mehandipur_balaji"
+    },
+    {
+      "id": "T094",
+      "name": "Shrinathji Temple (Nathdwara)",
+      "local_name": "श्रीनाथजी मंदिर, नाथद्वारा",
+      "deity": "Lord Krishna (Shrinathji)",
+      "deity_type": "Vishnu / Krishna",
+      "categories": [
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Nathdwara",
+      "district": "Rajsamand",
+      "state": "Rajasthan",
+      "country": "India",
+      "coordinates": {
+        "latitude": 24.9317,
+        "longitude": 73.8197
+      },
+      "altitude_m": 585,
+      "architecture_style": "Haveli Architecture (Pushtimarg style)",
+      "darshan_timings": "Eight dynamic daily darshans (approx. 5:30 AM – 7:30 PM intermittently)",
+      "best_time_to_visit": "September to March; Janmashtami",
+      "significance": "Principal shrine of the Pushtimarg sect, founded by Vallabhacharya. Depicts Lord Krishna lifting Govardhan Hill with his left hand. The idol was moved here from Vrindavan in 1672 to protect it from Aurangzeb.",
+      "special_events": [
+        "Annakut (Govardhan Puja)",
+        "Janmashtami",
+        "Holi"
+      ],
+      "nearest_airport": "Maharana Pratap Airport, Udaipur (45 km)",
+      "nearest_railway": "Mavli Junction (28 km)",
+      "pilgrimage_circuits": [
+        "Mewar Pilgrimage Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "shrinathji_nathdwara"
+    },
+    {
+      "id": "T095",
+      "name": "Udupi Sri Krishna Matha",
+      "local_name": "उडुपी श्रीकृष्ण मठ",
+      "deity": "Lord Krishna (Kadagolu Krishna)",
+      "deity_type": "Vishnu / Krishna",
+      "categories": [
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Udupi",
+      "district": "Udupi",
+      "state": "Karnataka",
+      "country": "India",
+      "coordinates": {
+        "latitude": 13.3408,
+        "longitude": 74.7473
+      },
+      "altitude_m": 15,
+      "architecture_style": "Traditional Coastal Karnataka Dravidian",
+      "darshan_timings": "5:00 AM – 9:30 PM",
+      "best_time_to_visit": "September to March",
+      "significance": "Established in the 13th century by Saint Madhvacharya. Uniquely, the deity is worshipped not directly, but through a silver-plated 9-hole window called 'Kanakana Kindi' associated with the devotee Kanakadasa.",
+      "special_events": [
+        "Paryaya Festival (every alternate January)",
+        "Krishna Janmashtami",
+        "Madhva Navami"
+      ],
+      "nearest_airport": "Mangaluru International Airport (58 km)",
+      "nearest_railway": "Udupi Railway Station (4 km)",
+      "pilgrimage_circuits": [
+        "Karnataka coastal temple circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "udupi_sri_krishna"
+    },
+    {
+      "id": "T096",
+      "name": "Kukke Subramanya Temple",
+      "local_name": "कुक्के सुब्रह्मण्य मंदिर",
+      "deity": "Lord Kartikeya (Subramanya as Lord of Serpents)",
+      "deity_type": "Kartikeya",
+      "categories": [
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Subramanya",
+      "district": "Dakshina Kannada",
+      "state": "Karnataka",
+      "country": "India",
+      "coordinates": {
+        "latitude": 12.6631,
+        "longitude": 75.6156
+      },
+      "altitude_m": 120,
+      "architecture_style": "Dravidian Style",
+      "darshan_timings": "6:30 AM – 1:30 PM; 3:30 PM – 8:00 PM",
+      "best_time_to_visit": "September to March",
+      "significance": "Famous destination for Sarpa Samskara and Ashlesha Bali (rituals to rid of snake curses). Lord Subramanya merged here with the serpent king Vasuki to protect him from Garuda.",
+      "special_events": [
+        "Champa Sasthi (major chariot festival)",
+        "Kartik Poornima",
+        "Skanda Sasthi"
+      ],
+      "nearest_airport": "Mangaluru International Airport (110 km)",
+      "nearest_railway": "Subrahmanya Road Railway Station (12 km)",
+      "pilgrimage_circuits": [
+        "Dakshina Kannada Pilgrimage Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "kukke_subramanya"
+    },
+    {
+      "id": "T097",
+      "name": "Dharmasthala Manjunatha Temple",
+      "local_name": "धर्मस्थल मंजूनाथ मंदिर",
+      "deity": "Lord Shiva (Manjunatha) & Dharma Daivas",
+      "deity_type": "Shiva",
+      "categories": [
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Dharmasthala",
+      "district": "Dakshina Kannada",
+      "state": "Karnataka",
+      "country": "India",
+      "coordinates": {
+        "latitude": 12.9328,
+        "longitude": 75.3853
+      },
+      "altitude_m": 135,
+      "architecture_style": "Dravidian Kerala-fusion Style",
+      "darshan_timings": "6:30 AM – 11:00 AM; 12:15 PM – 2:30 PM; 5:00 PM – 8:30 PM",
+      "best_time_to_visit": "October to March",
+      "significance": "Unique temple administered by a Jain family (Heggade), where the temple priests are Vaishnavite Madhva Brahmins, and the presiding deity is Shiva. Known for charity, providing free meals to over 10,000 visitors daily.",
+      "special_events": [
+        "Laksha Deepotsava (Nov/Dec)",
+        "Mahashivratri"
+      ],
+      "nearest_airport": "Mangaluru International Airport (75 km)",
+      "nearest_railway": "Kabaka Puttur Railway Station (30 km)",
+      "pilgrimage_circuits": [
+        "Dakshina Kannada Pilgrimage Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "dharmasthala_manjunatha"
+    },
+    {
+      "id": "T098",
+      "name": "Sringeri Sharada Peetham",
+      "local_name": "शृंगेरी शारदा पीठम",
+      "deity": "Goddess Sharadamba (Saraswati)",
+      "deity_type": "Shakti",
+      "categories": [
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Sringeri",
+      "district": "Chikkamagaluru",
+      "state": "Karnataka",
+      "country": "India",
+      "coordinates": {
+        "latitude": 13.4217,
+        "longitude": 75.2536
+      },
+      "altitude_m": 672,
+      "architecture_style": "Hoysala / Dravidian Fusion (Vidyashankara Temple)",
+      "darshan_timings": "6:00 AM – 2:00 PM; 5:00 PM – 9:00 PM",
+      "best_time_to_visit": "October to March",
+      "significance": "The first of the four mathas established by Adi Shankaracharya in the 8th century. Features the Vidyashankara temple with 12 zodiac pillars designed so that the sun rays hit them in sequence according to the months.",
+      "special_events": [
+        "Sharada Navratri (huge celebration)",
+        "Shankara Jayanti",
+        "Vidyaranya Rathotsava"
+      ],
+      "nearest_airport": "Mangaluru International Airport (100 km)",
+      "nearest_railway": "Udupi Railway Station (80 km)",
+      "pilgrimage_circuits": [
+        "Adi Shankaracharya Peethas Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "sringeri_sharada_peetham"
+    },
+    {
+      "id": "T099",
+      "name": "Tulja Bhavani Temple (Tuljapur)",
+      "local_name": "तुळजाभवानी मंदिर, तुळजापूर",
+      "deity": "Goddess Bhavani (Shakti)",
+      "deity_type": "Shakti",
+      "categories": [
+        "Shakti Peetha (associated)",
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Tuljapur",
+      "district": "Dharashiv (Osmanabad)",
+      "state": "Maharashtra",
+      "country": "India",
+      "coordinates": {
+        "latitude": 18.0117,
+        "longitude": 76.1256
+      },
+      "altitude_m": 648,
+      "architecture_style": "Maratha-Hemadpanti style",
+      "darshan_timings": "5:00 AM – 9:30 PM",
+      "best_time_to_visit": "October to March; Navratri",
+      "significance": "Family deity (Kuldevi) of Chhatrapati Shivaji Maharaj. One of the three and a half Shakti Peethas of Maharashtra. The self-manifested granite idol is dynamic and can be moved.",
+      "special_events": [
+        "Shardiya Navratri",
+        "Kojagiri Pournima",
+        "Gudi Padwa"
+      ],
+      "nearest_airport": "Solapur Airport (45 km)",
+      "nearest_railway": "Solapur Railway Station (45 km)",
+      "pilgrimage_circuits": [
+        "Maharashtra Shakti Circuit",
+        "51 Shakti Peetha Circuit (associated)"
+      ],
+      "open_year_round": true,
+      "image_ref": "tulja_bhavani_tuljapur"
+    },
+    {
+      "id": "T100",
+      "name": "Saptashrungi Temple (Nashik)",
+      "local_name": "सप्तशृंगी देवी मंदिर, नाशिक",
+      "deity": "Goddess Saptashrungi Nivasini",
+      "deity_type": "Shakti",
+      "categories": [
+        "Shakti Peetha (associated)",
+        "Major Pilgrimage"
+      ],
+      "city": "Vani (near Nashik)",
+      "district": "Nashik",
+      "state": "Maharashtra",
+      "country": "India",
+      "coordinates": {
+        "latitude": 20.3814,
+        "longitude": 73.9069
+      },
+      "altitude_m": 1230,
+      "architecture_style": "Rock-cut hill shrine (with modern funicular trolley)",
+      "darshan_timings": "5:00 AM – 9:00 PM",
+      "best_time_to_visit": "October to March",
+      "significance": "Located on a high hill with seven peaks (Saptashrunga). The massive 8-foot-tall idol of the Goddess is carved out of natural rock and has 18 arms holding various weapons.",
+      "special_events": [
+        "Navratri",
+        "Kojagiri Utsav",
+        "Chaitra Otsav"
+      ],
+      "nearest_airport": "Nashik Ozar Airport (50 km)",
+      "nearest_railway": "Nashik Road Railway Station (70 km)",
+      "pilgrimage_circuits": [
+        "Maharashtra Shakti Circuit",
+        "51 Shakti Peetha Circuit (associated)"
+      ],
+      "open_year_round": true,
+      "image_ref": "saptashrungi_vani"
+    },
+    {
+      "id": "T101",
+      "name": "Chintpurni Devi Temple",
+      "local_name": "चिंतपूर्णी देवी मंदिर",
+      "deity": "Goddess Chhinnamastika Devi",
+      "deity_type": "Shakti",
+      "categories": [
+        "Shakti Peetha",
+        "Major Pilgrimage"
+      ],
+      "city": "Chintpurni",
+      "district": "Una",
+      "state": "Himachal Pradesh",
+      "country": "India",
+      "coordinates": {
+        "latitude": 31.8106,
+        "longitude": 76.1506
+      },
+      "altitude_m": 940,
+      "architecture_style": "Indo-Aryan Nagara Style",
+      "darshan_timings": "4:00 AM – 11:00 PM",
+      "best_time_to_visit": "October to March; Navratri",
+      "significance": "One of the 51 Shakti Peethas. Sati's feet fell here. The presiding deity is worshipped in the form of a pindi (stone emblem) representing Chhinnamasta (the self-decapitated goddess).",
+      "special_events": [
+        "Chintpurni Mela (during Navratri)",
+        "Sawan Ashtami"
+      ],
+      "nearest_airport": "Kangra Airport, Gaggal (60 km)",
+      "nearest_railway": "Amb Andaura Railway Station (20 km)",
+      "pilgrimage_circuits": [
+        "51 Shakti Peetha Circuit",
+        "Himachal Devi Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "chintpurni_devi"
+    },
+    {
+      "id": "T102",
+      "name": "Bajreshwari Devi Temple (Kangra)",
+      "local_name": "बज्रेश्वरी देवी मंदिर, कांगड़ा",
+      "deity": "Goddess Bajreshwari (Vajreshwari)",
+      "deity_type": "Shakti",
+      "categories": [
+        "Shakti Peetha",
+        "Major Pilgrimage"
+      ],
+      "city": "Kangra",
+      "district": "Kangra",
+      "state": "Himachal Pradesh",
+      "country": "India",
+      "coordinates": {
+        "latitude": 32.0986,
+        "longitude": 76.2625
+      },
+      "altitude_m": 733,
+      "architecture_style": "Fortified Nagara Architecture",
+      "darshan_timings": "5:00 AM – 9:00 PM",
+      "best_time_to_visit": "September to April",
+      "significance": "One of the 51 Shakti Peethas. Sati's left breast fell here. Historically looted for its immense gold treasures by Mahmud of Ghazni in 1009, and rebuilt completely after the 1905 Kangra earthquake.",
+      "special_events": [
+        "Makar Sankranti (deity decorated with butter)",
+        "Navratri"
+      ],
+      "nearest_airport": "Kangra Airport, Gaggal (8 km)",
+      "nearest_railway": "Kangra Toy Train Station (1 km)",
+      "pilgrimage_circuits": [
+        "51 Shakti Peetha Circuit",
+        "Himachal Devi Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "bajreshwari_kangra"
+    },
+    {
+      "id": "T103",
+      "name": "Tara Tarini Temple",
+      "local_name": "तारा तारिणी मंदिर",
+      "deity": "Goddess Tara & Goddess Tarini",
+      "deity_type": "Shakti",
+      "categories": [
+        "Shakti Peetha",
+        "Major Pilgrimage"
+      ],
+      "city": "Purushottampur (near Brahmapur)",
+      "district": "Ganjam",
+      "state": "Odisha",
+      "country": "India",
+      "coordinates": {
+        "latitude": 19.4939,
+        "longitude": 84.9011
+      },
+      "altitude_m": 210,
+      "architecture_style": "Kalinga Hilltop architecture (999 steps or ropeway)",
+      "darshan_timings": "5:30 AM – 12:30 PM; 2:15 PM – 9:00 PM",
+      "best_time_to_visit": "October to March",
+      "significance": "One of the four major ancient Adi Shakti Peethas. Represents the breasts (Sthana Peetha) of Sati. Located on the Kumari hill banks of Rishikulya river.",
+      "special_events": [
+        "Chaitra Mela (huge gathering on Tuesdays of Chaitra month)",
+        "Navratri"
+      ],
+      "nearest_airport": "Biju Patnaik International Airport, Bhubaneswar (165 km)",
+      "nearest_railway": "Brahmapur Railway Station (32 km)",
+      "pilgrimage_circuits": [
+        "51 Shakti Peetha Circuit",
+        "Odisha Shakti Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "taratarini_temple"
+    },
+    {
+      "id": "T104",
+      "name": "Biraja Temple (Jajpur)",
+      "local_name": "बिरजा मंदिर, जाजपुर",
+      "deity": "Goddess Biraja (Girija / Durga)",
+      "deity_type": "Shakti",
+      "categories": [
+        "Shakti Peetha",
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Jajpur",
+      "district": "Jajpur",
+      "state": "Odisha",
+      "country": "India",
+      "coordinates": {
+        "latitude": 20.8497,
+        "longitude": 86.3314
+      },
+      "altitude_m": 15,
+      "architecture_style": "Kalinga Style",
+      "darshan_timings": "6:00 AM – 9:00 PM",
+      "best_time_to_visit": "October to March; Durga Puja",
+      "significance": "Famous Shakti Peetha where Sati's navel (Nabhi) fell. Presiding deity is a two-armed image of Durga piercing the chest of Mahishasura. Navratri features a rare independent chariot festival (Rath Yatra) for the Goddess.",
+      "special_events": [
+        "Shodasa Puja (16-day festival during Durga Puja)",
+        "Biraja Rathotsava"
+      ],
+      "nearest_airport": "Biju Patnaik International Airport, Bhubaneswar (105 km)",
+      "nearest_railway": "Jajpur Keonjhar Road Railway Station (30 km)",
+      "pilgrimage_circuits": [
+        "51 Shakti Peetha Circuit",
+        "Odisha Shakti Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "biraja_temple"
+    },
+    {
+      "id": "T105",
+      "name": "Danteshwari Temple (Dantewada)",
+      "local_name": "दन्तेश्वरी मंदिर, दन्तेवाड़ा",
+      "deity": "Goddess Danteshwari (Shakti)",
+      "deity_type": "Shakti",
+      "categories": [
+        "Shakti Peetha",
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Dantewada",
+      "district": "Dantewada",
+      "state": "Chhattisgarh",
+      "country": "India",
+      "coordinates": {
+        "latitude": 18.8953,
+        "longitude": 81.3533
+      },
+      "altitude_m": 355,
+      "architecture_style": "Bastar Stone-Tribal style",
+      "darshan_timings": "6:00 AM – 8:30 PM",
+      "best_time_to_visit": "October to March; Bastar Dussehra",
+      "significance": "One of the 51 Shakti Peethas. Sati's tooth (Danta) fell here. Presiding deity of the Kakatiya kings and Bastar tribes, carved in black stone.",
+      "special_events": [
+        "Bastar Dussehra (75-day long tribal celebration)",
+        "Chaitra Navratri"
+      ],
+      "nearest_airport": "Jagdalpur Airport (85 km)",
+      "nearest_railway": "Dantewada Railway Station (2 km)",
+      "pilgrimage_circuits": [
+        "51 Shakti Peetha Circuit",
+        "Chhattisgarh Devotional Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "danteshwari_dantewada"
+    },
+    {
+      "id": "T106",
+      "name": "Kanakadurga Temple (Vijayawada)",
+      "local_name": "कनकदुर्गा मंदिर, विजयवाड़ा",
+      "deity": "Goddess Kanaka Durga (Swayambhu)",
+      "deity_type": "Shakti",
+      "categories": [
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Vijayawada",
+      "district": "NTR (Krishna)",
+      "state": "Andhra Pradesh",
+      "country": "India",
+      "coordinates": {
+        "latitude": 16.5161,
+        "longitude": 80.6053
+      },
+      "altitude_m": 120,
+      "architecture_style": "Dravidian Hilltop style (Indrakeeladri Hill)",
+      "darshan_timings": "4:00 AM – 9:00 PM",
+      "best_time_to_visit": "October to March; Dasara",
+      "significance": "Second largest temple in Andhra Pradesh, located on Indrakeeladri hill on the banks of Krishna river. Arjuna is believed to have performed penance to Lord Shiva here to obtain the Pasupatastra.",
+      "special_events": [
+        "Dasara (huge festival with river bath processions)",
+        "Shakambari festival"
+      ],
+      "nearest_airport": "Vijayawada International Airport (22 km)",
+      "nearest_railway": "Vijayawada Junction (3 km)",
+      "pilgrimage_circuits": [
+        "Andhra Pradesh Devotional Circuit",
+        "51 Shakti Peetha Circuit (associated)"
+      ],
+      "open_year_round": true,
+      "image_ref": "kanakadurga_vijayawada"
+    },
+    {
+      "id": "T107",
+      "name": "Tarapith Temple",
+      "local_name": "तारापीठ मंदिर",
+      "deity": "Goddess Tara (Fierce form of Kali)",
+      "deity_type": "Shakti",
+      "categories": [
+        "Shakti Peetha (associated)",
+        "Major Pilgrimage"
+      ],
+      "city": "Tarapith (near Rampurhat)",
+      "district": "Birbhum",
+      "state": "West Bengal",
+      "country": "India",
+      "coordinates": {
+        "latitude": 24.1167,
+        "longitude": 87.7944
+      },
+      "altitude_m": 31,
+      "architecture_style": "Bengal Char-chala (four-roofed terracotta style)",
+      "darshan_timings": "6:00 AM – 9:00 PM",
+      "best_time_to_visit": "October to March",
+      "significance": "Major Tantric center, famous for the adjoining cremation grounds and association with the saint Bamakhepa. Sati's eyeball/third eye (Tara) fell here.",
+      "special_events": [
+        "Tara Puja",
+        "Kojagori Lakshmi Puja",
+        "Bamakhepa Anniversary"
+      ],
+      "nearest_airport": "Kazi Nazrul Islam Airport, Durgapur (95 km)",
+      "nearest_railway": "Rampurhat Junction (9 km)",
+      "pilgrimage_circuits": [
+        "West Bengal Shakti Circuit",
+        "51 Shakti Peetha Circuit (associated)"
+      ],
+      "open_year_round": true,
+      "image_ref": "tarapith_temple"
+    },
+    {
+      "id": "T108",
+      "name": "Hanuman Garhi (Ayodhya)",
+      "local_name": "हनुमान गढ़ी, अयोध्या",
+      "deity": "Lord Hanuman",
+      "deity_type": "Hanuman",
+      "categories": [
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Ayodhya",
+      "district": "Ayodhya",
+      "state": "Uttar Pradesh",
+      "country": "India",
+      "coordinates": {
+        "latitude": 26.7972,
+        "longitude": 82.1994
+      },
+      "altitude_m": 95,
+      "architecture_style": "Fortified Haveli Style (76 stairs entrance)",
+      "darshan_timings": "5:00 AM – 10:00 PM",
+      "best_time_to_visit": "October to March; Hanuman Jayanti",
+      "significance": "A cave temple built in a fortress-like structure, custom dictates that before visiting the Rama Mandir, one must first pay respects to Hanuman here as he guards the city.",
+      "special_events": [
+        "Hanuman Jayanti",
+        "Rama Navami",
+        "Diwali"
+      ],
+      "nearest_airport": "Ayodhya Airport (Ayodhya Dham) (8 km)",
+      "nearest_railway": "Ayodhya Junction Railway Station (1 km)",
+      "pilgrimage_circuits": [
+        "Ramayana Circuit",
+        "Sapta Puri Circuit (associated)"
+      ],
+      "open_year_round": true,
+      "image_ref": "hanumangarhi_ayodhya"
+    },
+    {
+      "id": "T109",
+      "name": "Kanak Bhawan (Ayodhya)",
+      "local_name": "कनक भवन, अयोध्या",
+      "deity": "Lord Rama & Goddess Sita",
+      "deity_type": "Vishnu / Krishna",
+      "categories": [
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Ayodhya",
+      "district": "Ayodhya",
+      "state": "Uttar Pradesh",
+      "country": "India",
+      "coordinates": {
+        "latitude": 26.7997,
+        "longitude": 82.1997
+      },
+      "altitude_m": 93,
+      "architecture_style": "Ornate Bundelkhand Haveli Palace style",
+      "darshan_timings": "8:00 AM – 11:30 AM; 4:30 PM – 9:00 PM",
+      "best_time_to_visit": "October to March",
+      "significance": "Believed to be a palace gifted to Sita by Kaikeyi immediately after her marriage. Rebuilt in 1891 by Queen Vrishbhanu Kunwari of Orchha, the idols are adorned with gold crowns.",
+      "special_events": [
+        "Rama Navami",
+        "Janmashtami",
+        "Vivah Panchami"
+      ],
+      "nearest_airport": "Ayodhya Airport (Ayodhya Dham) (9 km)",
+      "nearest_railway": "Ayodhya Junction (1.5 km)",
+      "pilgrimage_circuits": [
+        "Ramayana Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "kanakbhawan_ayodhya"
+    },
+    {
+      "id": "T110",
+      "name": "Mundeshwari Devi Temple",
+      "local_name": "मुण्डेश्वरी देवी मंदिर",
+      "deity": "Lord Shiva & Goddess Mundeshwari (Parvati)",
+      "deity_type": "Shiva / Shakti",
+      "categories": [
+        "Heritage Temple",
+        "Major Pilgrimage"
+      ],
+      "city": "Ramgarh (near Bhabua)",
+      "district": "Kaimur",
+      "state": "Bihar",
+      "country": "India",
+      "coordinates": {
+        "latitude": 25.0347,
+        "longitude": 83.5653
+      },
+      "altitude_m": 185,
+      "architecture_style": "Ancient Octagonal Stone Gupta architecture",
+      "darshan_timings": "6:00 AM – 7:00 PM",
+      "best_time_to_visit": "October to March",
+      "significance": "Officially dated to 108 AD, it is recognized as the oldest functional temple in India, where worship has continued uninterrupted for nearly 2000 years. Famous for bloodless goat sacrifice where the goat is temporarily put to sleep by chanting mantra.",
+      "special_events": [
+        "Navratri",
+        "Mahashivratri"
+      ],
+      "nearest_airport": "Lal Bahadur Shastri International Airport, Varanasi (100 km)",
+      "nearest_railway": "Bhabua Road Railway Station (22 km)",
+      "pilgrimage_circuits": [
+        "Bihar Heritage Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "mundeshwari_devi"
+    },
+    {
+      "id": "T111",
+      "name": "Patan Devi Temple",
+      "local_name": "पाटन देवी मंदिर, पटना",
+      "deity": "Goddess Pataneshwari (Shakti)",
+      "deity_type": "Shakti",
+      "categories": [
+        "Shakti Peetha",
+        "Major Pilgrimage"
+      ],
+      "city": "Patna",
+      "district": "Patna",
+      "state": "Bihar",
+      "country": "India",
+      "coordinates": {
+        "latitude": 25.6203,
+        "longitude": 85.1953
+      },
+      "altitude_m": 53,
+      "architecture_style": "Modern Nagara Style",
+      "darshan_timings": "5:00 AM – 9:00 PM",
+      "best_time_to_visit": "October to March",
+      "significance": "The temple from which the city of Patna derives its name. One of the 51 Shakti Peethas. Sati's right thigh fell here. Divided into Badi (greater) and Chhoti (lesser) Patan Devi shrines.",
+      "special_events": [
+        "Durga Puja",
+        "Chhath Puja"
+      ],
+      "nearest_airport": "Jay Prakash Narayan Airport, Patna (10 km)",
+      "nearest_railway": "Patna Sahib Railway Station (2 km)",
+      "pilgrimage_circuits": [
+        "51 Shakti Peetha Circuit",
+        "Bihar Devotional Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "patandevi_patna"
+    },
+    {
+      "id": "T112",
+      "name": "Deo Sun Temple",
+      "local_name": "देव सूर्य मंदिर",
+      "deity": "Sun God (Surya Narayana)",
+      "deity_type": "Surya",
+      "categories": [
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Deo (near Aurangabad)",
+      "district": "Aurangabad",
+      "state": "Bihar",
+      "country": "India",
+      "coordinates": {
+        "latitude": 24.6567,
+        "longitude": 84.4447
+      },
+      "altitude_m": 115,
+      "architecture_style": "Gupta/Chandela stone Nagara Style",
+      "darshan_timings": "4:30 AM – 8:30 PM",
+      "best_time_to_visit": "October to March; Chhath Puja",
+      "significance": "A rare monolithic stone Sun Temple that faces west instead of the traditional east. Dates back to the Umga dynasty (~15th century) with earlier foundations.",
+      "special_events": [
+        "Chhath Puja (celebrated on a massive scale twice a year)",
+        "Aditya Parva"
+      ],
+      "nearest_airport": "Gaya Airport (65 km)",
+      "nearest_railway": "Anugrah Narayan Road Railway Station (20 km)",
+      "pilgrimage_circuits": [
+        "Bihar Heritage Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "deosun_temple"
+    },
+    {
+      "id": "T113",
+      "name": "Bhoramdeo Temple",
+      "local_name": "भोरमदेव मंदिर",
+      "deity": "Lord Shiva",
+      "deity_type": "Shiva",
+      "categories": [
+        "Heritage Temple",
+        "Major Pilgrimage"
+      ],
+      "city": "Kawardha",
+      "district": "Kabirdham (Kawardha)",
+      "state": "Chhattisgarh",
+      "country": "India",
+      "coordinates": {
+        "latitude": 22.1158,
+        "longitude": 81.1558
+      },
+      "altitude_m": 353,
+      "architecture_style": "Phaniganga Nagara Style (Erotic carvings)",
+      "darshan_timings": "5:00 AM – 7:30 PM",
+      "best_time_to_visit": "October to March",
+      "significance": "Known as the 'Khajuraho of Chhattisgarh' due to its detailed erotic sculptured facades. Built by King Ramachandra of the Nagavanshi dynasty in the 11th century amidst the Maikal Hills.",
+      "special_events": [
+        "Bhoramdeo Mahotsav (March)",
+        "Mahashivratri"
+      ],
+      "nearest_airport": "Swami Vivekananda Airport, Raipur (140 km)",
+      "nearest_railway": "Bilaspur Junction (115 km)",
+      "pilgrimage_circuits": [
+        "Chhattisgarh Heritage Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "bhoramdeo_kawardha"
+    },
+    {
+      "id": "T114",
+      "name": "Six Abodes of Murugan — Subramaniyaswamy Temple (Tiruchendur)",
+      "local_name": "திருச்செந்தூர் சுப்பிரமணியசுவாமி கோவில்",
+      "deity": "Lord Murugan (Senthiandavar)",
+      "deity_type": "Kartikeya",
+      "categories": [
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Tiruchendur",
+      "district": "Thoothukudi",
+      "state": "Tamil Nadu",
+      "country": "India",
+      "coordinates": {
+        "latitude": 8.4967,
+        "longitude": 78.1283
+      },
+      "altitude_m": 5,
+      "architecture_style": "Dravidian Style (located on Bay of Bengal shoreline)",
+      "darshan_timings": "5:00 AM – 9:00 PM",
+      "best_time_to_visit": "October to March; Soorasamharam",
+      "significance": "Second abode of Lord Murugan. Uniquely located directly on the seashore. Marks the place where Murugan defeated the demon Soorapadman.",
+      "special_events": [
+        "Kanda Sasthi / Soorasamharam (huge reenactment)",
+        "Masi Festival"
+      ],
+      "nearest_airport": "Tuticorin Airport (40 km)",
+      "nearest_railway": "Tiruchendur Railway Station (2 km)",
+      "pilgrimage_circuits": [
+        "Six Abodes of Lord Murugan"
+      ],
+      "open_year_round": true,
+      "image_ref": "tiruchendur_murugan"
+    },
+    {
+      "id": "T115",
+      "name": "Six Abodes of Murugan — Dhandayuthapani Swamy Temple (Palani)",
+      "local_name": "பழனி தண்டாயுதபாணி சுவாமி கோவில்",
+      "deity": "Lord Murugan (Dhandayuthapani)",
+      "deity_type": "Kartikeya",
+      "categories": [
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Palani",
+      "district": "Dindigul",
+      "state": "Tamil Nadu",
+      "country": "India",
+      "coordinates": {
+        "latitude": 10.4439,
+        "longitude": 77.5208
+      },
+      "altitude_m": 310,
+      "architecture_style": "Dravidian Hilltop style (693 steps, winch or ropeway)",
+      "darshan_timings": "6:00 AM – 8:30 PM",
+      "best_time_to_visit": "October to March; Thaipusam",
+      "significance": "Third abode of Lord Murugan. The main idol, created by Sage Bogar, is made of 'Navapashanam' (an alloy of 9 poisons that becomes healing medicine when bathed in milk).",
+      "special_events": [
+        "Thaipusam (millions carry Kavadi barefoot)",
+        "Panguni Uthiram"
+      ],
+      "nearest_airport": "Coimbatore International Airport (110 km)",
+      "nearest_railway": "Palani Railway Station (3 km)",
+      "pilgrimage_circuits": [
+        "Six Abodes of Lord Murugan"
+      ],
+      "open_year_round": true,
+      "image_ref": "palani_murugan"
+    },
+    {
+      "id": "T116",
+      "name": "Six Abodes of Murugan — Swaminatha Swamy Temple (Swamimalai)",
+      "local_name": "சுவாமிமலை சுவாமிநாதசுவாமி கோவில்",
+      "deity": "Lord Swaminatha Swamy (Murugan)",
+      "deity_type": "Kartikeya",
+      "categories": [
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Swamimalai (near Kumbakonam)",
+      "district": "Thanjavur",
+      "state": "Tamil Nadu",
+      "country": "India",
+      "coordinates": {
+        "latitude": 10.9575,
+        "longitude": 79.3283
+      },
+      "altitude_m": 25,
+      "architecture_style": "Dravidian Hilltop style (60 steps representing 60 Hindu years)",
+      "darshan_timings": "5:30 AM – 12:00 PM; 4:00 PM – 9:00 PM",
+      "best_time_to_visit": "October to March",
+      "significance": "Fourth abode of Lord Murugan. Marks the location where Murugan explained the meaning of the Pranava Mantra ('Aum') to his father Shiva.",
+      "special_events": [
+        "Skanda Sasthi",
+        "Chitra Pournami",
+        "Panguni Uthiram"
+      ],
+      "nearest_airport": "Tiruchirappalli International Airport (85 km)",
+      "nearest_railway": "Kumbakonam Railway Station (8 km)",
+      "pilgrimage_circuits": [
+        "Six Abodes of Lord Murugan",
+        "Kumbakonam Temple Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "swamimalai_murugan"
+    },
+    {
+      "id": "T117",
+      "name": "Six Abodes of Murugan — Thiruthani Murugan Temple (Thiruttani)",
+      "local_name": "திருத்தணி சுப்பிரமணியசுவாமி கோவில்",
+      "deity": "Lord Tanikesan (Murugan in peace)",
+      "deity_type": "Kartikeya",
+      "categories": [
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Thiruttani",
+      "district": "Tiruvallur",
+      "state": "Tamil Nadu",
+      "country": "India",
+      "coordinates": {
+        "latitude": 13.1897,
+        "longitude": 79.6203
+      },
+      "altitude_m": 215,
+      "architecture_style": "Dravidian Hilltop style (365 steps representing days of the year)",
+      "darshan_timings": "6:00 AM – 9:15 PM",
+      "best_time_to_visit": "October to March",
+      "significance": "Fifth abode of Lord Murugan. Represents the place where the Lord found peace and calm after defeating the demon Soorapadman, and where he married Valli.",
+      "special_events": [
+        "Adi Krittika (huge flower kavadi festival)",
+        "New Year Step Festival"
+      ],
+      "nearest_airport": "Chennai International Airport (85 km)",
+      "nearest_railway": "Thiruttani Railway Station (2 km)",
+      "pilgrimage_circuits": [
+        "Six Abodes of Lord Murugan"
+      ],
+      "open_year_round": true,
+      "image_ref": "thiruttani_murugan"
+    },
+    {
+      "id": "T118",
+      "name": "Six Abodes of Murugan — Solaimalai Murugan Temple (Pazhamudircholai)",
+      "local_name": "பழமுதிர்சோலை முருகன் கோவில்",
+      "deity": "Lord Kurinjiaandavar (Murugan with Valli & Deivayanai)",
+      "deity_type": "Kartikeya",
+      "categories": [
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Pazhamudircholai (near Madurai)",
+      "district": "Madurai",
+      "state": "Tamil Nadu",
+      "country": "India",
+      "coordinates": {
+        "latitude": 10.0764,
+        "longitude": 78.2253
+      },
+      "altitude_m": 350,
+      "architecture_style": "Dravidian Style (Dense forest-hilltop shrine)",
+      "darshan_timings": "6:00 AM – 6:00 PM",
+      "best_time_to_visit": "October to March",
+      "significance": "Sixth and final abode of Lord Murugan. Celebrated as the site of the legendary 'fruit-seller' play between the poet-saint Avvaiyar and child Murugan under a rose-apple tree.",
+      "special_events": [
+        "Skanda Sasthi",
+        "Aadi Krittika"
+      ],
+      "nearest_airport": "Madurai Airport (35 km)",
+      "nearest_railway": "Madurai Junction (25 km)",
+      "pilgrimage_circuits": [
+        "Six Abodes of Lord Murugan",
+        "Madurai Temple Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "pazhamudircholai_murugan"
+    },
+    {
+      "id": "T119",
+      "name": "Six Abodes of Murugan — Subramaniya Swamy Temple (Thiruparankundram)",
+      "local_name": "திருப்பரங்குன்றம் சுப்பிரமணியசுவாமி கோவில்",
+      "deity": "Lord Subramaniya Swamy",
+      "deity_type": "Kartikeya",
+      "categories": [
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Thiruparankundram (near Madurai)",
+      "district": "Madurai",
+      "state": "Tamil Nadu",
+      "country": "India",
+      "coordinates": {
+        "latitude": 9.8789,
+        "longitude": 78.0717
+      },
+      "altitude_m": 45,
+      "architecture_style": "Pandyan Rock-cut Cave Architecture",
+      "darshan_timings": "5:00 AM – 1:00 PM; 4:00 PM – 9:00 PM",
+      "best_time_to_visit": "October to March",
+      "significance": "First abode of Lord Murugan. A rock-cut temple carved into a massive granite hill. Marks the location where Murugan married Deivayanai, the daughter of Indra, in victory.",
+      "special_events": [
+        "Pankuni Uthiram (Mar/Apr)",
+        "Kanda Sasthi (Nov)"
+      ],
+      "nearest_airport": "Madurai Airport (11 km)",
+      "nearest_railway": "Thiruparankundram Railway Station (1 km)",
+      "pilgrimage_circuits": [
+        "Six Abodes of Lord Murugan",
+        "Madurai Temple Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "thiruparankundram_murugan"
+    },
+    {
+      "id": "T120",
+      "name": "Attukal Bhagavathy Temple",
+      "local_name": "ஆற்றுக்கால் பகவதி கோவில்",
+      "deity": "Goddess Attukalamma (Kannaki / Shakti)",
+      "deity_type": "Shakti",
+      "categories": [
+        "Major Pilgrimage",
+        "Heritage Temple"
+      ],
+      "city": "Thiruvananthapuram",
+      "district": "Thiruvananthapuram",
+      "state": "Kerala",
+      "country": "India",
+      "coordinates": {
+        "latitude": 8.4719,
+        "longitude": 76.9608
+      },
+      "altitude_m": 12,
+      "architecture_style": "Kerala-Tamil Dravidian Fusion Style",
+      "darshan_timings": "4:30 AM – 12:30 PM; 5:00 PM – 8:30 PM",
+      "best_time_to_visit": "September to March; Attukal Pongala",
+      "significance": "Famously called the 'Sabarimala of Women'. Holds the Guinness World Record for the largest annual gathering of women (over 3.7 million) cooking sweet Pongala offering on brick hearths around the city.",
+      "special_events": [
+        "Attukal Pongala festival (10 days in Feb/March)"
+      ],
+      "nearest_airport": "Trivandrum International Airport (6 km)",
+      "nearest_railway": "Thiruvananthapuram Central (2 km)",
+      "pilgrimage_circuits": [
+        "Kerala Shakti Circuit"
+      ],
+      "open_year_round": true,
+      "image_ref": "attukal_bhagavathy"
     }
   ]
 }
