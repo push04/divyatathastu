@@ -1919,19 +1919,18 @@ export default function ReportDetailPage() {
         rpa.style.visibility = ''
       }
 
-      // ── 2. Call the server-side PDF API ──
-      const resp = await fetch(`/api/reports/${reportId}/pdf`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ canvases }),
-      })
-
-      if (!resp.ok) {
-        throw new Error(`PDF API returned ${resp.status}: ${await resp.text()}`)
-      }
+      // ── 2. Generate PDF client-side (avoids Vercel Hobby 10s limit) ──
+      const [{ pdf, Font }, { default: ReportPDF }] = await Promise.all([
+        import('@react-pdf/renderer'),
+        import('@/components/pdf/ReportPDF'),
+      ])
+      Font.registerHyphenationCallback((word: string) => [word])
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const doc = (ReportPDF as any)({ report, canvases })
+      if (!doc) throw new Error('ReportPDF returned null')
+      const blob = await pdf(doc).toBlob()
 
       // ── 3. Trigger download ──
-      const blob = await resp.blob()
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       const safeName = (title ?? 'report').replace(/[^a-z0-9\s]/gi, '').trim().replace(/\s+/g, '_')
