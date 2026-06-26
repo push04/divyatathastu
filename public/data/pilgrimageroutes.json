@@ -1413,7 +1413,16 @@
             "latitude": 11.0139,
             "longitude": 79.48
           },
-          "significance": "Dedicated to Surya (the Sun God). Represents power, leadership, and health."
+          "significance": "Dedicated to Surya (the Sun God). Represents power, leadership, and health.",
+          "deity": "Sun God (Surya)",
+          "altitude_m": 26,
+          "distance_from_base_km": 15,
+          "nearby_attractions": [
+            "Kaveri River banks",
+            "Sarangapani Temple"
+          ],
+          "planet": "Sun (Surya)",
+          "astrological_significance": "Governs leadership, authority, and health."
         },
         {
           "stop_number": 2,
@@ -1424,7 +1433,16 @@
             "latitude": 10.9631,
             "longitude": 79.1417
           },
-          "significance": "Dedicated to Chandra (the Moon God). Governs emotions, mental peace, and motherly affection."
+          "significance": "Dedicated to Chandra (the Moon God). Governs emotions, mental peace, and motherly affection.",
+          "deity": "Lord Shiva (Chandra focus)",
+          "altitude_m": 24,
+          "distance_from_previous_km": 32,
+          "nearby_attractions": [
+            "Thingaloor village fields",
+            "Swamimalai"
+          ],
+          "planet": "Moon (Chandra)",
+          "astrological_significance": "Governs emotions, mental peace, and maternal connections."
         },
         {
           "stop_number": 3,
@@ -1435,7 +1453,16 @@
             "latitude": 11.2008,
             "longitude": 79.7119
           },
-          "significance": "Chevvai (Mars) shrine. Shiva is worshipped here as Vaitheeswaran (Lord of Healing). Governs energy and vitality."
+          "significance": "Chevvai (Mars) shrine. Shiva is worshipped here as Vaitheeswaran (Lord of Healing). Governs energy and vitality.",
+          "deity": "Lord Vaidyanathaswamy (Mars focus)",
+          "altitude_m": 18,
+          "distance_from_previous_km": 40,
+          "nearby_attractions": [
+            "Sirkazhi Temple",
+            "Poompuhar beach"
+          ],
+          "planet": "Mars (Mangal/Chevvai)",
+          "astrological_significance": "Governs courage, strength, and marital harmony."
         },
         {
           "stop_number": 4,
@@ -1446,7 +1473,16 @@
             "latitude": 11.1739,
             "longitude": 79.8183
           },
-          "significance": "Budha (Mercury) shrine. Governs communication, intellect, and education."
+          "significance": "Budha (Mercury) shrine. Governs communication, intellect, and education.",
+          "deity": "Lord Shiva (Mercury focus)",
+          "altitude_m": 12,
+          "distance_from_previous_km": 16,
+          "nearby_attractions": [
+            "Thiruvenkadu forest",
+            "Kaveri delta"
+          ],
+          "planet": "Mercury (Budha)",
+          "astrological_significance": "Governs intelligence, communication, and education."
         },
         {
           "stop_number": 5,
@@ -1457,7 +1493,16 @@
             "latitude": 10.8247,
             "longitude": 79.4319
           },
-          "significance": "Guru (Jupiter) shrine. Governs wisdom, spirituality, and good fortune."
+          "significance": "Guru (Jupiter) shrine. Governs wisdom, spirituality, and good fortune.",
+          "deity": "Lord Shiva (Jupiter focus)",
+          "altitude_m": 25,
+          "distance_from_previous_km": 45,
+          "nearby_attractions": [
+            "Alangudi river tank",
+            "Kumbakonam market"
+          ],
+          "planet": "Jupiter (Guru)",
+          "astrological_significance": "Governs wisdom, wealth, and spiritual growth."
         },
         {
           "stop_number": 6,
@@ -1468,7 +1513,15 @@
             "latitude": 11.0319,
             "longitude": 79.4939
           },
-          "significance": "Sukran (Venus) shrine. Governs arts, relationships, wealth, and beauty."
+          "significance": "Sukran (Venus) shrine. Governs arts, relationships, wealth, and beauty.",
+          "deity": "Lord Shiva (Venus focus)",
+          "altitude_m": 28,
+          "distance_from_previous_km": 12,
+          "nearby_attractions": [
+            "Kanjanur village tank"
+          ],
+          "planet": "Venus (Shukra)",
+          "astrological_significance": "Governs arts, beauty, relationship, and fine life."
         },
         {
           "stop_number": 7,
@@ -1479,7 +1532,16 @@
             "latitude": 10.9317,
             "longitude": 79.7814
           },
-          "significance": "Shani (Saturn) shrine. Highly popular, believed to alleviate karmic challenges."
+          "significance": "Shani (Saturn) shrine. Highly popular, believed to alleviate karmic challenges.",
+          "deity": "Lord Dharbaranyeswarar (Saturn focus)",
+          "altitude_m": 10,
+          "distance_from_previous_km": 35,
+          "nearby_attractions": [
+            "Nala Theertham (sacred tank)",
+            "Karaikal beach"
+          ],
+          "planet": "Saturn (Shani)",
+          "astrological_significance": "Governs discipline, longevity, and karmic lessons."
         },
         {
           "stop_number": 8,
@@ -1490,7 +1552,16 @@
             "latitude": 10.9606,
             "longitude": 79.4219
           },
-          "significance": "Rahu shrine. Worshipped to overcome obstacles and gain spiritual growth."
+          "significance": "Rahu shrine. Worshipped to overcome obstacles and gain spiritual growth.",
+          "deity": "Lord Naganathar (Rahu focus)",
+          "altitude_m": 26,
+          "distance_from_previous_km": 42,
+          "nearby_attractions": [
+            "Thirunageswaram tank",
+            "Uppiliappan Temple"
+          ],
+          "planet": "Rahu (North Node)",
+          "astrological_significance": "Governs desires, worldly success, and occult knowledge."
         },
         {
           "stop_number": 9,
@@ -1501,7 +1572,16 @@
             "latitude": 11.1683,
             "longitude": 79.8453
           },
-          "significance": "Ketu shrine. Governs wisdom, detachment, and spiritual liberation (Moksha)."
+          "significance": "Ketu shrine. Governs wisdom, detachment, and spiritual liberation (Moksha).",
+          "deity": "Lord Shiva (Ketu focus)",
+          "altitude_m": 14,
+          "distance_from_previous_km": 38,
+          "nearby_attractions": [
+            "Keezhaperumpallam village",
+            "Poompuhar museum"
+          ],
+          "planet": "Ketu (South Node)",
+          "astrological_significance": "Governs liberation (Moksha), detachment, and spiritual depth."
         }
       ]
     },
@@ -1534,7 +1614,15 @@
             "latitude": 12.8471,
             "longitude": 79.6997
           },
-          "significance": "Represents the Earth (Prithvi) element. The main lingam is made of sand."
+          "significance": "Represents the Earth (Prithvi) element. The main lingam is made of sand.",
+          "deity": "Lord Ekambareswarar",
+          "element": "Earth (Prithvi)",
+          "altitude_m": 83,
+          "distance_from_base_km": 75,
+          "nearby_attractions": [
+            "Kamakshi Amman Temple",
+            "Kailasanathar Temple"
+          ]
         },
         {
           "stop_number": 2,
@@ -1545,7 +1633,15 @@
             "latitude": 10.8533,
             "longitude": 78.7067
           },
-          "significance": "Represents the Water (Appu) element. Underground springs keep the sanctum wet."
+          "significance": "Represents the Water (Appu) element. Underground springs keep the sanctum wet.",
+          "deity": "Lord Jambukeswarar",
+          "element": "Water (Appu)",
+          "altitude_m": 60,
+          "distance_from_previous_km": 290,
+          "nearby_attractions": [
+            "Srirangam Ranganathaswamy Temple",
+            "Cauvery River banks"
+          ]
         },
         {
           "stop_number": 3,
@@ -1556,7 +1652,15 @@
             "latitude": 12.2308,
             "longitude": 79.0678
           },
-          "significance": "Represents the Fire (Agni) element, located at the base of the sacred Annamalai Hill."
+          "significance": "Represents the Fire (Agni) element, located at the base of the sacred Annamalai Hill.",
+          "deity": "Lord Arunachaleswarar",
+          "element": "Fire (Agni)",
+          "altitude_m": 171,
+          "distance_from_previous_km": 80,
+          "nearby_attractions": [
+            "Annamalai Hill Path",
+            "Ramana Ashram"
+          ]
         },
         {
           "stop_number": 4,
@@ -1567,7 +1671,15 @@
             "latitude": 13.7498,
             "longitude": 79.6983
           },
-          "significance": "Represents the Air (Vayu) element. Lingam is worshipped as wind."
+          "significance": "Represents the Air (Vayu) element. Lingam is worshipped as wind.",
+          "deity": "Lord Sri Kalahasteeswara",
+          "element": "Air (Vayu)",
+          "altitude_m": 68,
+          "distance_from_previous_km": 220,
+          "nearby_attractions": [
+            "Bharadwaja Tirtham",
+            "Tirupati Hills"
+          ]
         },
         {
           "stop_number": 5,
@@ -1578,7 +1690,15 @@
             "latitude": 11.3994,
             "longitude": 79.6936
           },
-          "significance": "Represents the Space (Akasha) element. The deity is represented in cosmic dance form."
+          "significance": "Represents the Space (Akasha) element. The deity is represented in cosmic dance form.",
+          "deity": "Lord Thillai Natarajar",
+          "element": "Space (Akasha)",
+          "altitude_m": 10,
+          "distance_from_previous_km": 240,
+          "nearby_attractions": [
+            "Thillai Kali Temple",
+            "Pichavaram Mangrove Forests"
+          ]
         }
       ]
     },
@@ -1610,7 +1730,14 @@
             "latitude": 16.5744,
             "longitude": 80.3547
           },
-          "significance": "First Aramam, located on the bank of Krishna river. Features a high marble Linga."
+          "significance": "First Aramam, located on the bank of Krishna river. Features a high marble Linga.",
+          "deity": "Lord Amaralingeswara Swamy",
+          "altitude_m": 18,
+          "distance_from_base_km": 35,
+          "nearby_attractions": [
+            "Krishna River Ghats",
+            "Dhyana Buddha Statue"
+          ]
         },
         {
           "stop_number": 2,
@@ -1621,7 +1748,14 @@
             "latitude": 16.5414,
             "longitude": 81.5208
           },
-          "significance": "Second Aramam, where the Linga changes color with phases of the moon."
+          "significance": "Second Aramam, where the Linga changes color with phases of the moon.",
+          "deity": "Lord Someswara Swamy",
+          "altitude_m": 14,
+          "distance_from_previous_km": 120,
+          "nearby_attractions": [
+            "Somaramam temple tank",
+            "Bhimavaram markets"
+          ]
         },
         {
           "stop_number": 3,
@@ -1632,7 +1766,14 @@
             "latitude": 16.5292,
             "longitude": 81.7231
           },
-          "significance": "Third Aramam. Worshipped as the milk-coloured Linga."
+          "significance": "Third Aramam. Worshipped as the milk-coloured Linga.",
+          "deity": "Lord Ksheera Ramalingeswara Swamy",
+          "altitude_m": 12,
+          "distance_from_previous_km": 22,
+          "nearby_attractions": [
+            "Gopuram View",
+            "Palakollu parks"
+          ]
         },
         {
           "stop_number": 4,
@@ -1643,7 +1784,14 @@
             "latitude": 16.7947,
             "longitude": 82.0647
           },
-          "significance": "Fourth Aramam, known as Dakshina Kashi. Historic Chalukyan carvings."
+          "significance": "Fourth Aramam, known as Dakshina Kashi. Historic Chalukyan carvings.",
+          "deity": "Lord Bhimeswara Swamy",
+          "altitude_m": 16,
+          "distance_from_previous_km": 68,
+          "nearby_attractions": [
+            "Draksharamam ancient pillars",
+            "Gadavali river"
+          ]
         },
         {
           "stop_number": 5,
@@ -1654,7 +1802,14 @@
             "latitude": 17.0494,
             "longitude": 82.2417
           },
-          "significance": "Fifth Aramam. A monolithic Linga rising to the upper level of the sanctum."
+          "significance": "Fifth Aramam. A monolithic Linga rising to the upper level of the sanctum.",
+          "deity": "Lord Kumara Bhimeswara Swamy",
+          "altitude_m": 22,
+          "distance_from_previous_km": 34,
+          "nearby_attractions": [
+            "Samalkot historic fort",
+            "Kakinada beach"
+          ]
         }
       ]
     },
@@ -1686,7 +1841,16 @@
             "latitude": 15.1117,
             "longitude": 78.6831
           },
-          "significance": "Worshipped by Sage Parashurama."
+          "significance": "Worshipped by Sage Parashurama.",
+          "deity": "Lord Bhargava Narasimha Swamy",
+          "altitude_m": 320,
+          "distance_from_base_km": 2,
+          "trek_distance_km": 1.5,
+          "difficulty": "Easy",
+          "nearby_attractions": [
+            "Bhargava Tirtham",
+            "Lower Ahobilam temple"
+          ]
         },
         {
           "stop_number": 2,
@@ -1697,7 +1861,15 @@
             "latitude": 15.1217,
             "longitude": 78.6947
           },
-          "significance": "Post-battle peaceful yoga posture."
+          "significance": "Post-battle peaceful yoga posture.",
+          "deity": "Lord Yogananda Narasimha Swamy",
+          "altitude_m": 315,
+          "distance_from_previous_km": 3,
+          "trek_distance_km": 0.5,
+          "difficulty": "Easy",
+          "nearby_attractions": [
+            "Lower Ahobilam streets"
+          ]
         },
         {
           "stop_number": 3,
@@ -1708,7 +1880,15 @@
             "latitude": 15.1294,
             "longitude": 78.6917
           },
-          "significance": "Depicts a smiling Narasimha under a Peepal tree."
+          "significance": "Depicts a smiling Narasimha under a Peepal tree.",
+          "deity": "Lord Chatravata Narasimha Swamy",
+          "altitude_m": 310,
+          "distance_from_previous_km": 2,
+          "trek_distance_km": 0.2,
+          "difficulty": "Easy",
+          "nearby_attractions": [
+            "Peepal tree shrine"
+          ]
         },
         {
           "stop_number": 4,
@@ -1719,7 +1899,16 @@
             "latitude": 15.1328,
             "longitude": 78.7153
           },
-          "significance": "Main cave temple where self-manifested deity resides."
+          "significance": "Main cave temple where self-manifested deity resides.",
+          "deity": "Lord Ahobila Narasimha Swamy",
+          "altitude_m": 420,
+          "distance_from_previous_km": 8,
+          "trek_distance_km": 1,
+          "difficulty": "Moderate",
+          "nearby_attractions": [
+            "Main Upper Ahobilam cave",
+            "Nallamala forest cliffs"
+          ]
         },
         {
           "stop_number": 5,
@@ -1730,7 +1919,16 @@
             "latitude": 15.1347,
             "longitude": 78.7097
           },
-          "significance": "Varaha and Narasimha combination form."
+          "significance": "Varaha and Narasimha combination form.",
+          "deity": "Lord Kroda Narasimha Swamy",
+          "altitude_m": 435,
+          "distance_from_previous_km": 1,
+          "trek_distance_km": 1.2,
+          "difficulty": "Moderate",
+          "nearby_attractions": [
+            "Kroda cave",
+            "Bhavanasini river bed"
+          ]
         },
         {
           "stop_number": 6,
@@ -1741,7 +1939,15 @@
             "latitude": 15.1247,
             "longitude": 78.6983
           },
-          "significance": "Under Karanja tree, holding a bow and arrow."
+          "significance": "Under Karanja tree, holding a bow and arrow.",
+          "deity": "Lord Karanja Narasimha Swamy",
+          "altitude_m": 330,
+          "distance_from_previous_km": 5,
+          "trek_distance_km": 0.1,
+          "difficulty": "Easy",
+          "nearby_attractions": [
+            "Karanja tree shrine"
+          ]
         },
         {
           "stop_number": 7,
@@ -1752,7 +1958,16 @@
             "latitude": 15.1394,
             "longitude": 78.7117
           },
-          "significance": "Peaceful form sitting with Goddess Lakshmi."
+          "significance": "Peaceful form sitting with Goddess Lakshmi.",
+          "deity": "Lord Malola Narasimha Swamy",
+          "altitude_m": 450,
+          "distance_from_previous_km": 2,
+          "trek_distance_km": 2,
+          "difficulty": "Moderate",
+          "nearby_attractions": [
+            "Malola hilltop pavilion",
+            "Scenic forest trails"
+          ]
         },
         {
           "stop_number": 8,
@@ -1763,7 +1978,16 @@
             "latitude": 15.1383,
             "longitude": 78.7183
           },
-          "significance": "Spot where Lord Narasimha defeated Hiranyakashipu."
+          "significance": "Spot where Lord Narasimha defeated Hiranyakashipu.",
+          "deity": "Lord Jwala Narasimha Swamy",
+          "altitude_m": 480,
+          "distance_from_previous_km": 1,
+          "trek_distance_km": 4,
+          "difficulty": "Strenuous",
+          "nearby_attractions": [
+            "Ugra Stambham cliff",
+            "Jwala cave waterfalls"
+          ]
         },
         {
           "stop_number": 9,
@@ -1774,7 +1998,16 @@
             "latitude": 15.1439,
             "longitude": 78.7297
           },
-          "significance": "The most remote forest temple."
+          "significance": "The most remote forest temple.",
+          "deity": "Lord Pavana Narasimha Swamy",
+          "altitude_m": 510,
+          "distance_from_previous_km": 12,
+          "trek_distance_km": 6,
+          "difficulty": "Strenuous",
+          "nearby_attractions": [
+            "Deep Nallamala forest reserve",
+            "Tribal hamlets"
+          ]
         }
       ]
     },
@@ -1806,7 +2039,14 @@
             "latitude": 10.7828,
             "longitude": 79.1319
           },
-          "significance": "UNESCO site built by Raja Raja Chola I. Features a monumental 66m stone tower."
+          "significance": "UNESCO site built by Raja Raja Chola I. Features a monumental 66m stone tower.",
+          "deity": "Lord Shiva (Brihadeeswarar)",
+          "altitude_m": 58,
+          "distance_from_base_km": 1,
+          "nearby_attractions": [
+            "Thanjavur Royal Palace",
+            "Saraswathi Mahal Library"
+          ]
         },
         {
           "stop_number": 2,
@@ -1817,7 +2057,14 @@
             "latitude": 11.2057,
             "longitude": 79.4824
           },
-          "significance": "Built by Rajendra Chola I. Houses the largest stone Shiva Linga in South India."
+          "significance": "Built by Rajendra Chola I. Houses the largest stone Shiva Linga in South India.",
+          "deity": "Lord Shiva (Brihadeeswarar)",
+          "altitude_m": 35,
+          "distance_from_previous_km": 72,
+          "nearby_attractions": [
+            "Lower Anicut",
+            "Gangaikonda Cholapuram museum"
+          ]
         },
         {
           "stop_number": 3,
@@ -1828,7 +2075,14 @@
             "latitude": 10.9483,
             "longitude": 79.3564
           },
-          "significance": "UNESCO site built by Raja Raja Chola II. Shaped like a stone chariot."
+          "significance": "UNESCO site built by Raja Raja Chola II. Shaped like a stone chariot.",
+          "deity": "Lord Shiva (Airavatesvara)",
+          "altitude_m": 25,
+          "distance_from_previous_km": 36,
+          "nearby_attractions": [
+            "Darasuram silk weaving village",
+            "Kumbakonam temples"
+          ]
         }
       ]
     },
@@ -1861,7 +2115,14 @@
             "latitude": 30.1447,
             "longitude": 78.5983
           },
-          "significance": "Confluence of Alaknanda and Bhagirathi rivers, where the Ganges officially begins."
+          "significance": "Confluence of Alaknanda and Bhagirathi rivers, where the Ganges officially begins.",
+          "deity": "Lord Rama",
+          "altitude_m": 472,
+          "distance_from_base_km": 72,
+          "nearby_attractions": [
+            "Bhagirathi-Alaknanda confluence",
+            "Sangam Ghat"
+          ]
         },
         {
           "stop_number": 2,
@@ -1872,7 +2133,14 @@
             "latitude": 30.2853,
             "longitude": 78.9817
           },
-          "significance": "Confluence of Alaknanda and Mandakini rivers."
+          "significance": "Confluence of Alaknanda and Mandakini rivers.",
+          "deity": "Goddess Chamunda",
+          "altitude_m": 895,
+          "distance_from_previous_km": 68,
+          "nearby_attractions": [
+            "Mandakini-Alaknanda confluence",
+            "Rudraprayag Sangam Ghat"
+          ]
         },
         {
           "stop_number": 3,
@@ -1883,7 +2151,14 @@
             "latitude": 30.2608,
             "longitude": 79.2217
           },
-          "significance": "Confluence of Alaknanda and Pindar rivers."
+          "significance": "Confluence of Alaknanda and Pindar rivers.",
+          "deity": "Goddess Uma (Parvati)",
+          "altitude_m": 860,
+          "distance_from_previous_km": 33,
+          "nearby_attractions": [
+            "Pindar-Alaknanda confluence",
+            "Karna Temple"
+          ]
         },
         {
           "stop_number": 4,
@@ -1894,7 +2169,14 @@
             "latitude": 30.3328,
             "longitude": 79.3253
           },
-          "significance": "Confluence of Alaknanda and Mandakini rivers."
+          "significance": "Confluence of Alaknanda and Mandakini rivers.",
+          "deity": "Lord Krishna (Gopal)",
+          "altitude_m": 914,
+          "distance_from_previous_km": 22,
+          "nearby_attractions": [
+            "Nandakini-Alaknanda confluence",
+            "Nanda Temple"
+          ]
         },
         {
           "stop_number": 5,
@@ -1905,7 +2187,14 @@
             "latitude": 30.5647,
             "longitude": 79.5683
           },
-          "significance": "Confluence of Alaknanda and Dhauliganga rivers."
+          "significance": "Confluence of Alaknanda and Dhauliganga rivers.",
+          "deity": "Lord Vishnu",
+          "altitude_m": 1372,
+          "distance_from_previous_km": 60,
+          "nearby_attractions": [
+            "Dhauliganga-Alaknanda confluence",
+            "Vishnu Kund"
+          ]
         }
       ]
     },
@@ -1937,7 +2226,14 @@
             "latitude": 13.1617,
             "longitude": 75.8597
           },
-          "significance": "Famous for its ornate Dravidian-Hoysala facade and standard soapstone madanika figurines."
+          "significance": "Famous for its ornate Dravidian-Hoysala facade and standard soapstone madanika figurines.",
+          "deity": "Lord Chennakeshava",
+          "altitude_m": 915,
+          "distance_from_base_km": 38,
+          "nearby_attractions": [
+            "Yagachi Dam",
+            "Belur bazaar"
+          ]
         },
         {
           "stop_number": 2,
@@ -1948,7 +2244,14 @@
             "latitude": 13.2139,
             "longitude": 75.9931
           },
-          "significance": "UNESCO World Heritage Site with spectacular twin shrines and massive monolith Nandi statues."
+          "significance": "UNESCO World Heritage Site with spectacular twin shrines and massive monolith Nandi statues.",
+          "deity": "Lord Shiva (Hoysaleswara)",
+          "altitude_m": 920,
+          "distance_from_previous_km": 16,
+          "nearby_attractions": [
+            "Kedareshwara Temple",
+            "Halebidu Archaeological Museum"
+          ]
         },
         {
           "stop_number": 3,
@@ -1959,7 +2262,14 @@
             "latitude": 12.2764,
             "longitude": 76.8819
           },
-          "significance": "A beautifully complete star-shaped triple-shrine (Trikuta) temple dedicated to Lord Vishnu."
+          "significance": "A beautifully complete star-shaped triple-shrine (Trikuta) temple dedicated to Lord Vishnu.",
+          "deity": "Lord Keshava",
+          "altitude_m": 640,
+          "distance_from_previous_km": 140,
+          "nearby_attractions": [
+            "Talakadu sand temples",
+            "Kaveri River banks"
+          ]
         }
       ]
     },
@@ -1991,7 +2301,14 @@
             "latitude": 25.0717,
             "longitude": 73.8833
           },
-          "significance": "A key shrine of the Pushtimarg sect located next to the Rajsamand Lake."
+          "significance": "A key shrine of the Pushtimarg sect located next to the Rajsamand Lake.",
+          "deity": "Lord Krishna (Dwarkadhish)",
+          "altitude_m": 532,
+          "distance_from_base_km": 65,
+          "nearby_attractions": [
+            "Rajsamand Lake",
+            "Kankroli Bandha"
+          ]
         },
         {
           "stop_number": 2,
@@ -2002,7 +2319,14 @@
             "latitude": 25.1383,
             "longitude": 73.5717
           },
-          "significance": "Historic fortress temple dedicated to a four-armed form of Lord Vishnu."
+          "significance": "Historic fortress temple dedicated to a four-armed form of Lord Vishnu.",
+          "deity": "Lord Vishnu (Charbhuja)",
+          "altitude_m": 595,
+          "distance_from_previous_km": 38,
+          "nearby_attractions": [
+            "Garhbor ancient fort",
+            "Kumbhalgarh Wildlife Sanctuary"
+          ]
         }
       ]
     },
@@ -2034,7 +2358,14 @@
             "latitude": 15.4383,
             "longitude": 73.9683
           },
-          "significance": "Features a unique 7-story lamp tower (Deepasthambha) and stunning dome architecture."
+          "significance": "Features a unique 7-story lamp tower (Deepasthambha) and stunning dome architecture.",
+          "deity": "Lord Shiva (Manguesh)",
+          "altitude_m": 45,
+          "distance_from_base_km": 22,
+          "nearby_attractions": [
+            "Spice plantations of Ponda",
+            "Veling village temples"
+          ]
         },
         {
           "stop_number": 2,
@@ -2045,7 +2376,14 @@
             "latitude": 15.4217,
             "longitude": 73.9183
           },
-          "significance": "Dedicated to the peaceful form of Goddess Durga mediating between Shiva and Vishnu."
+          "significance": "Dedicated to the peaceful form of Goddess Durga mediating between Shiva and Vishnu.",
+          "deity": "Goddess Shanta Durga",
+          "altitude_m": 30,
+          "distance_from_previous_km": 7,
+          "nearby_attractions": [
+            "Kavalem village hills",
+            "Ponda Fort"
+          ]
         },
         {
           "stop_number": 3,
@@ -2056,7 +2394,14 @@
             "latitude": 15.4383,
             "longitude": 74.2533
           },
-          "significance": "The oldest surviving stone temple in Goa, built of black basalt in Kadamba style."
+          "significance": "The oldest surviving stone temple in Goa, built of black basalt in Kadamba style.",
+          "deity": "Lord Shiva",
+          "altitude_m": 85,
+          "distance_from_previous_km": 42,
+          "nearby_attractions": [
+            "Bhagwan Mahavir Wildlife Sanctuary",
+            "Tambdi Surla waterfall trek"
+          ]
         }
       ]
     },
@@ -2088,7 +2433,14 @@
             "latitude": 27.5714,
             "longitude": 77.7017
           },
-          "significance": "One of the most famous Krishna temples where the deity is worshipped with a curtain-based darshan."
+          "significance": "One of the most famous Krishna temples where the deity is worshipped with a curtain-based darshan.",
+          "deity": "Lord Krishna (Bankey Bihari)",
+          "altitude_m": 183,
+          "distance_from_base_km": 2,
+          "nearby_attractions": [
+            "Radha Vallabh Temple",
+            "Vrindavan old bazaar"
+          ]
         },
         {
           "stop_number": 2,
@@ -2099,7 +2451,14 @@
             "latitude": 27.5817,
             "longitude": 77.7039
           },
-          "significance": "Houses a self-manifested deity from a Saligram stone. The kitchen fire has burned for 480+ years."
+          "significance": "Houses a self-manifested deity from a Saligram stone. The kitchen fire has burned for 480+ years.",
+          "deity": "Lord Krishna (Radha Raman)",
+          "altitude_m": 182,
+          "distance_from_previous_km": 1.2,
+          "nearby_attractions": [
+            "Nidhivan",
+            "Yamuna river ghats"
+          ]
         },
         {
           "stop_number": 3,
@@ -2110,7 +2469,14 @@
             "latitude": 27.5794,
             "longitude": 77.7006
           },
-          "significance": "Deity is represented by a golden crown alongside Radha."
+          "significance": "Deity is represented by a golden crown alongside Radha.",
+          "deity": "Lord Krishna & Radha",
+          "altitude_m": 180,
+          "distance_from_previous_km": 0.8,
+          "nearby_attractions": [
+            "Seva Kunj",
+            "Lala Babu Temple"
+          ]
         },
         {
           "stop_number": 4,
@@ -2121,7 +2487,14 @@
             "latitude": 27.5783,
             "longitude": 77.7028
           },
-          "significance": "Houses the holy Govardhan Shila displaying the footprint of Lord Krishna."
+          "significance": "Houses the holy Govardhan Shila displaying the footprint of Lord Krishna.",
+          "deity": "Lord Krishna (Damodar)",
+          "altitude_m": 181,
+          "distance_from_previous_km": 0.5,
+          "nearby_attractions": [
+            "Radha Syamasundara Temple",
+            "Imli Tala"
+          ]
         }
       ]
     },
@@ -2153,7 +2526,14 @@
             "latitude": 25.3217,
             "longitude": 83.0139
           },
-          "significance": "Dedicated to the spiritual police guardian (Kotwal) of Kashi."
+          "significance": "Dedicated to the spiritual police guardian (Kotwal) of Kashi.",
+          "deity": "Lord Kaal Bhairav",
+          "altitude_m": 86,
+          "distance_from_base_km": 3,
+          "nearby_attractions": [
+            "Kashi Vishwanath Temple",
+            "Manikarnika Ghat"
+          ]
         },
         {
           "stop_number": 2,
@@ -2164,7 +2544,14 @@
             "latitude": 25.2806,
             "longitude": 83.0006
           },
-          "significance": "Established by saint poet Tulsidas, highly popular Hanuman shrine."
+          "significance": "Established by saint poet Tulsidas, highly popular Hanuman shrine.",
+          "deity": "Lord Hanuman",
+          "altitude_m": 85,
+          "distance_from_previous_km": 5,
+          "nearby_attractions": [
+            "Banaras Hindu University (BHU) campus",
+            "Assi Ghat"
+          ]
         },
         {
           "stop_number": 3,
@@ -2175,7 +2562,14 @@
             "latitude": 25.2853,
             "longitude": 83.0039
           },
-          "significance": "An 18th-century red sandstone temple displaying classical Nagara Shikhara design."
+          "significance": "An 18th-century red sandstone temple displaying classical Nagara Shikhara design.",
+          "deity": "Goddess Durga",
+          "altitude_m": 83,
+          "distance_from_previous_km": 1,
+          "nearby_attractions": [
+            "Tulsi Manas Mandir",
+            "Durga Kund"
+          ]
         }
       ]
     },
@@ -2207,7 +2601,14 @@
             "latitude": 20.888,
             "longitude": 70.4012
           },
-          "significance": "The first among the twelve Jyotirlinga shrines of Lord Shiva, sitting directly on the beach."
+          "significance": "The first among the twelve Jyotirlinga shrines of Lord Shiva, sitting directly on the beach.",
+          "deity": "Lord Shiva (Somnath)",
+          "altitude_m": 10,
+          "distance_from_base_km": 4,
+          "nearby_attractions": [
+            "Somnath beach",
+            "Triveni Sangam Ghat"
+          ]
         },
         {
           "stop_number": 2,
@@ -2218,7 +2619,14 @@
             "latitude": 20.8953,
             "longitude": 70.4183
           },
-          "significance": "The holy site where Lord Krishna left the earthly plane."
+          "significance": "The holy site where Lord Krishna left the earthly plane.",
+          "deity": "Lord Krishna",
+          "altitude_m": 15,
+          "distance_from_previous_km": 4,
+          "nearby_attractions": [
+            "Veraval harbor",
+            "Somnath Museum"
+          ]
         },
         {
           "stop_number": 3,
@@ -2229,7 +2637,14 @@
             "latitude": 22.2417,
             "longitude": 68.9556
           },
-          "significance": "A gorgeous coastal temple situated on a hillock in the Arabian Sea near Dwarka."
+          "significance": "A gorgeous coastal temple situated on a hillock in the Arabian Sea near Dwarka.",
+          "deity": "Lord Shiva (Bhadkeshwar)",
+          "altitude_m": 5,
+          "distance_from_previous_km": 135,
+          "nearby_attractions": [
+            "Dwarkadhish Temple",
+            "Gomti Ghat"
+          ]
         },
         {
           "stop_number": 4,
@@ -2240,7 +2655,14 @@
             "latitude": 21.6117,
             "longitude": 72.2856
           },
-          "significance": "A unique sea temple where lingams emerge during low tide, allowing devotees to walk to them."
+          "significance": "A unique sea temple where lingams emerge during low tide, allowing devotees to walk to them.",
+          "deity": "Lord Shiva (Nishkalank)",
+          "altitude_m": 1,
+          "distance_from_previous_km": 280,
+          "nearby_attractions": [
+            "Koliyak beach",
+            "Bhavnagar Gandhi Smriti"
+          ]
         },
         {
           "stop_number": 5,
@@ -2251,7 +2673,14 @@
             "latitude": 21.2008,
             "longitude": 72.1117
           },
-          "significance": "Coastal temple where Narsinh Mehta received a vision of Krishna's Raas Leela."
+          "significance": "Coastal temple where Narsinh Mehta received a vision of Krishna's Raas Leela.",
+          "deity": "Lord Shiva (Gopnath)",
+          "altitude_m": 10,
+          "distance_from_previous_km": 55,
+          "nearby_attractions": [
+            "Gopnath beach cliffs",
+            "Talaja Buddhist Caves"
+          ]
         }
       ]
     }
