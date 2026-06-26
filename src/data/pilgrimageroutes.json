@@ -2,7 +2,7 @@
   "_meta": {
     "dataset": "Major Pilgrimage Circuits of India",
     "version": "1.0.0",
-    "total_circuits": 13,
+    "total_circuits": 18,
     "last_updated": "2026-05-21",
     "coordinate_source": "Wikipedia, Survey of India, Archaeological Survey of India, government tourism boards",
     "notes": "Temple sequences follow traditional/scriptural order. Distances are approximate road distances. Some temples appear in multiple circuits. All circuits reference temple IDs in mandirs.json."
@@ -970,7 +970,8 @@
             "latitude": 10.8537,
             "longitude": 78.7043
           },
-          "significance": "The Shivalinga is always submerged in naturally-springing water inside the Garbha Griha (sanctum). The water level never drops. One of the oldest temples in Tamil Nadu."
+          "significance": "The Shivalinga is always submerged in naturally-springing water inside the Garbha Griha (sanctum). The water level never drops. One of the oldest temples in Tamil Nadu.",
+          "temple_id": "T131"
         },
         {
           "stop_number": 3,
@@ -982,7 +983,8 @@
             "latitude": 12.2325,
             "longitude": 79.0668
           },
-          "significance": "Lord Shiva manifested as a column of fire to settle a dispute between Brahma and Vishnu. The hill Arunachala IS the Shivalinga. Deepam festival lights a fire visible for miles. Sri Ramana Maharshi's ashram is here."
+          "significance": "Lord Shiva manifested as a column of fire to settle a dispute between Brahma and Vishnu. The hill Arunachala IS the Shivalinga. Deepam festival lights a fire visible for miles. Sri Ramana Maharshi's ashram is here.",
+          "temple_id": "T130"
         },
         {
           "stop_number": 4,
@@ -1007,7 +1009,8 @@
             "latitude": 13.7482,
             "longitude": 79.6983
           },
-          "significance": "The only Pancha Bhuta Stala in Andhra Pradesh. The flame inside flickers constantly (showing moving air) despite no windows or vents. Famous for Rahu-Ketu Dosha (Rahukala puja) remedies."
+          "significance": "The only Pancha Bhuta Stala in Andhra Pradesh. The flame inside flickers constantly (showing moving air) despite no windows or vents. Famous for Rahu-Ketu Dosha (Rahukala puja) remedies.",
+          "temple_id": "T132"
         }
       ]
     },
@@ -1378,6 +1381,454 @@
             "longitude": 78.2253
           },
           "significance": "Sixth and final abode, situated on a peaceful forest hill near Madurai."
+        }
+      ]
+    },
+    {
+      "id": "PC014",
+      "name": "Navagraha Temples of Tamil Nadu",
+      "local_name": "நவக்கிரக தலம் யாத்திரை",
+      "circuit_type": "Navagraha Circuit",
+      "deity_focus": "Nine Planetary Deities (Navagrahas)",
+      "total_temples": 9,
+      "states_covered": [
+        "Tamil Nadu",
+        "Puducherry"
+      ],
+      "base_city": "Kumbakonam / Mayiladuthurai",
+      "best_months": [
+        "October to March"
+      ],
+      "approx_duration_days": 3,
+      "difficulty": "Easy",
+      "significance": "A circuit of nine ancient temples located around Kumbakonam, each representing one of the nine planetary deities in Hindu astrology (Navagrahas). Devotees visit them to resolve astrological constraints.",
+      "traditional_route_order": "Suryanar Kovil (Sun) → Thingaloor (Moon) → Vaitheeswaran Kovil (Mars) → Thiruvenkadu (Mercury) → Alangudi (Jupiter) → Kanjanur (Venus) → Thirunallar (Saturn) → Thirunageswaram (Rahu) → Keezhaperumpallam (Ketu)",
+      "temples": [
+        {
+          "stop_number": 1,
+          "temple_id": "T121",
+          "name": "Suryanar Kovil (Sun)",
+          "city": "Aduthurai",
+          "coordinates": {
+            "latitude": 11.0139,
+            "longitude": 79.48
+          },
+          "significance": "Dedicated to Surya (the Sun God). Represents power, leadership, and health."
+        },
+        {
+          "stop_number": 2,
+          "temple_id": "T122",
+          "name": "Thingaloor Kailasanathar Temple (Moon)",
+          "city": "Thingaloor",
+          "coordinates": {
+            "latitude": 10.9631,
+            "longitude": 79.1417
+          },
+          "significance": "Dedicated to Chandra (the Moon God). Governs emotions, mental peace, and motherly affection."
+        },
+        {
+          "stop_number": 3,
+          "temple_id": "T123",
+          "name": "Vaitheeswaran Kovil (Chevvai/Mars)",
+          "city": "Sirkazhi",
+          "coordinates": {
+            "latitude": 11.2008,
+            "longitude": 79.7119
+          },
+          "significance": "Chevvai (Mars) shrine. Shiva is worshipped here as Vaitheeswaran (Lord of Healing). Governs energy and vitality."
+        },
+        {
+          "stop_number": 4,
+          "temple_id": "T124",
+          "name": "Thiruvenkadu Swetharanyeswarar Temple (Mercury)",
+          "city": "Thiruvenkadu",
+          "coordinates": {
+            "latitude": 11.1739,
+            "longitude": 79.8183
+          },
+          "significance": "Budha (Mercury) shrine. Governs communication, intellect, and education."
+        },
+        {
+          "stop_number": 5,
+          "temple_id": "T125",
+          "name": "Alangudi Apatsahayesvarar Temple (Jupiter)",
+          "city": "Alangudi",
+          "coordinates": {
+            "latitude": 10.8247,
+            "longitude": 79.4319
+          },
+          "significance": "Guru (Jupiter) shrine. Governs wisdom, spirituality, and good fortune."
+        },
+        {
+          "stop_number": 6,
+          "temple_id": "T126",
+          "name": "Kanjanur Agneeswarar Temple (Venus)",
+          "city": "Kanjanur",
+          "coordinates": {
+            "latitude": 11.0319,
+            "longitude": 79.4939
+          },
+          "significance": "Sukran (Venus) shrine. Governs arts, relationships, wealth, and beauty."
+        },
+        {
+          "stop_number": 7,
+          "temple_id": "T127",
+          "name": "Thirunallar Dharbaranyeswarar Temple (Saturn)",
+          "city": "Thirunallar",
+          "coordinates": {
+            "latitude": 10.9317,
+            "longitude": 79.7814
+          },
+          "significance": "Shani (Saturn) shrine. Highly popular, believed to alleviate karmic challenges."
+        },
+        {
+          "stop_number": 8,
+          "temple_id": "T128",
+          "name": "Thirunageswaram Naganathar Temple (Rahu)",
+          "city": "Thirunageswaram",
+          "coordinates": {
+            "latitude": 10.9606,
+            "longitude": 79.4219
+          },
+          "significance": "Rahu shrine. Worshipped to overcome obstacles and gain spiritual growth."
+        },
+        {
+          "stop_number": 9,
+          "temple_id": "T129",
+          "name": "Keezhaperumpallam Naganathaswamy Temple (Ketu)",
+          "city": "Keezhaperumpallam",
+          "coordinates": {
+            "latitude": 11.1683,
+            "longitude": 79.8453
+          },
+          "significance": "Ketu shrine. Governs wisdom, detachment, and spiritual liberation (Moksha)."
+        }
+      ]
+    },
+    {
+      "id": "PC015",
+      "name": "Pancha Bhuta Sthala (Five Elements Circuit)",
+      "local_name": "पंचभूत स्थल यात्रा",
+      "circuit_type": "Pancha Bhuta Stala",
+      "deity_focus": "Lord Shiva (Five Cosmic Elements)",
+      "total_temples": 5,
+      "states_covered": [
+        "Tamil Nadu",
+        "Andhra Pradesh"
+      ],
+      "base_city": "Chennai / Trichy",
+      "best_months": [
+        "October to March"
+      ],
+      "approx_duration_days": 5,
+      "difficulty": "Easy",
+      "significance": "Circuit of five ancient temples representing the five elements of nature (Earth, Water, Fire, Air, and Space). Promoted by Adi Shankaracharya to show the omnipresence of Shiva in nature.",
+      "traditional_route_order": "Ekambareswarar (Earth) → Jambukeswarar (Water) → Arunachaleswarar (Fire) → Kalahasteeswara (Air) → Natarajar (Space)",
+      "temples": [
+        {
+          "stop_number": 1,
+          "temple_id": "T036",
+          "name": "Ekambareswarar Temple (Earth)",
+          "city": "Kanchipuram, TN",
+          "coordinates": {
+            "latitude": 12.8471,
+            "longitude": 79.6997
+          },
+          "significance": "Represents the Earth (Prithvi) element. The main lingam is made of sand."
+        },
+        {
+          "stop_number": 2,
+          "temple_id": "T131",
+          "name": "Jambukeswarar Temple (Water)",
+          "city": "Thiruvanaikaval, Trichy, TN",
+          "coordinates": {
+            "latitude": 10.8533,
+            "longitude": 78.7067
+          },
+          "significance": "Represents the Water (Appu) element. Underground springs keep the sanctum wet."
+        },
+        {
+          "stop_number": 3,
+          "temple_id": "T130",
+          "name": "Arunachaleswarar Temple (Fire)",
+          "city": "Tiruvannamalai, TN",
+          "coordinates": {
+            "latitude": 12.2308,
+            "longitude": 79.0678
+          },
+          "significance": "Represents the Fire (Agni) element, located at the base of the sacred Annamalai Hill."
+        },
+        {
+          "stop_number": 4,
+          "temple_id": "T132",
+          "name": "Kalahasteeswara Temple (Air)",
+          "city": "Srikalahasti, AP",
+          "coordinates": {
+            "latitude": 13.7498,
+            "longitude": 79.6983
+          },
+          "significance": "Represents the Air (Vayu) element. Lingam is worshipped as wind."
+        },
+        {
+          "stop_number": 5,
+          "temple_id": "T035",
+          "name": "Nataraja Temple (Space)",
+          "city": "Chidambaram, TN",
+          "coordinates": {
+            "latitude": 11.3994,
+            "longitude": 79.6936
+          },
+          "significance": "Represents the Space (Akasha) element. The deity is represented in cosmic dance form."
+        }
+      ]
+    },
+    {
+      "id": "PC016",
+      "name": "Pancharama Kshetras of Andhra Pradesh",
+      "local_name": "पंचाराम क्षेत्र यात्रा",
+      "circuit_type": "Pancharama Kshetra",
+      "deity_focus": "Lord Shiva",
+      "total_temples": 5,
+      "states_covered": [
+        "Andhra Pradesh"
+      ],
+      "base_city": "Vijayawada / Rajahmundry",
+      "best_months": [
+        "October to March"
+      ],
+      "approx_duration_days": 4,
+      "difficulty": "Easy",
+      "significance": "Five sacred Shiva temples in Andhra Pradesh. The Shiva Lingas here are believed to be parts of a single giant Shiva Linga owned by the demon Tarakasura, which shattered into five pieces during a celestial battle.",
+      "traditional_route_order": "Amararama → Somarama → Ksheerarama → Draksharama → Kumararama",
+      "temples": [
+        {
+          "stop_number": 1,
+          "temple_id": "T133",
+          "name": "Amararama Temple",
+          "city": "Amaravati",
+          "coordinates": {
+            "latitude": 16.5744,
+            "longitude": 80.3547
+          },
+          "significance": "First Aramam, located on the bank of Krishna river. Features a high marble Linga."
+        },
+        {
+          "stop_number": 2,
+          "temple_id": "T134",
+          "name": "Somarama Temple",
+          "city": "Bhimavaram",
+          "coordinates": {
+            "latitude": 16.5414,
+            "longitude": 81.5208
+          },
+          "significance": "Second Aramam, where the Linga changes color with phases of the moon."
+        },
+        {
+          "stop_number": 3,
+          "temple_id": "T086",
+          "name": "Ksheerarama Temple",
+          "city": "Palakollu",
+          "coordinates": {
+            "latitude": 16.5292,
+            "longitude": 81.7231
+          },
+          "significance": "Third Aramam. Worshipped as the milk-coloured Linga."
+        },
+        {
+          "stop_number": 4,
+          "temple_id": "T135",
+          "name": "Draksharama Temple",
+          "city": "Draksharamam",
+          "coordinates": {
+            "latitude": 16.7947,
+            "longitude": 82.0647
+          },
+          "significance": "Fourth Aramam, known as Dakshina Kashi. Historic Chalukyan carvings."
+        },
+        {
+          "stop_number": 5,
+          "temple_id": "T136",
+          "name": "Kumararama Temple",
+          "city": "Samalkot",
+          "coordinates": {
+            "latitude": 17.0494,
+            "longitude": 82.2417
+          },
+          "significance": "Fifth Aramam. A monolithic Linga rising to the upper level of the sanctum."
+        }
+      ]
+    },
+    {
+      "id": "PC017",
+      "name": "Ahobilam Nava Narasimha Circuit",
+      "local_name": "अहोबिलम नव नरसिंह यात्रा",
+      "circuit_type": "Narasimha Circuit",
+      "deity_focus": "Lord Narasimha (9 avatars)",
+      "total_temples": 9,
+      "states_covered": [
+        "Andhra Pradesh"
+      ],
+      "base_city": "Ahobilam / Nandyal",
+      "best_months": [
+        "September to March"
+      ],
+      "approx_duration_days": 3,
+      "difficulty": "Strenuous (involves hilly forest trekking)",
+      "significance": "The sacred forest valley of Ahobilam where Lord Narasimha manifested. Features nine temples displaying nine different forms of Narasimha, split between Lower and Upper Ahobilam.",
+      "traditional_route_order": "Bhargava → Yogananda → Chatravata → Ahobila → Kroda → Karanja → Malola → Jwala → Pavana",
+      "temples": [
+        {
+          "stop_number": 1,
+          "temple_id": "T145",
+          "name": "Bhargava Narasimha Temple",
+          "city": "Lower Ahobilam",
+          "coordinates": {
+            "latitude": 15.1117,
+            "longitude": 78.6831
+          },
+          "significance": "Worshipped by Sage Parashurama."
+        },
+        {
+          "stop_number": 2,
+          "temple_id": "T142",
+          "name": "Yogananda Narasimha Temple",
+          "city": "Lower Ahobilam",
+          "coordinates": {
+            "latitude": 15.1217,
+            "longitude": 78.6947
+          },
+          "significance": "Post-battle peaceful yoga posture."
+        },
+        {
+          "stop_number": 3,
+          "temple_id": "T143",
+          "name": "Chatravata Narasimha Temple",
+          "city": "Lower Ahobilam",
+          "coordinates": {
+            "latitude": 15.1294,
+            "longitude": 78.6917
+          },
+          "significance": "Depicts a smiling Narasimha under a Peepal tree."
+        },
+        {
+          "stop_number": 4,
+          "temple_id": "T138",
+          "name": "Ahobila Narasimha Temple",
+          "city": "Upper Ahobilam",
+          "coordinates": {
+            "latitude": 15.1328,
+            "longitude": 78.7153
+          },
+          "significance": "Main cave temple where self-manifested deity resides."
+        },
+        {
+          "stop_number": 5,
+          "temple_id": "T140",
+          "name": "Kroda Narasimha Temple",
+          "city": "Upper Ahobilam",
+          "coordinates": {
+            "latitude": 15.1347,
+            "longitude": 78.7097
+          },
+          "significance": "Varaha and Narasimha combination form."
+        },
+        {
+          "stop_number": 6,
+          "temple_id": "T141",
+          "name": "Karanja Narasimha Temple",
+          "city": "Upper Ahobilam",
+          "coordinates": {
+            "latitude": 15.1247,
+            "longitude": 78.6983
+          },
+          "significance": "Under Karanja tree, holding a bow and arrow."
+        },
+        {
+          "stop_number": 7,
+          "temple_id": "T139",
+          "name": "Malola Narasimha Temple",
+          "city": "Upper Ahobilam",
+          "coordinates": {
+            "latitude": 15.1394,
+            "longitude": 78.7117
+          },
+          "significance": "Peaceful form sitting with Goddess Lakshmi."
+        },
+        {
+          "stop_number": 8,
+          "temple_id": "T137",
+          "name": "Jwala Narasimha Temple",
+          "city": "Upper Ahobilam",
+          "coordinates": {
+            "latitude": 15.1383,
+            "longitude": 78.7183
+          },
+          "significance": "Spot where Lord Narasimha defeated Hiranyakashipu."
+        },
+        {
+          "stop_number": 9,
+          "temple_id": "T144",
+          "name": "Pavana Narasimha Temple",
+          "city": "Upper Ahobilam",
+          "coordinates": {
+            "latitude": 15.1439,
+            "longitude": 78.7297
+          },
+          "significance": "The most remote forest temple."
+        }
+      ]
+    },
+    {
+      "id": "PC018",
+      "name": "Great Living Chola Temples Circuit",
+      "local_name": "महान चोल मंदिर यात्रा",
+      "circuit_type": "UNESCO Heritage + Regional",
+      "deity_focus": "Lord Shiva",
+      "total_temples": 3,
+      "states_covered": [
+        "Tamil Nadu"
+      ],
+      "base_city": "Thanjavur / Kumbakonam",
+      "best_months": [
+        "October to March"
+      ],
+      "approx_duration_days": 2,
+      "difficulty": "Easy",
+      "significance": "UNESCO World Heritage group of three stunning 11th-12th century temples built by the Chola Empire, celebrating the peak of Dravidian architecture.",
+      "traditional_route_order": "Thanjavur Brihadeeswarar → Gangaikonda Cholapuram → Darasuram Airavatesvara",
+      "temples": [
+        {
+          "stop_number": 1,
+          "temple_id": "T024",
+          "name": "Brihadeeswarar Temple (Thanjavur)",
+          "city": "Thanjavur",
+          "coordinates": {
+            "latitude": 10.7828,
+            "longitude": 79.1319
+          },
+          "significance": "UNESCO site built by Raja Raja Chola I. Features a monumental 66m stone tower."
+        },
+        {
+          "stop_number": 2,
+          "temple_id": "T085",
+          "name": "Brihadeeswarar Temple (Gangaikonda Cholapuram)",
+          "city": "Gangaikonda Cholapuram",
+          "coordinates": {
+            "latitude": 11.2057,
+            "longitude": 79.4824
+          },
+          "significance": "Built by Rajendra Chola I. Houses the largest stone Shiva Linga in South India."
+        },
+        {
+          "stop_number": 3,
+          "temple_id": "T292",
+          "name": "Airavatesvara Temple (Darasuram)",
+          "city": "Darasuram, Kumbakonam",
+          "coordinates": {
+            "latitude": 10.9483,
+            "longitude": 79.3564
+          },
+          "significance": "UNESCO site built by Raja Raja Chola II. Shaped like a stone chariot."
         }
       ]
     }
