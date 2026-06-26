@@ -2283,7 +2283,7 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
     #rpa { display: none; }
 
     @media print {
-      @page { size: A4 portrait; margin: 12mm 10mm; }
+      @page { size: A4 portrait; margin: 10mm; }
 
       /* ── 0. DashboardShell has h-screen overflow-hidden + main overflow-y-auto
               These clip everything after page 1. Reset ALL ancestors. ── */
@@ -2326,7 +2326,16 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
         box-shadow: none !important;
         page-break-inside: avoid;
         break-inside: avoid;
+        overflow: visible !important;
         margin-bottom: 8px;
+      }
+      /* Prevent content blocks from being cut mid-item */
+      #rpa > div { overflow: visible !important; }
+      #rpa [style*="border-radius"], #rpa [style*="rounded"] {
+        break-inside: avoid; page-break-inside: avoid;
+      }
+      #rpa [style*="pageBreakBefore"], #rpa [style*="pageBreakAfter"] {
+        overflow: visible !important;
       }
 
       /* ── 5. Tables ── */
@@ -2412,7 +2421,7 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
         <div id="rpa" ref={printRef}>
 
           {/* COVER PAGE - Tathastu parchment style */}
-          <div style={{ minHeight: 'calc(29.7cm - 20mm)', background: '#f5ede0', pageBreakAfter: 'always', position: 'relative', overflow: 'hidden', fontFamily: 'Georgia, serif' }}>
+          <div style={{ minHeight: 'calc(29.7cm - 20mm)', background: '#f5ede0', pageBreakAfter: 'always', position: 'relative', overflow: 'visible', fontFamily: 'Georgia, serif' }}>
             {/* Decorative corner borders */}
             {[{ top: 12, left: 12 }, { top: 12, right: 12 }, { bottom: 12, left: 12 }, { bottom: 12, right: 12 }].map((pos, i) => (
               <div key={i} style={{ position: 'absolute', width: 40, height: 40, ...pos, borderColor: '#c8922a', borderStyle: 'solid', borderWidth: i === 0 ? '3px 0 0 3px' : i === 1 ? '3px 3px 0 0' : i === 2 ? '0 0 3px 3px' : '0 3px 3px 0' }} />
@@ -2518,7 +2527,7 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
           </div>
 
           {/* ABOUT & BENEFITS PAGE - parchment style */}
-          <div style={{ padding: '0', pageBreakAfter: 'always', minHeight: '29.7cm', background: '#f5ede0', fontFamily: 'Georgia, serif', position: 'relative' }}>
+          <div style={{ padding: '0', pageBreakAfter: 'always', minHeight: 'calc(29.7cm - 20mm)', background: '#f5ede0', fontFamily: 'Georgia, serif', position: 'relative', overflow: 'visible' }}>
             {/* Decorative border */}
             <div style={{ position: 'absolute', inset: 8, border: '1px solid #c8922a', opacity: 0.5, pointerEvents: 'none' }} />
             {[{ top: 12, left: 12 }, { top: 12, right: 12 }, { bottom: 12, left: 12 }, { bottom: 12, right: 12 }].map((pos, i) => (
@@ -2639,7 +2648,7 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
           ))}
 
           {/* DISCLAIMER PAGE - parchment */}
-          <div style={{ padding: '0', pageBreakBefore: 'always', background: '#f5ede0', minHeight: '29.7cm', position: 'relative', fontFamily: 'Georgia, serif' }}>
+          <div style={{ padding: '0', pageBreakBefore: 'always', background: '#f5ede0', minHeight: 'calc(29.7cm - 20mm)', position: 'relative', fontFamily: 'Georgia, serif', overflow: 'visible' }}>
             <div style={{ position: 'absolute', inset: 8, border: '1px solid #c8922a', opacity: 0.4, pointerEvents: 'none' }} />
             {[{ top: 12, left: 12 }, { top: 12, right: 12 }, { bottom: 12, left: 12 }, { bottom: 12, right: 12 }].map((pos, i) => (
               <div key={i} style={{ position: 'absolute', width: 32, height: 32, ...pos, borderColor: '#c8922a', borderStyle: 'solid', borderWidth: i === 0 ? '3px 0 0 3px' : i === 1 ? '3px 3px 0 0' : i === 2 ? '0 0 3px 3px' : '0 3px 3px 0' }} />
