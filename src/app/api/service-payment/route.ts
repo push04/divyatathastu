@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
   const action = url.searchParams.get('action') || 'create'
 
   if (action === 'create') {
-    const { service_item_id, amount, notes, preferred_date } = await req.json()
+    const { service_item_id, amount, notes, preferred_date, quantity } = await req.json()
     if (!service_item_id) return NextResponse.json({ error: 'service_item_id required' }, { status: 400 })
 
     // Fetch authoritative price — prevents client-side tampering
@@ -33,7 +33,8 @@ export async function POST(req: NextRequest) {
       .single()
     if (itemErr || !item) return NextResponse.json({ error: 'Service not found or not available for booking' }, { status: 404 })
 
-    const totalAmount = (item.price ?? amount ?? 0) as number
+    const qty = Math.max(1, parseInt(quantity) || 1)
+    const totalAmount = ((item.price ?? amount ?? 0) as number) * qty
     const receipt = `SVC-${Date.now()}`
 
     // Mock mode when no Razorpay keys configured

@@ -56,8 +56,9 @@ export default function ArdraJalamPage() {
         return
       }
       await pay(
-        { id: product.id, title: product.title, price: totalPrice },
+        { id: product.id, title: product.title, price: unitPrice },
         {
+          quantity: qty,
           notes: `Qty: ${qty} bottle(s) of Ardra Jalam`,
           onSuccess: () => setBooked(true),
         }

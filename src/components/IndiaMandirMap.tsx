@@ -97,9 +97,17 @@ export default function IndiaMandirMap() {
     return ids
   }, [selectedCircuit])
 
+  const mapData = useMemo(() => {
+    const raw = (indiaMap as any)?.default || indiaMap
+    return {
+      viewBox: raw?.viewBox || '0 0 612 696',
+      locations: raw?.locations || []
+    }
+  }, [])
+
   const activeTemples = selectedState ? (stateTemples[selectedState] || []) : []
   const activeStateName = selectedState
-    ? indiaMap.locations.find(l => l.id === selectedState)?.name || ''
+    ? mapData.locations.find(l => l.id === selectedState)?.name || ''
     : ''
 
   return (
@@ -135,11 +143,11 @@ export default function IndiaMandirMap() {
           )}
 
           <svg
-            viewBox={indiaMap.viewBox}
+            viewBox={mapData.viewBox}
             className="w-full h-full max-h-[600px] drop-shadow-sm"
             style={{ maxWidth: '500px' }}
           >
-            {indiaMap.locations.map(loc => {
+            {mapData.locations.map(loc => {
               const count = stateTemples[loc.id]?.length || 0
               const isHovered = hoveredState === loc.id
               const isSelected = selectedState === loc.id
@@ -172,7 +180,7 @@ export default function IndiaMandirMap() {
           {/* Hover tooltip */}
           {hoveredState && !selectedState && (
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-[var(--indigo-deep)] text-white px-3 py-1.5 rounded-lg text-xs font-medium shadow-lg pointer-events-none z-20">
-              {indiaMap.locations.find(l => l.id === hoveredState)?.name}
+              {mapData.locations.find(l => l.id === hoveredState)?.name}
               {stateTemples[hoveredState]?.length
                 ? ` · ${stateTemples[hoveredState].length} temple${stateTemples[hoveredState].length > 1 ? 's' : ''}`
                 : ' · No temples in dataset'}

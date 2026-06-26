@@ -28,6 +28,7 @@ export interface ServiceItem {
 export interface PayOptions {
   notes?: string
   preferredDate?: string
+  quantity?: number
   onSuccess?: (itemId: string) => void
 }
 
@@ -51,6 +52,7 @@ export function useServicePayment() {
         body: JSON.stringify({
           service_item_id: item.id,
           amount: item.price,
+          quantity: opts?.quantity || 1,
           notes: opts?.notes || item.title,
           preferred_date: opts?.preferredDate || null,
         }),
