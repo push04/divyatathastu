@@ -1,26 +1,20 @@
 /**
  * Safe server-side PDF rendering utilities.
  *
- * ROOT CAUSE HISTORY:
+ * THE SPLIT-MODULE-SINGLETON PROBLEM:
+ * @react-pdf/renderer is in serverExternalPackages so it loads as an isolated
+ * CJS module instance. ReportPDF.tsx is bundled by Turbopack and gets a
+ * DIFFERENT react-pdf instance.
  *
- * 1. Split module singleton: @react-pdf/renderer is in serverExternalPackages,
- *    so it loads via Node.js CJS require as an isolated module instance.
- *    ReportPDF.tsx is bundled by Turbopack and gets a DIFFERENT react-pdf
- *    instance. Any Font.register() calls in ReportPDF.tsx register fonts on
- *    the wrong (Turbopack-bundled) instance — the renderer never sees them.
- *    This causes rendering to fail silently (react-pdf tries to load fonts
- *    that aren't registered), and container.document stays null.
+ * Therefore:
+ * - Font.register() MUST happen here (not in ReportPDF.tsx)
+ * - Components (Document, Page, etc.) are identified by string type constants
+ *   ('DOCUMENT', 'PAGE', etc.) so they work across module boundaries
  *
- * 2. Scheduler timing: updateContainer() without a callback relies on
- *    flushSyncWork() which can be a no-op in some Vercel Lambda contexts.
- *    We use the callback form to guarantee the commit happened.
- *
- * THE FIX:
- * - Font.register() is called HERE (in pdf-utils.ts) via dynamic import,
- *   ensuring it runs on the same externalized CJS react-pdf instance that
- *   does the actual rendering.
- * - renderToBufferSafe() uses callback-based updateContainer() so
- *   container.document is guaranteed non-null before toBuffer().
+ * NULL CONTAINER PROBLEM:
+ * container.document stays null when React's render phase throws a component
+ * error. React 19 swallows these errors silently in custom renderer contexts.
+ * We intercept console.error to capture and re-surface the real error.
  */
 
 import path from 'path'
@@ -33,11 +27,8 @@ async function ensureFontsRegistered() {
 
   const { Font } = await import('@react-pdf/renderer')
 
-  // Fonts are in public/fonts/ which Vercel always bundles (outputFileTracingIncludes)
   const f = (name: string) => path.join(process.cwd(), 'public', 'fonts', name)
 
-  // Register each weight/style as its own family name to avoid fontWeight
-  // resolution bugs in react-pdf (it doesn't reliably map weight:700 → bold file)
   Font.register({ family: 'CG',       src: f('cg-400.woff2') })
   Font.register({ family: 'CGi',      src: f('cg-400i.woff2') })
   Font.register({ family: 'CGsb',     src: f('cg-600.woff2') })
@@ -51,34 +42,64 @@ async function ensureFontsRegistered() {
 }
 
 export async function renderToBufferSafe(element: React.ReactElement): Promise<Buffer> {
-  // Step 1: Register fonts on the externalized react-pdf instance
-  // (must happen here, NOT in ReportPDF.tsx which is bundled separately)
   await ensureFontsRegistered()
 
-  // Step 2: Dynamic import — react-pdf is in serverExternalPackages so this
-  // loads via CJS require, getting the same isolated instance as ensureFontsRegistered()
-  const { pdf } = await import('@react-pdf/renderer')
+  // ── Intercept console.error to catch React 19's swallowed component errors ──
+  // React 19 catches component errors internally and calls console.error instead
+  // of propagating them in custom renderer contexts. We capture them here so
+  // the real error is visible in the 500 response body and Vercel logs.
+  const capturedErrors: string[] = []
+  const origConsoleError = console.error
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  console.error = (...args: any[]) => {
+    const msg = args.map(a => (a instanceof Error ? a.stack || a.message : String(a))).join(' ')
+    capturedErrors.push(msg)
+    origConsoleError(...args)
+  }
 
-  const instance = (pdf as any)()
+  let buffer: Buffer
+  try {
+    const { pdf } = await import('@react-pdf/renderer')
+    const instance = (pdf as any)()
 
-  // Step 3: Wait for the reconciler to fully commit the element tree.
-  // The callback fires AFTER appendChildToContainer sets container.document,
-  // so container.document is guaranteed non-null when we call toBuffer().
-  await new Promise<void>((resolve, reject) => {
-    try {
-      instance.updateContainer(element, () => resolve())
-    } catch (err) {
-      reject(err)
+    // Use the 'change' event (fires from resetAfterCommit, AFTER appendChildToContainer)
+    // AND the updateContainer callback (fires after layout effects) as belt-and-suspenders.
+    // Whichever fires first resolves the Promise.
+    await new Promise<void>((resolve, reject) => {
+      let resolved = false
+      const done = () => { if (!resolved) { resolved = true; resolve() } }
+
+      // resetAfterCommit fires AFTER appendChildToContainer → container.document is set
+      instance.on('change', done)
+
+      try {
+        instance.updateContainer(element, done)
+      } catch (err) {
+        reject(err)
+      }
+    })
+
+    // Verify container.document was actually set (if React threw during render,
+    // it may still have called our callbacks without committing anything)
+    if (!instance.container.document) {
+      const reactErrors = capturedErrors.join('\n').slice(0, 2000)
+      throw new Error(
+        `PDF render: container.document is null after commit callbacks fired.\n` +
+        `This means React threw during render phase but swallowed the error.\n` +
+        `Captured React errors:\n${reactErrors || '(none — check Vercel function logs)'}`
+      )
     }
-  })
 
-  // container.document is set — safe to render
-  const stream = await instance.toBuffer()
+    const stream = await instance.toBuffer()
+    buffer = await new Promise<Buffer>((resolve, reject) => {
+      const chunks: Buffer[] = []
+      stream.on('data', (chunk: Buffer) => chunks.push(chunk))
+      stream.on('end', () => resolve(Buffer.concat(chunks)))
+      stream.on('error', reject)
+    })
+  } finally {
+    console.error = origConsoleError
+  }
 
-  return new Promise<Buffer>((resolve, reject) => {
-    const chunks: Buffer[] = []
-    stream.on('data', (chunk: Buffer) => chunks.push(chunk))
-    stream.on('end', () => resolve(Buffer.concat(chunks)))
-    stream.on('error', reject)
-  })
+  return buffer
 }
