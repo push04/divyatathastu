@@ -2429,34 +2429,50 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
             </div>
 
             {/* Two-column layout */}
-            <div style={{ display: 'flex', margin: '0 16px' }}>
+            <div style={{ display: 'flex', margin: '0 16px', minHeight: '22cm' }}>
 
               {/* LEFT - Gyanampeetham */}
-              <div style={{ flex: '0 0 42%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRight: '1px solid rgba(200,146,42,0.4)', padding: '28px 24px', gap: 18 }}>
-                {/* G logo circle */}
-                <div style={{ width: 88, height: 88, borderRadius: '50%', background: 'linear-gradient(135deg,#6b3a2a,#3d1f0f)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 42, fontWeight: 900, fontFamily: 'Georgia, serif' }}>
-                  G
+              <div style={{ flex: '0 0 42%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'space-between', borderRight: '1px solid rgba(200,146,42,0.4)', padding: '20px 24px' }}>
+                {/* Top: OM auspicious mark */}
+                <div style={{ textAlign: 'center', width: '100%' }}>
+                  <div style={{ fontSize: 28, color: '#cc2200', lineHeight: 1 }}>ॐ</div>
+                  <div style={{ width: '60%', height: 1, background: 'rgba(200,146,42,0.4)', margin: '8px auto 0' }} />
                 </div>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 20, fontWeight: 900, color: '#2c1a0e', letterSpacing: '0.06em', fontFamily: 'Georgia, serif' }}>GYANAMPEETHAM</div>
-                  <div style={{ fontSize: 8.5, color: '#6b3a2a', letterSpacing: '0.2em', marginTop: 3 }}>"DISCOVER THE DIVINE WITHIN"</div>
+
+                {/* Middle: Logo block */}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, flex: 1, justifyContent: 'center' }}>
+                  <div style={{ width: 88, height: 88, borderRadius: '50%', background: 'linear-gradient(135deg,#6b3a2a,#3d1f0f)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 42, fontWeight: 900, fontFamily: 'Georgia, serif' }}>
+                    G
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: 20, fontWeight: 900, color: '#2c1a0e', letterSpacing: '0.06em', fontFamily: 'Georgia, serif' }}>GYANAMPEETHAM</div>
+                    <div style={{ fontSize: 8.5, color: '#6b3a2a', letterSpacing: '0.2em', marginTop: 3 }}>"DISCOVER THE DIVINE WITHIN"</div>
+                  </div>
+                  {/* Lotus SVG */}
+                  <svg width="76" height="76" viewBox="0 0 90 90" fill="none">
+                    {[0,40,80,120,160,200,240,280,320].map((a, i) => (
+                      <ellipse key={i} cx="45" cy="45" rx="10" ry="28" fill="#7c6db5" opacity="0.55" transform={`rotate(${a} 45 45)`} />
+                    ))}
+                    <circle cx="45" cy="45" r="10" fill="#7c6db5" opacity="0.8" />
+                  </svg>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: 13, fontWeight: 900, color: '#7c6db5', letterSpacing: '0.18em', fontFamily: 'Georgia, serif' }}>ANUSHTHAAN INDIA</div>
+                    <div style={{ fontSize: 7.5, color: '#7c6db5', letterSpacing: '0.1em', marginTop: 3 }}>"EDUCATING SOCIETY WITH WISDOM FOR A BETTER LIFE"</div>
+                  </div>
                 </div>
-                {/* Lotus SVG */}
-                <svg width="80" height="80" viewBox="0 0 90 90" fill="none">
-                  {[0,40,80,120,160,200,240,280,320].map((a, i) => (
-                    <ellipse key={i} cx="45" cy="45" rx="10" ry="28" fill="#7c6db5" opacity="0.55" transform={`rotate(${a} 45 45)`} />
-                  ))}
-                  <circle cx="45" cy="45" r="10" fill="#7c6db5" opacity="0.8" />
-                </svg>
-                <div style={{ textAlign: 'center' }}>
-                  <div style={{ fontSize: 13, fontWeight: 900, color: '#7c6db5', letterSpacing: '0.18em', fontFamily: 'Georgia, serif' }}>ANUSHTHAAN INDIA</div>
-                  <div style={{ fontSize: 7.5, color: '#7c6db5', letterSpacing: '0.1em', marginTop: 3 }}>"EDUCATING SOCIETY WITH WISDOM FOR A BETTER LIFE"</div>
+
+                {/* Bottom: Mission & note */}
+                <div style={{ width: '100%', textAlign: 'center' }}>
+                  <div style={{ width: '60%', height: 1, background: 'rgba(200,146,42,0.4)', margin: '0 auto 10px' }} />
+                  <div style={{ background: 'rgba(200,146,42,0.1)', border: '1px solid rgba(200,146,42,0.35)', borderRadius: 6, padding: '8px 10px', marginBottom: 10 }}>
+                    <p style={{ fontSize: 9, color: '#6b3a2a', lineHeight: 1.6, margin: 0, fontStyle: 'italic' }}>
+                      "ज्ञानम् परमं बलम्" —<br />Knowledge is the highest power.
+                    </p>
+                  </div>
+                  <p style={{ fontSize: 7.5, color: '#bbb', lineHeight: 1.5, margin: 0 }}>
+                    AI tools were utilized during development; all inventive steps, claims, and final outcomes are attributable to human ingenuity and supervision.
+                  </p>
                 </div>
-                {/* Divider */}
-                <div style={{ width: '70%', height: 1, background: 'rgba(200,146,42,0.35)' }} />
-                <p style={{ fontSize: 7.5, color: '#999', textAlign: 'center', lineHeight: 1.5, maxWidth: 200 }}>
-                  AI tools were utilized during development; all inventive steps, claims, and final outcomes are attributable to human ingenuity and supervision.
-                </p>
               </div>
 
               {/* RIGHT - MahaTathastu report */}
@@ -2536,9 +2552,9 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
                 <div style={{ fontSize: 16, fontWeight: 700, color: '#1a3a8c' }}>Divine Guidance & Remedy Instructions</div>
                 <div style={{ fontSize: 10, color: '#cc2200', marginTop: 4 }}>Shree Matra Namah</div>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, alignItems: 'stretch' }}>
                 {/* Left column */}
-                <div>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <p style={{ fontSize: 10.5, color: '#1a1a1a', lineHeight: 1.75, marginBottom: 12 }}>
                     This report has been prepared by the Tathastu Team based on the details provided by the devotee.
                   </p>
@@ -2555,20 +2571,39 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
 
                   <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid #c8922a' }}>
                     <div style={{ fontSize: 13, fontWeight: 700, color: '#1a3a8c', marginBottom: 8 }}>Divine Wisdom Behind the Tathastu Report</div>
-                    <p style={{ fontSize: 10.5, color: '#1a1a1a', lineHeight: 1.75 }}>
-                      Preparing a Tathastu Report is not just a process-it is a sacred responsibility. Each report is carefully created based on multiple dimensions of life, integrating the wisdom of Vedic Astrology, Bhrigu Nandi Nadi, and Jaimini (Gemini) Jyotish, so that the remedies can deliver faster and more impactful results.
+                    <p style={{ fontSize: 10.5, color: '#1a1a1a', lineHeight: 1.75, marginBottom: 12 }}>
+                      Preparing a Tathastu Report is not just a process — it is a sacred responsibility. Each report is carefully created based on multiple dimensions of life, integrating the wisdom of Vedic Astrology, Bhrigu Nandi Nadi, and Jaimini Jyotish.
                     </p>
                   </div>
+
+                  {/* Three pillars */}
+                  <div style={{ marginTop: 'auto', paddingTop: 14 }}>
+                    {[
+                      { icon: '🔭', label: 'Vedic Astrology', desc: 'Planetary positions & life path' },
+                      { icon: '🔢', label: 'Numerology', desc: 'Numbers that shape your destiny' },
+                      { icon: '🌿', label: 'Ayurveda', desc: 'Body constitution & health balance' },
+                    ].map(p => (
+                      <div key={p.label} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginBottom: 8 }}>
+                        <div style={{ width: 30, height: 30, borderRadius: '50%', background: '#1a3a8c', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, flexShrink: 0 }}>{p.icon}</div>
+                        <div>
+                          <div style={{ fontSize: 10, fontWeight: 700, color: '#1a3a8c' }}>{p.label}</div>
+                          <div style={{ fontSize: 9, color: '#666' }}>{p.desc}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
+
                 {/* Right column - 13 reports grid */}
-                <div style={{ background: 'white', border: '2px solid #c8922a', borderRadius: 10, padding: 16 }}>
+                <div style={{ background: 'white', border: '2px solid #c8922a', borderRadius: 10, padding: 16, display: 'flex', flexDirection: 'column' }}>
                   <div style={{ textAlign: 'center', marginBottom: 10 }}>
                     <div style={{ fontSize: 10, color: '#1a1a1a', fontWeight: 700, lineHeight: 1.5 }}>
                       India's First Comprehensive Report<br />
                       <span style={{ color: '#cc2200' }}>Covering 360° Aspects of Human Life</span><br />
                       for Future Holistic Growth and Development
                     </div>
-                    <div style={{ fontSize: 18, fontWeight: 900, color: '#2c1a0e', margin: '8px 0 2px', letterSpacing: '0.08em' }}>TATHASTU</div>
+                    <div style={{ fontSize: 18, fontWeight: 900, color: '#1a3a8c', margin: '8px 0 1px', letterSpacing: '0.08em' }}>MAHA</div>
+                    <div style={{ fontSize: 18, fontWeight: 900, color: '#2c1a0e', letterSpacing: '0.08em' }}>TATHASTU</div>
                     <div style={{ fontSize: 9, color: '#888', letterSpacing: '0.1em' }}>- ONE FAMILY REPORT -</div>
                     <div style={{ fontSize: 9, fontWeight: 700, color: '#1a3a8c', marginTop: 6, padding: '3px 8px', border: '1px solid #1a3a8c', borderRadius: 4, display: 'inline-block' }}>
                       13 PERSONALIZED REPORTS
@@ -2581,10 +2616,31 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
                       </div>
                     ))}
                   </div>
-                  <div style={{ marginTop: 12, textAlign: 'center', background: '#f5ede0', borderRadius: 6, padding: '8px 12px' }}>
-                    <div style={{ fontSize: 9, color: '#1a1a1a', marginBottom: 4 }}>✓ Hurry! Life Time Report Support &nbsp; ✓ Complete Guidance & Remedies</div>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: '#1a1a1a' }}>With Remedies Contact:</div>
-                    <div style={{ fontSize: 15, fontWeight: 900, color: '#cc2200', marginTop: 2 }}>9858784784</div>
+
+                  {/* Why MahaTathastu section - fills blank space */}
+                  <div style={{ marginTop: 14, padding: '10px 12px', background: '#f5ede0', borderRadius: 8, border: '1px solid rgba(200,146,42,0.35)', flex: 1 }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: '#1a3a8c', marginBottom: 8, textAlign: 'center', borderBottom: '1px solid rgba(200,146,42,0.3)', paddingBottom: 6 }}>
+                      Why Choose MahaTathastu?
+                    </div>
+                    {[
+                      'NASA-grade planetary calculations (Lahiri Ayanamsa)',
+                      'Holistic integration: Jyotish + Numerology + Ayurveda',
+                      'Personalised 90-day remedy roadmap',
+                      'Lifetime report support from the Tathastu Team',
+                      'Verified by 18 classical Jyotish Acharya traditions',
+                    ].map(pt => (
+                      <div key={pt} style={{ display: 'flex', gap: 6, alignItems: 'flex-start', marginBottom: 6 }}>
+                        <span style={{ color: '#c8922a', fontSize: 9, marginTop: 1, flexShrink: 0 }}>✦</span>
+                        <span style={{ fontSize: 9, color: '#2c1a0e', lineHeight: 1.5 }}>{pt}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div style={{ marginTop: 10, textAlign: 'center', background: '#1a3a8c', borderRadius: 6, padding: '8px 12px' }}>
+                    <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.7)', marginBottom: 3 }}>✓ Lifetime Report Support &nbsp; ✓ Complete Guidance & Remedies</div>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: '#c8922a' }}>With Remedies Contact:</div>
+                    <div style={{ fontSize: 16, fontWeight: 900, color: 'white', marginTop: 2 }}>9858784784</div>
+                    <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>www.mahatathastu.com</div>
                   </div>
                 </div>
               </div>
@@ -2592,7 +2648,7 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
           </div>
 
           {/* TABLE OF CONTENTS */}
-          <div style={{ padding: '44px', pageBreakAfter: 'always', minHeight: '27cm' }}>
+          <div style={{ padding: '44px', pageBreakAfter: 'always' }}>
             <div style={{ borderBottom: '2px solid #D4A017', paddingBottom: 14, marginBottom: 28 }}>
               <p style={{ fontSize: 10, color: '#D4A017', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 4 }}>Navigation</p>
               <h2 style={{ fontFamily: 'Georgia, serif', fontSize: 22, color: '#2F2A44', fontWeight: 700, margin: 0 }}>Table of Contents</h2>
@@ -2613,11 +2669,9 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
 
           {/* CHAPTER PAGES */}
           {visibleChapters.map((c) => (
-            <div key={c.id} style={{ pageBreakBefore: 'always', background: '#f5ede0', position: 'relative', fontFamily: 'Georgia, serif' }}>
-              {/* Chapter decorative border */}
-              <div style={{ position: 'absolute', inset: 8, border: '1px solid #c8922a', opacity: 0.4, pointerEvents: 'none', zIndex: 0 }} />
+            <div key={c.id} style={{ pageBreakBefore: 'always', background: '#f5ede0', fontFamily: 'Georgia, serif', outline: '1px solid rgba(200,146,42,0.35)', outlineOffset: '-8px' }}>
               {/* Chapter header */}
-              <div style={{ padding: '20px 44px 14px', borderBottom: '2px solid #c8922a', background: '#f5ede0', position: 'relative', zIndex: 1 }}>
+              <div style={{ padding: '20px 44px 14px', borderBottom: '2px solid #c8922a', background: '#f5ede0' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                   <div style={{ width: 44, height: 44, borderRadius: '50%', background: '#1a3a8c', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 14, fontWeight: 700, flexShrink: 0, fontFamily: 'Georgia, serif' }}>
                     {c.number}
@@ -2632,13 +2686,13 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
               </div>
               {/* Visual chart (KundliWheel / ChakraChart / etc.) - included in PDF */}
               {c.leftPanel && (
-                <div data-left-panel={c.id} style={{ background: '#f5ede0', padding: '14px 44px 6px', display: 'flex', justifyContent: 'center', position: 'relative', zIndex: 1 }}>
+                <div data-left-panel={c.id} style={{ background: '#f5ede0', padding: '14px 44px 6px', display: 'flex', justifyContent: 'center' }}>
                   <div style={{ maxWidth: 360, width: '100%' }}>
                     {c.leftPanel}
                   </div>
                 </div>
               )}
-              <div style={{ padding: '12px 44px 32px', background: '#f5ede0', position: 'relative', zIndex: 1 }}>
+              <div style={{ padding: '12px 44px 32px', background: '#f5ede0' }}>
                 {c.content}
               </div>
             </div>
