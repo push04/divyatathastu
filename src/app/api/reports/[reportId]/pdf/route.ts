@@ -41,10 +41,15 @@ export async function POST(
     let canvases: Record<string, string> = {}
     try { const b = await req.json(); canvases = b.canvases ?? {} } catch { /* ok */ }
 
+    // Ownership guard — users can only download PDFs for their own family's reports
+    const { data: family } = await supabase.from('families').select('id').eq('owner_id', user.id).single()
+    if (!family) return new Response('Report not found', { status: 404 })
+
     const { data: report, error: rErr } = await supabase
       .from('reports')
       .select('id, report_type, status, report_content, created_at, family_members(full_name, date_of_birth, place_of_birth)')
       .eq('id', reportId)
+      .eq('family_id', (family as any).id)
       .single()
 
     if (rErr || !report) return new Response('Report not found', { status: 404 })

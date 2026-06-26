@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Groq from 'groq-sdk'
+import { createClient } from '@/lib/supabase/server'
 
 function getGroq() {
   if (!process.env.GROQ_API_KEY) throw new Error('GROQ_API_KEY not set')
@@ -9,6 +10,10 @@ function getGroq() {
 export const maxDuration = 60
 
 export async function POST(req: NextRequest) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
   try {
     const { mandirs, startCity, days, travelMode, startDate } = await req.json()
 

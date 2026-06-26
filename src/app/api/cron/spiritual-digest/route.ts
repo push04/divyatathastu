@@ -69,12 +69,9 @@ Return ONLY the 8 sections separated by "---". No labels, no extra text.`
 }
 
 export async function GET(req: NextRequest) {
-  // Vercel cron authentication
+  // Vercel cron authentication — check whenever CRON_SECRET is set (not just production)
   const authHeader = req.headers.get('authorization')
-  if (
-    process.env.VERCEL_ENV === 'production' &&
-    authHeader !== `Bearer ${process.env.CRON_SECRET}`
-  ) {
+  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

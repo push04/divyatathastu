@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { createClient as createServerClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
@@ -55,13 +56,13 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ success: true })
 }
 
-// Allow admin to list subscribers — protected by NEWSLETTER_ADMIN_SECRET env var
+// Allow admin to list subscribers — protected by Supabase session (role = admin)
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get('authorization')
-  const secret = process.env.NEWSLETTER_ADMIN_SECRET || process.env.ADMIN_API_SECRET
-  if (!secret || authHeader !== `Bearer ${secret}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  const auth = await createServerClient()
+  const { data: { user } } = await auth.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  const { data: profile } = await auth.from('profiles').select('role').eq('id', user.id).single()
+  if ((profile as any)?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
 
   const supabase = getAdmin()
   const { data, error } = await supabase
