@@ -19,7 +19,7 @@
  * - Compatible (produces the exact same node structure as the reconciler would)
  */
 
-import path from 'path'
+
 
 let fontsRegistered = false
 
@@ -29,18 +29,11 @@ async function ensureFontsRegistered() {
 
   const { Font } = await import('@react-pdf/renderer')
 
-  const f = (name: string) => path.join(process.cwd(), 'public', 'fonts', name)
-
-  Font.register({ family: 'CG',       src: f('cg-400.woff2') })
-  Font.register({ family: 'CGi',      src: f('cg-400i.woff2') })
-  Font.register({ family: 'CGsb',     src: f('cg-600.woff2') })
-  Font.register({ family: 'CGb',      src: f('cg-700.woff2') })
-  Font.register({ family: 'CGbi',     src: f('cg-700i.woff2') })
-  Font.register({ family: 'Lato',     src: f('lato-400.woff2') })
-  Font.register({ family: 'LatoBold', src: f('lato-700.woff2') })
+  // All fonts are built-in Helvetica variants — zero load/parse/embed cost.
+  // Only disable hyphenation to prevent slow word-break lookups.
   Font.registerHyphenationCallback((word: string) => [word])
 
-  console.log('[PDF] Fonts registered on externalized react-pdf instance')
+  console.log('[PDF] Hyphenation disabled — using built-in Helvetica fonts')
 }
 
 // ─── React-pdf node types (matches createInstance / createTextInstance output) ─
@@ -150,24 +143,26 @@ export async function renderToBufferSafe(element: React.ReactElement): Promise<B
   await ensureFontsRegistered()
 
   // Step 2: Build the react-pdf node tree synchronously (no reconciler!)
+  const t1 = Date.now()
   const nodes = buildNodes(element)
+  console.log(`[PDF] buildNodes done in ${Date.now() - t1}ms`)
   if (nodes.length === 0) {
     throw new Error('[PDF] buildNodes returned empty — no renderable elements')
   }
 
   const root = nodes[0] as ReactPdfNode
-  console.log('[PDF] buildNodes root type:', root.type, '| children:', root.children.length)
+  console.log('[PDF] root type:', root.type, '| children:', root.children.length)
 
-  // Step 3: Create a pdf() instance and bypass the reconciler by setting
-  // container.document directly. toBuffer() only reads container.document —
-  // it does not care how it was set.
+  // Step 3: Set container.document directly — bypasses the reconciler entirely
   const { pdf } = await import('@react-pdf/renderer')
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const instance = (pdf as any)()
   instance.container.document = root
 
   // Step 4: Render to buffer via react-pdf's layout + pdfkit pipeline
+  const t2 = Date.now()
   const stream = await instance.toBuffer()
+  console.log(`[PDF] toBuffer done in ${Date.now() - t2}ms`)
 
   return new Promise<Buffer>((resolve, reject) => {
     const chunks: Buffer[] = []
@@ -176,3 +171,4 @@ export async function renderToBufferSafe(element: React.ReactElement): Promise<B
     stream.on('error', reject)
   })
 }
+
