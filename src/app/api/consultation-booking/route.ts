@@ -132,6 +132,7 @@ export async function POST(req: NextRequest) {
       }).select('id').single()
 
       if (bookErr || !booking) {
+        console.error('Booking insert error (free slot):', bookErr)
         await (admin as any).from('consultation_slots').update({ is_booked: false }).eq('id', slotId)
         return NextResponse.json({ error: 'Booking failed. Please try again.' }, { status: 500 })
       }
@@ -154,6 +155,7 @@ export async function POST(req: NextRequest) {
       }).select('id').single()
 
       if (bookErr || !booking) {
+        console.error('Booking insert error (mock paid slot):', bookErr)
         await (admin as any).from('consultation_slots').update({ is_booked: false }).eq('id', slotId)
         return NextResponse.json({ error: 'Booking failed. Please try again.' }, { status: 500 })
       }
@@ -185,6 +187,7 @@ export async function POST(req: NextRequest) {
     }).select('id').single()
 
     if (bookErr || !booking) {
+      console.error('Booking insert error (Razorpay paid slot):', bookErr)
       await (admin as any).from('consultation_slots').update({ is_booked: false }).eq('id', slotId)
       return NextResponse.json({ error: 'Booking failed. Please try again.' }, { status: 500 })
     }
