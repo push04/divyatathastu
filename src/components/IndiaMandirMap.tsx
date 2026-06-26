@@ -111,7 +111,7 @@ export default function IndiaMandirMap() {
     : ''
 
   return (
-    <div className="flex h-full flex-col lg:flex-row gap-0 overflow-hidden relative">
+    <div className="flex w-full h-full flex-col lg:flex-row gap-0 overflow-hidden relative">
       {/* SVG Map Panel */}
       <div className={`flex-1 bg-[var(--kutch-white)] flex flex-col ${mobileView === 'map' ? 'flex' : 'hidden lg:flex'}`}>
         {/* Circuit filter strip */}
