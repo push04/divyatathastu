@@ -88,6 +88,36 @@ export default async function EbooksPage() {
         </div>
       </section>
 
+      {/* Featured: Ardra Jalam */}
+      <section className="px-6 lg:px-12 py-6" style={{ background: 'linear-gradient(135deg, #064e3b 0%, #065f46 60%, #047857 100%)' }}>
+        <div className="max-w-7xl mx-auto">
+          <Link
+            href="/ardra-jalam"
+            className="group flex flex-col sm:flex-row items-center gap-4 sm:gap-8 rounded-2xl px-6 py-5 transition-all hover:scale-[1.01]"
+            style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)' }}
+          >
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <span className="material-symbols-outlined text-[36px] text-emerald-300" style={{ fontVariationSettings: "'FILL' 1" }}>water_drop</span>
+              <div>
+                <p className="text-[10px] uppercase tracking-widest text-emerald-300/70 mb-0.5" style={{ fontFamily: "'Sora', sans-serif" }}>Sacred Product · Limited Batches</p>
+                <h2 className="shimmer-text text-2xl font-black leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+                  Ardra Jalam
+                </h2>
+                <p className="text-sm text-white/60 mt-0.5" style={{ fontFamily: "'DM Sans', sans-serif" }}>Sacred Healing Water — charged under Ardra Nakshatra</p>
+              </div>
+            </div>
+            <div className="sm:ml-auto flex-shrink-0">
+              <span
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all group-hover:opacity-90"
+                style={{ background: 'rgba(212,160,23,0.15)', border: '1px solid rgba(212,160,23,0.4)' }}
+              >
+                <span className="shimmer-text" style={{ fontFamily: "'Playfair Display', serif" }}>Shop Now →</span>
+              </span>
+            </div>
+          </Link>
+        </div>
+      </section>
+
       {ebooks.length === 0 ? (
         <section className="py-20 px-6 bg-[var(--kutch-white)] text-center">
           <span className="material-symbols-outlined text-[56px] text-[var(--indigo-deep)]/20 block mb-4" style={{ fontVariationSettings: "'FILL' 1" }}>auto_stories</span>

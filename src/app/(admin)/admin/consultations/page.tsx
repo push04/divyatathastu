@@ -8,7 +8,7 @@ import { toast } from 'sonner'
 
 interface Slot {
   id: string; expert_id: string; date: string; start_time: string; end_time: string
-  is_booked: boolean; is_blocked: boolean; created_at: string
+  is_booked: boolean; is_blocked: boolean; created_at: string; price?: number
   profiles: { full_name: string } | null
 }
 
@@ -42,7 +42,10 @@ export default function AdminConsultationsPage() {
   const [experts, setExperts] = useState<Expert[]>([])
   const [loading, setLoading] = useState(true)
   const [showAdd, setShowAdd] = useState(false)
-  const [form, setForm] = useState({ expert_id: '', date: '', start_time: '17:00', end_time: '17:45' })
+  const [form, setForm] = useState({ expert_id: '', date: '', start_time: '17:00', end_time: '17:45', price: '' })
+  const [generatingSlots, setGeneratingSlots] = useState(false)
+  const [generateDate, setGenerateDate] = useState('')
+  const [generatePrice, setGeneratePrice] = useState('')
   const [filter, setFilter] = useState('all')
   const [saving, setSaving] = useState(false)
   const [meetLinkEditing, setMeetLinkEditing] = useState<string | null>(null)
@@ -56,10 +59,10 @@ export default function AdminConsultationsPage() {
   async function loadAll() {
     setLoading(true)
     const [slotsRes, expertsRes, bookingsRes, modeRes] = await Promise.all([
-      supabase.from('consultation_slots')
-        .select('id,expert_id,date,start_time,end_time,is_booked,is_blocked,created_at,profiles!expert_id(full_name)')
+      (supabase as any).from('consultation_slots')
+        .select('id,expert_id,date,start_time,end_time,is_booked,is_blocked,created_at,price,profiles!expert_id(full_name)')
         .order('date').order('start_time'),
-      supabase.from('profiles').select('id,full_name').eq('role', 'expert'),
+      supabase.from('profiles').select('id,full_name').or('role.eq.expert,role.eq.admin'),
       supabase.from('consultation_bookings')
         .select('*, profiles!user_id(full_name), consultation_slots(date,start_time,end_time)')
         .order('booked_at', { ascending: false })
@@ -87,13 +90,46 @@ export default function AdminConsultationsPage() {
 
   useEffect(() => {
     loadAll()
-    // Admin always joins as "Vedic Expert" so the client sees the role, not the admin's personal name
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const PREDEFINED_SLOTS = [
+    { start: '17:00', end: '17:45' },
+    { start: '17:45', end: '18:30' },
+    { start: '18:30', end: '19:15' },
+    { start: '19:15', end: '20:00' },
+    { start: '20:00', end: '20:45' },
+    { start: '20:45', end: '21:30' },
+    { start: '21:30', end: '22:15' },
+    { start: '22:15', end: '23:00' },
+  ]
+
+  async function generateAllSlots() {
+    if (!generateDate) { toast.error('Select a date first'); return }
+    setGeneratingSlots(true)
+    const price = parseFloat(generatePrice) || 0
+    const expertId = experts[0]?.id || null
+    let created = 0
+    for (const ps of PREDEFINED_SLOTS) {
+      const exists = slots.some(s => s.date === generateDate && s.start_time?.substring(0, 5) === ps.start)
+      if (!exists) {
+        const { data, error } = await supabase.from('consultation_slots').insert({
+          expert_id: expertId, date: generateDate,
+          start_time: ps.start, end_time: ps.end,
+          is_booked: false, is_blocked: false,
+          price, duration_minutes: 45,
+        } as any).select('id,expert_id,date,start_time,end_time,is_booked,is_blocked,created_at,profiles!expert_id(full_name)').single()
+        if (!error && data) { setSlots(s => [...s, data as unknown as Slot]); created++ }
+      }
+    }
+    toast.success(created > 0 ? `${created} slots generated for ${generateDate}` : 'All slots already exist for this date')
+    setGeneratingSlots(false)
+    setGenerateDate('')
+    setGeneratePrice('')
+  }
 
   async function addSlot() {
     if (!form.expert_id || !form.date) { toast.error('Select expert and date'); return }
 
-    // Validate 5PM–11PM window
     const [sh, sm] = form.start_time.split(':').map(Number)
     const [eh, em] = form.end_time.split(':').map(Number)
     const startMin = sh * 60 + sm
@@ -102,20 +138,16 @@ export default function AdminConsultationsPage() {
       toast.error('Slots must be between 5:00 PM and 11:00 PM'); return
     }
 
-    // Max 5 slots per expert per day
-    const slotsOnDay = slots.filter(s => s.expert_id === form.expert_id && s.date === form.date)
-    if (slotsOnDay.length >= 5) {
-      toast.error('Maximum 5 slots per expert per day reached'); return
-    }
-
     setSaving(true)
     const { data, error } = await supabase.from('consultation_slots').insert({
       expert_id: form.expert_id, date: form.date,
       start_time: form.start_time, end_time: form.end_time,
       is_booked: false, is_blocked: false,
-    }).select('id,expert_id,date,start_time,end_time,is_booked,is_blocked,created_at,profiles!expert_id(full_name)').single()
+      price: parseFloat(form.price) || 0,
+      duration_minutes: 45,
+    } as any).select('id,expert_id,date,start_time,end_time,is_booked,is_blocked,created_at,profiles!expert_id(full_name)').single()
     if (error) toast.error('Failed: ' + error.message)
-    else { setSlots(s => [...s, data as unknown as Slot]); toast.success('Slot added'); setShowAdd(false); setForm({ expert_id: '', date: '', start_time: '17:00', end_time: '17:45' }) }
+    else { setSlots(s => [...s, data as unknown as Slot]); toast.success('Slot added'); setShowAdd(false); setForm({ expert_id: '', date: '', start_time: '17:00', end_time: '17:45', price: '' }) }
     setSaving(false)
   }
 
@@ -190,9 +222,9 @@ export default function AdminConsultationsPage() {
             {stats.booked} booked · {stats.available} available · {bookings.length} total bookings · {stats.meetLinks} with Meet link
           </p>
         </div>
-        <div className="flex gap-2">
-          <button onClick={() => { setTab('slots'); setShowAdd(true) }} className="btn-divine px-4 py-2 text-sm inline-flex items-center gap-1.5">
-            <span className="material-symbols-outlined text-[16px]">add</span>Add Slot
+        <div className="flex gap-2 flex-wrap">
+          <button onClick={() => { setTab('slots'); setShowAdd(v => !v) }} className="btn-divine px-4 py-2 text-sm inline-flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-[16px]">add</span>Add Single Slot
           </button>
         </div>
       </div>
@@ -215,14 +247,43 @@ export default function AdminConsultationsPage() {
       {/* ── SLOTS TAB ── */}
       {tab === 'slots' && (
         <>
+          {/* Generate All Slots panel */}
+          <div className="bento-card p-5" style={{ background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', border: '1px solid #bbf7d0' }}>
+            <p className="text-sm font-bold text-[#166534] mb-3 flex items-center gap-2">
+              <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+              Generate All 8 Slots for a Date (5 PM – 11 PM · 45 min each)
+            </p>
+            <div className="flex flex-wrap gap-3 items-end">
+              <div>
+                <label className="block text-xs font-semibold text-[#166534]/70 mb-1.5 uppercase tracking-wide">Date *</label>
+                <input type="date" value={generateDate} min={new Date().toISOString().split('T')[0]}
+                  onChange={e => setGenerateDate(e.target.value)} className={inputCls} style={{ minWidth: 160 }} />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-[#166534]/70 mb-1.5 uppercase tracking-wide">Price per slot (₹)</label>
+                <input type="number" value={generatePrice} min="0" step="50"
+                  onChange={e => setGeneratePrice(e.target.value)}
+                  placeholder="0 = free"
+                  className={inputCls} style={{ minWidth: 130 }} />
+              </div>
+              <button onClick={generateAllSlots} disabled={generatingSlots || !generateDate}
+                className="px-5 py-2.5 rounded-xl text-sm font-bold bg-[#166534] text-white hover:bg-[#14532d] transition-all disabled:opacity-50 inline-flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-[16px]">calendar_add_on</span>
+                {generatingSlots ? 'Generating...' : 'Generate All Slots'}
+              </button>
+            </div>
+            <p className="text-xs text-[#166534]/60 mt-2">Creates 8 slots: 5:00 PM, 5:45 PM, 6:30 PM, 7:15 PM, 8:00 PM, 8:45 PM, 9:30 PM, 10:15 PM. Skips slots already created.</p>
+          </div>
+
+          {/* Manual Add Single Slot */}
           {showAdd && (
             <div className="bento-card p-5">
               {experts.length === 0 ? (
-                <p className="text-sm text-[var(--warm-charcoal)]/60 text-center py-2">
-                  No expert users found. Go to <strong>Users</strong> and set a user's role to <strong>expert</strong> first.
-                </p>
+                <div className="text-sm text-[var(--warm-charcoal)]/60 text-center py-2">
+                  <p>No expert/admin users found in profiles. Make sure at least one user has <strong>role = expert</strong> or <strong>role = admin</strong>.</p>
+                </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                   <div>
                     <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1.5 uppercase tracking-wide">Expert *</label>
                     <select value={form.expert_id} onChange={e => setForm(f => ({ ...f, expert_id: e.target.value }))} className={inputCls}>
@@ -235,7 +296,7 @@ export default function AdminConsultationsPage() {
                     <input type="date" value={form.date} min={new Date().toISOString().split('T')[0]} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} className={inputCls} />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1.5 uppercase tracking-wide">Start (5PM–10:15PM)</label>
+                    <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1.5 uppercase tracking-wide">Start</label>
                     <input type="time" value={form.start_time} min="17:00" max="22:15"
                       onChange={e => {
                         const start = e.target.value
@@ -250,7 +311,13 @@ export default function AdminConsultationsPage() {
                     <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1.5 uppercase tracking-wide">End (auto · 45 min)</label>
                     <input type="time" value={form.end_time} readOnly className={`${inputCls} opacity-60 cursor-not-allowed`} />
                   </div>
-                  <div className="sm:col-span-2 lg:col-span-4 flex gap-3 justify-end">
+                  <div>
+                    <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1.5 uppercase tracking-wide">Price (₹)</label>
+                    <input type="number" value={form.price} min="0" step="50"
+                      onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
+                      placeholder="0 = free" className={inputCls} />
+                  </div>
+                  <div className="sm:col-span-2 lg:col-span-5 flex gap-3 justify-end">
                     <button onClick={() => setShowAdd(false)} className="text-sm text-[var(--warm-charcoal)]/50 hover:text-[var(--warm-charcoal)] px-4 py-2">Cancel</button>
                     <button onClick={addSlot} disabled={saving} className="btn-divine px-6 py-2 text-sm disabled:opacity-60">
                       {saving ? 'Adding...' : 'Add Slot'}
@@ -276,8 +343,8 @@ export default function AdminConsultationsPage() {
                 <div className="flex items-center gap-3">
                   <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${slot.is_booked ? 'bg-emerald-500' : slot.is_blocked ? 'bg-red-400' : 'bg-[var(--warm-sand)]'}`} />
                   <div>
-                    <p className="text-[var(--indigo-deep)] font-semibold text-sm">{slot.profiles?.full_name || 'Unknown Expert'}</p>
-                    <p className="text-[var(--warm-charcoal)]/50 text-xs">{slot.date} · {slot.start_time?.slice(0, 5)} – {slot.end_time?.slice(0, 5)}</p>
+                    <p className="text-[var(--indigo-deep)] font-semibold text-sm">{slot.profiles?.full_name || 'No Expert Assigned'}</p>
+                    <p className="text-[var(--warm-charcoal)]/50 text-xs">{slot.date} · {slot.start_time?.slice(0, 5)} – {slot.end_time?.slice(0, 5)} · {slot.price ? `₹${slot.price}` : 'Free'}</p>
                     <div className="flex gap-1 mt-1">
                       {slot.is_booked && <span className="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full font-medium">Booked</span>}
                       {slot.is_blocked && <span className="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full font-medium">Blocked</span>}

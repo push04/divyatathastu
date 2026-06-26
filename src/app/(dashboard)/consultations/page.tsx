@@ -37,7 +37,6 @@ export default function ConsultationsPage() {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [dates, setDates] = useState<string[]>([])
   const [selectedDate, setSelectedDate] = useState<string>('')
-  const [experts, setExperts] = useState<{ id: string; full_name: string }[]>([])
   const [loading, setLoading] = useState(true)
   const [tab, setTab] = useState<'book' | 'my'>('book')
   const [filter, setFilter] = useState('All')
@@ -55,6 +54,9 @@ export default function ConsultationsPage() {
     { start: '21:30', end: '22:15' },
     { start: '22:15', end: '23:00' },
   ]
+
+  // DB slot state fetched via API for selected date
+  const [dbSlots, setDbSlots] = useState<Record<string, { is_booked: boolean; is_blocked: boolean; price: number }>>({})
 
   useEffect(() => {
     createClient().auth.getUser().then(({ data: { user } }) => {
@@ -78,23 +80,21 @@ export default function ConsultationsPage() {
     setSelectedDate(list[0])
   }, [])
 
-  // Fetch slot & expert bookings
+  // Fetch slot states and user bookings
   useEffect(() => {
     if (dates.length === 0) return
     async function load() {
       const todayStr = dates[0]
       const endOfWeekStr = dates[dates.length - 1]
-      const [slotsRes, expertsRes, { data: { user } }] = await Promise.all([
-        supabase.from('consultation_slots')
-          .select('*')
+      const [slotsRes, { data: { user } }] = await Promise.all([
+        (supabase as any).from('consultation_slots')
+          .select('id,date,start_time,end_time,is_booked,is_blocked,price,specialization')
           .gte('date', todayStr)
           .lte('date', endOfWeekStr),
-        supabase.from('profiles').select('id,full_name').or('role.eq.expert,role.eq.admin'),
         supabase.auth.getUser(),
       ])
 
       if (slotsRes.data) setSlots(slotsRes.data as Slot[])
-      if (expertsRes.data) setExperts(expertsRes.data as any[])
 
       if (user) {
         const { data: bks } = await supabase.from('consultation_bookings')
@@ -108,6 +108,15 @@ export default function ConsultationsPage() {
     load()
   }, [dates]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Build dbSlots map for selected date (for quick lookup in render)
+  useEffect(() => {
+    const map: Record<string, { is_booked: boolean; is_blocked: boolean; price: number }> = {}
+    slots.filter(s => s.date === selectedDate).forEach(s => {
+      map[s.start_time.substring(0, 5)] = { is_booked: s.is_booked, is_blocked: s.is_blocked, price: (s as any).price || 0 }
+    })
+    setDbSlots(map)
+  }, [slots, selectedDate])
+
   const isPast = (date: string, startTime: string) => {
     const [sh, sm] = startTime.split(':').map(Number)
     const nowIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
@@ -118,110 +127,61 @@ export default function ConsultationsPage() {
     return slotDateTime.getTime() < nowIST.getTime()
   }
 
-  const isSlotBooked = (date: string, startTime: string) => {
-    const normTime = startTime.substring(0, 5)
-    return slots.some(s => s.date === date && s.start_time.substring(0, 5) === normTime && s.is_booked)
-  }
-
-  const isSlotBlocked = (date: string, startTime: string) => {
-    const normTime = startTime.substring(0, 5)
-    return slots.some(s => s.date === date && s.start_time.substring(0, 5) === normTime && s.is_blocked)
-  }
-
   const getBookingsCount = (date: string) => {
     return slots.filter(s => s.date === date && s.is_booked).length
   }
 
   const isSpecializationMatch = (startTime: string) => {
     if (filter === 'All') return true
-    const normTime = startTime.substring(0, 5)
-    const dbSlot = slots.find(s => s.date === selectedDate && s.start_time.substring(0, 5) === normTime)
-    if (!dbSlot) return true
-    return dbSlot.specialization === filter
+    const s = slots.find(sl => sl.date === selectedDate && sl.start_time.substring(0, 5) === startTime.substring(0, 5))
+    if (!s) return true
+    return (s as any).specialization === filter
   }
 
   async function bookSlot(date: string, startTime: string, endTime: string) {
-    const count = getBookingsCount(date)
-    if (count >= 5) {
-      toast.error('This day is fully booked. Please select another date.')
-      return
-    }
-
     const bookingKey = `${date}_${startTime}`
     setBooking(bookingKey)
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) { toast.error('Please login'); setBooking(null); return }
-
-    const normTime = startTime.substring(0, 5)
-    const dbSlot = slots.find(s => s.date === date && s.start_time.substring(0, 5) === normTime)
-    let slotId = dbSlot?.id
-
-    if (!slotId) {
-      if (experts.length === 0) {
-        toast.error('No experts available for booking.')
-        setBooking(null)
-        return
-      }
-      const selectedExpertId = experts[0].id
-
-      const { data: newSlot, error: slotErr } = await supabase
-        .from('consultation_slots')
-        .insert({
-          expert_id: selectedExpertId,
+    try {
+      const res = await fetch('/api/consultation-booking', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           date,
           start_time: startTime,
           end_time: endTime,
-          is_booked: true,
-          is_blocked: false,
-          duration_minutes: 45,
-          specialization: filter === 'All' ? 'Astrology' : filter
-        })
-        .select()
-        .single()
-
-      if (slotErr || !newSlot) {
-        toast.error('Booking failed. Could not register slot.')
-        setBooking(null)
+          specialization: filter === 'All' ? 'Astrology' : filter,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        toast.error(data.error || 'Booking failed. Please try again.')
         return
       }
-      slotId = newSlot.id
-      setSlots(prev => [...prev, newSlot as Slot])
-    } else {
-      const { error: slotUpdErr } = await supabase
-        .from('consultation_slots')
-        .update({ is_booked: true })
-        .eq('id', slotId)
 
-      if (slotUpdErr) {
-        toast.error('Booking failed. Slot may be taken.')
-        setBooking(null)
-        return
+      toast.success('Consultation booked! Check your email for confirmation.')
+
+      // Refresh bookings and slot states
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        const { data: bks } = await supabase.from('consultation_bookings')
+          .select('*, consultation_slots(expert_id,date,start_time,end_time)')
+          .eq('user_id', user.id)
+          .order('booked_at', { ascending: false })
+        if (bks) setBookings(bks as unknown as Booking[])
       }
-      setSlots(prev => prev.map(s => s.id === slotId ? { ...s, is_booked: true } : s))
-    }
-
-    const { error: bookErr } = await supabase
-      .from('consultation_bookings')
-      .insert({ user_id: user.id, slot_id: slotId, status: 'confirmed' })
-
-    if (bookErr) {
-      toast.error('Booking failed. Please try again.')
-      await supabase.from('consultation_slots').update({ is_booked: false }).eq('id', slotId)
-      setSlots(prev => prev.map(s => s.id === slotId ? { ...s, is_booked: false } : s))
+      // Mark slot as booked in local state
+      setSlots(prev => {
+        const norm = startTime.substring(0, 5)
+        const exists = prev.find(s => s.date === date && s.start_time.substring(0, 5) === norm)
+        if (exists) return prev.map(s => s.date === date && s.start_time.substring(0, 5) === norm ? { ...s, is_booked: true } : s)
+        return [...prev, { id: data.booking_id, date, start_time: startTime, end_time: endTime, is_booked: true, is_blocked: false } as Slot]
+      })
+      setTab('my')
+    } catch {
+      toast.error('Network error. Please try again.')
+    } finally {
       setBooking(null)
-      return
     }
-
-    toast.success('Consultation booked! Check your email for confirmation.')
-    setBooking(null)
-
-    const { data: bks } = await supabase.from('consultation_bookings')
-      .select('*, consultation_slots(expert_id,date,start_time,end_time)')
-      .eq('user_id', user.id)
-      .order('booked_at', { ascending: false })
-    if (bks) setBookings(bks as unknown as Booking[])
-
-    setTab('my')
   }
 
   const fmtTime = (t: string) => {
@@ -325,9 +285,11 @@ export default function ConsultationsPage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {visiblePredefined.map(ps => {
-                const isBooked = isSlotBooked(selectedDate, ps.start)
-                const isBlocked = isSlotBlocked(selectedDate, ps.start)
+                const dbState = dbSlots[ps.start] || { is_booked: false, is_blocked: false, price: 0 }
+                const isBooked = dbState.is_booked
+                const isBlocked = dbState.is_blocked
                 const isAvailable = !isBooked && !isBlocked
+                const slotPrice = dbState.price
 
                 return (
                   <div key={ps.start} className={`card-divine p-5 transition-all ${!isAvailable ? 'opacity-60 bg-gray-50' : 'hover:shadow-md'}`}>
@@ -346,15 +308,19 @@ export default function ConsultationsPage() {
                         {isBooked ? 'Booked' : isBlocked ? 'Blocked' : 'Available'}
                       </span>
                     </div>
-                    <p className="text-xs text-[var(--warm-charcoal)]/50 mb-3">45 minutes session with a Vedic expert</p>
-                    
+                    <p className="text-xs text-[var(--warm-charcoal)]/50">45 min session with a Vedic expert</p>
+                    {slotPrice > 0
+                      ? <p className="text-sm font-bold text-[var(--saffron)] mt-1">₹{slotPrice.toLocaleString('en-IN')}</p>
+                      : <p className="text-xs text-emerald-600 font-semibold mt-1">Complimentary</p>
+                    }
+
                     {isAvailable && (
                       <button
                         onClick={() => bookSlot(selectedDate, ps.start, ps.end)}
                         disabled={booking === `${selectedDate}_${ps.start}`}
                         className="btn-divine w-full py-2.5 text-sm mt-3 disabled:opacity-50"
                       >
-                        {booking === `${selectedDate}_${ps.start}` ? 'Booking...' : 'Book Now'}
+                        {booking === `${selectedDate}_${ps.start}` ? 'Booking...' : slotPrice > 0 ? `Book — ₹${slotPrice.toLocaleString('en-IN')}` : 'Book Now'}
                       </button>
                     )}
                   </div>

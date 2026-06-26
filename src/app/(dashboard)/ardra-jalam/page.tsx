@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useState } from 'react'
 import { useServiceItems } from '@/lib/hooks/useServiceItems'
 import { useServicePayment } from '@/lib/hooks/useServicePayment'
@@ -87,8 +88,18 @@ export default function ArdraJalamPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
             {/* Left text */}
             <div>
-              <div className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-full mb-4 bg-emerald-100 text-emerald-800 uppercase tracking-widest">
-                <span className="material-symbols-outlined text-[13px]" style={{ fontVariationSettings: "'FILL' 1" }}>water_drop</span> Sacred Product · Limited Batches
+              <div className="flex flex-wrap items-center gap-3 mb-4">
+                <div className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-800 uppercase tracking-widest">
+                  <span className="material-symbols-outlined text-[13px]" style={{ fontVariationSettings: "'FILL' 1" }}>water_drop</span> Sacred Product · Limited Batches
+                </div>
+                <Link
+                  href="/ebooks"
+                  className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full border-2 border-transparent font-bold text-xs uppercase tracking-widest transition-all hover:scale-105"
+                  style={{ background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(4px)', boxShadow: '0 0 12px rgba(212,160,23,0.25)' }}
+                >
+                  <span className="material-symbols-outlined text-[13px] shimmer-text" style={{ fontVariationSettings: "'FILL' 1" }}>auto_stories</span>
+                  <span className="shimmer-text" style={{ fontFamily: "'Playfair Display', serif" }}>Shop Sacred Ebooks</span>
+                </Link>
               </div>
               <h1 className="text-4xl font-black mb-3 leading-tight shimmer-text" style={{ fontFamily: "'Playfair Display', serif" }}>
                 Ardra Jalam
