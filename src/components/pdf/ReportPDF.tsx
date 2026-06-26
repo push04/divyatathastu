@@ -1140,9 +1140,20 @@ function ChakraPages({ data, number }: { data: any; number: string }) {
 }
 
 // ── PRAKRITI SECTION ──────────────────────────────────────────────────────────
+// Helper: normalise prakriti diet/lifestyle which can be string[] OR Record<string,string[]>
+function toFlatArr(val: unknown, max: number): string[] {
+  if (!val) return []
+  if (Array.isArray(val)) return (val as string[]).slice(0, max)
+  if (typeof val === 'object') return Object.values(val as Record<string, string[]>).flat().slice(0, max)
+  return []
+}
+
 function PrakritiPages({ data, number }: { data: any; number: string }) {
   const p = data.prakriti || data
   if (!p?.dominant) return null
+
+  const dietItems      = toFlatArr(p.diet, 7)
+  const lifestyleItems = toFlatArr(p.lifestyle, 7)
 
   return (
     <Page size="A4" style={styles.page} wrap>
@@ -1176,8 +1187,8 @@ function PrakritiPages({ data, number }: { data: any; number: string }) {
       {p.mentalConstitution ? <HighlightBox label="Mental Constitution (Manas Prakriti)" text={p.mentalConstitution} accent={C.navyMid} /> : null}
 
       <TwoColInfo
-        left={{ label: 'Dietary Recommendations', items: p.diet?.slice(0, 7) || [] }}
-        right={{ label: 'Lifestyle Practices', items: p.lifestyle?.slice(0, 7) || [] }}
+        left={{ label: 'Dietary Recommendations', items: dietItems }}
+        right={{ label: 'Lifestyle Practices', items: lifestyleItems }}
       />
 
       {p.herbs?.length ? (
