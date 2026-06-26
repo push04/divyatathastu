@@ -42,7 +42,7 @@ export default function AdminConsultationsPage() {
   const [experts, setExperts] = useState<Expert[]>([])
   const [loading, setLoading] = useState(true)
   const [showAdd, setShowAdd] = useState(false)
-  const [form, setForm] = useState({ expert_id: '', date: '', start_time: '10:00', end_time: '11:00' })
+  const [form, setForm] = useState({ expert_id: '', date: '', start_time: '17:00', end_time: '17:45' })
   const [filter, setFilter] = useState('all')
   const [saving, setSaving] = useState(false)
   const [meetLinkEditing, setMeetLinkEditing] = useState<string | null>(null)
@@ -92,6 +92,22 @@ export default function AdminConsultationsPage() {
 
   async function addSlot() {
     if (!form.expert_id || !form.date) { toast.error('Select expert and date'); return }
+
+    // Validate 5PM–11PM window
+    const [sh, sm] = form.start_time.split(':').map(Number)
+    const [eh, em] = form.end_time.split(':').map(Number)
+    const startMin = sh * 60 + sm
+    const endMin = eh * 60 + em
+    if (startMin < 17 * 60 || endMin > 23 * 60) {
+      toast.error('Slots must be between 5:00 PM and 11:00 PM'); return
+    }
+
+    // Max 5 slots per expert per day
+    const slotsOnDay = slots.filter(s => s.expert_id === form.expert_id && s.date === form.date)
+    if (slotsOnDay.length >= 5) {
+      toast.error('Maximum 5 slots per expert per day reached'); return
+    }
+
     setSaving(true)
     const { data, error } = await supabase.from('consultation_slots').insert({
       expert_id: form.expert_id, date: form.date,
@@ -99,7 +115,7 @@ export default function AdminConsultationsPage() {
       is_booked: false, is_blocked: false,
     }).select('id,expert_id,date,start_time,end_time,is_booked,is_blocked,created_at,profiles!expert_id(full_name)').single()
     if (error) toast.error('Failed: ' + error.message)
-    else { setSlots(s => [...s, data as unknown as Slot]); toast.success('Slot added'); setShowAdd(false); setForm({ expert_id: '', date: '', start_time: '10:00', end_time: '11:00' }) }
+    else { setSlots(s => [...s, data as unknown as Slot]); toast.success('Slot added'); setShowAdd(false); setForm({ expert_id: '', date: '', start_time: '17:00', end_time: '17:45' }) }
     setSaving(false)
   }
 
@@ -219,12 +235,20 @@ export default function AdminConsultationsPage() {
                     <input type="date" value={form.date} min={new Date().toISOString().split('T')[0]} onChange={e => setForm(f => ({ ...f, date: e.target.value }))} className={inputCls} />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1.5 uppercase tracking-wide">Start</label>
-                    <input type="time" value={form.start_time} onChange={e => setForm(f => ({ ...f, start_time: e.target.value }))} className={inputCls} />
+                    <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1.5 uppercase tracking-wide">Start (5PM–10:15PM)</label>
+                    <input type="time" value={form.start_time} min="17:00" max="22:15"
+                      onChange={e => {
+                        const start = e.target.value
+                        const [h, m] = start.split(':').map(Number)
+                        const endTotalMin = h * 60 + m + 45
+                        const end = `${String(Math.floor(endTotalMin / 60)).padStart(2, '0')}:${String(endTotalMin % 60).padStart(2, '0')}`
+                        setForm(f => ({ ...f, start_time: start, end_time: end }))
+                      }}
+                      className={inputCls} />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1.5 uppercase tracking-wide">End</label>
-                    <input type="time" value={form.end_time} onChange={e => setForm(f => ({ ...f, end_time: e.target.value }))} className={inputCls} />
+                    <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1.5 uppercase tracking-wide">End (auto · 45 min)</label>
+                    <input type="time" value={form.end_time} readOnly className={`${inputCls} opacity-60 cursor-not-allowed`} />
                   </div>
                   <div className="sm:col-span-2 lg:col-span-4 flex gap-3 justify-end">
                     <button onClick={() => setShowAdd(false)} className="text-sm text-[var(--warm-charcoal)]/50 hover:text-[var(--warm-charcoal)] px-4 py-2">Cancel</button>

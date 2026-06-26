@@ -219,8 +219,22 @@ export async function sendWelcomeEmail(to: string, name: string): Promise<void> 
 
 // ─── Order Confirmation Email ─────────────────────────────────────────────────
 
+function getOrderRedirectUrl(items: OrderItem[]): { url: string; label: string; guide: string } {
+  const types = items.map(i => (i.product_type || '').toLowerCase())
+  if (types.some(t => t.includes('course')))
+    return { url: `${APP}/my-courses`, label: 'Go to My Courses', guide: 'Your course is immediately available under <strong>My Courses</strong> in your dashboard.' }
+  if (types.some(t => t.includes('report') || t.includes('handwritten')))
+    return { url: `${APP}/reports`, label: 'View My Reports', guide: 'Your report is immediately available under <strong>My Reports</strong> in your dashboard.' }
+  if (types.some(t => t.includes('ebook') || t.includes('book') || t.includes('library')))
+    return { url: `${APP}/my-library`, label: 'Open My Library', guide: 'Your ebook is immediately available under <strong>My Library</strong> in your dashboard.' }
+  if (types.some(t => t.includes('consultation')))
+    return { url: `${APP}/consultations`, label: 'View Consultation', guide: 'Your consultation slot is available under <strong>Consultations</strong> in your dashboard.' }
+  return { url: `${APP}/orders`, label: 'Track Your Order', guide: 'Track the status of your order under <strong>Orders</strong> in your dashboard. Physical items ship within 2–5 business days.' }
+}
+
 export function orderConfirmationHtml(name: string, order: OrderDetails): string {
   const header = hdr('Order Confirmed')
+  const redirect = getOrderRedirectUrl(order.items)
 
   const rows = order.items.map(item => `
     <tr>
@@ -286,14 +300,14 @@ export function orderConfirmationHtml(name: string, order: OrderDetails): string
     ${order.paymentId ? `<p style="font-size:11px;color:#C0B8CC;margin-bottom:22px;font-family:Arial,sans-serif">Payment reference: <span style="font-family:monospace;color:#8A8098">${escHtml(order.paymentId)}</span></p>` : ''}
 
     <p style="font-size:14px;color:#4A4060;line-height:1.8;margin-bottom:28px;font-family:Georgia,serif;font-style:italic;border-left:3px solid #D4A017;padding-left:16px">
-      Digital reports and ebooks are immediately available in your dashboard. Physical items ship within 2 to 5 business days.
+      ${redirect.guide}
     </p>
 
     <hr style="border:none;border-top:1px solid #EDE6DC;margin:6px 0 28px">
 
     <div style="text-align:center">
-      <a href="${APP}/dashboard" style="display:inline-block;background:#E36414;color:#ffffff;padding:16px 44px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:15px;font-family:Arial,sans-serif;letter-spacing:.02em">
-        Access Your Purchase
+      <a href="${redirect.url}" style="display:inline-block;background:#E36414;color:#ffffff;padding:16px 44px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:15px;font-family:Arial,sans-serif;letter-spacing:.02em">
+        ${redirect.label}
       </a>
     </div>
 

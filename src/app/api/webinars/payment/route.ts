@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
   const { action, webinarId } = body
 
   // Fetch webinar
-  const { data: webinar, error: wErr } = await supabase
+  const { data: webinar, error: wErr } = await (supabase as any)
     .from('webinars')
     .select('id, title, price, max_participants, status')
     .eq('id', webinarId)

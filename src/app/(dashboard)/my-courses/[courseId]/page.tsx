@@ -49,6 +49,8 @@ export default function CourseViewerPage() {
 
   const [modules, setModules] = useState<Module[]>([])
   const [courseName, setCourseName] = useState('')
+  const [isLive, setIsLive] = useState(false)
+  const [liveUrl, setLiveUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [activeLesson, setActiveLesson] = useState<Lesson | null>(null)
@@ -83,12 +85,16 @@ export default function CourseViewerPage() {
     setLoading(true)
     try {
       const [courseRes, contentRes, { data: { user } }] = await Promise.all([
-        (supabase as any).from('service_items').select('title').eq('id', courseId).single(),
+        (supabase as any).from('service_items').select('title,is_live,video_url').eq('id', courseId).single(),
         fetch(`/api/courses/content?courseId=${courseId}`),
         supabase.auth.getUser(),
       ])
       if (user?.email) setUserEmail(user.email)
-      if (courseRes.data) setCourseName(courseRes.data.title)
+      if (courseRes.data) {
+        setCourseName(courseRes.data.title)
+        setIsLive(!!courseRes.data.is_live)
+        setLiveUrl(courseRes.data.video_url || null)
+      }
       const contentData = await contentRes.json()
       if (!contentRes.ok) throw new Error(contentData.error || 'Could not load course content')
       const mods: Module[] = contentData.modules || []
@@ -274,6 +280,37 @@ export default function CourseViewerPage() {
             </button>
           </div>
         </div>
+
+        {/* ── YouTube Live banner (shown when course is live) ── */}
+        {isLive && liveUrl && (
+          <div className="bg-red-950/40 border-b border-red-500/30 px-4 py-2 flex items-center gap-3 flex-shrink-0">
+            <span className="flex items-center gap-1.5 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded animate-pulse">
+              ● LIVE
+            </span>
+            <span className="text-white/70 text-xs flex-1">This course is currently streaming live</span>
+            <a
+              href={liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-500 transition-colors font-semibold flex items-center gap-1.5"
+            >
+              <span className="material-symbols-outlined text-[14px]">live_tv</span>
+              Watch Live on YouTube
+            </a>
+          </div>
+        )}
+        {isLive && liveUrl && getYouTubeId(liveUrl) && (
+          <div className="w-full bg-black flex-shrink-0" style={{ aspectRatio: '16/9', maxHeight: '40vh' }}>
+            <iframe
+              key={liveUrl}
+              src={`https://www.youtube.com/embed/${getYouTubeId(liveUrl)}?autoplay=1`}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full"
+              title="Live Class"
+            />
+          </div>
+        )}
 
         {/* Content area */}
         <div className="flex-1 overflow-y-auto bg-gray-950">

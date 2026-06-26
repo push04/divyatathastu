@@ -1,8 +1,10 @@
 'use client'
 
+import '@livekit/components-styles'
 import { useState, useEffect, use } from 'react'
+import { LiveKitRoom } from '@livekit/components-react'
 import { createClient } from '@/lib/supabase/client'
-import ConsultationRoom from '@/components/consultation/ConsultationRoom'
+import { TathastuConsultRoom } from '@/components/consultation/ConsultationRoom'
 import SudarshanLoader from '@/components/SudarshanLoader'
 
 declare global {
@@ -64,7 +66,7 @@ export default function WebinarJoinPage({ params }: { params: Promise<{ id: stri
       setIsAdmin(admin)
 
       // Fetch webinar
-      const { data: w, error: wErr } = await supabase
+      const { data: w, error: wErr } = await (supabase as any)
         .from('webinars').select('*').eq('id', id).single()
       if (wErr || !w) { setError('Webinar not found.'); setLoading(false); return }
       setWebinar(w as Webinar)
@@ -209,13 +211,14 @@ export default function WebinarJoinPage({ params }: { params: Promise<{ id: stri
   // Active LiveKit session
   if (liveToken && wsUrl) {
     return (
-      <ConsultationRoom
-        token={liveToken}
-        wsUrl={wsUrl}
-        userName={userName}
-        expertName={webinar.host_name}
-        onEnd={() => { setLiveToken(null); setWsUrl(null) }}
-      />
+      <div className="h-screen">
+        <LiveKitRoom token={liveToken} serverUrl={wsUrl} connect audio video>
+          <TathastuConsultRoom
+            userName={userName}
+            onLeave={() => { setLiveToken(null); setWsUrl(null) }}
+          />
+        </LiveKitRoom>
+      </div>
     )
   }
 

@@ -2685,6 +2685,65 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
             </div>
           </div>
 
+          {/* DVĀTRIṂŚAD GAṆAPATI PAGE — 32 Divine Forms */}
+          <div style={{ pageBreakAfter: 'always', background: '#fffdf7', fontFamily: 'Georgia, serif', padding: '32px 44px', outline: '1px solid rgba(200,146,42,0.4)', outlineOffset: '-8px' }}>
+            <div style={{ textAlign: 'center', marginBottom: 16, paddingBottom: 12, borderBottom: '2px solid #c8922a' }}>
+              <div style={{ fontSize: 22, color: '#cc2200', marginBottom: 3 }}>ॐ श्री गणेशाय नमः</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: '#1a3a8c' }}>द्वात्रिंशद् गणपति — 32 Divine Forms</div>
+              <div style={{ fontSize: 9, color: '#c8922a', marginTop: 3, letterSpacing: '0.15em' }}>FROM MUDGALA PURĀṆA · RECITE EACH MANTRA 3× FOR COMPLETE PROTECTION & BLESSINGS</div>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 7 }}>
+              {[
+                { no: 1,  name: 'Bala',           skt: 'बाल गणपति',           mantra: 'ॐ बालाय गणपतये नमः' },
+                { no: 2,  name: 'Taruna',          skt: 'तरुण गणपति',          mantra: 'ॐ तरुणाय गणपतये नमः' },
+                { no: 3,  name: 'Bhakti',          skt: 'भक्ति गणपति',         mantra: 'ॐ भक्त्याय गणपतये नमः' },
+                { no: 4,  name: 'Vira',            skt: 'वीर गणपति',           mantra: 'ॐ वीराय गणपतये नमः' },
+                { no: 5,  name: 'Shakti',          skt: 'शक्ति गणपति',         mantra: 'ॐ शक्तिसहिताय गणपतये नमः' },
+                { no: 6,  name: 'Dvija',           skt: 'द्विज गणपति',         mantra: 'ॐ द्विजाय गणपतये नमः' },
+                { no: 7,  name: 'Siddhi',          skt: 'सिद्धि गणपति',        mantra: 'ॐ सिद्धाय गणपतये नमः' },
+                { no: 8,  name: 'Ucchishta',       skt: 'उच्छिष्ट गणपति',      mantra: 'ॐ उच्छिष्टाय गणपतये नमः' },
+                { no: 9,  name: 'Vighna',          skt: 'विघ्न गणपति',         mantra: 'ॐ विघ्नाय गणपतये नमः' },
+                { no: 10, name: 'Kshipra',         skt: 'क्षिप्र गणपति',       mantra: 'ॐ क्षिप्राय गणपतये नमः' },
+                { no: 11, name: 'Heramba',         skt: 'हेरम्ब गणपति',        mantra: 'ॐ हेरम्बाय गणपतये नमः' },
+                { no: 12, name: 'Lakshmi',         skt: 'लक्ष्मी गणपति',       mantra: 'ॐ लक्ष्मीसहिताय गणपतये नमः' },
+                { no: 13, name: 'Maha',            skt: 'महा गणपति',           mantra: 'ॐ महाय गणपतये नमः' },
+                { no: 14, name: 'Vijaya',          skt: 'विजय गणपति',          mantra: 'ॐ विजयाय गणपतये नमः' },
+                { no: 15, name: 'Nritya',          skt: 'नृत्य गणपति',         mantra: 'ॐ नृत्याय गणपतये नमः' },
+                { no: 16, name: 'Urdhva',          skt: 'ऊर्ध्व गणपति',        mantra: 'ॐ ऊर्ध्वाय गणपतये नमः' },
+                { no: 17, name: 'Ekakshara',       skt: 'एकाक्षर गणपति',       mantra: 'ॐ एकाक्षराय गणपतये नमः' },
+                { no: 18, name: 'Vara',            skt: 'वर गणपति',            mantra: 'ॐ वराय गणपतये नमः' },
+                { no: 19, name: 'Tryakshara',      skt: 'त्र्यक्षर गणपति',     mantra: 'ॐ त्र्यक्षराय गणपतये नमः' },
+                { no: 20, name: 'Kshipra Prasada', skt: 'क्षिप्र प्रसाद गणपति', mantra: 'ॐ क्षिप्रप्रसादाय गणपतये नमः' },
+                { no: 21, name: 'Haridra',         skt: 'हरिद्र गणपति',        mantra: 'ॐ हरिद्राय गणपतये नमः' },
+                { no: 22, name: 'Ekadanta',        skt: 'एकदन्त गणपति',        mantra: 'ॐ एकदन्ताय गणपतये नमः' },
+                { no: 23, name: 'Srushti',         skt: 'सृष्टि गणपति',        mantra: 'ॐ सृष्टिकर्त्रे गणपतये नमः' },
+                { no: 24, name: 'Uddanda',         skt: 'उद्दण्ड गणपति',       mantra: 'ॐ उद्दण्डाय गणपतये नमः' },
+                { no: 25, name: 'Rinamochana',     skt: 'ऋणमोचन गणपति',        mantra: 'ॐ ऋणविमोचनाय गणपतये नमः' },
+                { no: 26, name: 'Dhundhi',         skt: 'ढुण्ढि गणपति',        mantra: 'ॐ ढुण्ढये गणपतये नमः' },
+                { no: 27, name: 'Dvimukha',        skt: 'द्विमुख गणपति',       mantra: 'ॐ द्विमुखाय गणपतये नमः' },
+                { no: 28, name: 'Trimukha',        skt: 'त्रिमुख गणपति',       mantra: 'ॐ त्रिमुखाय गणपतये नमः' },
+                { no: 29, name: 'Simha',           skt: 'सिंह गणपति',          mantra: 'ॐ सिंहाय गणपतये नमः' },
+                { no: 30, name: 'Yoga',            skt: 'योग गणपति',           mantra: 'ॐ योगिने गणपतये नमः' },
+                { no: 31, name: 'Durga',           skt: 'दुर्गा गणपति',        mantra: 'ॐ दुर्गाय गणपतये नमः' },
+                { no: 32, name: 'Sankatahara',     skt: 'संकट हर गणपति',       mantra: 'ॐ संकटहराय गणपतये नमः' },
+              ].map(f => (
+                <div key={f.no} style={{ background: 'rgba(200,146,42,0.05)', border: '1px solid rgba(200,146,42,0.22)', borderRadius: 5, padding: '6px 8px', breakInside: 'avoid', pageBreakInside: 'avoid' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 3 }}>
+                    <span style={{ fontSize: 7.5, fontWeight: 700, color: '#c8922a', background: 'rgba(200,146,42,0.18)', borderRadius: 3, padding: '1px 4px', flexShrink: 0, lineHeight: 1.5 }}>{f.no}</span>
+                    <span style={{ fontSize: 8.5, fontWeight: 700, color: '#1a3a8c', lineHeight: 1.2 }}>{f.name}</span>
+                  </div>
+                  <div style={{ fontSize: 9.5, color: '#cc2200', lineHeight: 1.3, marginBottom: 2 }}>{f.skt}</div>
+                  <div style={{ fontSize: 7.5, color: '#5c3d2e', lineHeight: 1.5, fontStyle: 'italic' }}>{f.mantra}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ marginTop: 12, padding: '8px 14px', background: 'rgba(26,58,140,0.06)', borderRadius: 7, borderLeft: '3px solid #1a3a8c' }}>
+              <div style={{ fontSize: 8, color: '#1a3a8c', lineHeight: 1.8 }}>
+                <strong>Dvātriṃśad Gaṇapati Pāṭha:</strong> Recite all 32 mantras 3× each — ideally on Ganesh Chaturthi or Sankashti Chaturthi — while offering durva grass or modak. Completing this pāṭha bestows supreme protection, removal of all obstacles, and Ganesha&apos;s complete blessings across all 32 dimensions of life.
+              </div>
+            </div>
+          </div>
+
           {/* TABLE OF CONTENTS */}
           <div style={{ padding: '44px', pageBreakAfter: 'always' }}>
             <div style={{ borderBottom: '2px solid #D4A017', paddingBottom: 14, marginBottom: 28 }}>

@@ -32,7 +32,7 @@ function useTimer() {
 }
 
 // ── In-call room (inside LiveKitRoom context) ─────────────────────
-function TathastuConsultRoom({ userName, onLeave, isExpert }: { userName: string; onLeave: () => void; isExpert?: boolean }) {
+export function TathastuConsultRoom({ userName, onLeave, isExpert }: { userName: string; onLeave: () => void; isExpert?: boolean }) {
   const { localParticipant, isMicrophoneEnabled, isCameraEnabled } = useLocalParticipant()
   const remoteParticipants = useRemoteParticipants()
   const timer = useTimer()

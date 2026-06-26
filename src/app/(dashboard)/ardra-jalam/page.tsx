@@ -61,7 +61,7 @@ export default function ArdraJalamPage() {
               <div className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-full mb-4 bg-emerald-100 text-emerald-800 uppercase tracking-widest">
                 <span className="material-symbols-outlined text-[13px]" style={{ fontVariationSettings: "'FILL' 1" }}>water_drop</span> Sacred Product · Limited Batches
               </div>
-              <h1 className="text-4xl font-black text-[#065f46] mb-3 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h1 className="text-4xl font-black mb-3 leading-tight shimmer-text" style={{ fontFamily: "'Playfair Display', serif" }}>
                 Ardra Jalam
               </h1>
               <p className="text-lg text-[#065f46]/70 mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>

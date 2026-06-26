@@ -30,7 +30,7 @@ export default function WebinarsPage() {
 
   useEffect(() => {
     async function load() {
-      const { data } = await supabase
+      const { data } = await (supabase as any)
         .from('webinars')
         .select('id,title,description,host_name,scheduled_at,duration_minutes,max_participants,price,status')
         .neq('status', 'ended')

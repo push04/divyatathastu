@@ -19,7 +19,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 
   if (!emails?.length) return NextResponse.json({ error: 'No emails provided' }, { status: 400 })
 
-  const { data: webinar, error } = await supabase
+  const { data: webinar, error } = await (supabase as any)
     .from('webinars')
     .select('*')
     .eq('id', id)

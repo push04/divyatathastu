@@ -19,7 +19,7 @@ export async function GET() {
   const admin = await assertAdmin(supabase)
   if (!admin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('webinars')
     .select('*')
     .order('created_at', { ascending: false })
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
 
   const livekit_room_name = generateRoomName(title)
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('webinars')
     .insert({
       title: title.trim(),
