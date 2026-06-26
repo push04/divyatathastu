@@ -95,12 +95,26 @@ export async function POST(req: NextRequest) {
   if (action === 'verify') {
     const { booking_id, razorpay_order_id, razorpay_payment_id, razorpay_signature } = await req.json()
 
-    const secret = process.env.RAZORPAY_KEY_SECRET || 'mock_secret'
+    const secret = process.env.RAZORPAY_KEY_SECRET
+    if (!secret) return NextResponse.json({ error: 'Payment not configured' }, { status: 503 })
+
     const body = razorpay_order_id + '|' + razorpay_payment_id
     const expectedSig = crypto.createHmac('sha256', secret).update(body).digest('hex')
-    const isValid = expectedSig === razorpay_signature || String(razorpay_order_id).startsWith('mock_')
+    if (expectedSig !== razorpay_signature) {
+      return NextResponse.json({ error: 'Invalid payment signature' }, { status: 400 })
+    }
 
-    if (!isValid) return NextResponse.json({ error: 'Invalid payment signature' }, { status: 400 })
+    // Ownership guard: verify this booking belongs to the calling user
+    const { data: booking } = await (supabase as any).from('service_bookings')
+      .select('user_id, razorpay_order_id')
+      .eq('id', booking_id)
+      .single()
+    if (!booking || booking.user_id !== user.id) {
+      return NextResponse.json({ error: 'Booking not found' }, { status: 404 })
+    }
+    if (booking.razorpay_order_id !== razorpay_order_id) {
+      return NextResponse.json({ error: 'Order mismatch' }, { status: 400 })
+    }
 
     await (supabase as any).from('service_bookings').update({
       payment_status: 'paid',

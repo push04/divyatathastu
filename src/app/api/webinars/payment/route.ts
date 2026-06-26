@@ -73,15 +73,17 @@ export async function POST(req: NextRequest) {
       { onConflict: 'webinar_id,user_id' },
     )
 
-    return NextResponse.json({ orderId: order.id, amount: order.amount, currency: order.currency })
+    return NextResponse.json({ order_id: order.id, amount: order.amount, currency: order.currency })
   }
 
   // ── VERIFY PAYMENT ────────────────────────────────────────────────────────
   if (action === 'verify') {
     const { razorpayOrderId, razorpayPaymentId, razorpaySignature } = body
 
+    const wSecret = process.env.RAZORPAY_KEY_SECRET
+    if (!wSecret) return NextResponse.json({ error: 'Payment not configured' }, { status: 503 })
     const expectedSig = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET || '')
+      .createHmac('sha256', wSecret)
       .update(`${razorpayOrderId}|${razorpayPaymentId}`)
       .digest('hex')
 

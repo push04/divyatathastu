@@ -8,12 +8,15 @@ const SETTINGS_KEY = 'report_pricing'
 const NO_CACHE = { headers: { 'Cache-Control': 'no-store, no-cache, must-revalidate' } }
 
 export async function GET() {
-  try {
-    const supabase = await createClient()
-    const { data, error } = await (supabase as any).from('settings').select('value').eq('key', SETTINGS_KEY).single()
-    if (!error && data?.value) return NextResponse.json(data.value, NO_CACHE)
-  } catch {}
-  return NextResponse.json({}, NO_CACHE)
+  const supabase = await createClient()
+  const { data, error } = await (supabase as any).from('settings').select('value').eq('key', SETTINGS_KEY).single()
+  if (error) {
+    // Log but return empty object so payment route falls through to its own error handling
+    console.error('[report-pricing] Failed to load pricing:', error.message)
+    return NextResponse.json({}, { status: 500, headers: { 'Cache-Control': 'no-store' } })
+  }
+  if (!data?.value) return NextResponse.json({}, NO_CACHE)
+  return NextResponse.json(data.value, NO_CACHE)
 }
 
 export async function POST(req: NextRequest) {

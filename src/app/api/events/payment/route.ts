@@ -23,7 +23,8 @@ export async function POST(req: NextRequest) {
   if (action === 'verify') {
     // Verify Razorpay signature and register user
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = body
-    const secret = process.env.RAZORPAY_KEY_SECRET || ''
+    const secret = process.env.RAZORPAY_KEY_SECRET
+    if (!secret) return NextResponse.json({ error: 'Payment not configured' }, { status: 503 })
     const expected = crypto.createHmac('sha256', secret)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest('hex')
@@ -56,15 +57,26 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true })
   }
 
-  // Create Razorpay order
+  // Create Razorpay order — fetch authoritative event price from DB to prevent tampering
   if (!process.env.RAZORPAY_KEY_ID) {
     return NextResponse.json({ error: 'Payment not configured' }, { status: 503 })
   }
+  if (!process.env.RAZORPAY_KEY_SECRET) {
+    return NextResponse.json({ error: 'Payment not configured' }, { status: 503 })
+  }
+
+  const { data: event, error: eventErr } = await (supabase as any)
+    .from('events')
+    .select('price')
+    .eq('id', eventId)
+    .single()
+  if (eventErr || !event) return NextResponse.json({ error: 'Event not found' }, { status: 404 })
+  const authorizedAmount = event.price as number
 
   try {
     const razorpay = getRazorpay()
     const order = await razorpay.orders.create({
-      amount: Math.round(amount * 100),
+      amount: Math.round(authorizedAmount * 100),
       currency: 'INR',
       receipt: `event-${eventId}-${Date.now()}`,
       notes: { event_id: eventId, name, email },

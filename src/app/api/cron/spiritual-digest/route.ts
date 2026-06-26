@@ -86,13 +86,21 @@ export async function GET(req: NextRequest) {
     // Generate digest content once for all users
     const digest = await generateDigest(topic)
 
-    // Fetch all users via admin client
+    // Fetch all users via admin client (paginated to handle >1000 users)
     const supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
     )
-    const { data: { users }, error } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 })
-    if (error) throw error
+    const allUsers: any[] = []
+    let page = 1
+    while (true) {
+      const { data: { users: batch }, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: 1000 })
+      if (error) throw error
+      allUsers.push(...batch)
+      if (batch.length < 1000) break
+      page++
+    }
+    const users = allUsers
 
     let sent = 0
     let failed = 0

@@ -20,6 +20,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   for (const key of allowed) {
     if (key in body) updates[key] = body[key]
   }
+  if (Object.keys(updates).length === 0) {
+    return NextResponse.json({ error: 'No valid fields to update' }, { status: 400 })
+  }
 
   const { data, error } = await (supabase as any)
     .from('webinars')

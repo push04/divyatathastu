@@ -37,7 +37,9 @@ export async function POST(req: NextRequest) {
         break
       }
       default: {
-        // Generic email — requires subject + html
+        // Generic email — restricted to admin to prevent open relay abuse
+        const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+        if (profile?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
         if (!subject || !html) return NextResponse.json({ error: 'Missing subject or html' }, { status: 400 })
         await sendEmail(to, subject, html)
       }

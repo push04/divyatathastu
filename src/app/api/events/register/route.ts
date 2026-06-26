@@ -10,6 +10,16 @@ export async function POST(req: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  // Guard against duplicate free registrations
+  const { data: existing } = await (supabase as any)
+    .from('event_registrations')
+    .select('id')
+    .eq('event_id', eventId)
+    .eq('email', email)
+    .maybeSingle()
+  if (existing) return NextResponse.json({ success: true, already_registered: true })
+
   const { error } = await (supabase as any).from('event_registrations').insert({
     event_id: eventId,
     name,

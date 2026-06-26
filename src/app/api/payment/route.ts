@@ -25,11 +25,19 @@ export async function POST(req: NextRequest) {
     const { items, couponCode } = await req.json()
 
     // Fetch authoritative report prices from settings — prevents client price tampering
+    const hasReportItems = items.some((i: any) => i.product_type === 'report')
     let reportPrices: Record<string, number> = {}
-    try {
-      const { data: setting } = await (supabase as any).from('settings').select('value').eq('key', 'report_pricing').single()
-      if (setting?.value) reportPrices = setting.value
-    } catch {}
+    const { data: setting, error: priceErr } = await (supabase as any)
+      .from('settings').select('value').eq('key', 'report_pricing').single()
+    if (priceErr) {
+      if (hasReportItems) {
+        // Refuse to process report orders at client-supplied prices
+        console.error('[payment/create] report-pricing fetch failed:', priceErr.message)
+        return NextResponse.json({ error: 'Pricing unavailable. Please try again.' }, { status: 503 })
+      }
+    } else if (setting?.value) {
+      reportPrices = setting.value
+    }
 
     // Override price for report items with server-side authoritative price
     const authoritative = items.map((item: any) => {
@@ -104,7 +112,7 @@ export async function POST(req: NextRequest) {
     const { data: order, error: orderErr } = await supabase.from('orders').insert({
       user_id: user.id,
       order_number: orderNumber,
-      items,
+      items: authoritative,
       subtotal,
       discount,
       coupon_code: couponCode || null,
@@ -132,21 +140,32 @@ export async function POST(req: NextRequest) {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, db_order_id } = await req.json()
 
     const isMock = process.env.NODE_ENV === 'development' && process.env.RAZORPAY_MOCK_MODE === 'true'
-    const secret = process.env.RAZORPAY_KEY_SECRET || 'mock_secret'
-    const body = razorpay_order_id + '|' + razorpay_payment_id
-    const expectedSignature = crypto.createHmac('sha256', secret).update(body).digest('hex')
+    if (!isMock) {
+      const secret = process.env.RAZORPAY_KEY_SECRET
+      if (!secret) return NextResponse.json({ error: 'Payment not configured' }, { status: 503 })
+      const body = razorpay_order_id + '|' + razorpay_payment_id
+      const expectedSignature = crypto.createHmac('sha256', secret).update(body).digest('hex')
+      if (expectedSignature !== razorpay_signature) {
+        return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
+      }
+    }
 
-    const isValid = isMock || expectedSignature === razorpay_signature
-
-    if (!isValid) return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
-
+    // Ownership guard: only mark the user's own order as paid
     await supabase.from('orders').update({
       status: 'paid' as any,
       razorpay_payment_id,
-    }).eq('id', db_order_id)
+    }).eq('id', db_order_id).eq('user_id', user.id)
 
     // Fulfil ebook purchases — sync ebooks table then create ebook_purchases
-    const { data: orderRow } = await supabase.from('orders').select('items,user_id,order_number,subtotal,discount,total').eq('id', db_order_id).single()
+    const { data: orderRow } = await supabase.from('orders')
+      .select('items,user_id,order_number,subtotal,discount,total,razorpay_order_id')
+      .eq('id', db_order_id)
+      .eq('user_id', user.id)
+      .single()
+    if (!orderRow) {
+      console.error('[payment/verify] Could not re-fetch order:', db_order_id)
+      return NextResponse.json({ success: true, verified: true })
+    }
     const orderItems: any[] = (orderRow?.items as any[]) || []
     const ebookItems = orderItems.filter((i: any) => i.product_type === 'ebook')
     for (const item of ebookItems) {

@@ -91,7 +91,16 @@ export async function POST(req: NextRequest) {
     slotId = newSlot.id
     slotPrice = newSlot.price || 0
   } else {
-    await (admin as any).from('consultation_slots').update({ is_booked: true }).eq('id', slot.id)
+    // Atomic claim: only update if still available (guards against concurrent booking of same slot)
+    const { data: claimed } = await (admin as any).from('consultation_slots')
+      .update({ is_booked: true })
+      .eq('id', slot.id)
+      .eq('is_booked', false)
+      .select('id')
+      .maybeSingle()
+    if (!claimed) {
+      return NextResponse.json({ error: 'This slot was just booked. Please choose another time.' }, { status: 409 })
+    }
     slotId = slot.id
     slotPrice = slot.price || 0
   }
