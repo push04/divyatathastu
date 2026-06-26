@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import type { ReportPDFProps } from '@/components/pdf/ReportPDF'
+import { renderToBufferSafe } from '@/lib/pdf-utils'
 
 export const maxDuration = 60
 export const runtime = 'nodejs'
@@ -59,9 +60,8 @@ export async function POST(
     console.log('[PDF] report_type:', report.report_type)
 
     // All React/PDF imports are dynamic to avoid Turbopack static-analysis restrictions
-    const [{ default: ReportPDF }, { renderToBuffer }, { createElement }] = await Promise.all([
+    const [{ default: ReportPDF }, { createElement }] = await Promise.all([
       import('@/components/pdf/ReportPDF'),
-      import('@react-pdf/renderer'),
       import('react'),
     ])
 
@@ -69,8 +69,10 @@ export async function POST(
     const doc = createElement(ReportPDF as any, { report: report as ReportPDFProps['report'], canvases })
     let buffer: Buffer
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      buffer = await (renderToBuffer as any)(doc)
+      // Use renderToBufferSafe which uses a callback-based updateContainer.
+      // This avoids the flushSyncWork timing issue on Vercel where react-pdf's
+      // isolated scheduler context can't flush synchronously.
+      buffer = await renderToBufferSafe(doc)
     } catch (renderErr) {
       const msg = renderErr instanceof Error ? renderErr.message : String(renderErr)
       const stack = renderErr instanceof Error ? (renderErr.stack || '').slice(0, 1200) : ''

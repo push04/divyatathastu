@@ -2,12 +2,21 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // astronomy-engine has native bindings — keep it external.
-  // @react-pdf/renderer was previously external, but that causes its bundled
-  // react-reconciler to use a scheduler context isolated from Next.js's server
-  // execution context — flushSyncWork() becomes a no-op, container.document
-  // stays null, and renderToBuffer fails with "Cannot read properties of null".
-  // Bundling it with Turbopack (removing it from here) fixes this.
-  serverExternalPackages: ['astronomy-engine'],
+  //
+  // @react-pdf/renderer MUST also be external. When Turbopack bundles it, the
+  // route handler runs in a React Server context where only
+  // __SERVER_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE is
+  // exported. The @react-pdf/reconciler-33 accesses
+  // __CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE.S which
+  // is undefined in that context → "Cannot read properties of undefined
+  // (reading 'S')". When externalized, react-pdf loads its own isolated CJS
+  // React which has the full client internals available.
+  //
+  // The separate flushSyncWork/null-container issue on Vercel is fixed by
+  // using a callback-based updateContainer in the API route (see pdf-utils.ts).
+  serverExternalPackages: ['astronomy-engine', '@react-pdf/renderer', '@react-pdf/reconciler'],
+
+
 
   // Belt-and-suspenders: explicitly alias astronomy-engine to its CJS file
   turbopack: {
