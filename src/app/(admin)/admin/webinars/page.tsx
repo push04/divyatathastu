@@ -219,7 +219,14 @@ export default function AdminWebinarsPage() {
                   {/* Join link */}
                   <div className="mt-3 flex items-center gap-2 bg-[var(--warm-sand)]/40 rounded-xl px-3 py-2">
                     <span className="material-symbols-outlined text-[14px] text-[var(--saffron)]">link</span>
-                    <code className="text-xs text-[var(--indigo-deep)] flex-1 truncate">{joinUrl(w)}</code>
+                    <a
+                      href={`/webinar/${w.id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-[var(--indigo-deep)] flex-1 truncate hover:underline font-mono font-semibold"
+                    >
+                      {joinUrl(w)}
+                    </a>
                     <button
                       onClick={() => copyLink(w)}
                       className="flex items-center gap-1 text-xs text-[var(--indigo-deep)] font-semibold hover:opacity-70 transition-opacity ml-2"
@@ -242,9 +249,19 @@ export default function AdminWebinarsPage() {
                       </button>
                     )}
                     {w.status === 'live' && (
-                      <button onClick={() => updateStatus(w.id, 'ended')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-semibold hover:bg-red-600 transition-colors">
-                        <span className="material-symbols-outlined text-[13px]">stop</span> End
-                      </button>
+                      <>
+                        <a
+                          href={`/webinar/${w.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-[13px]">meeting_room</span> Join Live
+                        </a>
+                        <button onClick={() => updateStatus(w.id, 'ended')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-500 text-white text-xs font-semibold hover:bg-red-600 transition-colors">
+                          <span className="material-symbols-outlined text-[13px]">stop</span> End
+                        </button>
+                      </>
                     )}
                     {w.status === 'ended' && (
                       <button onClick={() => updateStatus(w.id, 'upcoming')} className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-amber-500 text-white text-xs font-semibold hover:bg-amber-600 transition-colors">
@@ -300,7 +317,7 @@ export default function AdminWebinarsPage() {
 
             {/* Join URL preview */}
             <div className="bg-[var(--warm-sand)]/40 rounded-xl px-3 py-2 mb-4 text-xs text-[var(--indigo-deep)] truncate">
-              🔗 {joinUrl(inviteWebinar)}
+              🔗 <a href={`/webinar/${inviteWebinar.id}`} target="_blank" rel="noopener noreferrer" className="hover:underline font-mono font-semibold">{joinUrl(inviteWebinar)}</a>
             </div>
 
             <div className="flex gap-3">
