@@ -1,22 +1,18 @@
 import React from 'react'
-import path from 'path'
 import {
-  Document, Page, View, Text, Image, StyleSheet, Font,
+  Document, Page, View, Text, Image, StyleSheet,
   Svg, Circle, Ellipse, Polygon, Path,
 } from '@react-pdf/renderer'
 
-// ── Premium font registration — reads from public/fonts/ (always in Vercel bundle)
-const f = (name: string) => path.join(process.cwd(), 'public', 'fonts', name)
-
-// Register each weight/style as its own family — avoids fontWeight resolution in react-pdf
-Font.register({ family: 'CG',       src: f('cg-400.woff2') })
-Font.register({ family: 'CGi',      src: f('cg-400i.woff2') })
-Font.register({ family: 'CGsb',     src: f('cg-600.woff2') })
-Font.register({ family: 'CGb',      src: f('cg-700.woff2') })
-Font.register({ family: 'CGbi',     src: f('cg-700i.woff2') })
-Font.register({ family: 'Lato',     src: f('lato-400.woff2') })
-Font.register({ family: 'LatoBold', src: f('lato-700.woff2') })
-Font.registerHyphenationCallback(word => [word])
+// ── NOTE: Font.register() is intentionally NOT here. ─────────────────────────
+// @react-pdf/renderer is in serverExternalPackages so it loads as an isolated
+// CJS module instance. ReportPDF.tsx is bundled by Turbopack and gets a
+// DIFFERENT react-pdf instance. Font.register() calls here would silently
+// register fonts on the wrong instance and the renderer would never see them.
+//
+// Font registration is done in src/lib/pdf-utils.ts via dynamic import(),
+// which guarantees it runs on the same externalized CJS instance as the renderer.
+// ─────────────────────────────────────────────────────────────────────────────
 
 // ── Brand colours ─────────────────────────────────────────────────────────────
 // Premium design tokens (WCAG AA compliant on their intended backgrounds)
