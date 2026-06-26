@@ -180,7 +180,7 @@ export async function POST(req: NextRequest) {
     const { data: booking, error: bookErr } = await (admin as any).from('consultation_bookings').insert({
       user_id: user.id,
       slot_id: slotId,
-      status: 'pending',
+      status: 'booked', // Changed from 'pending' to satisfy Postgres CHECK constraint
       payment_status: 'pending',
       razorpay_order_id: order.id,
       notes: notes || null,
