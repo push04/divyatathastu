@@ -2329,13 +2329,15 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
         overflow: visible !important;
         margin-bottom: 8px;
       }
-      /* Prevent content blocks from being cut mid-item */
-      #rpa > div { overflow: visible !important; }
+      /* Every element inside #rpa must let content flow through page boundaries */
+      #rpa, #rpa * { overflow: visible !important; }
       #rpa [style*="border-radius"], #rpa [style*="rounded"] {
         break-inside: avoid; page-break-inside: avoid;
       }
-      #rpa [style*="pageBreakBefore"], #rpa [style*="pageBreakAfter"] {
-        overflow: visible !important;
+      /* Month/remedy cards — avoid cutting mid-item */
+      #rpa [style*="marginBottom"][style*="background"],
+      #rpa [style*="margin-bottom"][style*="background"] {
+        break-inside: avoid; page-break-inside: avoid;
       }
 
       /* ── 5. Tables ── */
@@ -2421,13 +2423,7 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
         <div id="rpa" ref={printRef}>
 
           {/* COVER PAGE - Tathastu parchment style */}
-          <div style={{ minHeight: 'calc(29.7cm - 20mm)', background: '#f5ede0', pageBreakAfter: 'always', position: 'relative', overflow: 'visible', fontFamily: 'Georgia, serif' }}>
-            {/* Decorative corner borders */}
-            {[{ top: 12, left: 12 }, { top: 12, right: 12 }, { bottom: 12, left: 12 }, { bottom: 12, right: 12 }].map((pos, i) => (
-              <div key={i} style={{ position: 'absolute', width: 40, height: 40, ...pos, borderColor: '#c8922a', borderStyle: 'solid', borderWidth: i === 0 ? '3px 0 0 3px' : i === 1 ? '3px 3px 0 0' : i === 2 ? '0 0 3px 3px' : '0 3px 3px 0' }} />
-            ))}
-            {/* Full decorative border */}
-            <div style={{ position: 'absolute', inset: 8, border: '1px solid #c8922a', opacity: 0.4, pointerEvents: 'none' }} />
+          <div style={{ minHeight: 'calc(29.7cm - 20mm)', background: '#f5ede0', pageBreakAfter: 'always', fontFamily: 'Georgia, serif', outline: '1px solid rgba(200,146,42,0.4)', outlineOffset: '-8px' }}>
 
             {/* Top Sanskrit invocation */}
             <div style={{ textAlign: 'center', padding: '28px 0 0', color: '#cc2200', fontSize: 13, fontWeight: 700 }}>
@@ -2527,12 +2523,7 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
           </div>
 
           {/* ABOUT & BENEFITS PAGE - parchment style */}
-          <div style={{ padding: '0', pageBreakAfter: 'always', minHeight: 'calc(29.7cm - 20mm)', background: '#f5ede0', fontFamily: 'Georgia, serif', position: 'relative', overflow: 'visible' }}>
-            {/* Decorative border */}
-            <div style={{ position: 'absolute', inset: 8, border: '1px solid #c8922a', opacity: 0.5, pointerEvents: 'none' }} />
-            {[{ top: 12, left: 12 }, { top: 12, right: 12 }, { bottom: 12, left: 12 }, { bottom: 12, right: 12 }].map((pos, i) => (
-              <div key={i} style={{ position: 'absolute', width: 32, height: 32, ...pos, borderColor: '#c8922a', borderStyle: 'solid', borderWidth: i === 0 ? '3px 0 0 3px' : i === 1 ? '3px 3px 0 0' : i === 2 ? '0 0 3px 3px' : '0 3px 3px 0' }} />
-            ))}
+          <div style={{ pageBreakAfter: 'always', background: '#f5ede0', fontFamily: 'Georgia, serif', outline: '1px solid rgba(200,146,42,0.5)', outlineOffset: '-8px' }}>
             <div style={{ padding: '36px 44px' }}>
               {/* Divine Guidance header */}
               <div style={{ textAlign: 'center', marginBottom: 20, paddingBottom: 14, borderBottom: '2px solid #c8922a' }}>
@@ -2648,11 +2639,7 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
           ))}
 
           {/* DISCLAIMER PAGE - parchment */}
-          <div style={{ padding: '0', pageBreakBefore: 'always', background: '#f5ede0', minHeight: 'calc(29.7cm - 20mm)', position: 'relative', fontFamily: 'Georgia, serif', overflow: 'visible' }}>
-            <div style={{ position: 'absolute', inset: 8, border: '1px solid #c8922a', opacity: 0.4, pointerEvents: 'none' }} />
-            {[{ top: 12, left: 12 }, { top: 12, right: 12 }, { bottom: 12, left: 12 }, { bottom: 12, right: 12 }].map((pos, i) => (
-              <div key={i} style={{ position: 'absolute', width: 32, height: 32, ...pos, borderColor: '#c8922a', borderStyle: 'solid', borderWidth: i === 0 ? '3px 0 0 3px' : i === 1 ? '3px 3px 0 0' : i === 2 ? '0 0 3px 3px' : '0 3px 3px 0' }} />
-            ))}
+          <div style={{ pageBreakBefore: 'always', background: '#f5ede0', fontFamily: 'Georgia, serif', outline: '1px solid rgba(200,146,42,0.4)', outlineOffset: '-8px' }}>
             <div style={{ padding: '36px 44px' }}>
               <div style={{ borderBottom: '2px solid #c8922a', paddingBottom: 14, marginBottom: 24, display: 'flex', alignItems: 'center', gap: 12 }}>
                 <div style={{ fontSize: 24, color: '#c8922a' }}>ॐ</div>
