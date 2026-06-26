@@ -3,9 +3,10 @@
 import { useEffect, useState, useRef } from 'react'
 import { toast } from 'sonner'
 import dynamic from 'next/dynamic'
-import TempleDetailModal, { Temple } from '@/components/mandir/TempleDetailModal'
+import type { Temple } from '@/components/mandir/TempleDetailModal'
 
 const IndiaMandirMap = dynamic(() => import('@/components/IndiaMandirMap'), { ssr: false })
+const TempleDetailModal = dynamic(() => import('@/components/mandir/TempleDetailModal'), { ssr: false })
 
 interface Mandir {
   id: string; name: string; city: string; state: string; deity: string

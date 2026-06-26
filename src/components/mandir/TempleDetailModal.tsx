@@ -90,7 +90,7 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
                 )}
                 {/* Categories */}
                 <div className="flex flex-wrap gap-1.5 mt-2">
-                  {temple.categories.map(cat => (
+                  {(temple.categories || []).map(cat => (
                     <span
                       key={cat}
                       className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${
@@ -195,7 +195,7 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
                     Festivals & Special Events
                   </h3>
                   <div className="flex flex-wrap gap-2 pt-1">
-                    {temple.special_events.map(event => (
+                    {(temple.special_events || []).map(event => (
                       <span
                         key={event}
                         className="text-xs px-3 py-1 rounded-lg bg-[var(--warm-sand)]/30 text-[var(--indigo-deep)] border border-[var(--warm-sand)] font-medium"
@@ -243,7 +243,7 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
                     Important Visitor Guidelines
                   </h4>
                   <ul className="space-y-2 text-xs text-[var(--warm-charcoal)]/80 leading-relaxed font-sans">
-                    {temple.travel_tips.map((tip, idx) => (
+                    {(temple.travel_tips || []).map((tip, idx) => (
                       <li key={idx} className="flex items-start gap-2">
                         <Footprints className="w-3.5 h-3.5 text-[var(--saffron)] flex-shrink-0 mt-0.5" />
                         <span>{tip}</span>
@@ -263,7 +263,7 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
                 Close Details
               </button>
               <a
-                href={`https://www.openstreetmap.org/directions?to=${temple.coordinates.latitude},${temple.coordinates.longitude}`}
+                href={`https://www.openstreetmap.org/directions?to=${temple.coordinates?.latitude || 0},${temple.coordinates?.longitude || 0}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-4 py-2 text-xs font-semibold rounded-lg bg-[var(--indigo-deep)] text-white hover:bg-[var(--indigo-deep)]/90 transition-all flex items-center gap-1.5 shadow-md active:scale-[0.98]"

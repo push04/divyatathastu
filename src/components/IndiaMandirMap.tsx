@@ -2,7 +2,10 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import indiaMap from '@svg-maps/india'
-import TempleDetailModal, { Temple } from './mandir/TempleDetailModal'
+import dynamic from 'next/dynamic'
+import type { Temple } from './mandir/TempleDetailModal'
+
+const TempleDetailModal = dynamic(() => import('./mandir/TempleDetailModal'), { ssr: false })
 
 interface Circuit {
   id: string; name: string; local_name: string; circuit_type: string
@@ -218,7 +221,7 @@ export default function IndiaMandirMap() {
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-1 mb-2">
-                    {t.categories.slice(0, 2).map(cat => (
+                    {(t.categories || []).slice(0, 2).map(cat => (
                       <span key={cat} className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${CATEGORY_COLORS[cat] || 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>{cat}</span>
                     ))}
                   </div>
