@@ -2,10 +2,8 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import indiaMap from '@svg-maps/india'
-import dynamic from 'next/dynamic'
+import TempleDetailModal from './mandir/TempleDetailModal'
 import type { Temple } from './mandir/TempleDetailModal'
-
-const TempleDetailModal = dynamic(() => import('./mandir/TempleDetailModal'), { ssr: false })
 
 interface Circuit {
   id: string; name: string; local_name: string; circuit_type: string
@@ -323,8 +321,6 @@ export default function IndiaMandirMap() {
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false)
-          // Delay clearing temple data so AnimatePresence exit animation
-          // can render real content while fading out (prevents flash/vanish)
           setTimeout(() => setSelectedTemple(null), 400)
         }}
       />
