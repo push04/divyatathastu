@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import crypto from 'crypto'
 import { sendOrderConfirmation } from '@/lib/email'
 
@@ -157,6 +157,8 @@ export async function POST(req: NextRequest) {
     }).eq('id', db_order_id).eq('user_id', user.id)
 
     // Fulfil ebook purchases — sync ebooks table then create ebook_purchases
+    // Uses admin client to bypass RLS (ebooks table only allows admin writes via RLS policy)
+    const adminSupabase = await createAdminClient()
     const { data: orderRow } = await supabase.from('orders')
       .select('items,user_id,order_number,subtotal,discount,total,razorpay_order_id')
       .eq('id', db_order_id)
@@ -178,8 +180,8 @@ export async function POST(req: NextRequest) {
         console.warn(`[payment/verify] Product ${item.id} has no PDF — admin must upload via Admin > Ebooks first.`)
         continue
       }
-      // Ensure ebooks record exists (uses product id as ebook id — same UUID)
-      const { error: upsertErr } = await (supabase as any).from('ebooks').upsert({
+      // Ensure ebooks record exists — uses admin client because RLS blocks user writes to ebooks table
+      const { error: upsertErr } = await adminSupabase.from('ebooks').upsert({
         id: item.id,
         title: product.name,
         slug: product.slug,
@@ -194,15 +196,15 @@ export async function POST(req: NextRequest) {
         console.error(`[payment/verify] ebooks upsert failed for ${item.id}:`, upsertErr.message)
         continue
       }
-      // Create purchase record (avoid duplicate on retry)
-      const { data: existing } = await supabase
+      // Create purchase record (avoid duplicate on retry) — admin client ensures reliable write
+      const { data: existing } = await adminSupabase
         .from('ebook_purchases')
         .select('id')
         .eq('user_id', orderRow.user_id)
         .eq('ebook_id', item.id)
         .maybeSingle()
       if (!existing) {
-        const { error: epErr } = await (supabase as any).from('ebook_purchases').insert({
+        const { error: epErr } = await adminSupabase.from('ebook_purchases').insert({
           user_id: orderRow.user_id,
           ebook_id: item.id,
           order_id: db_order_id,
