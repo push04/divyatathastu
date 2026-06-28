@@ -310,38 +310,73 @@ export default function DashboardPage() {
 
         {/* ── Divine Services ── */}
         <div className="md:col-span-12">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--indigo-deep)]/50" style={{ fontFamily: "'Sora', sans-serif" }}>
-              Divine Services
-            </h2>
-            <span className="text-[10px] text-[var(--terracotta)] font-semibold" style={{ fontFamily: "'Sora', sans-serif" }}>Anushthaan India · Gyanampeetham</span>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {DIVINE_SERVICES.map(s => (
-              <Link
-                key={s.href}
-                href={s.href}
-                className="bento-card p-4 flex flex-col items-center text-center hover:shadow-lg hover:-translate-y-0.5 group transition-all duration-200 relative overflow-hidden"
-              >
-                <div
-                  className="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-sm"
-                  style={{ background: s.bg }}
-                >
-                  <span className="material-symbols-outlined text-[22px]" style={{ color: s.color, fontVariationSettings: "'FILL' 1" }}>{s.icon}</span>
+          {/* Golden-framed section container */}
+          <div className="rounded-2xl p-5" style={{
+            background: 'linear-gradient(135deg, #fffbeb 0%, #fef9f0 50%, #fffbeb 100%)',
+            border: '2px solid #D4A017',
+            boxShadow: '0 0 0 1px rgba(212,160,23,0.15), 0 4px 24px rgba(212,160,23,0.12)',
+          }}>
+            {/* Section header */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <span className="material-symbols-outlined text-[22px]" style={{ color: '#D4A017', fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+                <div>
+                  <h2 className="font-black text-lg leading-tight" style={{ fontFamily: "'Playfair Display', serif", color: '#78350f', letterSpacing: '0.02em' }}>
+                    Divine Services
+                  </h2>
+                  <p className="text-[10px] font-semibold tracking-widest uppercase" style={{ color: '#D4A017', fontFamily: "'Sora', sans-serif" }}>
+                    Anushthaan India · Gyanampeetham
+                  </p>
                 </div>
-                <p className="text-[13px] font-semibold text-[var(--indigo-deep)] mb-1 leading-tight" style={{ fontFamily: "'Sora', sans-serif" }}>
-                  {s.label}
-                </p>
-                <p className="text-[10px] text-[var(--indigo-deep)]/40 leading-tight mb-2">{s.desc}</p>
-                {s.badge && (
-                  <span className="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wide"
-                    style={{ background: `${s.color}15`, color: s.color }}>
-                    {s.badge}
-                  </span>
-                )}
-                <span className="material-symbols-outlined text-[14px] text-[var(--outline-variant)] absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
+              </div>
+              <Link href="/divine-services"
+                className="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full transition-all hover:opacity-80"
+                style={{ background: '#D4A017', color: 'white', fontFamily: "'Sora', sans-serif" }}>
+                View All
+                <span className="material-symbols-outlined text-[12px]">arrow_forward</span>
               </Link>
-            ))}
+            </div>
+
+            {/* Golden divider */}
+            <div className="h-px mb-4" style={{ background: 'linear-gradient(to right, transparent, #D4A017, transparent)' }} />
+
+            {/* Service cards grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {DIVINE_SERVICES.map(s => (
+                <Link
+                  key={s.href}
+                  href={s.href}
+                  className="bg-white rounded-2xl p-4 flex flex-col items-center text-center group transition-all duration-200 relative overflow-hidden hover:-translate-y-0.5"
+                  style={{ border: '1.5px solid rgba(212,160,23,0.25)', boxShadow: '0 2px 8px rgba(212,160,23,0.08)' }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = 'rgba(212,160,23,0.6)'
+                    e.currentTarget.style.boxShadow = '0 6px 20px rgba(212,160,23,0.2)'
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = 'rgba(212,160,23,0.25)'
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(212,160,23,0.08)'
+                  }}
+                >
+                  <div
+                    className="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-sm"
+                    style={{ background: s.bg }}
+                  >
+                    <span className="material-symbols-outlined text-[22px]" style={{ color: s.color, fontVariationSettings: "'FILL' 1" }}>{s.icon}</span>
+                  </div>
+                  <p className="text-[13px] font-bold text-[var(--indigo-deep)] mb-1 leading-tight" style={{ fontFamily: "'Sora', sans-serif" }}>
+                    {s.label}
+                  </p>
+                  <p className="text-[10px] text-[var(--indigo-deep)]/45 leading-tight mb-2">{s.desc}</p>
+                  {s.badge && (
+                    <span className="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wide"
+                      style={{ background: `${s.color}18`, color: s.color, border: `1px solid ${s.color}30` }}>
+                      {s.badge}
+                    </span>
+                  )}
+                  <span className="material-symbols-outlined text-[14px] absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: '#D4A017' }}>arrow_forward</span>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
 

@@ -14,7 +14,6 @@ const navItems = [
   { href: '/reports', label: 'Reports', icon: 'description' },
   { href: '/reports/generate', label: 'Generate Report', icon: 'auto_awesome' },
   { href: '/ai-guide', label: 'AI Spiritual Guide', icon: 'psychology' },
-  { href: '/puja', label: 'Puja & Rituals', icon: 'temple_hindu' },
   { href: '/panchang', label: 'Panchang', icon: 'calendar_today' },
   { href: '/mandir-finder', label: 'Mandir Finder', icon: 'temple_hindu' },
   { href: '/pilgrimage', label: 'Pilgrimage', icon: 'travel_explore' },
@@ -28,6 +27,17 @@ const navItems = [
   { href: '/my-library', label: 'My Ebooks', icon: 'menu_book' },
   { href: '/social', label: 'Social Content', icon: 'share' },
   { href: '/settings', label: 'Settings', icon: 'settings' },
+]
+
+const divineServiceItems = [
+  { href: '/divine-services', label: 'All Divine Services', icon: 'auto_awesome' },
+  { href: '/puja', label: 'Pooja & Rituals', icon: 'local_fire_department' },
+  { href: '/sadhana', label: 'Saadhana', icon: 'self_improvement' },
+  { href: '/mahaganpati', label: 'Mahaganpati', icon: 'brightness_5' },
+  { href: '/gyanampeetham', label: 'Gyanampeetham', icon: 'school' },
+  { href: '/ayurveda', label: 'Ayurveda', icon: 'spa' },
+  { href: '/ardra-jalam', label: 'Ardra Jalam', icon: 'water_drop' },
+  { href: '/courses', label: 'Courses', icon: 'menu_book' },
 ]
 
 function NavContent({ pathname, onClose, onSignOut }: { pathname: string; onClose: () => void; onSignOut: () => void }) {
@@ -76,6 +86,52 @@ function NavContent({ pathname, onClose, onSignOut }: { pathname: string; onClos
             </Link>
           )
         })}
+
+        {/* ── Divine Services Section ── */}
+        <div className="pt-3 pb-1">
+          <div className="mx-1 rounded-2xl overflow-hidden"
+            style={{ border: '1.5px solid #D4A017', background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)' }}>
+            {/* Section header */}
+            <div className="px-3 pt-3 pb-2 flex items-center gap-2">
+              <span className="material-symbols-outlined text-[16px]" style={{ color: '#D4A017', fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+              <span className="text-[10px] font-black tracking-[0.2em] uppercase" style={{ color: '#92400e', fontFamily: "'Sora', sans-serif" }}>
+                Divine Services
+              </span>
+            </div>
+            {/* Service links */}
+            <div className="pb-2 px-1 space-y-0.5">
+              {divineServiceItems.map(({ href, label, icon }) => {
+                const isAll    = href === '/divine-services'
+                const active   = pathname === href || (!isAll && href !== '/dashboard' && pathname.startsWith(href))
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={cn(
+                      'flex items-center gap-2.5 px-3 py-2 rounded-xl text-[12px] transition-all duration-200',
+                      isAll
+                        ? active
+                          ? 'bg-[#D4A017] text-white font-bold'
+                          : 'bg-[#D4A01715] text-[#92400e] font-bold hover:bg-[#D4A01725] border border-[#D4A01740]'
+                        : active
+                        ? 'bg-[#92400e]/15 text-[#92400e] font-semibold border-l-2 border-[#D4A017]'
+                        : 'text-[#78350f]/60 hover:text-[#92400e] hover:bg-[#D4A01710] border-l-2 border-transparent'
+                    )}
+                  >
+                    <span
+                      className="material-symbols-outlined text-[15px]"
+                      style={{ fontVariationSettings: active ? "'FILL' 1" : "'FILL' 0", color: active ? 'inherit' : '#D4A017' }}
+                    >
+                      {icon}
+                    </span>
+                    <span className={isAll ? 'font-bold' : 'font-medium'}>{label}</span>
+                    {isAll && <span className="ml-auto material-symbols-outlined text-[12px] opacity-60">arrow_forward</span>}
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        </div>
       </nav>
 
       {/* Security badge */}

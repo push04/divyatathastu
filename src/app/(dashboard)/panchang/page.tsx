@@ -13,7 +13,8 @@ interface HoraPeriod {
   planet: string; color: string; start: string; end: string; startH: number; endH: number; isDay: boolean
 }
 interface DoGhatiPeriod {
-  name: string; quality: string; color: string; start: string; end: string; period: string
+  name: string; kala: string; period: 'day' | 'night'
+  start: string; end: string; startH: number; endH: number; index: number
 }
 
 interface PanchangData {
@@ -220,6 +221,7 @@ export default function PanchangPage() {
   const [loading, setLoading]           = useState(false)
   const [nowH, setNowH]                 = useState(0)
   const [activeChogTab, setActiveChogTab] = useState<'day' | 'night'>('day')
+  const [activeDgTab, setActiveDgTab]     = useState<'day' | 'night'>('day')
   const [rightTab, setRightTab] = useState<'panchang' | 'hora' | 'choghadiya' | 'doghati' | 'guidance'>('panchang')
   const today = new Date()
 
@@ -546,33 +548,64 @@ export default function PanchangPage() {
                   <p className="text-center text-sm text-[var(--warm-charcoal)]/40 py-12">Select a date first</p>
                 ) : (
                   <div>
-                    <p className="text-xs text-[var(--warm-charcoal)]/50 mb-4 leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                      <strong>Do Ghati</strong> = 2 Ghati = 48 minutes. These are the most auspicious first 48 minutes of each Amrit or Shubh choghadiya - ideal for starting new ventures, prayers, business, travel, or important decisions.
-                    </p>
-                    <div className="space-y-3">
-                      {panchang.doGhatiMuhurt.map((m, i) => {
-                        const baseH = panchang.choghadiya.find(c => c.name === m.name.split(' ')[0] && c.period === m.period)?.startH ?? -1
-                        const isCurrent = isToday && nowH >= baseH && nowH < baseH + 0.8
-                        return (
-                          <div key={i} className="flex items-center gap-3 rounded-xl px-4 py-3"
-                            style={{ background: m.color + '12', border: `1.5px solid ${m.color}${isCurrent ? 'cc' : '40'}` }}>
-                            <span className="material-symbols-outlined text-[22px]" style={{ color: m.color, fontVariationSettings: "'FILL' 1" }}>
-                              {m.name.includes('Amrit') ? 'local_drink' : 'star'}
-                            </span>
-                            <div className="flex-1">
-                              <p style={{ fontFamily: "'Sora', sans-serif", fontSize: 12, fontWeight: 700, color: m.color }}>{m.name}</p>
-                              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: 'rgba(28,30,74,0.6)' }}>{m.start} – {m.end} · {m.period === 'day' ? 'Daytime' : 'Nighttime'}</p>
-                            </div>
-                            {isCurrent && (
-                              <div className="flex items-center gap-1.5">
-                                <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: m.color }} />
-                                <span className="text-[10px] font-bold" style={{ color: m.color }}>Now</span>
-                              </div>
-                            )}
+                    {(() => {
+                      const windows = panchang.doGhatiMuhurt.filter(m => m.period === activeDgTab)
+                      const kalas   = [...new Set(windows.map(w => w.kala))]
+                      const firstW  = panchang.doGhatiMuhurt.find(m => m.period === activeDgTab)
+                      const dgMin   = firstW ? Math.round((firstW.endH - firstW.startH) * 60) : 0
+                      const borderColor = activeDgTab === 'day' ? '#D4A017' : '#6366f1'
+                      return (
+                        <>
+                          <p className="text-xs text-[var(--warm-charcoal)]/50 mb-3 leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                            <strong>Do Ghati</strong> = 2 Ghati = day ÷ 15 equal windows. Each window today is <strong>~{dgMin} min</strong> for this location — sizes change with sunrise/sunset.
+                          </p>
+                          <div className="flex gap-1 bg-[var(--warm-sand)] rounded-lg p-0.5 mb-4 w-fit">
+                            {(['day','night'] as const).map(t => (
+                              <button key={t} onClick={() => setActiveDgTab(t)}
+                                className="px-4 py-1.5 rounded-md text-xs font-bold transition-all"
+                                style={{ background: activeDgTab === t ? 'var(--indigo-deep)' : 'transparent', color: activeDgTab === t ? 'white' : 'var(--warm-charcoal)', fontFamily: "'Sora', sans-serif" }}>
+                                {t === 'day' ? '☀ Daytime (15)' : '🌙 Nighttime (15)'}
+                              </button>
+                            ))}
                           </div>
-                        )
-                      })}
-                    </div>
+                          <div className="space-y-4 max-h-[380px] overflow-y-auto pr-1">
+                            {kalas.map(kala => (
+                              <div key={kala}>
+                                <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5 px-1"
+                                  style={{ color: borderColor, fontFamily: "'Sora', sans-serif" }}>{kala}</p>
+                                <div className="space-y-1">
+                                  {windows.filter(w => w.kala === kala).map(m => {
+                                    const isCurrent = isToday && nowH >= m.startH && nowH < m.endH
+                                    return (
+                                      <div key={m.index} className="flex items-center gap-3 rounded-xl px-3 py-2"
+                                        style={{
+                                          background: isCurrent ? borderColor + '22' : borderColor + '0C',
+                                          border: `1.5px solid ${borderColor}${isCurrent ? 'cc' : '28'}`,
+                                        }}>
+                                        <span className="text-[10px] font-bold tabular-nums w-5 text-right shrink-0 opacity-50"
+                                          style={{ fontFamily: "'JetBrains Mono', monospace" }}>{m.index}</span>
+                                        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: isCurrent ? 700 : 500, color: isCurrent ? borderColor : 'rgba(28,30,74,0.72)', flex: 1 }}>
+                                          {m.start} – {m.end}
+                                        </span>
+                                        {isCurrent && (
+                                          <div className="flex items-center gap-1.5">
+                                            <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: borderColor }} />
+                                            <span className="text-[10px] font-bold" style={{ color: borderColor }}>Now</span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    )
+                                  })}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          <p className="mt-3 text-[10px] text-[var(--warm-charcoal)]/40" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                            Window durations vary by location &amp; season — matches drikpanchang calculation.
+                          </p>
+                        </>
+                      )
+                    })()}
                   </div>
                 )
               )}

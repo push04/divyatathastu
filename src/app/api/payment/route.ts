@@ -181,7 +181,7 @@ export async function POST(req: NextRequest) {
         continue
       }
       // Ensure ebooks record exists — uses admin client because RLS blocks user writes to ebooks table
-      const { error: upsertErr } = await adminSupabase.from('ebooks').upsert({
+      const { error: upsertErr } = await (adminSupabase as any).from('ebooks').upsert({
         id: item.id,
         title: product.name,
         slug: product.slug,
@@ -204,7 +204,7 @@ export async function POST(req: NextRequest) {
         .eq('ebook_id', item.id)
         .maybeSingle()
       if (!existing) {
-        const { error: epErr } = await adminSupabase.from('ebook_purchases').insert({
+        const { error: epErr } = await (adminSupabase as any).from('ebook_purchases').insert({
           user_id: orderRow.user_id,
           ebook_id: item.id,
           order_id: db_order_id,

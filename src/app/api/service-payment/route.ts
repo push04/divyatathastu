@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createAdminClient } from '@/lib/supabase/server'
 import crypto from 'crypto'
 
 function getRazorpay() {
@@ -12,9 +12,13 @@ function getRazorpay() {
 }
 
 export async function POST(req: NextRequest) {
+  // User auth via cookie-session client
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  // Admin client bypasses RLS for all DB writes — user auth is already verified above
+  const admin = await createAdminClient()
 
   const url = new URL(req.url)
   const action = url.searchParams.get('action') || 'create'
@@ -24,14 +28,15 @@ export async function POST(req: NextRequest) {
     if (!service_item_id) return NextResponse.json({ error: 'service_item_id required' }, { status: 400 })
 
     // Fetch authoritative price — prevents client-side tampering
-    const { data: item, error: itemErr } = await (supabase as any)
+    const { data: item, error: itemErr } = await (admin as any)
       .from('service_items')
       .select('id, title, price, is_active, is_bookable')
       .eq('id', service_item_id)
       .eq('is_active', true)
-      .eq('is_bookable', true)
       .single()
-    if (itemErr || !item) return NextResponse.json({ error: 'Service not found or not available for booking' }, { status: 404 })
+    if (itemErr || !item) return NextResponse.json({ error: 'Service not found or not available' }, { status: 404 })
+
+    if (!item.is_bookable) return NextResponse.json({ error: 'This service is not yet open for booking. Please contact us.' }, { status: 400 })
 
     const qty = Math.max(1, parseInt(quantity) || 1)
     const totalAmount = ((item.price ?? amount ?? 0) as number) * qty
@@ -39,7 +44,7 @@ export async function POST(req: NextRequest) {
 
     // Mock mode when no Razorpay keys configured
     if (!process.env.RAZORPAY_KEY_ID) {
-      const { data: booking } = await (supabase as any).from('service_bookings').insert({
+      const { data: booking, error: bErr } = await (admin as any).from('service_bookings').insert({
         service_item_id,
         user_id: user.id,
         status: 'confirmed',
@@ -49,7 +54,11 @@ export async function POST(req: NextRequest) {
         preferred_date: preferred_date || null,
         razorpay_order_id: 'mock_' + Date.now(),
         razorpay_payment_id: 'mock_pay_' + Date.now(),
-      }).select().single()
+      }).select('id').single()
+      if (bErr) {
+        console.error('[service-payment/mock] insert failed:', bErr.message)
+        return NextResponse.json({ error: 'Booking failed. Try again.' }, { status: 500 })
+      }
       return NextResponse.json({ success: true, mock: true, booking_id: booking?.id })
     }
 
@@ -67,7 +76,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: err?.error?.description || 'Payment gateway error. Please try again.' }, { status: 500 })
     }
 
-    const { data: booking, error: bookErr } = await (supabase as any).from('service_bookings').insert({
+    const { data: booking, error: bookErr } = await (admin as any).from('service_bookings').insert({
       service_item_id,
       user_id: user.id,
       status: 'pending',
@@ -76,7 +85,7 @@ export async function POST(req: NextRequest) {
       notes: notes || item.title,
       preferred_date: preferred_date || null,
       razorpay_order_id: order.id,
-    }).select().single()
+    }).select('id').single()
 
     if (bookErr || !booking) {
       console.error('[service-payment/create] booking insert failed:', bookErr?.message)
@@ -105,7 +114,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Ownership guard: verify this booking belongs to the calling user
-    const { data: booking } = await (supabase as any).from('service_bookings')
+    const { data: booking } = await (admin as any).from('service_bookings')
       .select('user_id, razorpay_order_id')
       .eq('id', booking_id)
       .single()
@@ -116,11 +125,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Order mismatch' }, { status: 400 })
     }
 
-    await (supabase as any).from('service_bookings').update({
+    const { error: updErr } = await (admin as any).from('service_bookings').update({
       payment_status: 'paid',
       status: 'confirmed',
       razorpay_payment_id,
     }).eq('id', booking_id)
+
+    if (updErr) {
+      console.error('[service-payment/verify] update failed:', updErr.message)
+      return NextResponse.json({ error: 'Payment recorded but status update failed. Contact support.' }, { status: 500 })
+    }
 
     return NextResponse.json({ success: true })
   }

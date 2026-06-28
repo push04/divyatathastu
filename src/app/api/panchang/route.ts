@@ -194,19 +194,53 @@ function getChoghadiya(srH: number, ssH: number, dow: number) {
 }
 
 // ── Do Ghati Muhurt ───────────────────────────────────────────────────
-// 1 ghati = 24 min → Do ghati = 48 min (0.8 h)
-// Best 48-min window is the first 48 min of each Amrit / Shubh choghadiya
-function getDoGhatiMuhurt(choghadiya: ReturnType<typeof getChoghadiya>) {
-  return choghadiya
-    .filter(c => ['Amrit', 'Shubh', 'Labh'].includes(c.name))
-    .map(c => ({
-      name: `${c.name} Muhurt`,
-      start: c.start,
-      end: fmt(c.startH + 0.8),
-      quality: c.quality,
-      color: c.color,
-      period: c.period,
-    }))
+// Per drikpanchang: the day (sunrise→sunset) is divided into 30 equal Ghati.
+// 1 Do Ghati = 2 Ghati = day_duration / 15  → 15 windows per day, 15 per night.
+// Window durations vary by location & season (different sunrise/sunset = different sizes).
+// Traditional 5-Kala grouping: 3 Do Ghati per Kala (Pratah, Sangava, Madhyahna, Aparahna, Sayahna).
+const DAY_KALAS  = ['Pratah', 'Sangava', 'Madhyahna', 'Aparahna', 'Sayahna']
+const NIGHT_KALAS = ['Pradosh', 'Nishitha Mukha', 'Nishitha', 'Nishitha Anta', 'Usha']
+
+function getDoGhatiMuhurt(srH: number, ssH: number) {
+  const dayDur    = ssH - srH
+  const nightDur  = 24 - dayDur
+  const dgDay     = dayDur   / 15   // duration of one Do Ghati in daytime hours
+  const dgNight   = nightDur / 15   // duration of one Do Ghati in nighttime hours
+
+  const windows: {
+    name: string; kala: string; period: 'day' | 'night'
+    start: string; end: string; startH: number; endH: number; index: number
+  }[] = []
+
+  for (let i = 0; i < 15; i++) {
+    const startH = srH + i * dgDay
+    windows.push({
+      name:   `Do Ghati ${i + 1}`,
+      kala:   DAY_KALAS[Math.floor(i / 3)],
+      period: 'day',
+      start:  fmt(startH),
+      end:    fmt(startH + dgDay),
+      startH,
+      endH:   startH + dgDay,
+      index:  i + 1,
+    })
+  }
+
+  for (let i = 0; i < 15; i++) {
+    const startH = ssH + i * dgNight
+    windows.push({
+      name:   `Do Ghati ${i + 1}`,
+      kala:   NIGHT_KALAS[Math.floor(i / 3)],
+      period: 'night',
+      start:  fmt(startH),
+      end:    fmt(startH + dgNight),
+      startH,
+      endH:   startH + dgNight,
+      index:  i + 1,
+    })
+  }
+
+  return windows
 }
 
 export async function GET(req: NextRequest) {
@@ -243,8 +277,8 @@ export async function GET(req: NextRequest) {
 
   const dow = new Date(y, m - 1, d).getDay()
 
-  const choghadiya   = getChoghadiya(srH, ssH, dow)
-  const doGhatiMuhurt = getDoGhatiMuhurt(choghadiya)
+  const choghadiya    = getChoghadiya(srH, ssH, dow)
+  const doGhatiMuhurt = getDoGhatiMuhurt(srH, ssH)
 
   return NextResponse.json({
     success: true,
