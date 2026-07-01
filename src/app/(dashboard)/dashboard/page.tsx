@@ -29,6 +29,20 @@ const QUICK = [
   { href: '/consultations', label: 'Book Consult', icon: 'event', color: 'bg-rose-600' },
 ]
 
+// Section bubbles — horizontally scrollable quick-nav chips
+const SECTION_BUBBLES = [
+  { href: '/ardra-jalam',  label: 'Ardra Jalam',    icon: 'water_drop',         bg: '#16a34a', color: '#ffffff', border: '#15803d', solid: true },
+  { href: '/panchang',     label: 'Panchang',        icon: 'calendar_today',     bg: '#fff7ed', color: '#9a3412', border: '#ea580c', solid: false },
+  { href: '/gyanampeetham',label: 'Gyanampeetham',   icon: 'school',             bg: '#fef3c7', color: '#92400e', border: '#d97706', solid: false },
+  { href: '/sadhana',      label: 'Saadhana',        icon: 'self_improvement',   bg: '#f3e8ff', color: '#6b21a8', border: '#a855f7', solid: false },
+  { href: '/mahaganpati',  label: 'Mahaganpati',     icon: 'brightness_5',       bg: '#fce7f3', color: '#9d174d', border: '#ec4899', solid: false },
+  { href: '/puja',         label: 'Pooja & Rituals', icon: 'local_fire_department', bg: '#fff7ed', color: '#9a3412', border: '#f97316', solid: false },
+  { href: '/ayurveda',     label: 'Ayurveda',        icon: 'spa',                bg: '#f0fdf4', color: '#166534', border: '#22c55e', solid: false },
+  { href: '/courses',      label: 'Courses',         icon: 'menu_book',          bg: '#eff6ff', color: '#1e3a8a', border: '#3b82f6', solid: false },
+  { href: '/consultations',label: 'Consultations',   icon: 'event',              bg: '#fff1f2', color: '#881337', border: '#f43f5e', solid: false },
+  { href: '/divine-services', label: 'All Services', icon: 'auto_awesome',       bg: '#fffbeb', color: '#78350f', border: '#D4A017', solid: false },
+]
+
 const DIVINE_SERVICES = [
   {
     href: '/gyanampeetham',
@@ -208,6 +222,43 @@ export default function DashboardPage() {
           </Link>
         </div>
       </header>
+
+      {/* ── Section Bubbles ── */}
+      <div
+        className="flex gap-2 mb-6 overflow-x-auto pb-1"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        {SECTION_BUBBLES.map(b => (
+          <Link
+            key={b.href}
+            href={b.href}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-semibold whitespace-nowrap shrink-0 transition-all duration-200 hover:opacity-85 hover:scale-105"
+            style={{
+              background: b.bg,
+              color: b.color,
+              border: `1.5px solid ${b.border}`,
+              boxShadow: b.solid ? '0 2px 10px rgba(22,163,74,0.30)' : '0 1px 4px rgba(0,0,0,0.06)',
+              fontFamily: "'Sora', sans-serif",
+            }}
+          >
+            <span
+              className="material-symbols-outlined"
+              style={{ fontSize: 14, fontVariationSettings: "'FILL' 1" }}
+            >
+              {b.icon}
+            </span>
+            {b.label}
+            {b.solid && (
+              <span
+                className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full"
+                style={{ background: 'rgba(255,255,255,0.25)', color: '#ffffff' }}
+              >
+                New
+              </span>
+            )}
+          </Link>
+        ))}
+      </div>
 
       {/* ── Bento Grid ── */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
