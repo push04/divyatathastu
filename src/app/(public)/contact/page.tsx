@@ -13,9 +13,9 @@ const CONTACT_INFO = [
   {
     icon: 'call',
     label: 'Phone / WhatsApp',
-    value: '+91 9858784784',
-    href: 'tel:+919858784784',
-    whatsapp: 'https://wa.me/919858784784',
+    value: '+91 92748 15269 / +91 9858784784',
+    href: 'tel:+919274815269',
+    whatsapp: 'https://wa.me/919274815269',
     desc: 'Mon – Sat · 10 AM – 7 PM IST',
   },
   {
@@ -28,7 +28,7 @@ const CONTACT_INFO = [
   {
     icon: 'location_on',
     label: 'Address',
-    value: 'Anushthaan India, New Delhi',
+    value: 'FF-108, SIDDHARTH MAGNUM PLUS, TARSALI, VADODARA, GUJARAT',
     desc: 'By appointment only',
   },
 ]
@@ -37,7 +37,7 @@ const SOCIAL = [
   { icon: 'photo_camera', label: 'Instagram', href: 'https://www.instagram.com/mahatathastu', color: 'linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)' },
   { icon: 'play_circle', label: 'YouTube', href: 'https://www.youtube.com/@mahatathastu', color: '#FF0000' },
   { icon: 'groups', label: 'Facebook', href: 'https://www.facebook.com/mahatathastu', color: '#1877F2' },
-  { icon: 'chat', label: 'WhatsApp', href: 'https://wa.me/919858784784', color: '#25D366' },
+  { icon: 'chat', label: 'WhatsApp', href: 'https://wa.me/919274815269', color: '#25D366' },
 ]
 
 const BUSINESS_HOURS = [
@@ -75,15 +75,16 @@ export default function ContactPage() {
                   <span className="material-symbols-outlined text-emerald-600 text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>call</span>
                 </div>
                 <p className="text-xs font-bold text-[var(--warm-charcoal)]/40 uppercase tracking-widest mb-1">Phone / WhatsApp</p>
-                <p className="text-xl font-bold text-[var(--indigo-deep)] mb-1">+91 9858784784</p>
+                <p className="text-xl font-bold text-[var(--indigo-deep)] mb-1">+91 92748 15269</p>
+                <p className="text-sm font-semibold text-[var(--indigo-deep)]/70 mb-1">+91 98587 84784</p>
                 <p className="text-xs text-[var(--warm-charcoal)]/50 mb-4">Mon – Sat · 10 AM – 7 PM IST</p>
                 <div className="flex gap-2">
-                  <a href="tel:+919858784784"
+                  <a href="tel:+919274815269"
                     className="flex-1 flex items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-xl text-white"
                     style={{ background: 'var(--indigo-deep)' }}>
                     <span className="material-symbols-outlined text-[14px]">call</span> Call
                   </a>
-                  <a href="https://wa.me/919858784784" target="_blank" rel="noopener noreferrer"
+                  <a href="https://wa.me/919274815269" target="_blank" rel="noopener noreferrer"
                     className="flex-1 flex items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-xl text-white"
                     style={{ background: '#25D366' }}>
                     <span className="material-symbols-outlined text-[14px]">chat</span> WhatsApp
@@ -174,11 +175,11 @@ export default function ContactPage() {
                 <h2 className="text-base font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Address</h2>
               </div>
               <p className="text-sm text-[var(--warm-charcoal)]/70 leading-relaxed">
-                Anushthaan India<br />
-                New Delhi, India<br />
+                FF-108, SIDDHARTH MAGNUM PLUS<br />
+                TARSALI, VADODARA, GUJARAT<br />
                 <span className="text-xs text-[var(--warm-charcoal)]/40 mt-1 block">Visits by prior appointment only</span>
               </p>
-              <a href="https://wa.me/919858784784?text=I%20would%20like%20to%20schedule%20an%20appointment"
+              <a href="https://wa.me/919274815269?text=I%20would%20like%20to%20schedule%20an%20appointment"
                 target="_blank" rel="noopener noreferrer"
                 className="mt-4 w-full flex items-center justify-center gap-1.5 text-xs font-bold py-2.5 rounded-xl text-white"
                 style={{ background: '#25D366' }}>

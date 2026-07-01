@@ -89,40 +89,43 @@ export async function POST(req: NextRequest) {
         .limit(1)
         .maybeSingle()
 
+      const requestedSpec = specialization || 'Astrology'
+      const derivedPrice = (requestedSpec === 'Vastu') ? 21000 : (requestedSpec === 'Astro Vastu' ? 35000 : 11000)
+
       const { data: newSlot, error: slotErr } = await (admin as any).from('consultation_slots').insert({
         expert_id: expert?.id || null,
         date,
         start_time: normStart,
         end_time: normEnd,
-        is_booked: true,
+        is_booked: false, // First payment then booking - don't lock yet!
         is_blocked: false,
         duration_minutes: 45,
-        specialization: specialization || 'Astrology',
-        price: 0,
+        specialization: requestedSpec,
+        price: derivedPrice,
       }).select('id, price').single()
 
       if (slotErr || !newSlot) {
         return NextResponse.json({ error: 'Failed to create slot: ' + slotErr?.message }, { status: 500 })
       }
       slotId = newSlot.id
-      slotPrice = newSlot.price || 0
+      slotPrice = newSlot.price || derivedPrice
     } else {
-      // Atomic claim: only update if still available (guards against concurrent booking of same slot)
-      const { data: claimed } = await (admin as any).from('consultation_slots')
-        .update({ is_booked: true })
-        .eq('id', slot.id)
-        .eq('is_booked', false)
-        .select('id')
-        .maybeSingle()
-      if (!claimed) {
-        return NextResponse.json({ error: 'This slot was just booked. Please choose another time.' }, { status: 409 })
-      }
+      // Slot exists and is available. We do NOT claim it here to enforce "first payment then booking".
+      // We will claim it atomically in the verify step.
       slotId = slot.id
-      slotPrice = slot.price || 0
+      slotPrice = slot.price || 11000
     }
 
     if (slotPrice === 0) {
-      // Free slot — book immediately
+      // Free slot — book immediately (Atomic claim)
+      const { data: claimed } = await (admin as any).from('consultation_slots')
+        .update({ is_booked: true })
+        .eq('id', slotId)
+        .eq('is_booked', false)
+        .select('id')
+        .maybeSingle()
+      if (!claimed) return NextResponse.json({ error: 'Slot just got booked' }, { status: 409 })
+
       const { data: booking, error: bookErr } = await (admin as any).from('consultation_bookings').insert({
         user_id: user.id,
         slot_id: slotId,
@@ -156,7 +159,6 @@ export async function POST(req: NextRequest) {
 
       if (bookErr || !booking) {
         console.error('Booking insert error (mock paid slot):', bookErr)
-        await (admin as any).from('consultation_slots').update({ is_booked: false }).eq('id', slotId)
         return NextResponse.json({ error: 'Booking failed. Please try again.' }, { status: 500 })
       }
       await sendConfirmationEmails(admin, user.id, user.email, date, start_time, end_time, slotPrice)
@@ -173,8 +175,7 @@ export async function POST(req: NextRequest) {
         notes: { user_id: user.id, slot_id: slotId },
       })
     } catch (err: any) {
-      await (admin as any).from('consultation_slots').update({ is_booked: false }).eq('id', slotId)
-      return NextResponse.json({ error: err?.error?.description || 'Payment gateway error. Please try again.' }, { status: 500 })
+        return NextResponse.json({ error: err?.error?.description || 'Payment gateway error. Please try again.' }, { status: 500 })
     }
 
     const { data: booking, error: bookErr } = await (admin as any).from('consultation_bookings').insert({
@@ -188,7 +189,6 @@ export async function POST(req: NextRequest) {
 
     if (bookErr || !booking) {
       console.error('Booking insert error (Razorpay paid slot):', bookErr)
-      await (admin as any).from('consultation_slots').update({ is_booked: false }).eq('id', slotId)
       return NextResponse.json({ error: 'Booking failed. Please try again.' }, { status: 500 })
     }
 
@@ -223,6 +223,26 @@ export async function POST(req: NextRequest) {
     }
     if (booking.razorpay_order_id !== razorpay_order_id) {
       return NextResponse.json({ error: 'Order mismatch' }, { status: 400 })
+    }
+
+    // Atomic claim the slot now that payment is verified!
+    const { data: claimedSlot } = await (admin as any).from('consultation_slots')
+      .update({ is_booked: true })
+      .eq('id', booking.slot_id)
+      .eq('is_booked', false)
+      .select('id')
+      .maybeSingle()
+
+    if (!claimedSlot) {
+      // Extremely rare edge case: someone else paid and grabbed it millisecond before us!
+      // Since payment is already made, we still mark booking as paid, but need manual resolution
+      await (admin as any).from('consultation_bookings').update({
+        payment_status: 'paid',
+        status: 'booked', // Need to resolve manually
+        razorpay_payment_id,
+        notes: (booking.notes || '') + ' [ATTENTION: DOUBLE BOOKING COLLISION]'
+      }).eq('id', booking_id)
+      return NextResponse.json({ success: true, warning: 'Slot was taken concurrently. Admin will reschedule.' })
     }
 
     await (admin as any).from('consultation_bookings').update({
