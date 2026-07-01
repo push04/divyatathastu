@@ -113,7 +113,7 @@ export default function IndiaMandirMap() {
   return (
     <div className="absolute inset-0 flex flex-col lg:flex-row gap-0 overflow-hidden">
       {/* SVG Map Panel */}
-      <div className={`flex-1 bg-[var(--kutch-white)] flex flex-col ${mobileView === 'map' ? 'flex' : 'hidden lg:flex'}`}>
+      <div className={`flex-1 min-w-0 bg-[var(--kutch-white)] flex flex-col ${mobileView === 'map' ? 'flex' : 'hidden lg:flex'}`}>
         {/* Circuit filter strip */}
         <div className="p-3 border-b border-[var(--warm-sand)] bg-white flex gap-2 overflow-x-auto">
           <button

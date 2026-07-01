@@ -92,7 +92,14 @@ export default function EbookReaderPage() {
         const saved = localStorage.getItem(`ebook-bm-${ebookId}`)
         if (saved && alive) setBookmark(parseInt(saved, 10))
 
-        const images: string[] = []
+        // Fill with a lightweight placeholder up front so the reader can open with the
+        // correct page count/navigation as soon as page 1 is ready, instead of blocking
+        // on every page rendering first (which made long books take ages to open).
+        const placeholderSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1131"><rect width="100%" height="100%" fill="#1a1a2e"/><text x="50%" y="50%" fill="#666" font-family="sans-serif" font-size="24" text-anchor="middle">Loading page…</text></svg>'
+        const placeholder = 'data:image/svg+xml,' + encodeURIComponent(placeholderSvg)
+        const images: string[] = new Array(pages).fill(placeholder)
+        pageImagesRef.current = images
+
         for (let i = 1; i <= pages; i++) {
           if (!alive) return
           const pdfPage = await doc.getPage(i)
@@ -121,13 +128,20 @@ export default function EbookReaderPage() {
           ctx.restore()
 
           // PNG for maximum sharpness (no lossy JPEG artifacts on text)
-          images.push(canvas.toDataURL('image/png'))
-          if (alive) setRenderedCount(i)
+          images[i - 1] = canvas.toDataURL('image/png')
+          if (!alive) return
+          setRenderedCount(i)
+
+          if (i === 1) {
+            // Open the reader now — the rest render in the background below
+            setLoadStatus('ready')
+          } else if (flipRef.current && (i % 3 === 0 || i === pages)) {
+            // Backfill already-open reader with newly rendered pages, preserving current page
+            flipRef.current.updateFromImages(images)
+          }
         }
 
-        if (!alive) return
-        pageImagesRef.current = images
-        setLoadStatus('ready')
+        if (alive && flipRef.current) flipRef.current.updateFromImages(images)
       } catch (e: any) {
         if (alive) { setError(e.message); setLoadStatus('error') }
       }
@@ -176,6 +190,24 @@ export default function EbookReaderPage() {
     pageH = Math.max(280, Math.round(pageH))
 
     let pf: PageFlipInstance | null = null
+    let onResize: (() => void) | null = null
+
+    // page-flip's internal canvas is sized to raw CSS pixels with no devicePixelRatio
+    // scaling, so on any Retina/high-DPI screen the browser upscales a low-res bitmap —
+    // this is what makes the reader look blurry. Re-raise the canvas's backing-store
+    // resolution and compensate with a matching context scale so drawing stays crisp.
+    function applyHiDpiFix() {
+      const canvas = flipContainerRef.current?.querySelector('canvas.stf__canvas') as HTMLCanvasElement | null
+      if (!canvas) return
+      const dpr = window.devicePixelRatio || 1
+      if (dpr <= 1) return
+      const cssW = canvas.width
+      const cssH = canvas.height
+      canvas.width = Math.round(cssW * dpr)
+      canvas.height = Math.round(cssH * dpr)
+      const ctx = canvas.getContext('2d')
+      ctx?.scale(dpr, dpr)
+    }
 
     import('page-flip').then(mod => {
       const PageFlip = (mod as any).PageFlip || mod.default?.PageFlip || mod.default
@@ -202,6 +234,7 @@ export default function EbookReaderPage() {
       })
 
       pf.loadFromImages(imgs)
+      applyHiDpiFix()
 
       pf.on('flip', (e: any) => {
         const page = e.data as number
@@ -217,9 +250,15 @@ export default function EbookReaderPage() {
       })
 
       flipRef.current = pf
+
+      // page-flip resets the canvas (and its transform) on window resize — registering
+      // our listener after its own ensures we re-apply the fix right after each resize.
+      onResize = () => applyHiDpiFix()
+      window.addEventListener('resize', onResize)
     })
 
     return () => {
+      if (onResize) window.removeEventListener('resize', onResize)
       if (pf) {
         try { pf.destroy() } catch {}
       }

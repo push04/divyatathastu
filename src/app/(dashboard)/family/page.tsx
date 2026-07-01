@@ -32,7 +32,7 @@ export default function FamilyPage() {
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      if (!user) { setLoading(false); return }
 
       const { data: family } = await supabase.from('families').select('id,family_name').eq('owner_id', user.id).single()
       if (!family) { setLoading(false); return }

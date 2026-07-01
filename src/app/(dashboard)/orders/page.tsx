@@ -136,7 +136,7 @@ export default function OrdersPage() {
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      if (!user) { setLoading(false); return }
       const { data } = await supabase
         .from('orders')
         .select('id,order_number,items,subtotal,discount,total,status,created_at,payment_method,tracking_number,notes')

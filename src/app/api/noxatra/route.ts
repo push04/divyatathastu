@@ -22,6 +22,34 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
+    // Payment gate: the UI only calls this after checkout, but nothing stops calling
+    // this API directly — verify server-side that each requested report type is either
+    // priced free (per the same authoritative pricing payment/create uses) or covered
+    // by one of this user's own paid orders, before generating any (costly) content.
+    const { data: pricingSetting } = await (supabase as any)
+      .from('settings').select('value').eq('key', 'report_pricing').single()
+    const reportPrices: Record<string, number> = pricingSetting?.value || {}
+
+    const unpaidTypes = report_types.filter(rt => (reportPrices[rt] ?? 1) > 0)
+    if (unpaidTypes.length) {
+      const { data: paidOrders } = await supabase
+        .from('orders')
+        .select('items')
+        .eq('user_id', user.id)
+        .eq('status', 'paid')
+      const paidReportIds = new Set(
+        (paidOrders || []).flatMap((o: any) =>
+          ((o.items as any[]) || [])
+            .filter(i => i.product_type === 'report')
+            .map(i => i.id)
+        )
+      )
+      const stillUnpaid = unpaidTypes.filter(rt => !paidReportIds.has(rt))
+      if (stillUnpaid.length) {
+        return NextResponse.json({ error: `Payment required for: ${stillUnpaid.join(', ')}` }, { status: 402 })
+      }
+    }
+
     const { data: family } = await supabase
       .from('families')
       .select('id')

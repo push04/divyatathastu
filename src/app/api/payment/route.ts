@@ -39,10 +39,31 @@ export async function POST(req: NextRequest) {
       reportPrices = setting.value
     }
 
-    // Override price for report items with server-side authoritative price
+    // Fetch authoritative prices for every non-report item straight from the products
+    // table — the client price was only ever a display value, never trust it for billing.
+    const nonReportIds = items.filter((i: any) => i.product_type !== 'report').map((i: any) => i.id)
+    let productPrices: Record<string, number> = {}
+    if (nonReportIds.length) {
+      const { data: productsRows, error: productsErr } = await supabase
+        .from('products')
+        .select('id,price,sale_price')
+        .in('id', nonReportIds)
+      if (productsErr || !productsRows || productsRows.length !== new Set(nonReportIds).size) {
+        console.error('[payment/create] product price lookup failed or incomplete:', productsErr?.message)
+        return NextResponse.json({ error: 'Pricing unavailable. Please try again.' }, { status: 503 })
+      }
+      productPrices = Object.fromEntries(
+        productsRows.map((p: any) => [p.id, p.sale_price ?? p.price])
+      )
+    }
+
+    // Override every item's price with the server-side authoritative value
     const authoritative = items.map((item: any) => {
       if (item.product_type === 'report' && reportPrices[item.id] !== undefined) {
         return { ...item, price: reportPrices[item.id] }
+      }
+      if (item.product_type !== 'report' && productPrices[item.id] !== undefined) {
+        return { ...item, price: productPrices[item.id] }
       }
       return item
     })
@@ -170,6 +191,7 @@ export async function POST(req: NextRequest) {
     }
     const orderItems: any[] = (orderRow?.items as any[]) || []
     const ebookItems = orderItems.filter((i: any) => i.product_type === 'ebook')
+    const unfulfilledEbooks: string[] = []
     for (const item of ebookItems) {
       const { data: product } = await supabase
         .from('products')
@@ -178,6 +200,7 @@ export async function POST(req: NextRequest) {
         .single()
       if (!product?.ebook_file_url) {
         console.warn(`[payment/verify] Product ${item.id} has no PDF — admin must upload via Admin > Ebooks first.`)
+        unfulfilledEbooks.push(product?.name || item.name || item.id)
         continue
       }
       // Ensure ebooks record exists — uses admin client because RLS blocks user writes to ebooks table
@@ -215,6 +238,14 @@ export async function POST(req: NextRequest) {
         if (epErr) console.error(`[payment/verify] ebook_purchases insert failed:`, epErr.message)
         else console.log(`[payment/verify] ebook_purchase created for user=${orderRow.user_id} ebook=${item.id}`)
       }
+    }
+
+    // Customer paid but at least one ebook couldn't be fulfilled (no file uploaded yet) —
+    // flag it on the order so admins see it instead of the failure only reaching server logs.
+    if (unfulfilledEbooks.length) {
+      await adminSupabase.from('orders').update({
+        notes: `⚠ Needs manual fulfillment — no PDF uploaded yet for: ${unfulfilledEbooks.join(', ')}`,
+      } as any).eq('id', db_order_id)
     }
 
     // Send order confirmation email — fire and forget

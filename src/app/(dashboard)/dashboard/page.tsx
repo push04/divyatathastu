@@ -143,7 +143,7 @@ export default function DashboardPage() {
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      if (!user) { setLoading(false); return }
       // Nested select fetches family + its reports in one round trip (eliminates serial waterfall)
       const [profileRes, familyRes, membersRes, notifRes] = await Promise.all([
         supabase.from('profiles').select('*').eq('id', user.id).single(),

@@ -58,26 +58,31 @@ export default function AdminConsultationsPage() {
 
   async function loadAll() {
     setLoading(true)
-    const [slotsRes, expertsRes, bookingsRes, modeRes] = await Promise.all([
-      (supabase as any).from('consultation_slots')
-        .select('id,expert_id,date,start_time,end_time,is_booked,is_blocked,created_at,price,profiles!expert_id(full_name)')
-        .order('date').order('start_time'),
-      supabase.from('profiles').select('id,full_name').or('role.eq.expert,role.eq.admin'),
-      supabase.from('consultation_bookings')
-        .select('*, profiles!user_id(full_name), consultation_slots(date,start_time,end_time)')
-        .order('booked_at', { ascending: false })
-        .limit(100),
-      (supabase as any).from('platform_settings').select('value').eq('key', 'livekit_mode').single(),
-    ])
-    setSlots((slotsRes.data || []) as unknown as Slot[])
-    setExperts(expertsRes.data || [])
-    if (bookingsRes.error) {
-      console.error('Bookings query error:', bookingsRes.error)
-      toast.error('Bookings error: ' + bookingsRes.error.message + ' - Run migrations 014/015 in Supabase then refresh schema cache.')
+    try {
+      const [slotsRes, expertsRes, bookingsRes, modeRes] = await Promise.all([
+        (supabase as any).from('consultation_slots')
+          .select('id,expert_id,date,start_time,end_time,is_booked,is_blocked,created_at,price,profiles!expert_id(full_name)')
+          .order('date').order('start_time'),
+        supabase.from('profiles').select('id,full_name').or('role.eq.expert,role.eq.admin'),
+        supabase.from('consultation_bookings')
+          .select('*, profiles!user_id(full_name), consultation_slots(date,start_time,end_time)')
+          .order('booked_at', { ascending: false })
+          .limit(100),
+        (supabase as any).from('platform_settings').select('value').eq('key', 'livekit_mode').single(),
+      ])
+      setSlots((slotsRes.data || []) as unknown as Slot[])
+      setExperts(expertsRes.data || [])
+      if (bookingsRes.error) {
+        console.error('Bookings query error:', bookingsRes.error)
+        toast.error('Bookings error: ' + bookingsRes.error.message + ' - Run migrations 014/015 in Supabase then refresh schema cache.')
+      }
+      setBookings((bookingsRes.data || []) as unknown as Booking[])
+      if (modeRes.data?.value) setLivekitMode(modeRes.data.value as 'production' | 'sandbox')
+    } catch (e: any) {
+      toast.error('Failed to load consultations data: ' + (e?.message || 'network error'))
+    } finally {
+      setLoading(false)
     }
-    setBookings((bookingsRes.data || []) as unknown as Booking[])
-    if (modeRes.data?.value) setLivekitMode(modeRes.data.value as 'production' | 'sandbox')
-    setLoading(false)
   }
 
   async function saveLivekitMode(newMode: 'production' | 'sandbox') {

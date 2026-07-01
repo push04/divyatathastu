@@ -40,7 +40,7 @@ export default function ReportsPage() {
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      if (!user) { setLoading(false); return }
       // Nested select fetches family + its reports in one round trip (eliminates serial waterfall)
       const { data: family } = await supabase
         .from('families')

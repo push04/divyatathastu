@@ -101,17 +101,22 @@ export default function ShopPage() {
       if (stored) {
         try { setCart(new Map(JSON.parse(stored))) } catch {}
       }
-      // Parallelize both network calls - halves load time
-      const [productsRes, authRes] = await Promise.all([
-        supabase
-          .from('products')
-          .select('id,name,description,price,sale_price,product_type,images,stock_count,is_active,slug,is_featured')
-          .eq('is_active', true),
-        supabase.auth.getUser(),
-      ])
-      if (productsRes.data) setProducts(productsRes.data)
-      setUser(authRes.data.user)
-      setLoading(false)
+      try {
+        // Parallelize both network calls - halves load time
+        const [productsRes, authRes] = await Promise.all([
+          supabase
+            .from('products')
+            .select('id,name,description,price,sale_price,product_type,images,stock_count,is_active,slug,is_featured')
+            .eq('is_active', true),
+          supabase.auth.getUser(),
+        ])
+        if (productsRes.data) setProducts(productsRes.data)
+        setUser(authRes.data.user)
+      } catch (e: any) {
+        toast.error('Failed to load shop: ' + (e?.message || 'network error'))
+      } finally {
+        setLoading(false)
+      }
     }
     load()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps

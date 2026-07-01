@@ -60,7 +60,7 @@ export default function HandwrittenReportPage() {
 
   async function load() {
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    if (!user) { setLoading(false); return }
 
     const [reqRes, memRes] = await Promise.all([
       supabase

@@ -64,7 +64,11 @@ export default function CheckoutPage() {
       if (!cartMap.length) { router.push('/shop'); return }
 
       const ids = cartMap.map(([id]) => id)
-      const { data: products } = await supabase.from('products').select('id,name,price,sale_price,product_type').in('id', ids)
+      // Cart products and auth check are independent — run in parallel
+      const [{ data: products }, { data: { user } }] = await Promise.all([
+        supabase.from('products').select('id,name,price,sale_price,product_type').in('id', ids),
+        supabase.auth.getUser(),
+      ])
 
       if (products) {
         const cartItems = cartMap.map(([id, qty]) => {
@@ -74,7 +78,6 @@ export default function CheckoutPage() {
         setItems(cartItems)
       }
 
-      const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         const { data } = await supabase.from('profiles').select('full_name,phone').eq('id', user.id).single()
         setProfile({ ...data, email: user.email })

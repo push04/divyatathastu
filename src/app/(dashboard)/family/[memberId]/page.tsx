@@ -46,19 +46,24 @@ export default function MemberProfilePage() {
 
   useEffect(() => {
     async function load() {
-      // Ownership: only load members that belong to the current user's family
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { setLoading(false); return }
-      const { data: family } = await supabase.from('families').select('id').eq('owner_id', user.id).single()
-      if (!family) { setLoading(false); return }
+      try {
+        // Ownership: only load members that belong to the current user's family
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) { setLoading(false); return }
+        const { data: family } = await supabase.from('families').select('id').eq('owner_id', user.id).single()
+        if (!family) { setLoading(false); return }
 
-      const [memberRes, reportsRes] = await Promise.all([
-        supabase.from('family_members').select('*').eq('id', memberId).eq('family_id', (family as any).id).single(),
-        supabase.from('reports').select('id,report_type,status,created_at').eq('family_member_id', memberId).order('created_at', { ascending: false }),
-      ])
-      if (memberRes.data) setMember(memberRes.data)
-      if (reportsRes.data) setReports(reportsRes.data)
-      setLoading(false)
+        const [memberRes, reportsRes] = await Promise.all([
+          supabase.from('family_members').select('*').eq('id', memberId).eq('family_id', (family as any).id).single(),
+          supabase.from('reports').select('id,report_type,status,created_at').eq('family_member_id', memberId).order('created_at', { ascending: false }),
+        ])
+        if (memberRes.data) setMember(memberRes.data)
+        if (reportsRes.data) setReports(reportsRes.data)
+      } catch (e: any) {
+        toast.error('Failed to load member: ' + (e?.message || 'network error'))
+      } finally {
+        setLoading(false)
+      }
     }
     load()
   }, [memberId]) // eslint-disable-line react-hooks/exhaustive-deps

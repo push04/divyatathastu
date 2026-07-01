@@ -41,14 +41,19 @@ export default function AdminReportsPage() {
   const [regenerating, setRegenerating] = useState(false)
 
   async function load() {
-    const { data, error } = await supabase
-      .from('reports')
-      .select('id,report_type,status,created_at,admin_notes,report_content,raw_data,family_id,family_member_id,family_members(full_name,date_of_birth)')
-      .order('created_at', { ascending: false })
-      .limit(200)
-    if (error) toast.error('Load failed: ' + error.message)
-    else setReports((data || []) as unknown as Report[])
-    setLoading(false)
+    try {
+      const { data, error } = await supabase
+        .from('reports')
+        .select('id,report_type,status,created_at,admin_notes,report_content,raw_data,family_id,family_member_id,family_members(full_name,date_of_birth)')
+        .order('created_at', { ascending: false })
+        .limit(200)
+      if (error) toast.error('Load failed: ' + error.message)
+      else setReports((data || []) as unknown as Report[])
+    } catch (e: any) {
+      toast.error('Failed to load reports: ' + (e?.message || 'network error'))
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => { load() }, []) // eslint-disable-line react-hooks/exhaustive-deps

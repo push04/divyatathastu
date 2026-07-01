@@ -50,11 +50,14 @@ export default function PilgrimagePage() {
 
   useEffect(() => {
     async function load() {
-      const res = await fetch('/api/mandir')
+      // Mandir list and auth check are independent — run in parallel
+      const [res, { data: { user } }] = await Promise.all([
+        fetch('/api/mandir'),
+        supabase.auth.getUser(),
+      ])
       const data = await res.json()
       if (data.success) setMandirs(data.data)
 
-      const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         const { data: saved } = await supabase.from('itineraries').select('id,title,created_at,schedule').eq('user_id', user.id).order('created_at', { ascending: false }).limit(5)
         if (saved) setSavedItineraries(saved)

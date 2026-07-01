@@ -47,12 +47,17 @@ export default function AdminUsersPage() {
   const [detailLoading, setDetailLoading] = useState(false)
 
   async function load() {
-    const { data } = await supabase
-      .from('profiles')
-      .select('id,full_name,phone,role,is_active,created_at')
-      .order('created_at', { ascending: false })
-    if (data) setUsers(data)
-    setLoading(false)
+    try {
+      const { data } = await supabase
+        .from('profiles')
+        .select('id,full_name,phone,role,is_active,created_at')
+        .order('created_at', { ascending: false })
+      if (data) setUsers(data)
+    } catch (e: any) {
+      toast.error('Failed to load users: ' + (e?.message || 'network error'))
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => { load() }, []) // eslint-disable-line react-hooks/exhaustive-deps

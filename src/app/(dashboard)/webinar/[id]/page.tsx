@@ -54,37 +54,33 @@ export default function WebinarJoinPage({ params }: { params: Promise<{ id: stri
 
   useEffect(() => {
     async function load() {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) { setError('Please log in to join webinars.'); setLoading(false); return }
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (!user) { setError('Please log in to join webinars.'); setLoading(false); return }
 
-      const name = (user.user_metadata?.full_name as string) || user.email?.split('@')[0] || 'Seeker'
-      setUserName(name)
-      setUserEmail(user.email || '')
+        const name = (user.user_metadata?.full_name as string) || user.email?.split('@')[0] || 'Seeker'
+        setUserName(name)
+        setUserEmail(user.email || '')
 
-      // Check role
-      const { data: profile } = await supabase
-        .from('profiles').select('role').eq('id', user.id).single()
-      const admin = profile?.role === 'admin'
-      setIsAdmin(admin)
+        // Role, webinar, and registration are independent of each other — fetch in parallel
+        const [{ data: profile }, { data: w, error: wErr }, { data: r }] = await Promise.all([
+          supabase.from('profiles').select('role').eq('id', user.id).single(),
+          (supabase as any).from('webinars').select('*').eq('id', id).single(),
+          (supabase as any).from('webinar_registrations').select('payment_status').eq('webinar_id', id).eq('user_id', user.id).maybeSingle(),
+        ])
 
-      // Fetch webinar
-      const { data: w, error: wErr } = await (supabase as any)
-        .from('webinars').select('*').eq('id', id).single()
-      if (wErr || !w) { setError('Webinar not found.'); setLoading(false); return }
-      setWebinar(w as Webinar)
+        const admin = profile?.role === 'admin'
+        setIsAdmin(admin)
 
-      // Fetch registration (only for non-admins)
-      if (!admin) {
-        const { data: r } = await (supabase as any)
-          .from('webinar_registrations')
-          .select('payment_status')
-          .eq('webinar_id', id)
-          .eq('user_id', user.id)
-          .maybeSingle()
-        setReg(r || null)
+        if (wErr || !w) { setError('Webinar not found.'); setLoading(false); return }
+        setWebinar(w as Webinar)
+
+        if (!admin) setReg(r || null)
+      } catch (e: any) {
+        setError(e?.message || 'Failed to load webinar. Please try again.')
+      } finally {
+        setLoading(false)
       }
-
-      setLoading(false)
     }
     load()
   }, [id]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -128,60 +124,66 @@ export default function WebinarJoinPage({ params }: { params: Promise<{ id: stri
     if (!webinar) return
     setPaying(true)
 
-    // 1. Create Razorpay order
-    const res = await fetch('/api/webinars/payment', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'create', webinarId: id }),
-    })
-    const orderData = await res.json()
-    if (!res.ok) { setError(orderData.error); setPaying(false); return }
-
-    // 2. Load Razorpay SDK if needed
-    if (!window.Razorpay) {
-      await new Promise<void>(resolve => {
-        const s = document.createElement('script')
-        s.src = 'https://checkout.razorpay.com/v1/checkout.js'
-        s.onload = () => resolve()
-        document.head.appendChild(s)
+    try {
+      // 1. Create Razorpay order
+      const res = await fetch('/api/webinars/payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'create', webinarId: id }),
       })
-    }
+      const orderData = await res.json()
+      if (!res.ok) { setError(orderData.error); setPaying(false); return }
 
-    // 3. Open payment dialog
-    const rzp = new window.Razorpay({
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-      amount: orderData.amount,
-      currency: orderData.currency,
-      name: 'MahaTathastu',
-      description: webinar.title,
-      order_id: orderData.orderId,
-      prefill: { name: userName, email: userEmail },
-      theme: { color: '#1a3a8c' },
-      handler: async (response: any) => {
-        // 4. Verify on server
-        const vRes = await fetch('/api/webinars/payment', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'verify',
-            webinarId: id,
-            razorpayOrderId: response.razorpay_order_id,
-            razorpayPaymentId: response.razorpay_payment_id,
-            razorpaySignature: response.razorpay_signature,
-          }),
+      // 2. Load Razorpay SDK if needed
+      if (!window.Razorpay) {
+        await new Promise<void>((resolve, reject) => {
+          const s = document.createElement('script')
+          s.src = 'https://checkout.razorpay.com/v1/checkout.js'
+          s.onload = () => resolve()
+          s.onerror = () => reject(new Error('Failed to load payment gateway'))
+          document.head.appendChild(s)
         })
-        if (vRes.ok) {
-          setReg({ payment_status: 'paid' })
-        } else {
-          const json = await vRes.json()
-          setError('Payment verification failed: ' + json.error)
-        }
-        setPaying(false)
-      },
-    })
-    rzp.on('payment.failed', () => { setError('Payment failed. Please try again.'); setPaying(false) })
-    rzp.on('modal.dismissed', () => setPaying(false))
-    rzp.open()
+      }
+
+      // 3. Open payment dialog
+      const rzp = new window.Razorpay({
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: 'MahaTathastu',
+        description: webinar.title,
+        order_id: orderData.orderId,
+        prefill: { name: userName, email: userEmail },
+        theme: { color: '#1a3a8c' },
+        handler: async (response: any) => {
+          // 4. Verify on server
+          const vRes = await fetch('/api/webinars/payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              action: 'verify',
+              webinarId: id,
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+            }),
+          })
+          if (vRes.ok) {
+            setReg({ payment_status: 'paid' })
+          } else {
+            const json = await vRes.json()
+            setError('Payment verification failed: ' + json.error)
+          }
+          setPaying(false)
+        },
+      })
+      rzp.on('payment.failed', () => { setError('Payment failed. Please try again.'); setPaying(false) })
+      rzp.on('modal.dismissed', () => setPaying(false))
+      rzp.open()
+    } catch (e: any) {
+      setError(e?.message || 'Could not start payment. Please try again.')
+      setPaying(false)
+    }
   }
 
   function countdown(target: string): string {

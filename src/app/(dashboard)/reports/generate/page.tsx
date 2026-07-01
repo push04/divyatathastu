@@ -199,16 +199,16 @@ function GenerateReportContent() {
 
   useEffect(() => {
     async function load() {
+      // Pricing is independent of the auth/family/members chain — kick it off now, await later
+      const pricingPromise = fetch('/api/report-pricing', { cache: 'no-store' }).then(r => r.json()).catch(() => null)
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
       const { data: family } = await supabase.from('families').select('id').eq('owner_id', user.id).single()
       if (!family) return
       const { data } = await supabase.from('family_members').select('id,full_name,relation,date_of_birth,time_of_birth,place_of_birth,birth_latitude,birth_longitude,birth_timezone').eq('family_id', family.id)
       if (data) setMembers(data)
-      try {
-        const pr = await fetch('/api/report-pricing', { cache: 'no-store' }).then(r => r.json())
-        if (pr && Object.keys(pr).length > 0) setReportPrices(pr)
-      } catch {}
+      const pr = await pricingPromise
+      if (pr && Object.keys(pr).length > 0) setReportPrices(pr)
     }
     load()
     if (searchParams.get('member')) setStep(1)

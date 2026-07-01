@@ -33,7 +33,7 @@ export default function SettingsPage() {
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      if (!user) { setLoading(false); return }
       setUserEmail(user.email || '')
       const { data } = await supabase.from('profiles').select('*').eq('id', user.id).single()
       if (data) { setProfile(data); setForm({ full_name: data.full_name, phone: data.phone || '' }) }

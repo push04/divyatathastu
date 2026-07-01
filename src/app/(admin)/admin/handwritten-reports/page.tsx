@@ -46,17 +46,22 @@ export default function AdminHandwrittenReportsPage() {
   const [notes, setNotes] = useState<Record<string, string>>({})
 
   async function load() {
-    const { data } = await supabase
-      .from('handwritten_report_requests')
-      .select('id,user_id,report_type,description,status,file_url,file_name,admin_notes,created_at,profiles(full_name,phone),family_members(full_name)')
-      .order('created_at', { ascending: false })
-    if (data) {
-      setRequests(data as any)
-      const notesMap: Record<string, string> = {}
-      data.forEach((r: any) => { if (r.admin_notes) notesMap[r.id] = r.admin_notes })
-      setNotes(notesMap)
+    try {
+      const { data } = await supabase
+        .from('handwritten_report_requests')
+        .select('id,user_id,report_type,description,status,file_url,file_name,admin_notes,created_at,profiles(full_name,phone),family_members(full_name)')
+        .order('created_at', { ascending: false })
+      if (data) {
+        setRequests(data as any)
+        const notesMap: Record<string, string> = {}
+        data.forEach((r: any) => { if (r.admin_notes) notesMap[r.id] = r.admin_notes })
+        setNotes(notesMap)
+      }
+    } catch (e: any) {
+      toast.error('Failed to load requests: ' + (e?.message || 'network error'))
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   useEffect(() => { load() }, []) // eslint-disable-line react-hooks/exhaustive-deps

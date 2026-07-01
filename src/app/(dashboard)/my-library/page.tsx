@@ -45,7 +45,7 @@ export default function MyLibraryPage() {
   useEffect(() => {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) return
+      if (!user) { setLoading(false); return }
       const { data } = await supabase
         .from('ebook_purchases')
         .select('id,download_count,max_downloads,purchased_at,ebooks(id,title,author,description,file_url,language,tags)')

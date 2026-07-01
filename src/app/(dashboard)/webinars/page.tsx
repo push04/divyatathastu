@@ -30,13 +30,18 @@ export default function WebinarsPage() {
 
   useEffect(() => {
     async function load() {
-      const { data } = await (supabase as any)
-        .from('webinars')
-        .select('id,title,description,host_name,scheduled_at,duration_minutes,max_participants,price,status')
-        .neq('status', 'ended')
-        .order('scheduled_at', { ascending: true })
-      setWebinars((data || []) as Webinar[])
-      setLoading(false)
+      try {
+        const { data } = await (supabase as any)
+          .from('webinars')
+          .select('id,title,description,host_name,scheduled_at,duration_minutes,max_participants,price,status')
+          .neq('status', 'ended')
+          .order('scheduled_at', { ascending: true })
+        setWebinars((data || []) as Webinar[])
+      } catch (e) {
+        console.error('[webinars] load failed:', e)
+      } finally {
+        setLoading(false)
+      }
     }
     load()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
