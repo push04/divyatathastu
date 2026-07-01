@@ -37,7 +37,7 @@ export default function AyurvedaPage() {
   const { items, loading } = useServiceItems('ayurveda')
   const [booked, setBooked] = useState<Set<string>>(new Set())
   const [activeDosha, setActiveDosha] = useState(0)
-  const { pay, bookingId: booking } = useServicePayment()
+  const { pay, bookingId: booking, NoticeModal } = useServicePayment()
 
   function bookService(item: typeof items[number]) {
     pay({ id: item.id, title: item.title, price: item.price ?? 0 }, {
@@ -196,6 +196,7 @@ export default function AyurvedaPage() {
           </div>
         </div>
       </div>
+      {NoticeModal}
     </div>
   )
 }

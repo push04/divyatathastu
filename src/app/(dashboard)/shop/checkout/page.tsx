@@ -5,7 +5,10 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import SudarshanLoader from '@/components/SudarshanLoader'
+import CheckoutNoticeModal from '@/components/CheckoutNoticeModal'
 import Link from 'next/link'
+
+const DIGITAL_TYPES = new Set(['ebook', 'report'])
 
 interface CartItem {
   id: string
@@ -51,6 +54,7 @@ export default function CheckoutPage() {
   const [processing, setProcessing] = useState(false)
   const [profile, setProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [showNotice, setShowNotice] = useState(false)
 
   useEffect(() => {
     async function load() {
@@ -173,8 +177,20 @@ export default function CheckoutPage() {
     )
   }
 
+  const hasDigital = items.some(i => DIGITAL_TYPES.has(i.product_type || ''))
+  const hasPhysical = items.some(i => !DIGITAL_TYPES.has(i.product_type || ''))
+
   return (
     <div className="min-h-screen" style={{ background: 'var(--kutch-white)' }}>
+      {showNotice && (
+        <CheckoutNoticeModal
+          hasDigital={hasDigital}
+          hasPhysical={hasPhysical}
+          amount={total}
+          onConfirm={() => { setShowNotice(false); handlePayment() }}
+          onCancel={() => setShowNotice(false)}
+        />
+      )}
 
       {/* Sacred pattern background */}
       <div className="fixed inset-0 pointer-events-none select-none" style={{ zIndex: 0 }}>
@@ -371,7 +387,7 @@ export default function CheckoutPage() {
               {/* Pay button */}
               <div className="p-5">
                 <button
-                  onClick={handlePayment}
+                  onClick={() => setShowNotice(true)}
                   disabled={processing || items.length === 0}
                   className="w-full py-4 rounded-2xl text-base font-bold text-white transition-all disabled:opacity-50 inline-flex items-center justify-center gap-2.5"
                   style={{
@@ -412,7 +428,7 @@ export default function CheckoutPage() {
                 <div>
                   <p className="text-xs font-bold text-[var(--indigo-deep)]">MahaTathastu Promise</p>
                   <p className="text-[11px] text-[var(--warm-charcoal)]/60 mt-0.5 leading-relaxed">
-                    Authentic Vedic knowledge. If you're unsatisfied, contact us within 7 days for a full refund.
+                    Authentic Vedic knowledge, carefully sourced. Digital items are non-refundable once delivered; physical items can be returned within 7 days if damaged or not as described.
                   </p>
                 </div>
               </div>

@@ -6,6 +6,7 @@ import { LiveKitRoom } from '@livekit/components-react'
 import { createClient } from '@/lib/supabase/client'
 import { TathastuConsultRoom } from '@/components/consultation/ConsultationRoom'
 import SudarshanLoader from '@/components/SudarshanLoader'
+import { usePaymentNotice } from '@/lib/hooks/usePaymentNotice'
 
 declare global {
   interface Window { Razorpay: any }
@@ -44,6 +45,7 @@ export default function WebinarJoinPage({ params }: { params: Promise<{ id: stri
   const [userEmail, setUserEmail] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [now, setNow] = useState(Date.now())
+  const { confirmPayment, NoticeModal } = usePaymentNotice()
 
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 1000)
@@ -224,6 +226,7 @@ export default function WebinarJoinPage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[var(--kutch-white)] to-[var(--warm-sand)]/30 p-4">
+      {NoticeModal}
       <div className="max-w-md w-full">
         <div className="text-center mb-6">
           <div className="text-3xl text-[var(--saffron)] mb-1">ॐ</div>
@@ -359,7 +362,7 @@ export default function WebinarJoinPage({ params }: { params: Promise<{ id: stri
                     </button>
                   ) : (
                     <button
-                      onClick={handlePaidRegister}
+                      onClick={() => confirmPayment(webinar.title, webinar.price, handlePaidRegister)}
                       disabled={paying}
                       className="w-full py-3 rounded-xl bg-[var(--indigo-deep)] text-white font-bold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
                     >

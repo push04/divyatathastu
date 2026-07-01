@@ -59,20 +59,12 @@ function getPrice(serviceId: string, livePrices: Record<string, number>): number
 export default async function ServicesPage() {
   const supabase = await createClient()
 
-  // Fetch live prices from settings table
-  const { data: pricingRow } = await (supabase as any)
-    .from('settings')
-    .select('value')
-    .eq('key', 'report_pricing')
-    .single()
+  // Fetch live prices and the bundle product in parallel — both are independent reads
+  const [{ data: pricingRow }, { data: bundle }] = await Promise.all([
+    (supabase as any).from('settings').select('value').eq('key', 'report_pricing').single(),
+    supabase.from('products').select('price,sale_price').eq('slug', 'full-tathastu-bundle').single(),
+  ])
   const livePrices: Record<string, number> = pricingRow?.value || {}
-
-  // Full Tathastu bundle — also check products table for sale_price
-  const { data: bundle } = await supabase
-    .from('products')
-    .select('price,sale_price')
-    .eq('slug', 'full-tathastu-bundle')
-    .single()
 
   const bundlePrice = livePrices['full_tathastu'] ?? bundle?.sale_price ?? bundle?.price ?? 2999
   const bundleOriginal = (bundle?.sale_price != null && bundle.price != null) ? bundle.price : null

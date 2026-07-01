@@ -1,8 +1,10 @@
 'use client'
 
 import { useState } from 'react'
+import { createElement } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
+import PaymentNoticeModal from '@/components/PaymentNoticeModal'
 
 declare global {
   interface Window { Razorpay: any }
@@ -34,8 +36,14 @@ export interface PayOptions {
 
 export function useServicePayment() {
   const [bookingId, setBookingId] = useState<string | null>(null)
+  const [pending, setPending] = useState<{ item: ServiceItem; opts?: PayOptions } | null>(null)
 
-  const pay = async (item: ServiceItem, opts?: PayOptions) => {
+  const pay = (item: ServiceItem, opts?: PayOptions) => {
+    // Show non-refundable notice first — user must actively confirm
+    setPending({ item, opts })
+  }
+
+  const _executePay = async (item: ServiceItem, opts?: PayOptions) => {
     setBookingId(item.id)
     try {
       const supabase = createClient()
@@ -51,7 +59,6 @@ export function useServicePayment() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           service_item_id: item.id,
-          amount: item.price,
           quantity: opts?.quantity || 1,
           notes: opts?.notes || item.title,
           preferred_date: opts?.preferredDate || null,
@@ -124,5 +131,19 @@ export function useServicePayment() {
     }
   }
 
-  return { pay, bookingId }
+  // Rendered by the page — shows the non-refundable notice and proceeds on confirm
+  const NoticeModal = pending
+    ? createElement(PaymentNoticeModal, {
+        serviceName: pending.item.title,
+        amount: pending.item.price,
+        onConfirm: () => {
+          const { item, opts } = pending
+          setPending(null)
+          _executePay(item, opts)
+        },
+        onCancel: () => setPending(null),
+      })
+    : null
+
+  return { pay, bookingId, NoticeModal }
 }

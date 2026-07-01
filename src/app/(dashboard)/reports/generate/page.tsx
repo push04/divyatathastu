@@ -9,6 +9,7 @@ import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
+import { usePaymentNotice } from '@/lib/hooks/usePaymentNotice'
 
 interface FamilyMember {
   id: string
@@ -190,6 +191,7 @@ function GenerateReportContent() {
   const [secondsLeft, setSecondsLeft] = useState(0)
   const [allDone, setAllDone] = useState(false)
   const [paymentProcessing, setPaymentProcessing] = useState(false)
+  const { confirmPayment, NoticeModal } = usePaymentNotice()
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const t = T[lang]
@@ -326,8 +328,15 @@ function GenerateReportContent() {
     }
     const price = selectedReportInfo?.price || 0
     if (price > 0) {
-      setPaymentProcessing(true)
-      try {
+      confirmPayment(selectedReportInfo?.label || 'Vedic Report', price, () => proceedToPayment(price))
+      return
+    }
+    doGenerate()
+  }
+
+  async function proceedToPayment(price: number) {
+    setPaymentProcessing(true)
+    try {
         const res = await fetch('/api/payment?action=create', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -373,14 +382,11 @@ function GenerateReportContent() {
           },
           modal: { ondismiss: () => setPaymentProcessing(false) },
         })
-        rzp.open()
-      } catch (err: any) {
-        toast.error(err.message || 'Payment failed')
-        setPaymentProcessing(false)
-      }
-      return
+      rzp.open()
+    } catch (err: any) {
+      toast.error(err.message || 'Payment failed')
+      setPaymentProcessing(false)
     }
-    doGenerate()
   }
 
   const canProceed = [
@@ -597,6 +603,7 @@ function GenerateReportContent() {
   // ── SETUP WIZARD ──
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
+      {NoticeModal}
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[var(--indigo-deep)]">{t.title}</h1>

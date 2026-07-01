@@ -6,6 +6,7 @@ import { useServiceItems, ServiceItem } from '@/lib/hooks/useServiceItems'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import SudarshanLoader from '@/components/SudarshanLoader'
+import { usePaymentNotice } from '@/lib/hooks/usePaymentNotice'
 
 const LEVEL_CONFIG: Record<string, { bg: string; text: string }> = {
   'Beginner':     { bg: '#dcfce7', text: '#166534' },
@@ -58,6 +59,7 @@ export default function CoursesPage() {
   const [typeFilter, setTypeFilter] = useState<'all' | 'live' | 'recorded'>('all')
   const [search, setSearch] = useState('')
   const [currentUser, setCurrentUser] = useState<{ id: string; email: string; name: string } | null>(null)
+  const { confirmPayment, NoticeModal } = usePaymentNotice()
 
   useEffect(() => {
     const supabase = createClient()
@@ -179,6 +181,7 @@ export default function CoursesPage() {
 
   return (
     <div className="min-h-screen bg-[var(--kutch-white)]">
+      {NoticeModal}
 
       {/* ── Course Detail Modal ── */}
       {detailModal && (() => {
@@ -471,7 +474,11 @@ export default function CoursesPage() {
                   </div>
                 </div>
 
-                <button onClick={handleEnroll} className="btn-divine w-full py-4 text-sm font-semibold inline-flex items-center justify-center gap-2">
+                <button
+                  onClick={() => (enrollModal.price && enrollModal.price > 0)
+                    ? confirmPayment(enrollModal.title, enrollModal.price, handleEnroll)
+                    : handleEnroll()}
+                  className="btn-divine w-full py-4 text-sm font-semibold inline-flex items-center justify-center gap-2">
                   {enrollModal.price && enrollModal.price > 0 ? (
                     <><span className="material-symbols-outlined text-[18px]">lock</span>Secure Enrollment &mdash; ₹{enrollModal.price.toLocaleString('en-IN')}</>
                   ) : (

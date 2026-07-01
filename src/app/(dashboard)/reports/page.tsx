@@ -41,14 +41,17 @@ export default function ReportsPage() {
     async function load() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
-      const { data: family } = await supabase.from('families').select('id').eq('owner_id', user.id).single()
+      // Nested select fetches family + its reports in one round trip (eliminates serial waterfall)
+      const { data: family } = await supabase
+        .from('families')
+        .select('id,reports(id,report_type,status,created_at,family_members(full_name))')
+        .eq('owner_id', user.id)
+        .single()
       if (!family) { setLoading(false); return }
-      const { data } = await supabase
-        .from('reports')
-        .select('id,report_type,status,created_at,family_members(full_name)')
-        .eq('family_id', family.id)
-        .order('created_at', { ascending: false })
-      if (data) setReports(data as Report[])
+      const sorted = [...((family as any).reports || [])].sort(
+        (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      )
+      setReports(sorted as Report[])
       setLoading(false)
     }
     load()

@@ -45,12 +45,16 @@ export default function FamilyPage() {
         .eq('family_id', family.id)
         .order('created_at')
 
-      if (mems) {
-        const withCounts = await Promise.all(mems.map(async m => {
-          const { count } = await supabase.from('reports').select('*', { count: 'exact', head: true }).eq('family_member_id', m.id)
-          return { ...m, reports_count: count || 0 }
-        }))
-        setMembers(withCounts)
+      if (mems && mems.length) {
+        const { data: reportRows } = await supabase
+          .from('reports')
+          .select('family_member_id')
+          .in('family_member_id', mems.map(m => m.id))
+        const counts: Record<string, number> = {}
+        reportRows?.forEach((r: any) => { counts[r.family_member_id] = (counts[r.family_member_id] || 0) + 1 })
+        setMembers(mems.map(m => ({ ...m, reports_count: counts[m.id] || 0 })))
+      } else {
+        setMembers([])
       }
       setLoading(false)
     }

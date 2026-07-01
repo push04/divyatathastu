@@ -13,7 +13,7 @@ interface HoraPeriod {
   planet: string; color: string; start: string; end: string; startH: number; endH: number; isDay: boolean
 }
 interface DoGhatiPeriod {
-  name: string; kala: string; period: 'day' | 'night'
+  name: string; kala: string; period: 'day' | 'night'; nakshatra: string
   start: string; end: string; startH: number; endH: number; index: number
 }
 
@@ -557,7 +557,7 @@ export default function PanchangPage() {
                       return (
                         <>
                           <p className="text-xs text-[var(--warm-charcoal)]/50 mb-3 leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                            <strong>Do Ghati</strong> = 2 Ghati = day ÷ 15 equal windows. Each window today is <strong>~{dgMin} min</strong> for this location — sizes change with sunrise/sunset.
+                            <strong>Do Ghati</strong> = 2 Ghati = day ÷ 15 equal windows. Each window today is <strong>~{dgMin} min</strong> for this location — sizes change with sunrise/sunset. Each window also carries its own presiding <strong>Nakshatra</strong>, per the classical Do Ghati sequence — separate from the Moon&apos;s nakshatra for the day (shown on the Panchang tab).
                           </p>
                           <div className="flex gap-1 bg-[var(--warm-sand)] rounded-lg p-0.5 mb-4 w-fit">
                             {(['day','night'] as const).map(t => (
@@ -586,6 +586,10 @@ export default function PanchangPage() {
                                           style={{ fontFamily: "'JetBrains Mono', monospace" }}>{m.index}</span>
                                         <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: isCurrent ? 700 : 500, color: isCurrent ? borderColor : 'rgba(28,30,74,0.72)', flex: 1 }}>
                                           {m.start} – {m.end}
+                                        </span>
+                                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0"
+                                          style={{ fontFamily: "'Sora', sans-serif", color: borderColor, background: borderColor + '18' }}>
+                                          {m.nakshatra}
                                         </span>
                                         {isCurrent && (
                                           <div className="flex items-center gap-1.5">

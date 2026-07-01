@@ -15,7 +15,7 @@ const LEVEL_COLORS: Record<string, { bg: string; text: string }> = {
 export default function GyanampeethamPage() {
   const { items: courses, loading } = useServiceItems('gyanampeetham')
   const [enrolled, setEnrolled] = useState<Set<string>>(new Set())
-  const { pay, bookingId: enrolling } = useServicePayment()
+  const { pay, bookingId: enrolling, NoticeModal } = useServicePayment()
 
   function enroll(item: typeof courses[number]) {
     pay({ id: item.id, title: item.title, price: item.price ?? 0 }, {
@@ -132,6 +132,7 @@ export default function GyanampeethamPage() {
           </div>
         </div>
       </div>
+      {NoticeModal}
     </div>
   )
 }

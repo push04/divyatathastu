@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
 import SudarshanLoader from '@/components/SudarshanLoader'
+import { usePaymentNotice } from '@/lib/hooks/usePaymentNotice'
 
 export default function EventRegisterForm({ eventId, eventTitle, eventDate, price }: { eventId: string; eventTitle: string; eventDate?: string; price: number }) {
   const [name, setName] = useState('')
@@ -10,10 +11,19 @@ export default function EventRegisterForm({ eventId, eventTitle, eventDate, pric
   const [phone, setPhone] = useState('')
   const [loading, setLoading] = useState(false)
   const [done, setDone] = useState(false)
+  const { confirmPayment, NoticeModal } = usePaymentNotice()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!name || !email) return
+    if (price > 0) {
+      confirmPayment(eventTitle, price, () => doSubmit())
+      return
+    }
+    doSubmit()
+  }
+
+  async function doSubmit() {
     setLoading(true)
 
     try {
@@ -85,6 +95,7 @@ export default function EventRegisterForm({ eventId, eventTitle, eventDate, pric
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
+      {NoticeModal}
       <input
         type="text"
         placeholder="Full name *"

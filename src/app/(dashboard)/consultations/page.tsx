@@ -7,6 +7,7 @@ import ConsultationRoom from '@/components/consultation/ConsultationRoom'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
+import { usePaymentNotice } from '@/lib/hooks/usePaymentNotice'
 
 declare global {
   interface Window { Razorpay: any }
@@ -58,6 +59,7 @@ export default function ConsultationsPage() {
   const [booking, setBooking] = useState<string | null>(null)
   const [activeCallBookingId, setActiveCallBookingId] = useState<string | null>(null)
   const [profile, setProfile] = useState<{ full_name: string } | null>(null)
+  const { confirmPayment, NoticeModal } = usePaymentNotice()
 
   const PREDEFINED_SLOTS = [
     { start: '17:00', end: '17:45' },
@@ -268,6 +270,7 @@ export default function ConsultationsPage() {
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-6">
+      {NoticeModal}
       <div>
         <h1 className="text-2xl font-bold text-[var(--indigo-deep)] inline-flex items-center gap-2"><span className="material-symbols-outlined text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>handshake</span> Consultations</h1>
         <p className="text-sm text-[var(--warm-charcoal)]/60 mt-0.5">Book 1-on-1 sessions with Vedic experts · <span className="text-[var(--saffron)] font-semibold">5 PM – 11 PM IST · 45 min slots</span></p>
@@ -385,7 +388,9 @@ export default function ConsultationsPage() {
 
                     {isAvailable && (
                       <button
-                        onClick={() => bookSlot(selectedDate, ps.start, ps.end)}
+                        onClick={() => slotPrice > 0
+                          ? confirmPayment('Vedic Expert Consultation', slotPrice, () => bookSlot(selectedDate, ps.start, ps.end))
+                          : bookSlot(selectedDate, ps.start, ps.end)}
                         disabled={booking === `${selectedDate}_${ps.start}`}
                         className="btn-divine w-full py-2.5 text-sm mt-3 disabled:opacity-50"
                       >

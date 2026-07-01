@@ -201,6 +201,18 @@ function getChoghadiya(srH: number, ssH: number, dow: number) {
 const DAY_KALAS  = ['Pratah', 'Sangava', 'Madhyahna', 'Aparahna', 'Sayahna']
 const NIGHT_KALAS = ['Pradosh', 'Nishitha Mukha', 'Nishitha', 'Nishitha Anta', 'Usha']
 
+// Per drikpanchang: each of the 30 classical Do Ghati muhurat (Rudra, Ahi, Mitra…) has a
+// fixed presiding Nakshatra — the same 15+15 sequence every day, only the clock times shift
+// with sunrise/sunset. This is distinct from the Moon's nakshatra for the day shown elsewhere.
+const DAY_GHATI_NAKSHATRAS = [
+  'Ardra', 'Ashlesha', 'Anuradha', 'Magha', 'Dhanishtha', 'Purva Ashadha', 'Uttara Ashadha',
+  'Abhijit', 'Rohini', 'Jyeshtha', 'Vishakha', 'Mula', 'Shatabhisha', 'Uttara Phalguni', 'Purva Phalguni',
+]
+const NIGHT_GHATI_NAKSHATRAS = [
+  'Ardra', 'Purva Bhadrapada', 'Uttara Bhadrapada', 'Revati', 'Ashwini', 'Bharani', 'Krittika',
+  'Rohini', 'Mrigashira', 'Punarvasu', 'Pushya', 'Shravana', 'Hasta', 'Chitra', 'Swati',
+]
+
 function getDoGhatiMuhurt(srH: number, ssH: number) {
   const dayDur    = ssH - srH
   const nightDur  = 24 - dayDur
@@ -208,35 +220,37 @@ function getDoGhatiMuhurt(srH: number, ssH: number) {
   const dgNight   = nightDur / 15   // duration of one Do Ghati in nighttime hours
 
   const windows: {
-    name: string; kala: string; period: 'day' | 'night'
+    name: string; kala: string; period: 'day' | 'night'; nakshatra: string
     start: string; end: string; startH: number; endH: number; index: number
   }[] = []
 
   for (let i = 0; i < 15; i++) {
     const startH = srH + i * dgDay
     windows.push({
-      name:   `Do Ghati ${i + 1}`,
-      kala:   DAY_KALAS[Math.floor(i / 3)],
-      period: 'day',
-      start:  fmt(startH),
-      end:    fmt(startH + dgDay),
+      name:      `Do Ghati ${i + 1}`,
+      kala:      DAY_KALAS[Math.floor(i / 3)],
+      period:    'day',
+      nakshatra: DAY_GHATI_NAKSHATRAS[i],
+      start:     fmt(startH),
+      end:       fmt(startH + dgDay),
       startH,
-      endH:   startH + dgDay,
-      index:  i + 1,
+      endH:      startH + dgDay,
+      index:     i + 1,
     })
   }
 
   for (let i = 0; i < 15; i++) {
     const startH = ssH + i * dgNight
     windows.push({
-      name:   `Do Ghati ${i + 1}`,
-      kala:   NIGHT_KALAS[Math.floor(i / 3)],
-      period: 'night',
-      start:  fmt(startH),
-      end:    fmt(startH + dgNight),
+      name:      `Do Ghati ${i + 1}`,
+      kala:      NIGHT_KALAS[Math.floor(i / 3)],
+      period:    'night',
+      nakshatra: NIGHT_GHATI_NAKSHATRAS[i],
+      start:     fmt(startH),
+      end:       fmt(startH + dgNight),
       startH,
-      endH:   startH + dgNight,
-      index:  i + 1,
+      endH:      startH + dgNight,
+      index:     i + 1,
     })
   }
 

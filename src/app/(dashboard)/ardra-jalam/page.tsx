@@ -37,7 +37,7 @@ export default function ArdraJalamPage() {
   const [qty, setQty] = useState(1)
   const [booked, setBooked] = useState(false)
   const [ordering, setOrdering] = useState(false)
-  const { pay } = useServicePayment()
+  const { pay, NoticeModal } = useServicePayment()
 
   const product = items[0] ?? null
   const unitPrice = product?.price ?? FALLBACK_PRICE
@@ -382,6 +382,7 @@ export default function ArdraJalamPage() {
           </div>
         </section>
       </div>
+      {NoticeModal}
     </div>
   )
 }
