@@ -41,7 +41,11 @@ export function getSavedCity(): CityCoords | null {
 
 export function saveCity(city: CityCoords) {
   if (typeof window === 'undefined') return
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(city))
+  // Safari Private Browsing throws on localStorage.setItem — never let that
+  // bubble up and break the calling flow.
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(city))
+  } catch {}
 }
 
 export function getUserLocation(): Promise<CityCoords> {

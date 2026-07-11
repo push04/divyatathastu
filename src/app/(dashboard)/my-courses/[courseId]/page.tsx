@@ -351,7 +351,7 @@ export default function CourseViewerPage() {
                   <video
                     key={activeLesson.id}
                     src={activeLesson.signed_url}
-                    controls autoPlay
+                    controls autoPlay playsInline
                     className="absolute inset-0 w-full h-full"
                     style={{ outline: 'none' }}
                     onEnded={() => markComplete(activeLesson.id)}

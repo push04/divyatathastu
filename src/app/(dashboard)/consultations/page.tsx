@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { usePaymentNotice } from '@/lib/hooks/usePaymentNotice'
+import { nowInIST } from '@/lib/utils/date'
 
 declare global {
   interface Window { Razorpay: any }
@@ -84,7 +85,7 @@ export default function ConsultationsPage() {
   // Generate 7-day date slider in IST
   useEffect(() => {
     const list: string[] = []
-    const nowIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
+    const nowIST = nowInIST()
     for (let i = 0; i < 7; i++) {
       const d = new Date(nowIST)
       d.setDate(d.getDate() + i)
@@ -136,7 +137,7 @@ export default function ConsultationsPage() {
 
   const isPast = (date: string, startTime: string) => {
     const [sh, sm] = startTime.split(':').map(Number)
-    const nowIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }))
+    const nowIST = nowInIST()
     const slotDateTime = new Date(nowIST)
     const [y, m, d] = date.split('-').map(Number)
     slotDateTime.setFullYear(y, m - 1, d)
