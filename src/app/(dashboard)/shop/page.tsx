@@ -87,7 +87,12 @@ export default function ShopPage() {
     return 'all'
   })
   const [sort, setSort] = useState('featured')
-  const [search, setSearch] = useState('')
+  const [search, setSearch] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return new URLSearchParams(window.location.search).get('search') || ''
+    }
+    return ''
+  })
   const [cart, setCart] = useState<Map<string, number>>(new Map())
   const [cartOpen, setCartOpen] = useState(false)
   const [selected, setSelected] = useState<Product | null>(null)
@@ -112,7 +117,17 @@ export default function ShopPage() {
             .eq('is_active', true),
           supabase.auth.getUser(),
         ])
-        if (productsRes.data) setProducts(productsRes.data)
+        if (productsRes.data) {
+          setProducts(productsRes.data)
+          // Auto-open product if ?slug= is in URL
+          if (typeof window !== 'undefined') {
+            const slugParam = new URLSearchParams(window.location.search).get('slug')
+            if (slugParam) {
+              const match = productsRes.data.find((p: any) => p.slug === slugParam)
+              if (match) setSelected(match as any)
+            }
+          }
+        }
         setUser(authRes.data.user)
       } catch (e: any) {
         toast.error('Failed to load shop: ' + (e?.message || 'network error'))
