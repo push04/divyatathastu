@@ -605,7 +605,7 @@ export default function CrystalCalculatorPage() {
               { icon: 'calculate', label: 'Life Path Numerology' },
               { icon: 'language',  label: 'Navagraha Planets'   },
               { icon: 'schedule',  label: 'Vedic Hora (Birth Hour)' },
-              { icon: 'auto_awesome', label: 'Groq AI Refinement' },
+              { icon: 'auto_awesome', label: 'Vedic AI Analysis' },
             ].map(item => (
               <div
                 key={item.label}
@@ -735,7 +735,7 @@ export default function CrystalCalculatorPage() {
           <div className="max-w-2xl mx-auto flex items-center gap-3 px-5 py-3 rounded-xl" style={{ background: '#FEF3C7', border: '1px solid #FDE68A' }}>
             <span className="w-3.5 h-3.5 border-2 border-amber-400/50 border-t-amber-500 rounded-full animate-spin flex-shrink-0" />
             <p className="text-amber-800 text-xs" style={{ fontFamily: "'Sora', sans-serif" }}>
-              Groq AI is refining your recommendations with Vedic analysis...
+              Vedic AI is refining your recommendations...
             </p>
           </div>
         </div>
