@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import SudarshanLoader from '@/components/SudarshanLoader'
 
@@ -19,16 +19,16 @@ interface ProductForm {
   price: string; sale_price: string; stock_count: string
 }
 
-const PRODUCT_TYPES = ['report','ebook','consultation','yantra','gemstone','course','bundle','physical','herbal']
+const PRODUCT_TYPES = ['report','ebook','consultation','yantra','gemstone','crystal','course','bundle','physical','herbal']
 const TYPE_ICON: Record<string, string> = {
   report: 'description', ebook: 'menu_book', consultation: 'support_agent',
-  yantra: 'hexagon', gemstone: 'diamond', physical: 'temple_hindu',
+  yantra: 'hexagon', gemstone: 'diamond', crystal: 'diamond', physical: 'temple_hindu',
   course: 'school', bundle: 'auto_awesome', herbal: 'eco',
 }
 const TYPE_GRADIENT: Record<string, string> = {
   report: 'from-[#2F2A44] to-[#460B2F]', ebook: 'from-[#B9986B] to-[#C67D53]',
   consultation: 'from-emerald-600 to-teal-700', yantra: 'from-amber-500 to-orange-600',
-  gemstone: 'from-blue-500 to-purple-700', physical: 'from-[#C67D53] to-rose-700',
+  gemstone: 'from-blue-500 to-purple-700', crystal: 'from-violet-600 to-purple-800', physical: 'from-[#C67D53] to-rose-700',
   course: 'from-violet-600 to-purple-800', bundle: 'from-[#2F2A44] to-[#B9986B]',
   herbal: 'from-green-600 to-emerald-800',
 }

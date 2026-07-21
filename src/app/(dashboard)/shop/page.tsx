@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
@@ -30,13 +30,14 @@ const CATEGORIES = [
   { label: 'Puja Items', value: 'physical', icon: 'temple_hindu' },
   { label: 'Herbal', value: 'herbal', icon: 'eco' },
   { label: 'Bundles', value: 'bundle', icon: 'auto_awesome' },
+  { label: 'Crystals', value: 'crystal', icon: 'diamond' },
   { label: 'Ardra Jalam', value: 'ardra_jalam', icon: 'water_drop' },
 ]
 
 const TYPE_ICON: Record<string, string> = {
   report: 'description', ebook: 'menu_book', consultation: 'support_agent',
   yantra: 'hexagon', gemstone: 'diamond', physical: 'temple_hindu',
-  course: 'school', bundle: 'auto_awesome', herbal: 'eco',
+  course: 'school', bundle: 'auto_awesome', herbal: 'eco', crystal: 'diamond',
 }
 
 const TYPE_GRADIENT: Record<string, string> = {
@@ -45,6 +46,7 @@ const TYPE_GRADIENT: Record<string, string> = {
   consultation: 'from-emerald-600 to-teal-700',
   yantra: 'from-amber-500 to-orange-600',
   gemstone: 'from-blue-500 to-purple-700',
+  crystal: 'from-violet-600 to-indigo-700',
   physical: 'from-[#C67D53] to-rose-700',
   course: 'from-violet-600 to-purple-800',
   bundle: 'from-[#2F2A44] to-[#B9986B]',

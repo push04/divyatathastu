@@ -15,6 +15,7 @@ const navLinks = [
   { href: '/ebooks', label: 'Ebooks' },
   { href: '/panchang', label: 'Panchang' },
   { href: '/blog', label: 'Blog' },
+  { href: '/crystal-calculator', label: 'Crystals 💎', featured: true },
   { href: '/ardra-jalam', label: 'Ardra Jalam', featured: true },
 ]
 
