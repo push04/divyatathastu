@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '@/components/ui/Icon'
 import { useLanguage } from '@/components/i18n/LanguageProvider'
+import { isAudioClaimed, onExclusiveAudioChange } from '@/lib/audio/soundscapes'
 
 /* ═══════════════════════════════════════════════════════════════════════════
    AMBIENT OM
@@ -145,6 +146,8 @@ export default function AmbientOm() {
   const [playing, setPlaying] = useState(false)
   const [awaitingGesture, setAwaitingGesture] = useState(false)
   const [mounted, setMounted] = useState(false)
+  /** Another part of the app (the meditation room) owns audio right now. */
+  const [yielded, setYielded] = useState(false)
 
   const fadeTo = useCallback((value: number, seconds: number) => {
     const eng = engineRef.current
@@ -198,9 +201,26 @@ export default function AmbientOm() {
     setEnabled(readPref())
   }, [])
 
+  // The meditation room runs its own soundscape. Step aside while it does,
+  // rather than layering an Om drone under a tanpura in a different key.
+  useEffect(() => {
+    if (!mounted) return
+    setYielded(isAudioClaimed())
+    return onExclusiveAudioChange(setYielded)
+  }, [mounted])
+
+  useEffect(() => {
+    if (!mounted) return
+    if (yielded) {
+      if (playing) stop()
+    } else if (enabled && !playing) {
+      void start()
+    }
+  }, [yielded, mounted, enabled, playing, start, stop])
+
   // Try to start, and fall back to the first user gesture if blocked.
   useEffect(() => {
-    if (!mounted || !enabled) return
+    if (!mounted || !enabled || yielded) return
 
     let cancelled = false
 
@@ -230,7 +250,7 @@ export default function AmbientOm() {
     })()
 
     return () => { cancelled = true }
-  }, [mounted, enabled, start])
+  }, [mounted, enabled, yielded, start])
 
   // Never leave a drone playing in a tab nobody is looking at.
   useEffect(() => {
@@ -259,7 +279,9 @@ export default function AmbientOm() {
   }, [enabled, start, stop])
 
   // Nothing server-rendered: the correct icon depends on stored preference.
-  if (!mounted) return null
+  // Hidden entirely while the meditation room owns audio - two competing
+  // sound controls on one screen is worse than none.
+  if (!mounted || yielded) return null
 
   const isAudible = enabled && playing
   const label = isAudible ? t('sound.on') : t('sound.off')

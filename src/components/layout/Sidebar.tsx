@@ -22,6 +22,7 @@ const navItems: { href: string; labelKey: DictKey; icon: string }[] = [
   { href: '/reports', labelKey: 'side.reports', icon: 'description' },
   { href: '/reports/generate', labelKey: 'side.generate', icon: 'brightness_7' },
   { href: '/ai-guide', labelKey: 'side.guide', icon: 'psychology' },
+  { href: '/meditation', labelKey: 'side.meditation', icon: 'lotus' },
   { href: '/panchang', labelKey: 'side.panchang', icon: 'calendar_today' },
   { href: '/mandir-finder', labelKey: 'side.mandir', icon: 'temple_hindu' },
   { href: '/pilgrimage', labelKey: 'side.pilgrimage', icon: 'travel_explore' },

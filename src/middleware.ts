@@ -18,6 +18,7 @@ const PROTECTED_PATHS = [
   // per-account, so both belong behind the login wall.
   '/reviews',
   '/refer',
+  '/meditation',
 ]
 
 export async function middleware(request: NextRequest) {
