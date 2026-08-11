@@ -8,45 +8,52 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import SudarshanLoader from '@/components/SudarshanLoader'
 import LanguageSelector from '@/components/i18n/LanguageSelector'
+import { useLanguage } from '@/components/i18n/LanguageProvider'
+import type { DictKey } from '@/lib/i18n/dictionaries'
 
 import Icon from '@/components/ui/Icon'
-const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
-  { href: '/family', label: 'Family Circle', icon: 'family_restroom' },
-  { href: '/reports', label: 'Reports', icon: 'description' },
-  { href: '/reports/generate', label: 'Generate Report', icon: 'brightness_7' },
-  { href: '/ai-guide', label: 'Spiritual Guide', icon: 'psychology' },
-  { href: '/panchang', label: 'Panchang', icon: 'calendar_today' },
-  { href: '/mandir-finder', label: 'Mandir Finder', icon: 'temple_hindu' },
-  { href: '/pilgrimage', label: 'Pilgrimage', icon: 'travel_explore' },
-  { href: '/shop', label: 'Shop', icon: 'storefront' },
-  { href: '/handwritten-report', label: 'Handwritten Report', icon: 'draw' },
-  { href: '/orders', label: 'Orders', icon: 'package_2' },
-  { href: '/consultations', label: 'Consultations', icon: 'event' },
-  { href: '/refer', label: 'Refer & Earn', icon: 'group_add' },
-  { href: '/reviews', label: 'Reviews & Rewards', icon: 'rate_review' },
-  { href: '/mailbox', label: 'Mailbox', icon: 'mail' },
-  { href: '/my-courses', label: 'My Courses', icon: 'school' },
-  { href: '/webinars', label: 'Live Webinars', icon: 'live_tv' },
-  { href: '/my-library', label: 'My Ebooks', icon: 'menu_book' },
-  { href: '/social', label: 'Social Content', icon: 'share' },
-  { href: '/settings', label: 'Settings', icon: 'settings' },
+
+/* Labels are dictionary KEYS, not English strings. The sidebar used to hold
+   hardcoded English, so switching language left the whole dashboard in
+   English and the selector looked broken. */
+const navItems: { href: string; labelKey: DictKey; icon: string }[] = [
+  { href: '/dashboard', labelKey: 'side.dashboard', icon: 'dashboard' },
+  { href: '/family', labelKey: 'side.family', icon: 'family_restroom' },
+  { href: '/reports', labelKey: 'side.reports', icon: 'description' },
+  { href: '/reports/generate', labelKey: 'side.generate', icon: 'brightness_7' },
+  { href: '/ai-guide', labelKey: 'side.guide', icon: 'psychology' },
+  { href: '/panchang', labelKey: 'side.panchang', icon: 'calendar_today' },
+  { href: '/mandir-finder', labelKey: 'side.mandir', icon: 'temple_hindu' },
+  { href: '/pilgrimage', labelKey: 'side.pilgrimage', icon: 'travel_explore' },
+  { href: '/shop', labelKey: 'side.shop', icon: 'storefront' },
+  { href: '/handwritten-report', labelKey: 'side.handwritten', icon: 'draw' },
+  { href: '/orders', labelKey: 'side.orders', icon: 'package_2' },
+  { href: '/consultations', labelKey: 'side.consultations', icon: 'event' },
+  { href: '/refer', labelKey: 'side.refer', icon: 'group_add' },
+  { href: '/reviews', labelKey: 'side.reviews', icon: 'rate_review' },
+  { href: '/mailbox', labelKey: 'side.mailbox', icon: 'mail' },
+  { href: '/my-courses', labelKey: 'side.myCourses', icon: 'school' },
+  { href: '/webinars', labelKey: 'side.webinars', icon: 'live_tv' },
+  { href: '/my-library', labelKey: 'side.ebooks', icon: 'menu_book' },
+  { href: '/social', labelKey: 'side.social', icon: 'share' },
+  { href: '/settings', labelKey: 'side.settings', icon: 'settings' },
 ]
 
-const divineServiceItems: { href: string; label: string; icon: string; exact?: boolean }[] = [
-  { href: '/divine-services', label: 'All Divine Services', icon: 'brightness_7' },
-  { href: '/puja', label: 'Pooja & Rituals', icon: 'local_fire_department' },
-  { href: '/sadhana', label: 'Saadhana', icon: 'self_improvement' },
-  { href: '/mahaganpati', label: 'Mahaganpati', icon: 'brightness_5' },
-  { href: '/gyanampeetham', label: 'Gyanampeetham', icon: 'school' },
-  { href: '/ayurveda', label: 'Ayurveda', icon: 'spa' },
-  { href: '/ardra-jalam', label: 'Ardra Jalam', icon: 'water_drop', exact: true },
-  { href: '/ardra-jalam/nakshatra-jal', label: 'Nakshatra Jal', icon: 'water_drop' },
-  { href: '/ardra-jalam/crystal-manifestation', label: 'Crystal Manifestation', icon: 'diamond' },
-  { href: '/courses', label: 'Courses', icon: 'menu_book' },
+const divineServiceItems: { href: string; labelKey: DictKey; icon: string; exact?: boolean }[] = [
+  { href: '/divine-services', labelKey: 'side.allDivine', icon: 'brightness_7' },
+  { href: '/puja', labelKey: 'side.puja', icon: 'local_fire_department' },
+  { href: '/sadhana', labelKey: 'side.sadhana', icon: 'self_improvement' },
+  { href: '/mahaganpati', labelKey: 'side.mahaganpati', icon: 'brightness_5' },
+  { href: '/gyanampeetham', labelKey: 'side.gyanampeetham', icon: 'school' },
+  { href: '/ayurveda', labelKey: 'side.ayurveda', icon: 'spa' },
+  { href: '/ardra-jalam', labelKey: 'side.ardraJalam', icon: 'water_drop', exact: true },
+  { href: '/ardra-jalam/nakshatra-jal', labelKey: 'side.nakshatraJal', icon: 'water_drop' },
+  { href: '/ardra-jalam/crystal-manifestation', labelKey: 'side.crystal', icon: 'diamond' },
+  { href: '/courses', labelKey: 'side.courses', icon: 'menu_book' },
 ]
 
 function NavContent({ pathname, onClose, onSignOut }: { pathname: string; onClose: () => void; onSignOut: () => void }) {
+  const { t } = useLanguage()
   return (
     <>
       {/* Logo */}
@@ -55,7 +62,7 @@ function NavContent({ pathname, onClose, onSignOut }: { pathname: string; onClos
           <div className="w-8 h-8 flex-shrink-0 group-hover:scale-110 transition-transform"><SudarshanLoader px={32} /></div>
           <div>
             <div className="text-[var(--indigo-deep)] font-bold text-sm leading-tight" style={{ fontFamily: "var(--font-display)" }}>MahaTathastu</div>
-            <div className="text-[var(--terracotta)] text-[12px] tracking-[0.15em] uppercase" style={{ fontFamily: "var(--font-label)" }}>My Sanctuary</div>
+            <div className="text-[var(--terracotta)] text-[12px] tracking-[0.15em] uppercase" style={{ fontFamily: "var(--font-label)" }}>{t('side.tagline')}</div>
           </div>
         </Link>
         {/* Close button (mobile only) */}
@@ -72,7 +79,7 @@ function NavContent({ pathname, onClose, onSignOut }: { pathname: string; onClos
 
       {/* Nav */}
       <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-0.5">
-        {navItems.map(({ href, label, icon }) => {
+        {navItems.map(({ href, labelKey, icon }) => {
           const active = pathname === href || (href !== '/dashboard' && pathname.startsWith(href))
           return (
             <Link
@@ -86,7 +93,7 @@ function NavContent({ pathname, onClose, onSignOut }: { pathname: string; onClos
               )}
             >
               <Icon name={icon} size={18} />
-              <span className="font-medium text-[14px]">{label}</span>
+              <span className="font-medium text-[14px]">{t(labelKey)}</span>
             </Link>
           )
         })}
@@ -99,12 +106,12 @@ function NavContent({ pathname, onClose, onSignOut }: { pathname: string; onClos
             <div className="px-3 pt-3 pb-2 flex items-center gap-2">
               <Icon name="brightness_7" size={16} style={{ color: '#C9992E' }} />
               <span className="text-[12px] font-black tracking-[0.2em] uppercase" style={{ color: '#92400e', fontFamily: "var(--font-label)" }}>
-                Divine Services
+                {t('side.divineServices')}
               </span>
             </div>
             {/* Service links */}
             <div className="pb-2 px-1 space-y-0.5">
-              {divineServiceItems.map(({ href, label, icon, exact }) => {
+              {divineServiceItems.map(({ href, labelKey, icon, exact }) => {
                 const isAll    = href === '/divine-services'
                 const active   = pathname === href || (!isAll && !exact && href !== '/dashboard' && pathname.startsWith(href))
                 return (
@@ -123,7 +130,7 @@ function NavContent({ pathname, onClose, onSignOut }: { pathname: string; onClos
                     )}
                   >
                     <Icon name={icon} size={15} style={{ color: active ? 'inherit' : '#C9992E'  }} />
-                    <span className={isAll ? 'font-bold' : 'font-medium'}>{label}</span>
+                    <span className={isAll ? 'font-bold' : 'font-medium'}>{t(labelKey)}</span>
                     {isAll && <Icon name="arrow_forward" size={13} className="ml-auto opacity-60" />}
                   </Link>
                 )
@@ -137,9 +144,9 @@ function NavContent({ pathname, onClose, onSignOut }: { pathname: string; onClos
       <div className="mx-3 mb-3 p-3 rounded-xl bg-[var(--warm-sand)] border border-[var(--outline-variant)]/30">
         <div className="flex items-center gap-2 mb-1">
           <Icon name="lock" size={14} className="text-[var(--saffron)]" />
-          <span className="text-[12px] font-semibold tracking-widest uppercase text-[var(--saffron)]" style={{ fontFamily: "var(--font-label)" }}>Vedic Security</span>
+          <span className="text-[12px] font-semibold tracking-widest uppercase text-[var(--saffron)]" style={{ fontFamily: "var(--font-label)" }}>{t('side.security')}</span>
         </div>
-        <p className="text-[13px] text-[var(--text-muted)] leading-relaxed">Your family data is end-to-end encrypted.</p>
+        <p className="text-[13px] text-[var(--text-muted)] leading-relaxed">{t('side.securityDesc')}</p>
       </div>
 
       {/* Sign out */}
@@ -149,7 +156,7 @@ function NavContent({ pathname, onClose, onSignOut }: { pathname: string; onClos
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[var(--text-muted)] hover:text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/50 transition-all border-l-2 border-transparent"
         >
           <Icon name="logout" size={18} />
-          Sign Out
+          {t('side.signOut')}
         </button>
       </div>
     </>

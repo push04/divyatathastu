@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import { FileText, Users, MapPin, CalendarDays } from 'lucide-react'
@@ -64,7 +63,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
   const supabase = createClient()
 
   async function handleLogin(e: React.FormEvent) {
@@ -73,21 +71,31 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) {
       toast.error(error.message)
-    } else {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles').select('role').eq('id', user.id).single()
-        if (profile?.role === 'admin') {
-          router.push('/admin')
-          return
-        }
-      }
-      toast.success('Welcome back!')
-      router.push('/dashboard')
-      router.refresh()
+      setLoading(false)
+      return
     }
-    setLoading(false)
+
+    const { data: { user } } = await supabase.auth.getUser()
+    let target = '/dashboard'
+
+    // Resume the page the middleware bounced them off, if any.
+    const wanted = new URLSearchParams(window.location.search).get('redirect')
+    if (wanted && wanted.startsWith('/') && !wanted.startsWith('//')) target = wanted
+
+    if (user) {
+      const { data: profile } = await supabase
+        .from('profiles').select('role').eq('id', user.id).single()
+      if (profile?.role === 'admin') target = '/admin'
+    }
+
+    toast.success('Welcome back!')
+
+    // A HARD navigation, not router.push(). `signInWithPassword` has just
+    // written the session cookies in the browser; a soft RSC navigation can
+    // reach the middleware before those cookies are attached, which bounced
+    // the user back to an auth page and left the transition hanging until
+    // they refreshed by hand. A full document load always carries them.
+    window.location.assign(target)
   }
 
   async function handleGoogleLogin() {

@@ -60,14 +60,23 @@ export async function middleware(request: NextRequest) {
   const isProtected = PROTECTED_PATHS.some(p => path === p || path.startsWith(p + '/'))
 
   if (isProtected && !user) {
+    // Send existing users to /login, not /register. Pointing this at /register
+    // was half of a redirect ping-pong: a sign-in whose cookies had not yet
+    // landed bounced /dashboard → /register, and /register (which by then DID
+    // see the cookies) bounced straight back to /dashboard. During a soft
+    // client-side navigation that loop simply stalls, which is why the
+    // dashboard appeared to hang until a manual refresh.
     const url = request.nextUrl.clone()
-    url.pathname = '/register'
+    url.pathname = '/login'
     url.searchParams.set('redirect', path)
     return NextResponse.redirect(url)
   }
 
   if (path.startsWith('/admin') && !user) {
-    return NextResponse.redirect(new URL('/login', request.url))
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    url.searchParams.set('redirect', path)
+    return NextResponse.redirect(url)
   }
 
   if (path.startsWith('/admin') && user) {
@@ -82,7 +91,12 @@ export async function middleware(request: NextRequest) {
   }
 
   if ((path === '/login' || path === '/register') && user) {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+    // Honour ?redirect= so a bounced deep link resumes where it left off.
+    // It must be a relative in-app path - an absolute URL here would be an
+    // open redirect straight off the site.
+    const wanted = request.nextUrl.searchParams.get('redirect')
+    const safe = wanted && wanted.startsWith('/') && !wanted.startsWith('//') ? wanted : '/dashboard'
+    return NextResponse.redirect(new URL(safe, request.url))
   }
 
   return supabaseResponse

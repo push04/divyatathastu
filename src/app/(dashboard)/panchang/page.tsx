@@ -401,8 +401,11 @@ export default function PanchangPage() {
           remove the large empty gap that used to sit under the shorter card. */}
       <div className="max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-5 gap-5 items-start">
 
-        {/* Left column - calendar + moon + festivals */}
-        <div className="lg:col-span-2 space-y-4 lg:sticky lg:top-4">
+        {/* Left column - calendar + moon + sun + festivals + chakra.
+            Not sticky: with the chakra back in place this column is taller
+            than the viewport, and sticky positioning on an over-tall element
+            just pins it awkwardly mid-scroll. */}
+        <div className="lg:col-span-2 space-y-4">
           <div className="bg-white rounded-2xl border border-[var(--warm-sand)] shadow-sm p-5">
             <div className="flex items-center justify-between mb-4">
               <button onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1))}
@@ -487,6 +490,29 @@ export default function PanchangPage() {
               ))}
             </div>
           </div>
+
+          {/* Choghadiya Chakra wheel - stays in this column where it is visible
+              without hunting through a tab. */}
+          {panchang?.choghadiya && (
+            <div className="bg-white rounded-2xl border border-[var(--warm-sand)] shadow-sm p-5">
+              <h3 className="flex items-center gap-2 mb-4" style={{ fontFamily: "var(--font-body)", fontSize: 15, fontWeight: 700, color: 'var(--indigo-deep)' }}>
+                <Icon name="donut_large" size={18} className="text-[var(--saffron)]" />
+                Choghadiya Chakra
+              </h3>
+              <div className="flex justify-center">
+                <ChoghadiyaChakra choghadiya={panchang.choghadiya} currentH={isToday ? nowH : -1} />
+              </div>
+              {/* Legend */}
+              <div className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2">
+                {[['#10b981','Amrit'],['#3b82f6','Shubh'],['#22c55e','Labh'],['#f59e0b','Char'],['#ef4444','Udveg'],['#dc2626','Rog'],['#6b7280','Kaal']].map(([color, name]) => (
+                  <div key={name} className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: color as string }} />
+                    <span style={{ color: 'var(--warm-charcoal)', fontFamily: "var(--font-label)", fontSize: 13 }}>{name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Right column - tabbed features.
@@ -676,26 +702,6 @@ export default function PanchangPage() {
                       })}
                     </div>
 
-                    {/* Chakra wheel - moved here from the left column, where it
-                        made that column ~380px taller than this one and left a
-                        large empty gap beside the shorter tab panel. */}
-                    <div className="mt-6 pt-5" style={{ borderTop: '1px solid var(--warm-sand)' }}>
-                      <h3 className="flex items-center gap-2 mb-4" style={{ fontFamily: "var(--font-body)", fontSize: 15, fontWeight: 700, color: 'var(--indigo-deep)' }}>
-                        <Icon name="donut_large" size={18} className="text-[var(--saffron)]" />
-                        Choghadiya Chakra
-                      </h3>
-                      <div className="flex justify-center">
-                        <ChoghadiyaChakra choghadiya={panchang.choghadiya} currentH={isToday ? nowH : -1} />
-                      </div>
-                      <div className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2">
-                        {[['#10b981','Amrit'],['#3b82f6','Shubh'],['#22c55e','Labh'],['#f59e0b','Char'],['#ef4444','Udveg'],['#dc2626','Rog'],['#6b7280','Kaal']].map(([color, name]) => (
-                          <div key={name} className="flex items-center gap-1.5">
-                            <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: color as string }} />
-                            <span style={{ color: 'var(--warm-charcoal)', fontFamily: "var(--font-label)", fontSize: 13 }}>{name}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
                   </div>
                 )
               )}

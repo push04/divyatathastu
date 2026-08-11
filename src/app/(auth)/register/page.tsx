@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import { CheckCircle, Shield, Users, Clock } from 'lucide-react'
@@ -81,7 +81,6 @@ function RegisterForm() {
   const [form, setForm] = useState({ name: '', email: '', password: '', phone: '' })
   const [loading, setLoading] = useState(false)
   const [refCode, setRefCode] = useState('')
-  const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClient()
 
@@ -151,7 +150,12 @@ function RegisterForm() {
         body: JSON.stringify({ type: 'welcome', to: form.email, name: form.name }),
       }).catch(() => {})
       await claimReferral()
-      router.push('/dashboard')
+
+      // Hard navigation for the same reason as the login page: the session
+      // cookies were just written client-side, and a soft RSC navigation can
+      // hit the middleware before they are attached, stalling the transition.
+      window.location.assign('/dashboard')
+      return
     }
     setLoading(false)
   }
