@@ -5,6 +5,7 @@ import { Toaster } from 'sonner'
 import { LanguageProvider } from '@/components/i18n/LanguageProvider'
 import LanguagePrompt from '@/components/i18n/LanguagePrompt'
 import ChatWidget from '@/components/chat/ChatWidget'
+import AmbientOm from '@/components/AmbientOm'
 
 /* ── Type system ───────────────────────────────────────────────────────────
    All four families are self-hosted through next/font: no render-blocking
@@ -111,6 +112,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <LanguageProvider>
           {children}
           <LanguagePrompt />
+          {/* Sits just above the chat launcher, bottom-right, on every page. */}
+          <AmbientOm />
           <ChatWidget />
         </LanguageProvider>
         <Toaster

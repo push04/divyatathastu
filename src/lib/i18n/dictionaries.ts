@@ -140,6 +140,13 @@ export const en = {
   'side.signOut': 'Sign Out',
   'side.security': 'Vedic Security',
   'side.securityDesc': 'Your family data is end-to-end encrypted.',
+
+  // -- Ambient sound --
+  'sound.title': 'Ambient Om',
+  'sound.desc': 'A soft, continuous Om drone tuned to Sa. Plays quietly in the background as you browse.',
+  'sound.on': 'Sound on',
+  'sound.off': 'Sound off',
+  'sound.tapToPlay': 'Click anywhere on the page to begin - your browser blocks sound until you do.',
 } as const
 
 export type DictKey = keyof typeof en
@@ -269,6 +276,13 @@ const hi: Dict = {
   'side.signOut': 'साइन आउट',
   'side.security': 'वैदिक सुरक्षा',
   'side.securityDesc': 'आपके परिवार का डेटा एंड-टू-एंड एन्क्रिप्टेड है।',
+
+  // -- Ambient sound --
+  'sound.title': 'परिवेशी ॐ',
+  'sound.desc': 'सा पर आधारित कोमल, निरंतर ॐ ध्वनि। ब्राउज़ करते समय पृष्ठभूमि में धीमे बजती है।',
+  'sound.on': 'ध्वनि चालू',
+  'sound.off': 'ध्वनि बंद',
+  'sound.tapToPlay': 'शुरू करने के लिए पृष्ठ पर कहीं भी क्लिक करें - ब्राउज़र तब तक ध्वनि रोकता है।',
 }
 
 const gu: Dict = {
@@ -395,6 +409,13 @@ const gu: Dict = {
   'side.signOut': 'સાઇન આઉટ',
   'side.security': 'વૈદિક સુરક્ષા',
   'side.securityDesc': 'તમારા પરિવારનો ડેટા એન્ડ-ટુ-એન્ડ એન્ક્રિપ્ટેડ છે.',
+
+  // -- Ambient sound --
+  'sound.title': 'પરિવેશી ૐ',
+  'sound.desc': 'સા પર આધારિત કોમળ, સતત ૐ ધ્વનિ. બ્રાઉઝ કરતી વખતે પૃષ્ઠભૂમિમાં ધીમે વાગે છે.',
+  'sound.on': 'અવાજ ચાલુ',
+  'sound.off': 'અવાજ બંધ',
+  'sound.tapToPlay': 'શરૂ કરવા માટે પૃષ્ઠ પર ક્યાંય પણ ક્લિક કરો - બ્રાઉઝર ત્યાં સુધી અવાજ રોકે છે.',
 }
 
 const mr: Dict = {
@@ -521,6 +542,13 @@ const mr: Dict = {
   'side.signOut': 'साइन आउट',
   'side.security': 'वैदिक सुरक्षा',
   'side.securityDesc': 'तुमच्या कुटुंबाचा डेटा एंड-टू-एंड एन्क्रिप्टेड आहे.',
+
+  // -- Ambient sound --
+  'sound.title': 'परिवेशी ॐ',
+  'sound.desc': 'सा वर आधारित मृदू, अखंड ॐ ध्वनी. ब्राउझ करताना पार्श्वभूमीत हळू वाजते.',
+  'sound.on': 'आवाज सुरू',
+  'sound.off': 'आवाज बंद',
+  'sound.tapToPlay': 'सुरू करण्यासाठी पृष्ठावर कुठेही क्लिक करा - ब्राउझर तोपर्यंत आवाज थांबवतो.',
 }
 
 const ta: Dict = {
@@ -647,6 +675,13 @@ const ta: Dict = {
   'side.signOut': 'வெளியேறு',
   'side.security': 'வேத பாதுகாப்பு',
   'side.securityDesc': 'உங்கள் குடும்பத் தரவு எண்ட்-டு-எண்ட் மறையாக்கம் செய்யப்பட்டுள்ளது.',
+
+  // -- Ambient sound --
+  'sound.title': 'சூழல் ஓம்',
+  'sound.desc': 'ச-வில் அமைந்த மென்மையான, தொடர்ச்சியான ஓம் ஒலி. உலாவும்போது பின்னணியில் மெதுவாக ஒலிக்கும்.',
+  'sound.on': 'ஒலி இயக்கம்',
+  'sound.off': 'ஒலி நிறுத்தம்',
+  'sound.tapToPlay': 'தொடங்க பக்கத்தில் எங்கும் கிளிக் செய்யவும் - அதுவரை உலாவி ஒலியைத் தடுக்கும்.',
 }
 
 const bn: Dict = {
@@ -773,6 +808,13 @@ const bn: Dict = {
   'side.signOut': 'সাইন আউট',
   'side.security': 'বৈদিক নিরাপত্তা',
   'side.securityDesc': 'আপনার পরিবারের ডেটা এন্ড-টু-এন্ড এনক্রিপ্টেড।',
+
+  // -- Ambient sound --
+  'sound.title': 'পারিপার্শ্বিক ॐ',
+  'sound.desc': 'সা-তে বাঁধা কোমল, অবিরাম ॐ ধ্বনি। ব্রাউজ করার সময় নেপথ্যে মৃদু বাজে।',
+  'sound.on': 'শব্দ চালু',
+  'sound.off': 'শব্দ বন্ধ',
+  'sound.tapToPlay': 'শুরু করতে পাতার যেকোনো জায়গায় ক্লিক করুন - ব্রাউজার ততক্ষণ শব্দ আটকে রাখে।',
 }
 
 export const DICTIONARIES: Partial<Record<Lang, Dict>> = { en, hi, gu, mr, ta, bn }
