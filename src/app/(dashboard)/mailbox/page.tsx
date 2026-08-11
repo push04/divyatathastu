@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
+import Icon from '@/components/ui/Icon'
 interface Thread {
   id: string
   subject: string
@@ -41,7 +42,7 @@ export default function MailboxPage() {
       setUserId(user.id)
       await loadThreads(user.id)
 
-      // Realtime subscription — stored outside async fn so cleanup can reach it
+      // Realtime subscription - stored outside async fn so cleanup can reach it
       sub = supabase.channel('mailbox')
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mail_messages' }, payload => {
           const msg = payload.new as Message
@@ -115,15 +116,15 @@ export default function MailboxPage() {
         <div className="p-4 border-b border-[var(--warm-sand)]">
           <div className="flex items-center justify-between mb-3">
             <h1 className="font-bold text-[var(--indigo-deep)] flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>mail</span>
+              <Icon name="mail" size={18} />
               Mailbox
             </h1>
-            <button onClick={() => { setComposing(true); setActiveThread(null) }} className="btn-divine text-xs px-3 py-1.5 inline-flex items-center gap-1"><span className="material-symbols-outlined text-[14px]">edit</span>New</button>
+            <button onClick={() => { setComposing(true); setActiveThread(null) }} className="btn-divine text-xs px-3 py-1.5 inline-flex items-center gap-1"><Icon name="edit" size={14} />New</button>
           </div>
         </div>
         <div className="flex-1 overflow-y-auto">
           {threads.length === 0 ? (
-            <div className="p-6 text-center text-sm text-[var(--warm-charcoal)]/50">No messages yet</div>
+            <div className="p-6 text-center text-sm text-[var(--text-muted)]">No messages yet</div>
           ) : (
             threads.map(t => (
               <button
@@ -135,8 +136,8 @@ export default function MailboxPage() {
                   <p className="text-sm font-medium text-[var(--indigo-deep)] truncate">{t.subject}</p>
                 </div>
                 <div className="flex items-center justify-between mt-1">
-                  <span className={`text-xs px-1.5 py-0.5 rounded ${t.status === 'open' ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/50'}`}>{t.status}</span>
-                  <span className="text-xs text-[var(--warm-charcoal)]/40">{new Date(t.last_message_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
+                  <span className={`text-xs px-1.5 py-0.5 rounded ${t.status === 'open' ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--warm-sand)] text-[var(--text-muted)]'}`}>{t.status}</span>
+                  <span className="text-xs text-[var(--text-muted)]">{new Date(t.last_message_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</span>
                 </div>
               </button>
             ))
@@ -152,7 +153,7 @@ export default function MailboxPage() {
             onClick={() => { setActiveThread(null); setComposing(false) }}
             className="lg:hidden flex items-center gap-2 px-4 py-3 border-b border-[var(--warm-sand)] bg-white text-sm text-[var(--terracotta)] font-medium"
           >
-            <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+            <Icon name="arrow_back" size={18} />
             Back to Mailbox
           </button>
         )}
@@ -180,7 +181,7 @@ export default function MailboxPage() {
           <>
             <div className="px-6 py-4 border-b border-[var(--warm-sand)] bg-white">
               <h2 className="font-bold text-[var(--indigo-deep)]">{activeThread.subject}</h2>
-              <span className={`text-xs px-2 py-0.5 rounded mt-1 inline-block ${activeThread.status === 'open' ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/50'}`}>{activeThread.status}</span>
+              <span className={`text-xs px-2 py-0.5 rounded mt-1 inline-block ${activeThread.status === 'open' ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--warm-sand)] text-[var(--text-muted)]'}`}>{activeThread.status}</span>
             </div>
             <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-[var(--kutch-white)]">
               {messages.map(m => {
@@ -190,7 +191,7 @@ export default function MailboxPage() {
                     <div className={`max-w-[70%] rounded-2xl px-4 py-3 text-sm ${isOwn ? 'bg-[var(--indigo-deep)] text-white rounded-tr-sm' : 'bg-white border border-[var(--warm-sand)] text-[var(--warm-charcoal)] rounded-tl-sm'}`}>
                       {!isOwn && <p className="text-xs font-bold mb-1 text-[var(--terracotta)]">MahaTathastu Support</p>}
                       <p className="leading-relaxed">{m.content}</p>
-                      <p className={`text-xs mt-1 ${isOwn ? 'text-white/50' : 'text-[var(--warm-charcoal)]/40'}`}>{new Date(m.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</p>
+                      <p className={`text-xs mt-1 ${isOwn ? 'text-[var(--text-on-dark-secondary)]' : 'text-[var(--text-muted)]'}`}>{new Date(m.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</p>
                     </div>
                   </div>
                 )
@@ -205,10 +206,10 @@ export default function MailboxPage() {
         ) : (
           <div className="flex-1 flex items-center justify-center text-center">
             <div>
-              <span className="material-symbols-outlined text-[56px] text-[var(--outline-variant)] mb-4 block">mail</span>
+              <Icon name="mail" size={56} className="text-[var(--outline-variant)] mb-4 block" />
               <p className="font-bold text-[var(--indigo-deep)] text-xl mb-2">Your Mailbox</p>
-              <p className="text-[var(--warm-charcoal)]/60 mb-6">Select a conversation or start a new one</p>
-              <button onClick={() => setComposing(true)} className="btn-divine px-6 py-2.5 inline-flex items-center gap-2"><span className="material-symbols-outlined text-[16px]">edit</span>New Message</button>
+              <p className="text-[var(--text-secondary)] mb-6">Select a conversation or start a new one</p>
+              <button onClick={() => setComposing(true)} className="btn-divine px-6 py-2.5 inline-flex items-center gap-2"><Icon name="edit" size={16} />New Message</button>
             </div>
           </div>
         )}

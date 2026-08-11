@@ -73,7 +73,7 @@ Return ONLY this JSON structure, no other text:
       "rationale": "Two sentences on why this supporting crystal rounds out the energetic prescription."
     }
   ],
-  "soulMessage": "One to two sentences — a personalized message to the seeker about their cosmic crystal journey."
+  "soulMessage": "One to two sentences - a personalized message to the seeker about their cosmic crystal journey."
 }`
 
     const completion = await groq.chat.completions.create({

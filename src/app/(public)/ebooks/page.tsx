@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { EbookCard } from './EbookCardClient'
 
+import Icon from '@/components/ui/Icon'
 export const metadata: Metadata = {
   title: 'Ebooks | MahaTathastu - Vedic Wisdom Library',
   description: 'Download premium ebooks on Vedic astrology, numerology, Vastu, meditation and spiritual sciences.',
@@ -73,15 +74,15 @@ export default async function EbooksPage() {
         <div className="max-w-7xl mx-auto w-full">
           <div className="flex items-end justify-between gap-8">
             <div>
-              <p className="text-[10px] uppercase tracking-widest mb-3 text-[var(--saffron)]" style={{ fontFamily: "'Sora', sans-serif" }}>Digital Library</p>
-              <h1 className="text-white mb-3 leading-tight" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, fontSize: 'clamp(36px, 5vw, 58px)' }}>
+              <p className="text-[12px] uppercase tracking-widest mb-3 text-[var(--saffron)]" style={{ fontFamily: "var(--font-label)" }}>Digital Library</p>
+              <h1 className="text-white mb-3 leading-tight" style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 'clamp(36px, 5vw, 58px)' }}>
                 Vedic Wisdom Library
               </h1>
-              <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '15px', color: 'rgba(255,255,255,0.50)', maxWidth: '480px' }}>
+              <p style={{ fontFamily: "var(--font-body)", fontSize: '15px', color: 'var(--text-on-dark-secondary)', maxWidth: '480px' }}>
                 Premium ebooks on Jyotish, Numerology, Vastu, Mantra and Sanatan philosophy
               </p>
             </div>
-            <p className="text-[11px] whitespace-nowrap hidden sm:block" style={{ fontFamily: "'Sora', sans-serif", color: 'rgba(255,255,255,0.25)' }}>
+            <p className="text-[13px] whitespace-nowrap hidden sm:block" style={{ fontFamily: "var(--font-label)", color: 'var(--text-on-dark-muted)' }}>
               {ebooks.length} {ebooks.length === 1 ? 'Book' : 'Books'}{free.length > 0 ? ` · ${free.length} Free` : ''}
             </p>
           </div>
@@ -97,13 +98,13 @@ export default async function EbooksPage() {
             style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)' }}
           >
             <div className="flex items-center gap-3 flex-shrink-0">
-              <span className="material-symbols-outlined text-[36px] text-emerald-300" style={{ fontVariationSettings: "'FILL' 1" }}>water_drop</span>
+              <Icon name="water_drop" size={36} className="text-emerald-300" />
               <div>
-                <p className="text-[10px] uppercase tracking-widest text-emerald-300/70 mb-0.5" style={{ fontFamily: "'Sora', sans-serif" }}>Sacred Product · Limited Batches</p>
-                <h2 className="shimmer-text text-2xl font-black leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <p className="text-[12px] uppercase tracking-widest text-emerald-300/70 mb-0.5" style={{ fontFamily: "var(--font-label)" }}>Sacred Product · Limited Batches</p>
+                <h2 className="shimmer-text text-2xl font-black leading-tight" style={{ fontFamily: "var(--font-display)" }}>
                   Ardra Jalam
                 </h2>
-                <p className="text-sm text-white/60 mt-0.5" style={{ fontFamily: "'DM Sans', sans-serif" }}>Sacred Healing Water — charged under Ardra Nakshatra</p>
+                <p className="text-sm text-[var(--text-on-dark-secondary)] mt-0.5" style={{ fontFamily: "var(--font-body)" }}>Sacred Healing Water - charged under Ardra Nakshatra</p>
               </div>
             </div>
             <div className="sm:ml-auto flex-shrink-0">
@@ -111,7 +112,7 @@ export default async function EbooksPage() {
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all group-hover:opacity-90"
                 style={{ background: 'rgba(212,160,23,0.15)', border: '1px solid rgba(212,160,23,0.4)' }}
               >
-                <span className="shimmer-text" style={{ fontFamily: "'Playfair Display', serif" }}>Shop Now →</span>
+                <span className="shimmer-text" style={{ fontFamily: "var(--font-display)" }}>Shop Now →</span>
               </span>
             </div>
           </Link>
@@ -120,9 +121,9 @@ export default async function EbooksPage() {
 
       {ebooks.length === 0 ? (
         <section className="py-20 px-6 bg-[var(--kutch-white)] text-center">
-          <span className="material-symbols-outlined text-[56px] text-[var(--indigo-deep)]/20 block mb-4" style={{ fontVariationSettings: "'FILL' 1" }}>auto_stories</span>
-          <h2 className="text-xl font-bold text-[var(--indigo-deep)]/50 mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Library Coming Soon</h2>
-          <p className="text-sm text-[var(--warm-charcoal)]/50">Our collection of Vedic wisdom ebooks is being curated. Check back soon.</p>
+          <Icon name="auto_stories" size={56} className="text-[var(--indigo-deep)]/20 block mb-4" />
+          <h2 className="text-xl font-bold text-[var(--text-muted)] mb-2" style={{ fontFamily: "var(--font-display)" }}>Library Coming Soon</h2>
+          <p className="text-sm text-[var(--text-muted)]">Our collection of Vedic wisdom ebooks is being curated. Check back soon.</p>
         </section>
       ) : (
         <>
@@ -131,7 +132,7 @@ export default async function EbooksPage() {
               <div className="max-w-7xl mx-auto">
                 <div className="flex items-center gap-3 mb-8">
                   <span className="inline-block w-8 border-t-2 border-[var(--terracotta)]" />
-                  <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '24px', color: 'var(--indigo-deep)', fontWeight: 600 }}>Free Downloads</h3>
+                  <h3 style={{ fontFamily: "var(--font-display)", fontSize: '24px', color: 'var(--indigo-deep)', fontWeight: 600 }}>Free Downloads</h3>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {free.map(book => <EbookCard key={book.id} book={book} />)}
@@ -145,7 +146,7 @@ export default async function EbooksPage() {
               <div className="max-w-7xl mx-auto">
                 <div className="flex items-center gap-3 mb-8">
                   <span className="inline-block w-8 border-t-2 border-[var(--terracotta)]" />
-                  <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: '24px', color: 'var(--indigo-deep)', fontWeight: 600 }}>Premium Library</h3>
+                  <h3 style={{ fontFamily: "var(--font-display)", fontSize: '24px', color: 'var(--indigo-deep)', fontWeight: 600 }}>Premium Library</h3>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                   {paid.map(book => <EbookCard key={book.id} book={book} />)}
@@ -157,13 +158,13 @@ export default async function EbooksPage() {
       )}
 
       <section className="py-8 px-6 bg-[var(--warm-sand)] text-center">
-        <p className="text-sm mb-3" style={{ fontFamily: "'DM Sans', sans-serif", color: 'rgba(28,30,74,0.55)' }}>Already purchased an ebook?</p>
+        <p className="text-sm mb-3" style={{ fontFamily: "var(--font-body)", color: 'rgba(28,30,74,0.55)' }}>Already purchased an ebook?</p>
         <Link
           href="/my-library"
           className="inline-flex items-center gap-2 font-semibold text-sm"
-          style={{ fontFamily: "'DM Sans', sans-serif", background: 'var(--indigo-deep)', color: 'white', borderRadius: '8px', padding: '10px 24px' }}
+          style={{ fontFamily: "var(--font-body)", background: 'var(--indigo-deep)', color: 'white', borderRadius: '8px', padding: '10px 24px' }}
         >
-          <span className="material-symbols-outlined text-[16px]">library_books</span>
+          <Icon name="library_books" size={16} />
           Access My Library
         </Link>
       </section>

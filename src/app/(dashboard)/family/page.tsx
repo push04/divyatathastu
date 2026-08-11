@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
+import Icon from '@/components/ui/Icon'
 interface FamilyMember {
   id: string
   full_name: string
@@ -77,16 +78,16 @@ export default function FamilyPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[var(--indigo-deep)]">Family Management</h1>
-          {familyName && <p className="text-sm text-[var(--warm-charcoal)]/60 mt-0.5">{familyName} · {members.length} members</p>}
+          {familyName && <p className="text-sm text-[var(--text-secondary)] mt-0.5">{familyName} · {members.length} members</p>}
         </div>
-        <Link href="/family/add" className="btn-divine text-sm px-4 py-2 inline-flex items-center gap-1.5"><span className="material-symbols-outlined text-[16px]">person_add</span>Add Member</Link>
+        <Link href="/family/add" className="btn-divine text-sm px-4 py-2 inline-flex items-center gap-1.5"><Icon name="person_add" size={16} />Add Member</Link>
       </div>
 
       {members.length === 0 ? (
         <div className="bg-white rounded-2xl border border-dashed border-[var(--warm-sand)] p-16 text-center">
-          <div className="flex justify-center mb-4"><span className="material-symbols-outlined text-[48px] text-[var(--indigo-deep)]" style={{ fontVariationSettings: "'FILL' 1" }}>family_restroom</span></div>
+          <div className="flex justify-center mb-4"><Icon name="family_restroom" size={48} className="text-[var(--indigo-deep)]" /></div>
           <h2 className="text-xl font-bold text-[var(--indigo-deep)] mb-2">Start Your Family Tree</h2>
-          <p className="text-[var(--warm-charcoal)]/60 mb-6 max-w-sm mx-auto">Add family members to generate personalized spiritual reports for each of them</p>
+          <p className="text-[var(--text-secondary)] mb-6 max-w-sm mx-auto">Add family members to generate personalized spiritual reports for each of them</p>
           <Link href="/family/add" className="btn-divine px-8 py-3">Add First Member</Link>
         </div>
       ) : (
@@ -95,36 +96,36 @@ export default function FamilyPage() {
             <Link key={m.id} href={`/family/${m.id}`} className="card-divine p-5 hover:shadow-lg transition-all group">
               <div className="flex items-start gap-3 mb-4">
                 <div className="w-12 h-12 rounded-full bg-[var(--indigo-deep)] flex items-center justify-center flex-shrink-0">
-                  <span className="material-symbols-outlined text-[20px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{RELATION_ICONS[m.relation.toLowerCase()] || 'person'}</span>
+                  <Icon name={RELATION_ICONS[m.relation.toLowerCase()] || 'person'} size={20} className="text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-[var(--indigo-deep)] truncate">{m.full_name}</h3>
-                  <p className="text-sm text-[var(--warm-charcoal)]/60 capitalize">{m.relation}</p>
+                  <p className="text-sm text-[var(--text-secondary)] capitalize">{m.relation}</p>
                 </div>
               </div>
 
-              <div className="space-y-1.5 text-sm text-[var(--warm-charcoal)]/70">
+              <div className="space-y-1.5 text-sm text-[var(--text-secondary)]">
                 <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>cake</span>
+                  <Icon name="cake" size={16} />
                   <span>{new Date(m.date_of_birth).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} ({getAge(m.date_of_birth)} yrs)</span>
                 </div>
-                {m.place_of_birth && <div className="flex items-center gap-2"><span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>location_on</span><span>{m.place_of_birth}</span></div>}
-                {m.time_of_birth && <div className="flex items-center gap-2"><span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>schedule</span><span>{m.time_of_birth}</span></div>}
+                {m.place_of_birth && <div className="flex items-center gap-2"><Icon name="location_on" size={16} /><span>{m.place_of_birth}</span></div>}
+                {m.time_of_birth && <div className="flex items-center gap-2"><Icon name="schedule" size={16} /><span>{m.time_of_birth}</span></div>}
               </div>
 
               <div className="mt-4 pt-4 border-t border-[var(--warm-sand)] flex items-center justify-between">
-                <span className="text-xs text-[var(--warm-charcoal)]/50">{m.reports_count} report{m.reports_count !== 1 ? 's' : ''}</span>
-                <span className="text-xs text-[var(--terracotta)] font-medium group-hover:underline inline-flex items-center gap-0.5">View Profile <span className="material-symbols-outlined text-[14px]">arrow_forward</span></span>
+                <span className="text-xs text-[var(--text-muted)]">{m.reports_count} report{m.reports_count !== 1 ? 's' : ''}</span>
+                <span className="text-xs text-[var(--terracotta)] font-medium group-hover:underline inline-flex items-center gap-0.5">View Profile <Icon name="arrow_forward" size={14} /></span>
               </div>
             </Link>
           ))}
 
           {/* Add card */}
           <Link href="/family/add" className="border-2 border-dashed border-[var(--warm-sand)] hover:border-[var(--terracotta)] rounded-2xl p-5 flex flex-col items-center justify-center text-center gap-3 transition-all group min-h-[180px]">
-            <div className="w-12 h-12 rounded-full border-2 border-dashed border-[var(--warm-sand)] group-hover:border-[var(--terracotta)] flex items-center justify-center text-[var(--warm-charcoal)]/40 group-hover:text-[var(--terracotta)] transition-all"><span className="material-symbols-outlined text-[22px]">add</span></div>
+            <div className="w-12 h-12 rounded-full border-2 border-dashed border-[var(--warm-sand)] group-hover:border-[var(--terracotta)] flex items-center justify-center text-[var(--text-muted)] group-hover:text-[var(--terracotta)] transition-all"><Icon name="add" size={22} /></div>
             <div>
-              <p className="font-medium text-[var(--warm-charcoal)]/60 group-hover:text-[var(--terracotta)] transition-all">Add Member</p>
-              <p className="text-xs text-[var(--warm-charcoal)]/40 mt-0.5">Generate reports for them</p>
+              <p className="font-medium text-[var(--text-secondary)] group-hover:text-[var(--terracotta)] transition-all">Add Member</p>
+              <p className="text-xs text-[var(--text-muted)] mt-0.5">Generate reports for them</p>
             </div>
           </Link>
         </div>

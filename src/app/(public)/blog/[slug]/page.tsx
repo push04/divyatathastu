@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 
+import Icon from '@/components/ui/Icon'
 export const revalidate = 3600
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -39,16 +40,16 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       {/* Header */}
       <div className="page-banner text-left py-12">
         <div className="max-w-3xl mx-auto page-banner-inner">
-          <Link href="/blog" className="text-white/60 hover:text-white text-sm mb-6 inline-flex items-center gap-1.5">
-            <span className="material-symbols-outlined text-[16px]">arrow_back</span>Back to Blog
+          <Link href="/blog" className="text-[var(--text-on-dark-secondary)] hover:text-white text-sm mb-6 inline-flex items-center gap-1.5">
+            <Icon name="arrow_back" size={16} />Back to Blog
           </Link>
           <span className="text-xs font-bold text-[var(--saffron)] bg-white/10 px-3 py-1 rounded-full block w-fit mb-3">
             {post.category}
           </span>
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 leading-tight" style={{ fontFamily: "var(--font-display)" }}>
             {post.title}
           </h1>
-          <p className="text-white/60 text-sm">
+          <p className="text-[var(--text-on-dark-secondary)] text-sm">
             {post.read_time} min read &middot; {new Date(post.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
           </p>
         </div>
@@ -73,8 +74,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
           <p className="text-xl font-bold text-[var(--indigo-deep)] mb-2">
             Discover Your Personal {post.category} Report
           </p>
-          <p className="text-[var(--warm-charcoal)]/60 mb-5">
-            Get a detailed AI-generated report personalized for you and your family
+          <p className="text-[var(--text-secondary)] mb-5">
+            Get a detailed report personalized for you and your family
           </p>
           <Link href="/reports/generate" className="btn-divine px-8 py-3">Generate My Report</Link>
         </div>

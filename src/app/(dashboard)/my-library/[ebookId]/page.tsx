@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import SudarshanLoader from '@/components/SudarshanLoader'
 import { createClient } from '@/lib/supabase/client'
+import Icon from '@/components/ui/Icon'
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type PageFlipInstance = any
 
@@ -95,7 +96,7 @@ export default function EbookReaderPage() {
         // Fill with a lightweight placeholder up front so the reader can open with the
         // correct page count/navigation as soon as page 1 is ready, instead of blocking
         // on every page rendering first (which made long books take ages to open).
-        const placeholderSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1131"><rect width="100%" height="100%" fill="#1a1a2e"/><text x="50%" y="50%" fill="#666" font-family="sans-serif" font-size="24" text-anchor="middle">Loading page…</text></svg>'
+        const placeholderSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1131"><rect width="100%" height="100%" fill="#1a1a2e"/><text x="50%" y="50%" fill="#666" font-family="sans-serif" font-size="24" text-anchor="middle">Loading page...</text></svg>'
         const placeholder = 'data:image/svg+xml,' + encodeURIComponent(placeholderSvg)
         const images: string[] = new Array(pages).fill(placeholder)
         pageImagesRef.current = images
@@ -104,7 +105,7 @@ export default function EbookReaderPage() {
           if (!alive) return
           const pdfPage = await doc.getPage(i)
           // Use higher scale for crisp rendering on all DPR levels.
-          // We render at 3× the native PDF unit size — this is enough for 3× displays
+          // We render at 3× the native PDF unit size - this is enough for 3× displays
           // and still sharp when downsampled for 1× or 2× displays.
           const scale = Math.max(window.devicePixelRatio * 2, 3)
           const vp = pdfPage.getViewport({ scale })
@@ -133,7 +134,7 @@ export default function EbookReaderPage() {
           setRenderedCount(i)
 
           if (i === 1) {
-            // Open the reader now — the rest render in the background below
+            // Open the reader now - the rest render in the background below
             setLoadStatus('ready')
           } else if (flipRef.current && (i % 3 === 0 || i === pages)) {
             // Backfill already-open reader with newly rendered pages, preserving current page
@@ -193,7 +194,7 @@ export default function EbookReaderPage() {
     let onResize: (() => void) | null = null
 
     // page-flip's internal canvas is sized to raw CSS pixels with no devicePixelRatio
-    // scaling, so on any Retina/high-DPI screen the browser upscales a low-res bitmap —
+    // scaling, so on any Retina/high-DPI screen the browser upscales a low-res bitmap -
     // this is what makes the reader look blurry. Re-raise the canvas's backing-store
     // resolution and compensate with a matching context scale so drawing stays crisp.
     function applyHiDpiFix() {
@@ -251,7 +252,7 @@ export default function EbookReaderPage() {
 
       flipRef.current = pf
 
-      // page-flip resets the canvas (and its transform) on window resize — registering
+      // page-flip resets the canvas (and its transform) on window resize - registering
       // our listener after its own ensures we re-apply the fix right after each resize.
       onResize = () => applyHiDpiFix()
       window.addEventListener('resize', onResize)
@@ -405,7 +406,7 @@ export default function EbookReaderPage() {
       <SudarshanLoader size="lg" />
       {loadStatus === 'rendering' ? (
         <div className="text-center space-y-3 w-72">
-          <p className="text-white/60 text-sm font-medium">Preparing your book…</p>
+          <p className="text-[var(--text-on-dark-secondary)] text-sm font-medium">Preparing your book...</p>
           <div className="relative h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.08)' }}>
             <motion.div
               className="absolute inset-y-0 left-0 rounded-full"
@@ -414,19 +415,19 @@ export default function EbookReaderPage() {
               transition={{ duration: 0.3 }}
             />
           </div>
-          <p className="text-white/30 text-xs">{renderedCount} of {totalPages} pages · {renderPct}%</p>
+          <p className="text-[var(--text-on-dark-muted)] text-xs">{renderedCount} of {totalPages} pages · {renderPct}%</p>
         </div>
       ) : (
-        <p className="text-white/40 text-sm">Opening your book…</p>
+        <p className="text-[var(--text-on-dark-muted)] text-sm">Opening your book...</p>
       )}
     </div>
   )
 
   if (loadStatus === 'error') return (
     <div className="fixed inset-0 flex flex-col items-center justify-center gap-4" style={{ background: '#0D0C1D' }}>
-      <span className="material-symbols-outlined text-[52px] text-red-400" style={{ fontVariationSettings: "'FILL' 1" }}>lock</span>
-      <p className="text-white/80 font-semibold text-lg">{error}</p>
-      <p className="text-white/40 text-sm">Purchase this ebook to access it</p>
+      <Icon name="lock" size={52} className="text-red-400" />
+      <p className="text-[var(--text-on-dark)] font-semibold text-lg">{error}</p>
+      <p className="text-[var(--text-on-dark-muted)] text-sm">Purchase this ebook to access it</p>
       <button onClick={() => router.back()}
         className="mt-3 px-6 py-2.5 rounded-xl text-sm font-semibold text-white"
         style={{ background: 'var(--terracotta)' }}>
@@ -463,68 +464,68 @@ export default function EbookReaderPage() {
           style={{ background: 'rgba(14,12,30,0.96)', borderColor: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(20px)', height: 52 }}
         >
           <button onClick={() => router.back()}
-            className="flex items-center gap-1.5 text-white/50 hover:text-white/90 transition-colors text-sm">
-            <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+            className="flex items-center gap-1.5 text-[var(--text-on-dark-secondary)] hover:text-[var(--text-on-dark)] transition-colors text-sm">
+            <Icon name="arrow_back" size={18} />
             Library
           </button>
 
           <div className="text-center absolute left-1/2 -translate-x-1/2 max-w-[260px] sm:max-w-sm">
-            <p className="text-white/75 text-[13px] font-semibold truncate" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <p className="text-[var(--text-on-dark)] text-[14px] font-semibold truncate" style={{ fontFamily: "var(--font-display)" }}>
               {meta?.title}
             </p>
-            {meta?.author && <p className="text-white/30 text-[10px] mt-0.5 hidden sm:block">{meta.author}</p>}
+            {meta?.author && <p className="text-[var(--text-on-dark-muted)] text-[12px] mt-0.5 hidden sm:block">{meta.author}</p>}
           </div>
 
           <div className="flex items-center gap-1">
             {/* ToC */}
             {toc.length > 0 && (
               <button onClick={() => setShowToC(s => !s)} title="Table of Contents"
-                className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${showToC ? 'bg-white/20 text-white' : 'text-white/50 hover:text-white hover:bg-white/10'}`}>
-                <span className="material-symbols-outlined text-[17px]">toc</span>
+                className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${showToC ? 'bg-white/20 text-white' : 'text-[var(--text-on-dark-secondary)] hover:text-white hover:bg-white/10'}`}>
+                <Icon name="toc" size={17} />
               </button>
             )}
 
             {/* Bookmark */}
             <button onClick={() => saveBookmark(currentPage)} title={`Bookmark page ${currentPage + 1}`}
-              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${bookmark === currentPage ? 'text-[var(--saffron)]' : 'text-white/50 hover:text-white hover:bg-white/10'}`}>
-              <span className="material-symbols-outlined text-[17px]" style={{ fontVariationSettings: bookmark === currentPage ? "'FILL' 1" : "'FILL' 0" }}>bookmark</span>
+              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${bookmark === currentPage ? 'text-[var(--saffron)]' : 'text-[var(--text-on-dark-secondary)] hover:text-white hover:bg-white/10'}`}>
+              <Icon name="bookmark" size={17} />
             </button>
 
             <div className="w-px h-5 mx-0.5 hidden sm:block" style={{ background: 'rgba(255,255,255,0.08)' }} />
 
             {/* Zoom */}
             <button onClick={() => setZoom(z => Math.max(+(z - 0.15).toFixed(2), 0.4))}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-all">
-              <span className="material-symbols-outlined text-[17px]">zoom_out</span>
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-on-dark-secondary)] hover:text-white hover:bg-white/10 transition-all">
+              <Icon name="zoom_out" size={17} />
             </button>
             <button onClick={() => setZoom(1)}
-              className="text-[10px] text-white/30 hover:text-white/70 transition-colors w-10 text-center tabular-nums">
+              className="text-[12px] text-[var(--text-on-dark-muted)] hover:text-[var(--text-on-dark-secondary)] transition-colors w-10 text-center tabular-nums">
               {Math.round(zoom * 100)}%
             </button>
             <button onClick={() => setZoom(z => Math.min(+(z + 0.15).toFixed(2), 2.5))}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-all">
-              <span className="material-symbols-outlined text-[17px]">zoom_in</span>
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-on-dark-secondary)] hover:text-white hover:bg-white/10 transition-all">
+              <Icon name="zoom_in" size={17} />
             </button>
 
             <div className="w-px h-5 mx-0.5 hidden sm:block" style={{ background: 'rgba(255,255,255,0.08)' }} />
 
             {/* Sepia toggle */}
             <button onClick={() => setTheme(t => t === 'dark' ? 'sepia' : 'dark')} title="Toggle sepia mode"
-              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${theme === 'sepia' ? 'bg-amber-500/20 text-amber-400' : 'text-white/50 hover:text-white hover:bg-white/10'}`}>
-              <span className="material-symbols-outlined text-[17px]">wb_sunny</span>
+              className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${theme === 'sepia' ? 'bg-amber-500/20 text-amber-400' : 'text-[var(--text-on-dark-secondary)] hover:text-white hover:bg-white/10'}`}>
+              <Icon name="wb_sunny" size={17} />
             </button>
 
             {/* Fullscreen */}
             <button onClick={toggleFullscreen} title={isFullscreen ? 'Exit fullscreen (F)' : 'Fullscreen (F)'}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-all">
-              <span className="material-symbols-outlined text-[17px]">{isFullscreen ? 'fullscreen_exit' : 'fullscreen'}</span>
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--text-on-dark-secondary)] hover:text-white hover:bg-white/10 transition-all">
+              <Icon name={isFullscreen ? 'fullscreen_exit' : 'fullscreen'} size={17} />
             </button>
 
             <div className="w-px h-5 mx-0.5" style={{ background: 'rgba(255,255,255,0.08)' }} />
 
-            <div className="flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold tracking-wide"
-              style={{ background: 'rgba(212,160,23,0.1)', color: '#D4A017' }}>
-              <span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'FILL' 1" }}>lock</span>
+            <div className="flex items-center gap-1 px-2 py-1 rounded-lg text-[12px] font-bold tracking-wide"
+              style={{ background: 'rgba(212,160,23,0.1)', color: '#C9992E' }}>
+              <Icon name="lock" size={13} />
               <span className="hidden sm:inline">Protected</span>
             </div>
           </div>
@@ -539,15 +540,15 @@ export default function EbookReaderPage() {
             style={{ background: 'rgba(10,9,24,0.97)', borderColor: 'rgba(255,255,255,0.07)', backdropFilter: 'blur(24px)' }}
           >
             <div className="px-4 py-3 border-b flex items-center justify-between" style={{ borderColor: 'rgba(255,255,255,0.07)' }}>
-              <span className="text-white/80 text-sm font-semibold tracking-wide">Contents</span>
-              <button onClick={() => setShowToC(false)} className="text-white/40 hover:text-white/80 transition-colors">
-                <span className="material-symbols-outlined text-[18px]">close</span>
+              <span className="text-[var(--text-on-dark)] text-sm font-semibold tracking-wide">Contents</span>
+              <button onClick={() => setShowToC(false)} className="text-[var(--text-on-dark-muted)] hover:text-[var(--text-on-dark)] transition-colors">
+                <Icon name="close" size={18} />
               </button>
             </div>
             <div className="flex-1 overflow-y-auto py-2">
               {toc.map((item, i) => (
                 <button key={i} onClick={() => { goToPage(item.page); setShowToC(false) }}
-                  className="w-full text-left px-4 py-2 text-sm text-white/60 hover:text-white hover:bg-white/5 transition-all truncate">
+                  className="w-full text-left px-4 py-2 text-sm text-[var(--text-on-dark-secondary)] hover:text-white hover:bg-white/5 transition-all truncate">
                   {item.title}
                 </button>
               ))}
@@ -580,7 +581,7 @@ export default function EbookReaderPage() {
             className="absolute left-2 sm:left-4 z-20 w-11 h-11 rounded-full flex items-center justify-center text-white"
             style={{ background: 'rgba(255,255,255,0.07)', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer' }}
           >
-            <span className="material-symbols-outlined text-[24px]">chevron_left</span>
+            <Icon name="chevron_left" size={24} />
           </motion.button>
 
           {/* Right nav arrow */}
@@ -592,7 +593,7 @@ export default function EbookReaderPage() {
             className="absolute right-2 sm:right-4 z-20 w-11 h-11 rounded-full flex items-center justify-center text-white"
             style={{ background: 'rgba(255,255,255,0.07)', top: '50%', transform: 'translateY(-50%)', cursor: 'pointer' }}
           >
-            <span className="material-symbols-outlined text-[24px]">chevron_right</span>
+            <Icon name="chevron_right" size={24} />
           </motion.button>
 
           {/* Pan layer (screen-space translate) → Zoom layer → PageFlip canvas */}
@@ -619,13 +620,13 @@ export default function EbookReaderPage() {
                 transition={{ duration: 0.4 }}
               />
             </div>
-            <p className="text-[10px] mt-1" style={{ color: 'rgba(255,255,255,0.2)' }}>{Math.round(progress)}% complete</p>
+            <p className="text-[12px] mt-1" style={{ color: 'var(--text-on-dark-muted)' }}>{Math.round(progress)}% complete</p>
           </div>
 
           {/* Page controls */}
           <div className="flex items-center gap-3 mx-auto sm:mx-0">
-            <button onClick={goPrev} className="text-white/40 hover:text-white/80 transition-colors">
-              <span className="material-symbols-outlined text-[20px]">navigate_before</span>
+            <button onClick={goPrev} className="text-[var(--text-on-dark-muted)] hover:text-[var(--text-on-dark)] transition-colors">
+              <Icon name="navigate_before" size={20} />
             </button>
 
             <div className="flex items-center gap-1.5">
@@ -643,16 +644,16 @@ export default function EbookReaderPage() {
                 style={{ background: 'rgba(255,255,255,0.09)', padding: '4px 4px' }}
                 min={1} max={totalPages}
               />
-              <span className="text-sm" style={{ color: 'rgba(255,255,255,0.25)' }}>/</span>
-              <span className="text-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>{totalPages}</span>
+              <span className="text-sm" style={{ color: 'var(--text-on-dark-muted)' }}>/</span>
+              <span className="text-sm" style={{ color: 'var(--text-on-dark-muted)' }}>{totalPages}</span>
             </div>
 
-            <button onClick={goNext} className="text-white/40 hover:text-white/80 transition-colors">
-              <span className="material-symbols-outlined text-[20px]">navigate_next</span>
+            <button onClick={goNext} className="text-[var(--text-on-dark-muted)] hover:text-[var(--text-on-dark)] transition-colors">
+              <Icon name="navigate_next" size={20} />
             </button>
           </div>
 
-          <p className="text-[10px] tracking-widest uppercase hidden sm:block" style={{ color: 'rgba(255,255,255,0.12)' }}>
+          <p className="text-[12px] tracking-widest uppercase hidden sm:block" style={{ color: 'var(--text-on-dark-muted)' }}>
             MahaTathastu · Read-only
           </p>
         </motion.div>

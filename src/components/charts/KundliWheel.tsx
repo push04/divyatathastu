@@ -79,7 +79,7 @@ export default function KundliWheel({ kundli }: { kundli: KundliData }) {
         </defs>
 
         {/* Outer background disc */}
-        <circle cx={cx} cy={cy} r={rOuter} fill="url(#chartBg)" stroke="#D4A017" strokeWidth="1.5" />
+        <circle cx={cx} cy={cy} r={rOuter} fill="url(#chartBg)" stroke="#C9992E" strokeWidth="1.5" />
 
         {/* 12 zodiac sign segments */}
         {Array.from({ length: 12 }, (_, i) => {
@@ -121,13 +121,13 @@ export default function KundliWheel({ kundli }: { kundli: KundliData }) {
           const p2 = polarToXY(cx, cy, rZodiac, angle)
           return (
             <line key={i} x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
-              stroke="#D4A017" strokeWidth={i === 0 ? 2.5 : 0.8} strokeOpacity={i === 0 ? 1 : 0.5} />
+              stroke="#C9992E" strokeWidth={i === 0 ? 2.5 : 0.8} strokeOpacity={i === 0 ? 1 : 0.5} />
           )
         })}
 
         {/* Inner ring border */}
-        <circle cx={cx} cy={cy} r={rZodiac} fill="none" stroke="#D4A017" strokeWidth="1.5" strokeOpacity="0.6" />
-        <circle cx={cx} cy={cy} r={rInner} fill="#fef5ec" stroke="#D4A017" strokeWidth="1" strokeOpacity="0.5" />
+        <circle cx={cx} cy={cy} r={rZodiac} fill="none" stroke="#C9992E" strokeWidth="1.5" strokeOpacity="0.6" />
+        <circle cx={cx} cy={cy} r={rInner} fill="#fef5ec" stroke="#C9992E" strokeWidth="1" strokeOpacity="0.5" />
 
         {/* House numbers */}
         {Array.from({ length: 12 }, (_, i) => {
@@ -137,9 +137,9 @@ export default function KundliWheel({ kundli }: { kundli: KundliData }) {
           const isTrikona = [1, 5, 9].includes(i + 1)
           return (
             <text key={i} x={pos.x} y={pos.y + 4} textAnchor="middle" fontSize="11"
-              fill={isTrikona ? '#E36414' : isKendra ? '#2F2A44' : '#6b7280'}
+              fill={isTrikona ? '#D9741A' : isKendra ? '#1B1233' : '#6b7280'}
               fontWeight={isTrikona || isKendra ? 'bold' : 'normal'}
-              style={{ fontFamily: "'Sora', sans-serif" }}>
+              style={{ fontFamily: "var(--font-label)" }}>
               {i + 1}
             </text>
           )
@@ -152,7 +152,7 @@ export default function KundliWheel({ kundli }: { kundli: KundliData }) {
           const rashi = rashiForHouse(i + 1)
           return (
             <text key={i} x={pos.x} y={pos.y + 3} textAnchor="middle" fontSize="7.5"
-              fill="#9ca3af" style={{ fontFamily: "'Sora', sans-serif" }}>
+              fill="#9ca3af" style={{ fontFamily: "var(--font-label)" }}>
               {rashi.slice(0, 3)}
             </text>
           )
@@ -191,25 +191,25 @@ export default function KundliWheel({ kundli }: { kundli: KundliData }) {
         })}
 
         {/* Center hub */}
-        <circle cx={cx} cy={cy} r="38" fill="#fef9f0" stroke="#D4A017" strokeWidth="1.5" />
-        <circle cx={cx} cy={cy} r="35" fill="none" stroke="#D4A017" strokeWidth="0.6" strokeOpacity="0.5" />
-        <text x={cx} y={cy - 9} textAnchor="middle" fontSize="8" fill="#D4A017"
-          style={{ fontFamily: "'Sora', sans-serif", letterSpacing: '0.1em' }}>LAGNA</text>
-        <text x={cx} y={cy + 4} textAnchor="middle" fontSize="14" fill="#2F2A44" fontWeight="bold"
-          style={{ fontFamily: "'Playfair Display', serif" }}>
+        <circle cx={cx} cy={cy} r="38" fill="#fef9f0" stroke="#C9992E" strokeWidth="1.5" />
+        <circle cx={cx} cy={cy} r="35" fill="none" stroke="#C9992E" strokeWidth="0.6" strokeOpacity="0.5" />
+        <text x={cx} y={cy - 9} textAnchor="middle" fontSize="8" fill="#C9992E"
+          style={{ fontFamily: "var(--font-label)", letterSpacing: '0.1em' }}>LAGNA</text>
+        <text x={cx} y={cy + 4} textAnchor="middle" fontSize="14" fill="#1B1233" fontWeight="bold"
+          style={{ fontFamily: "var(--font-display)" }}>
           {(kundli.ascendant || '').slice(0, 3).toUpperCase()}
         </text>
-        <text x={cx} y={cy + 17} textAnchor="middle" fontSize="8" fill="#D4A017"
-          style={{ fontFamily: "'Sora', sans-serif" }}>
+        <text x={cx} y={cy + 17} textAnchor="middle" fontSize="8" fill="#C9992E"
+          style={{ fontFamily: "var(--font-label)" }}>
           {ZODIAC_SYMBOLS[kundli.ascendant] || ''}
         </text>
 
         {/* Ascendant pointer */}
         <line x1={polarToXY(cx, cy, rInner + 2, rotOffset).x} y1={polarToXY(cx, cy, rInner + 2, rotOffset).y}
           x2={polarToXY(cx, cy, rZodiac - 5, rotOffset).x} y2={polarToXY(cx, cy, rZodiac - 5, rotOffset).y}
-          stroke="#E36414" strokeWidth="2" />
+          stroke="#D9741A" strokeWidth="2" />
         <circle cx={polarToXY(cx, cy, rZodiac - 5, rotOffset).x}
-          cy={polarToXY(cx, cy, rZodiac - 5, rotOffset).y} r="3" fill="#E36414" />
+          cy={polarToXY(cx, cy, rZodiac - 5, rotOffset).y} r="3" fill="#D9741A" />
       </svg>
 
       {/* Planet legend */}
@@ -219,8 +219,8 @@ export default function KundliWheel({ kundli }: { kundli: KundliData }) {
             <span style={{ color: PLANET_COLORS[p.name] || '#c4a882', fontSize: 14 }}>
               {PLANET_SYMBOLS[p.name] || '●'}
             </span>
-            <span className="text-[var(--warm-charcoal)]/70 font-medium">{p.name}</span>
-            {p.retrograde && <span className="text-[var(--terracotta)] text-[9px]">R</span>}
+            <span className="text-[var(--text-secondary)] font-medium">{p.name}</span>
+            {p.retrograde && <span className="text-[var(--terracotta)] text-[12px]">R</span>}
           </div>
         ))}
       </div>

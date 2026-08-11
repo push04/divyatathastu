@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
+import Icon from '@/components/ui/Icon'
 interface Report {
   id: string
   report_type: string
@@ -15,7 +16,7 @@ interface Report {
 }
 
 const REPORT_META: Record<string, { label: string; icon: string; color: string }> = {
-  full_tathastu: { label: 'Full Tathastu', icon: 'auto_awesome', color: 'bg-gradient-to-br from-[var(--terracotta)] to-[var(--plum)]' },
+  full_tathastu: { label: 'Full Tathastu', icon: 'all_inclusive', color: 'bg-gradient-to-br from-[var(--terracotta)] to-[var(--plum)]' },
   astrology: { label: 'Kundli', icon: 'brightness_7', color: 'bg-[var(--indigo-deep)]' },
   numerology: { label: 'Numerology', icon: 'tag', color: 'bg-violet-600' },
   shakti_chakra: { label: 'Shakti Chakra', icon: 'spa', color: 'bg-pink-600' },
@@ -65,10 +66,10 @@ export default function ReportsPage() {
     <div className="p-6 max-w-5xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Nakshatra Reports</h1>
-          <p className="text-sm text-[var(--warm-charcoal)]/60 mt-0.5">{reports.length} reports · 14 types available</p>
+          <h1 className="text-3xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "var(--font-display)" }}>Nakshatra Reports</h1>
+          <p className="text-sm text-[var(--text-secondary)] mt-0.5">{reports.length} reports · 14 types available</p>
         </div>
-        <Link href="/reports/generate" className="btn-divine text-sm px-4 py-2 self-start sm:self-auto inline-flex items-center gap-1.5"><span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>Generate Report</Link>
+        <Link href="/reports/generate" className="btn-divine text-sm px-4 py-2 self-start sm:self-auto inline-flex items-center gap-1.5"><Icon name="brightness_7" size={16} />Generate Report</Link>
       </div>
 
       {/* Filter tabs */}
@@ -77,7 +78,7 @@ export default function ReportsPage() {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium capitalize transition-all ${filter === f ? 'bg-[var(--indigo-deep)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 hover:border-[var(--indigo-deep)]'}`}
+            className={`px-4 py-1.5 rounded-full text-sm font-medium capitalize transition-all ${filter === f ? 'bg-[var(--indigo-deep)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--text-secondary)] hover:border-[var(--indigo-deep)]'}`}
           >
             {f} {f === 'all' ? `(${reports.length})` : `(${reports.filter(r => r.status === f).length})`}
           </button>
@@ -86,9 +87,9 @@ export default function ReportsPage() {
 
       {filtered.length === 0 ? (
         <div className="bg-white rounded-2xl border border-dashed border-[var(--warm-sand)] p-16 text-center">
-          <span className="material-symbols-outlined text-[56px] text-[var(--outline-variant)] mb-4 block">description</span>
-          <h2 className="text-xl font-bold text-[var(--indigo-deep)] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>No Reports Yet</h2>
-          <p className="text-[var(--warm-charcoal)]/60 mb-6">Generate your first Nakshatra report to unlock divine insights</p>
+          <Icon name="description" size={56} className="text-[var(--outline-variant)] mb-4 block" />
+          <h2 className="text-xl font-bold text-[var(--indigo-deep)] mb-2" style={{ fontFamily: "var(--font-display)" }}>No Reports Yet</h2>
+          <p className="text-[var(--text-secondary)] mb-6">Generate your first Nakshatra report to unlock divine insights</p>
           <Link href="/reports/generate" className="btn-divine px-8 py-3">Generate First Report</Link>
         </div>
       ) : (
@@ -98,15 +99,15 @@ export default function ReportsPage() {
             return (
               <Link key={r.id} href={`/reports/${r.id}`} className="flex items-center gap-4 bg-white rounded-xl p-4 border border-[var(--warm-sand)] hover:border-[var(--saffron)] hover:shadow-sm transition-all">
                 <div className={`w-11 h-11 rounded-xl ${meta.color} flex items-center justify-center flex-shrink-0`}>
-                  <span className="material-symbols-outlined text-[22px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{meta.icon}</span>
+                  <Icon name={meta.icon} size={22} className="text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-[var(--indigo-deep)]">{meta.label}</p>
-                  <p className="text-sm text-[var(--warm-charcoal)]/60">
+                  <p className="text-sm text-[var(--text-secondary)]">
                     {(r.family_members as any)?.full_name || 'Self'} · {new Date(r.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </p>
                 </div>
-                <span className={`text-xs px-3 py-1 rounded-full font-medium flex-shrink-0 ${['generated','reviewed','delivered'].includes(r.status) ? 'bg-emerald-100 text-emerald-700' : r.status === 'processing' ? 'bg-amber-100 text-amber-700' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>
+                <span className={`text-xs px-3 py-1 rounded-full font-medium flex-shrink-0 ${['generated','reviewed','delivered'].includes(r.status) ? 'bg-emerald-100 text-emerald-700' : r.status === 'processing' ? 'bg-amber-100 text-amber-700' : 'bg-[var(--warm-sand)] text-[var(--text-secondary)]'}`}>
                   {r.status}
                 </span>
               </Link>

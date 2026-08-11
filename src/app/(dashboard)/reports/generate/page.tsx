@@ -11,6 +11,7 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { usePaymentNotice } from '@/lib/hooks/usePaymentNotice'
 
+import Icon from '@/components/ui/Icon'
 interface FamilyMember {
   id: string
   full_name: string
@@ -24,14 +25,14 @@ interface FamilyMember {
 }
 
 const REPORT_TYPES = [
-  { id: 'full_tathastu', label: 'Full Tathastu', labelHi: 'पूर्ण तथास्तु', icon: 'auto_awesome', desc: 'All 12 reports combined - complete life blueprint', descHi: 'सभी 12 रिपोर्ट एक साथ - सम्पूर्ण जीवन खाका', price: 2999, badge: 'BEST VALUE', badgeHi: 'सर्वोत्तम मूल्य' },
+  { id: 'full_tathastu', label: 'Full Tathastu', labelHi: 'पूर्ण तथास्तु', icon: 'all_inclusive', desc: 'All 12 reports combined - complete life blueprint', descHi: 'सभी 12 रिपोर्ट एक साथ - सम्पूर्ण जीवन खाका', price: 2999, badge: 'BEST VALUE', badgeHi: 'सर्वोत्तम मूल्य' },
   { id: 'astrology', label: 'Kundli / Horoscope', labelHi: 'कुंडली / जन्मपत्री', icon: 'brightness_7', desc: 'Birth chart, planets, dashas, predictions', descHi: 'जन्म कुंडली, ग्रह, दशाएं, भविष्यवाणी', price: 499 },
   { id: 'numerology', label: 'Numerology', labelHi: 'अंकशास्त्र', icon: 'tag', desc: 'Life path, destiny, lucky numbers & mobile compatibility', descHi: 'जीवन पथ, भाग्यांक, शुभ अंक और मोबाइल अनुकूलता', price: 299 },
   { id: 'shakti_chakra', label: 'Chakra Analysis', labelHi: 'चक्र विश्लेषण', icon: 'local_florist', desc: 'All 7 chakras - balance, mantras, crystals', descHi: 'सातों चक्र - संतुलन, मंत्र, क्रिस्टल', price: 299 },
   { id: 'prakriti', label: 'Prakriti (Ayurveda)', labelHi: 'प्रकृति (आयुर्वेद)', icon: 'eco', desc: 'Vata-Pitta-Kapha constitution + diet & herbs', descHi: 'वात-पित्त-कफ प्रकृति + आहार और जड़ी-बूटियां', price: 299 },
   { id: 'yantra_colour', label: 'Yantra & Colour', labelHi: 'यंत्र और रंग', icon: 'palette', desc: 'Personal yantra, power colors, gemstone', descHi: 'व्यक्तिगत यंत्र, शक्तिशाली रंग, रत्न', price: 299 },
   { id: 'mantra_chanting', label: 'Mantra Science', labelHi: 'मंत्र विज्ञान', icon: 'temple_hindu', desc: 'Personal beej mantra, likhit japa guidance', descHi: 'व्यक्तिगत बीज मंत्र, लिखित जप मार्गदर्शन', price: 299 },
-  { id: 'mantra_writing', label: 'Likhit Japa (Mantra Lekhnan)', labelHi: 'लिखित जप मार्गदर्शन', icon: 'edit_note', desc: 'Nakshatra-specific written mantra practice — 4-step Ganpati + Gayatri + VS Shloka protocol', descHi: 'नक्षत्र-आधारित लिखित जप अभ्यास — चार-चरण गणपति + गायत्री + विष्णु सहस्रनाम श्लोक', price: 199 },
+  { id: 'mantra_writing', label: 'Likhit Japa (Mantra Lekhnan)', labelHi: 'लिखित जप मार्गदर्शन', icon: 'edit_note', desc: 'Nakshatra-specific written mantra practice - 4-step Ganpati + Gayatri + VS Shloka protocol', descHi: 'नक्षत्र-आधारित लिखित जप अभ्यास - चार-चरण गणपति + गायत्री + विष्णु सहस्रनाम श्लोक', price: 199 },
   { id: 'astro_vastu', label: 'Vastu Report', labelHi: 'वास्तु रिपोर्ट', icon: 'house', desc: 'Home/office direction analysis & remedies', descHi: 'घर/कार्यालय दिशा विश्लेषण और उपाय', price: 399 },
   { id: 'child_development', label: 'Child Development', labelHi: 'बाल विकास', icon: 'child_care', desc: 'Learning style, talents, education guidance', descHi: 'सीखने की शैली, प्रतिभा, शिक्षा मार्गदर्शन', price: 399 },
   { id: 'dmit', label: 'DMIT (Brain Mapping)', labelHi: 'DMIT (मस्तिष्क मानचित्र)', icon: 'psychology', desc: 'Multiple intelligence profile, career fit', descHi: 'बहु-बुद्धिमत्ता प्रोफाइल, करियर उपयुक्तता', price: 499 },
@@ -191,6 +192,12 @@ function GenerateReportContent() {
   const [secondsLeft, setSecondsLeft] = useState(0)
   const [allDone, setAllDone] = useState(false)
   const [paymentProcessing, setPaymentProcessing] = useState(false)
+  // Free-report credits earned by referring 10 friends.
+  const [freeCredits, setFreeCredits] = useState(0)
+  const [useCredit, setUseCredit] = useState(false)
+  // "member|report" a credit has already been spent on, so a failed generation
+  // can be retried for free instead of consuming another credit or charging.
+  const [redeemedCreditFor, setRedeemedCreditFor] = useState<string | null>(null)
   const { confirmPayment, NoticeModal } = usePaymentNotice()
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
@@ -199,7 +206,7 @@ function GenerateReportContent() {
 
   useEffect(() => {
     async function load() {
-      // Pricing is independent of the auth/family/members chain — kick it off now, await later
+      // Pricing is independent of the auth/family/members chain - kick it off now, await later
       const pricingPromise = fetch('/api/report-pricing', { cache: 'no-store' }).then(r => r.json()).catch(() => null)
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return
@@ -209,6 +216,18 @@ function GenerateReportContent() {
       if (data) setMembers(data)
       const pr = await pricingPromise
       if (pr && Object.keys(pr).length > 0) setReportPrices(pr)
+
+      // Referral rewards. Arriving from /refer with ?credit=1 pre-selects the
+      // credit so the seeker does not have to find the toggle.
+      try {
+        const cr = await fetch('/api/report-credits', { cache: 'no-store' }).then(r => r.json())
+        const available = cr?.available_count ?? 0
+        setFreeCredits(available)
+        if (available > 0 && searchParams.get('credit') === '1') {
+          setSelectedReport('full_tathastu')
+          setUseCredit(true)
+        }
+      } catch {}
     }
     load()
     if (searchParams.get('member')) setStep(1)
@@ -327,6 +346,44 @@ function GenerateReportContent() {
       return
     }
     const price = selectedReportInfo?.price || 0
+
+    // A credit already spent on exactly this member+report combination. If the
+    // first generation attempt failed, Retry must regenerate for free - it must
+    // not consume a second credit, and it must certainly not fall through to
+    // the paid path and charge for a report the seeker already paid for.
+    if (redeemedCreditFor === creditKey) {
+      doGenerate()
+      return
+    }
+
+    // Referral reward: consume one free-report credit instead of paying.
+    // The credit is claimed server-side first, so a failed claim never lets a
+    // paid report through for free.
+    if (useCredit && canUseCredit) {
+      setPaymentProcessing(true)
+      try {
+        const res = await fetch('/api/report-credits', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'redeem', member_id: selectedMember, credit_type: 'full_tathastu' }),
+        })
+        const j = await res.json().catch(() => ({}))
+        if (!res.ok) {
+          toast.error(j.error || 'Could not use your free report credit')
+          return
+        }
+        setFreeCredits(c => Math.max(0, c - 1))
+        setRedeemedCreditFor(creditKey)
+        toast.success(isHindi ? 'निःशुल्क रिपोर्ट क्रेडिट लागू हुआ' : 'Free report credit applied')
+        doGenerate()
+      } catch {
+        toast.error('Network error. Please try again.')
+      } finally {
+        setPaymentProcessing(false)
+      }
+      return
+    }
+
     if (price > 0) {
       confirmPayment(selectedReportInfo?.label || 'Vedic Report', price, () => proceedToPayment(price))
       return
@@ -359,7 +416,7 @@ function GenerateReportContent() {
           order_id: orderData.order_id,
           name: 'MahaTathastu',
           description: `${isHindi ? selectedReportInfo?.labelHi : selectedReportInfo?.label} Report`,
-          theme: { color: '#2F2A44' },
+          theme: { color: '#1B1233' },
           handler: async (response: any) => {
             try {
               const verifyRes = await fetch('/api/payment?action=verify', {
@@ -377,7 +434,7 @@ function GenerateReportContent() {
               return
             }
             setPaymentProcessing(false)
-            toast.success(isHindi ? 'भुगतान सफल! रिपोर्ट बन रही है…' : 'Payment successful! Generating report…')
+            toast.success(isHindi ? 'भुगतान सफल! रिपोर्ट बन रही है...' : 'Payment successful! Generating report...')
             doGenerate()
           },
           modal: { ondismiss: () => setPaymentProcessing(false) },
@@ -402,6 +459,13 @@ function GenerateReportContent() {
     : undefined
   const selectedMemberInfo = members.find(m => m.id === selectedMember)
   const totalEstSeconds = selectedReport === 'full_tathastu' ? 47 : (SINGLE_SECTIONS[selectedReport]?.[0]?.estSeconds || 10)
+
+  // The referral reward covers the Full Tathastu bundle for one family member.
+  const creditKey = `${selectedMember}|${selectedReport}`
+  const alreadyRedeemed = redeemedCreditFor === creditKey
+  const canUseCredit = freeCredits > 0 && selectedReport === 'full_tathastu'
+  const creditApplied = alreadyRedeemed || (useCredit && canUseCredit)
+  const payableNow = creditApplied ? 0 : (selectedReportInfo?.price || 0)
 
   // ── GENERATION PROGRESS VIEW ──
   if (generating) {
@@ -469,7 +533,7 @@ function GenerateReportContent() {
           <div style={{ borderRadius: 22, overflow: 'hidden', boxShadow: '0 28px 80px rgba(47,42,68,0.32), 0 0 0 1px rgba(212,160,23,0.18)' }}>
 
             {/* ── Cosmic header ── */}
-            <div style={{ background: 'linear-gradient(160deg, #0f0b22 0%, #2F2A44 50%, #3a1e04 100%)', padding: '44px 32px 38px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ background: 'linear-gradient(160deg, #0f0b22 0%, #1B1233 50%, #3a1e04 100%)', padding: '44px 32px 38px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
               {/* Stars */}
               {[
                 {cls:'gen-s-a',top:'12%',left:'8%',sz:3},{cls:'gen-s-b',top:'20%',left:'85%',sz:2},{cls:'gen-s-c',top:'35%',left:'14%',sz:2},
@@ -489,12 +553,12 @@ function GenerateReportContent() {
                 <SudarshanLoader px={72} />
               </div>
 
-              <h2 style={{ color: '#fff', fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 700, marginBottom: 6, position: 'relative', zIndex: 2 }}>
+              <h2 style={{ color: '#fff', fontFamily: "var(--font-display)", fontSize: 20, fontWeight: 700, marginBottom: 6, position: 'relative', zIndex: 2 }}>
                 {t.craftingTitle}
               </h2>
-              <p style={{ color: 'rgba(255,255,255,0.52)', fontSize: 13, position: 'relative', zIndex: 2 }}>{t.craftingSubtitle}</p>
+              <p style={{ color: 'var(--text-on-dark-secondary)', fontSize: 13, position: 'relative', zIndex: 2 }}>{t.craftingSubtitle}</p>
               {selectedMemberInfo && (
-                <p style={{ color: '#D4A017', fontSize: 13, fontWeight: 600, marginTop: 12, position: 'relative', zIndex: 2, letterSpacing: '0.01em' }}>
+                <p style={{ color: '#C9992E', fontSize: 13, fontWeight: 600, marginTop: 12, position: 'relative', zIndex: 2, letterSpacing: '0.01em' }}>
                   {selectedMemberInfo.full_name} · {isHindi ? selectedReportInfo?.labelHi : selectedReportInfo?.label}
                 </p>
               )}
@@ -503,7 +567,7 @@ function GenerateReportContent() {
             {/* ── Progress bar ── */}
             <div style={{ background: '#FDFAF5', padding: '20px 28px 10px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 9 }}>
-                <span style={{ fontSize: 12, fontWeight: 700, color: '#2F2A44' }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: '#1B1233' }}>
                   {doneSections}/{totalSections} {isHindi ? 'अध्याय पूर्ण' : 'chapters done'}
                 </span>
                 {!allDone && secondsLeft > 0 ? (
@@ -515,7 +579,7 @@ function GenerateReportContent() {
               <div style={{ background: '#EDE8DC', borderRadius: 9999, height: 8, overflow: 'hidden' }}>
                 <div
                   className="gen-bar-fill"
-                  style={{ height: '100%', borderRadius: 9999, background: 'linear-gradient(90deg, #C2622A, #D4A017)', width: `${allDone ? 100 : progressPct}%`, transition: 'width 0.8s ease' }}
+                  style={{ height: '100%', borderRadius: 9999, background: 'linear-gradient(90deg, #C2622A, #C9992E)', width: `${allDone ? 100 : progressPct}%`, transition: 'width 0.8s ease' }}
                 />
               </div>
             </div>
@@ -541,19 +605,19 @@ function GenerateReportContent() {
                     {/* Icon */}
                     <div style={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       {isDone ? (
-                        <span className="material-symbols-outlined" style={{ fontSize: 22, color: '#10b981', fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                        <Icon name="check_circle" size={22} style={{ color: '#10b981' }} />
                       ) : isActive ? (
                         <SudarshanLoader size="sm" />
                       ) : isErr ? (
-                        <span className="material-symbols-outlined" style={{ fontSize: 22, color: '#f87171', fontVariationSettings: "'FILL' 1" }}>error</span>
+                        <Icon name="error" size={22} style={{ color: '#f87171' }} />
                       ) : (
-                        <span className="material-symbols-outlined" style={{ fontSize: 22, color: 'rgba(42,32,28,0.2)' }}>{sec.icon}</span>
+                        <Icon name={sec.icon} size={22} style={{ color: 'rgba(42,32,28,0.2)'  }} />
                       )}
                     </div>
 
                     {/* Name + Sanskrit */}
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontSize: 13, fontWeight: 600, color: isDone ? '#065f46' : isActive ? '#2F2A44' : isErr ? '#dc2626' : 'rgba(42,32,28,0.28)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: 0 }}>
+                      <p style={{ fontSize: 13, fontWeight: 600, color: isDone ? '#065f46' : isActive ? '#1B1233' : isErr ? '#dc2626' : 'rgba(42,32,28,0.28)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', margin: 0 }}>
                         {isHindi ? sec.nameHi : sec.name}
                       </p>
                       {sec.status !== 'pending' && (
@@ -567,12 +631,12 @@ function GenerateReportContent() {
                     <div style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 5 }}>
                       {isActive && (
                         <span style={{ display: 'inline-flex', gap: 3, alignItems: 'center' }}>
-                          <span className="gen-d1" style={{ width: 4, height: 4, borderRadius: '50%', background: '#D4A017', display: 'inline-block' }} />
-                          <span className="gen-d2" style={{ width: 4, height: 4, borderRadius: '50%', background: '#D4A017', display: 'inline-block' }} />
-                          <span className="gen-d3" style={{ width: 4, height: 4, borderRadius: '50%', background: '#D4A017', display: 'inline-block' }} />
+                          <span className="gen-d1" style={{ width: 4, height: 4, borderRadius: '50%', background: '#C9992E', display: 'inline-block' }} />
+                          <span className="gen-d2" style={{ width: 4, height: 4, borderRadius: '50%', background: '#C9992E', display: 'inline-block' }} />
+                          <span className="gen-d3" style={{ width: 4, height: 4, borderRadius: '50%', background: '#C9992E', display: 'inline-block' }} />
                         </span>
                       )}
-                      <span style={{ fontSize: 11, fontWeight: 600, color: isDone ? '#10b981' : isActive ? '#D4A017' : 'rgba(42,32,28,0.22)' }}>
+                      <span style={{ fontSize: 11, fontWeight: 600, color: isDone ? '#10b981' : isActive ? '#C9992E' : 'rgba(42,32,28,0.22)' }}>
                         {isDone && sec.elapsed ? `${sec.elapsed}s` : sec.status === 'pending' ? `~${sec.estSeconds}s` : ''}
                       </span>
                     </div>
@@ -587,9 +651,9 @@ function GenerateReportContent() {
                 <button
                   onClick={() => router.push(`/reports/${reportId}`)}
                   className="gen-cta"
-                  style={{ width: '100%', padding: '17px', background: 'linear-gradient(135deg, #2F2A44 0%, #C2622A 100%)', color: 'white', border: 'none', borderRadius: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, letterSpacing: '0.02em', fontFamily: "'Playfair Display', serif" }}
+                  style={{ width: '100%', padding: '17px', background: 'linear-gradient(135deg, #1B1233 0%, #C2622A 100%)', color: 'white', border: 'none', borderRadius: 14, fontSize: 15, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, letterSpacing: '0.02em', fontFamily: "var(--font-display)" }}
                 >
-                  <span className="material-symbols-outlined" style={{ fontSize: 20, fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+                  <Icon name="brightness_7" size={20} />
                   {t.viewReport}
                 </button>
               </div>
@@ -607,16 +671,16 @@ function GenerateReportContent() {
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[var(--indigo-deep)]">{t.title}</h1>
-          <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">{t.subtitle}</p>
+          <p className="text-sm text-[var(--text-secondary)] mt-1">{t.subtitle}</p>
         </div>
         <div className="flex items-center bg-[var(--warm-sand)] rounded-lg p-0.5 gap-0.5 flex-shrink-0">
           <button
             onClick={() => setLang('en')}
-            className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'en' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--warm-charcoal)]/60 hover:text-[var(--indigo-deep)]'}`}
+            className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'en' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--text-secondary)] hover:text-[var(--indigo-deep)]'}`}
           >EN</button>
           <button
             onClick={() => setLang('hi')}
-            className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'hi' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--warm-charcoal)]/60 hover:text-[var(--indigo-deep)]'}`}
+            className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${lang === 'hi' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--text-secondary)] hover:text-[var(--indigo-deep)]'}`}
           >हिं</button>
         </div>
       </div>
@@ -625,10 +689,10 @@ function GenerateReportContent() {
       <div className="flex items-center gap-2">
         {t.steps.map((s, i) => (
           <div key={s} className="flex items-center gap-2 flex-1">
-            <div className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold transition-all ${i < step ? 'bg-emerald-500 text-white' : i === step ? 'bg-[var(--indigo-deep)] text-white' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/50'}`}>
-              {i < step ? <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>check</span> : i + 1}
+            <div className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold transition-all ${i < step ? 'bg-emerald-500 text-white' : i === step ? 'bg-[var(--indigo-deep)] text-white' : 'bg-[var(--warm-sand)] text-[var(--text-muted)]'}`}>
+              {i < step ? <Icon name="check" size={14} /> : i + 1}
             </div>
-            <span className={`text-xs font-medium hidden sm:block ${i === step ? 'text-[var(--indigo-deep)]' : 'text-[var(--warm-charcoal)]/50'}`}>{s}</span>
+            <span className={`text-xs font-medium hidden sm:block ${i === step ? 'text-[var(--indigo-deep)]' : 'text-[var(--text-muted)]'}`}>{s}</span>
             {i < t.steps.length - 1 && <div className={`flex-1 h-0.5 ${i < step ? 'bg-emerald-500' : 'bg-[var(--warm-sand)]'}`} />}
           </div>
         ))}
@@ -640,9 +704,9 @@ function GenerateReportContent() {
           <h2 className="text-lg font-bold text-[var(--indigo-deep)]">{t.selectMember}</h2>
           {members.length === 0 ? (
             <div className="card-divine p-8 text-center">
-              <div className="flex justify-center mb-3"><span className="material-symbols-outlined text-[32px] text-[var(--indigo-deep)]" style={{ fontVariationSettings: "'FILL' 1" }}>family_restroom</span></div>
+              <div className="flex justify-center mb-3"><Icon name="family_restroom" size={32} className="text-[var(--indigo-deep)]" /></div>
               <p className="font-medium text-[var(--indigo-deep)] mb-1">{t.noMembers}</p>
-              <p className="text-sm text-[var(--warm-charcoal)]/60 mb-4">{t.noMembersDesc}</p>
+              <p className="text-sm text-[var(--text-secondary)] mb-4">{t.noMembersDesc}</p>
               <Link href="/family/add" className="btn-divine px-6 py-2.5 text-sm">{t.addMember}</Link>
             </div>
           ) : (
@@ -658,9 +722,9 @@ function GenerateReportContent() {
                   </div>
                   <div>
                     <p className="font-semibold text-[var(--indigo-deep)]">{m.full_name}</p>
-                    <p className="text-xs text-[var(--warm-charcoal)]/60 capitalize">{m.relation} · {new Date(m.date_of_birth).getFullYear()}</p>
+                    <p className="text-xs text-[var(--text-secondary)] capitalize">{m.relation} · {new Date(m.date_of_birth).getFullYear()}</p>
                   </div>
-                  {selectedMember === m.id && <span className="material-symbols-outlined text-[20px] text-[var(--terracotta)] ml-auto" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>}
+                  {selectedMember === m.id && <Icon name="check_circle" size={20} className="text-[var(--terracotta)] ml-auto" />}
                 </button>
               ))}
             </div>
@@ -684,13 +748,13 @@ function GenerateReportContent() {
                     {isHindi ? rt.badgeHi : rt.badge}
                   </span>
                 )}
-                <span className="material-symbols-outlined text-[24px] flex-shrink-0 text-[var(--indigo-deep)]" style={{ fontVariationSettings: "'FILL' 1" }}>{rt.icon}</span>
+                <Icon name={rt.icon} size={24} className="flex-shrink-0 text-[var(--indigo-deep)]" />
                 <div className="flex-1 min-w-0 pr-6">
                   <p className="font-semibold text-[var(--indigo-deep)] text-sm">{isHindi ? rt.labelHi : rt.label}</p>
-                  <p className="text-xs text-[var(--warm-charcoal)]/60 mt-0.5">{isHindi ? rt.descHi : rt.desc}</p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-0.5">{isHindi ? rt.descHi : rt.desc}</p>
                   <p className="text-xs font-bold text-[var(--terracotta)] mt-1">₹{(reportPrices[rt.id] ?? rt.price).toLocaleString('en-IN')}</p>
                 </div>
-                {selectedReport === rt.id && <span className="material-symbols-outlined text-[20px] text-[var(--terracotta)] ml-auto flex-shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>}
+                {selectedReport === rt.id && <Icon name="check_circle" size={20} className="text-[var(--terracotta)] ml-auto flex-shrink-0" />}
               </button>
             ))}
           </div>
@@ -703,7 +767,7 @@ function GenerateReportContent() {
           <h2 className="text-lg font-bold text-[var(--indigo-deep)]">{t.additionalInfo}</h2>
           {selectedReport === 'astro_vastu' ? (
             <div className="card-divine p-6 space-y-4">
-              <p className="text-sm text-[var(--warm-charcoal)]/70 mb-2">{t.vastuDesc}</p>
+              <p className="text-sm text-[var(--text-secondary)] mb-2">{t.vastuDesc}</p>
               <div>
                 <label className="block text-sm font-medium text-[var(--indigo-deep)] mb-1.5">{t.doorDir}</label>
                 <select value={vastuData.homeDirection} onChange={e => setVastuData(v => ({ ...v, homeDirection: e.target.value }))}
@@ -722,9 +786,9 @@ function GenerateReportContent() {
             </div>
           ) : (
             <div className="card-divine p-6 text-center">
-              <div className="flex justify-center mb-3"><span className="material-symbols-outlined text-[40px] text-emerald-500" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span></div>
+              <div className="flex justify-center mb-3"><Icon name="check_circle" size={40} className="text-emerald-500" /></div>
               <p className="font-medium text-[var(--indigo-deep)]">{t.allSet}</p>
-              <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">{t.allSetDesc}</p>
+              <p className="text-sm text-[var(--text-secondary)] mt-1">{t.allSetDesc}</p>
             </div>
           )}
         </div>
@@ -737,32 +801,80 @@ function GenerateReportContent() {
 
           <div className="card-divine p-6 space-y-3">
             <div className="flex justify-between text-sm">
-              <span className="text-[var(--warm-charcoal)]/60">{t.member}</span>
+              <span className="text-[var(--text-secondary)]">{t.member}</span>
               <span className="font-medium text-[var(--indigo-deep)]">{selectedMemberInfo?.full_name}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-[var(--warm-charcoal)]/60">{t.reportType}</span>
+              <span className="text-[var(--text-secondary)]">{t.reportType}</span>
               <span className="font-medium text-[var(--indigo-deep)]">{isHindi ? selectedReportInfo?.labelHi : selectedReportInfo?.label}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-[var(--warm-charcoal)]/60">{t.poweredBy}</span>
+              <span className="text-[var(--text-secondary)]">{t.poweredBy}</span>
               <span className="font-medium text-[var(--indigo-deep)]">Nakshatra Vedic Engine</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-[var(--warm-charcoal)]/60">{t.estTime}</span>
+              <span className="text-[var(--text-secondary)]">{t.estTime}</span>
               <span className="font-medium text-[var(--indigo-deep)]">~{totalEstSeconds}s</span>
             </div>
             {(selectedReportInfo?.price || 0) > 0 && (
               <div className="flex justify-between text-sm border-t border-[var(--warm-sand)] pt-2 mt-1">
                 <span className="font-bold text-[var(--indigo-deep)]">{isHindi ? 'मूल्य' : 'Price'}</span>
-                <span className="font-bold text-[var(--terracotta)]">₹{(selectedReportInfo?.price || 0).toLocaleString('en-IN')}</span>
+                <span className="font-bold text-[var(--terracotta)]">
+                  {creditApplied ? (
+                    <>
+                      <span className="line-through opacity-50 font-normal mr-1.5">₹{(selectedReportInfo?.price || 0).toLocaleString('en-IN')}</span>
+                      <span className="text-emerald-600">{isHindi ? 'निःशुल्क' : 'FREE'}</span>
+                    </>
+                  ) : `₹${(selectedReportInfo?.price || 0).toLocaleString('en-IN')}`}
+                </span>
               </div>
             )}
           </div>
 
+          {/* ── Referral reward credit ── */}
+          {freeCredits > 0 && (
+            <div className="rounded-xl p-4"
+              style={{ background: 'rgba(201,153,46,0.09)', border: '1px solid rgba(201,153,46,0.35)' }}>
+              <div className="flex items-start gap-3">
+                <Icon name="card_giftcard" size={22} className="text-[var(--saffron)] flex-shrink-0 mt-0.5" />
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-[var(--indigo-deep)] text-sm">
+                    {isHindi
+                      ? `आपके पास ${freeCredits} निःशुल्क रिपोर्ट क्रेडिट है`
+                      : `You have ${freeCredits} free report credit${freeCredits === 1 ? '' : 's'}`}
+                  </p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-0.5 leading-relaxed">
+                    {isHindi
+                      ? 'रेफरल पुरस्कार - परिवार के एक सदस्य के लिए पूर्ण तथास्तु रिपोर्ट निःशुल्क।'
+                      : 'Earned by referring friends. Covers one Full Tathastu Report for a single family member.'}
+                  </p>
+                  {canUseCredit ? (
+                    <label className="flex items-center gap-2 mt-2.5 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={useCredit}
+                        onChange={e => setUseCredit(e.target.checked)}
+                        className="w-4 h-4 accent-[var(--terracotta)]"
+                      />
+                      <span className="text-sm font-semibold text-[var(--indigo-deep)]">
+                        {isHindi ? 'इस रिपोर्ट के लिए क्रेडिट उपयोग करें' : 'Use my free credit for this report'}
+                      </span>
+                    </label>
+                  ) : (
+                    <p className="text-xs text-[var(--saffron)] font-semibold mt-2">
+                      {isHindi
+                        ? 'यह क्रेडिट केवल "पूर्ण तथास्तु" रिपोर्ट पर लागू होता है।'
+                        : 'Select the Full Tathastu report to use this credit.'}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
           {lastError && (
             <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 flex items-start gap-2">
-              <span className="material-symbols-outlined text-[18px] flex-shrink-0 mt-0.5">error</span>
+              <Icon name="error" size={18} className="flex-shrink-0 mt-0.5" />
               <div>
                 <p className="font-semibold">{t.prevFailed}</p>
                 <p className="mt-0.5 opacity-80">{lastError}</p>
@@ -776,18 +888,21 @@ function GenerateReportContent() {
             className="btn-divine w-full py-4 text-base font-bold inline-flex items-center justify-center gap-2 disabled:opacity-60"
           >
             {paymentProcessing ? (
-              <><SudarshanLoader px={20} /><span>{isHindi ? 'भुगतान हो रहा है…' : 'Processing payment…'}</span></>
-            ) : (selectedReportInfo?.price || 0) > 0 ? (
-              <><span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>credit_card</span>
-              {lastError ? t.retry : `${isHindi ? 'भुगतान करें' : 'Pay'} ₹${(selectedReportInfo?.price || 0).toLocaleString('en-IN')} & ${isHindi ? 'बनाएं' : 'Generate'}`}</>
+              <><SudarshanLoader px={20} /><span>{isHindi ? 'भुगतान हो रहा है...' : 'Processing payment...'}</span></>
+            ) : creditApplied ? (
+              <><Icon name="card_giftcard" size={20} />
+              {lastError ? t.retry : (isHindi ? 'निःशुल्क क्रेडिट से बनाएं' : 'Generate with free credit')}</>
+            ) : payableNow > 0 ? (
+              <><Icon name="credit_card" size={20} />
+              {lastError ? t.retry : `${isHindi ? 'भुगतान करें' : 'Pay'} ₹${payableNow.toLocaleString('en-IN')} & ${isHindi ? 'बनाएं' : 'Generate'}`}</>
             ) : (
-              <><span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+              <><Icon name="brightness_7" size={20} />
               {lastError ? t.retry : t.generate}</>
             )}
           </button>
           {(selectedReportInfo?.price || 0) > 0 && !paymentProcessing && (
-            <p className="text-center text-xs text-[var(--warm-charcoal)]/40 mt-1 flex items-center justify-center gap-1">
-              <span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'FILL' 1" }}>lock</span>
+            <p className="text-center text-xs text-[var(--text-muted)] mt-1 flex items-center justify-center gap-1">
+              <Icon name="lock" size={13} />
               Secured by Razorpay · 256-bit SSL
             </p>
           )}
@@ -799,10 +914,10 @@ function GenerateReportContent() {
         <button
           onClick={() => setStep(s => Math.max(0, s - 1))}
           disabled={step === 0}
-          className="px-4 py-2 rounded-lg border border-[var(--warm-sand)] text-sm font-medium text-[var(--warm-charcoal)]/60 hover:border-[var(--indigo-deep)] hover:text-[var(--indigo-deep)] disabled:opacity-30 transition-all"
+          className="px-4 py-2 rounded-lg border border-[var(--warm-sand)] text-sm font-medium text-[var(--text-secondary)] hover:border-[var(--indigo-deep)] hover:text-[var(--indigo-deep)] disabled:opacity-30 transition-all"
         >
           <span className="inline-flex items-center gap-1">
-            <span className="material-symbols-outlined text-[16px]">arrow_back</span>{t.back}
+            <Icon name="arrow_back" size={16} />{t.back}
           </span>
         </button>
 
@@ -812,7 +927,7 @@ function GenerateReportContent() {
             disabled={!canProceed[step]}
             className="btn-divine px-6 py-2 text-sm disabled:opacity-40 inline-flex items-center gap-1"
           >
-            {t.continue} <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+            {t.continue} <Icon name="arrow_forward" size={16} />
           </button>
         )}
       </div>

@@ -5,6 +5,7 @@ import indiaMap from '@svg-maps/india'
 import TempleDetailModal from './mandir/TempleDetailModal'
 import type { Temple } from './mandir/TempleDetailModal'
 
+import Icon from '@/components/ui/Icon'
 interface Circuit {
   id: string; name: string; local_name: string; circuit_type: string
   deity_focus: string; total_temples: number; states_covered: string[]
@@ -45,7 +46,7 @@ function getTempleColor(count: number): string {
   if (count === 0) return '#F5ECD7'
   if (count <= 2) return '#F5C97B'
   if (count <= 4) return '#E8A255'
-  if (count <= 6) return '#C67D53'
+  if (count <= 6) return '#B4231F'
   return '#8B3A2F'
 }
 
@@ -118,13 +119,13 @@ export default function IndiaMandirMap() {
         <div className="p-3 border-b border-[var(--warm-sand)] bg-white flex gap-2 overflow-x-auto">
           <button
             onClick={() => setSelectedCircuit(null)}
-            className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all ${!selectedCircuit ? 'bg-[var(--indigo-deep)] text-white' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 hover:bg-[var(--warm-sand)]/80'}`}
+            className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all ${!selectedCircuit ? 'bg-[var(--indigo-deep)] text-white' : 'bg-[var(--warm-sand)] text-[var(--text-secondary)] hover:bg-[var(--warm-sand)]/80'}`}
           >All States</button>
           {circuits.map(c => (
             <button
               key={c.id}
               onClick={() => setSelectedCircuit(selectedCircuit?.id === c.id ? null : c)}
-              className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all ${selectedCircuit?.id === c.id ? 'bg-[var(--terracotta)] text-white' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 hover:bg-[var(--warm-sand)]/80'}`}
+              className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap flex-shrink-0 transition-all ${selectedCircuit?.id === c.id ? 'bg-[var(--terracotta)] text-white' : 'bg-[var(--warm-sand)] text-[var(--text-secondary)] hover:bg-[var(--warm-sand)]/80'}`}
             >{c.name}</button>
           ))}
         </div>
@@ -134,10 +135,10 @@ export default function IndiaMandirMap() {
           {selectedCircuit && (
             <div className="absolute top-4 left-4 right-4 z-10 bg-white/95 rounded-xl border border-[var(--warm-sand)] p-3 shadow-md pointer-events-none">
               <p className="text-xs font-bold text-[var(--indigo-deep)]">{selectedCircuit.name}</p>
-              <p className="text-xs text-[var(--warm-charcoal)]/60 mt-0.5">{(selectedCircuit.significance || '').slice(0, 120)}...</p>
+              <p className="text-xs text-[var(--text-secondary)] mt-0.5">{(selectedCircuit.significance || '').slice(0, 120)}...</p>
               <p className="text-xs text-[var(--terracotta)] mt-1 font-medium">{selectedCircuit.total_temples} temples · {selectedCircuit.approx_duration_days} days · {selectedCircuit.difficulty}</p>
               {selectedCircuit.traditional_route_order && (
-                <p className="text-xs text-[var(--warm-charcoal)]/50 mt-0.5 font-mono">{selectedCircuit.traditional_route_order}</p>
+                <p className="text-xs text-[var(--text-muted)] mt-0.5 font-mono">{selectedCircuit.traditional_route_order}</p>
               )}
             </div>
           )}
@@ -153,7 +154,7 @@ export default function IndiaMandirMap() {
               const isSelected = selectedState === loc.id
               const isCircuitState = circuitStateIds.has(loc.id)
               const fill = selectedCircuit
-                ? (isCircuitState ? '#C67D53' : '#F5ECD7')
+                ? (isCircuitState ? '#B4231F' : '#F5ECD7')
                 : getTempleColor(count)
 
               return (
@@ -189,10 +190,10 @@ export default function IndiaMandirMap() {
 
           {/* Legend */}
           <div className="absolute bottom-4 right-4 bg-white/90 rounded-lg p-2 text-xs space-y-1 border border-[var(--warm-sand)]">
-            {[['1-2', '#F5C97B'], ['3-4', '#E8A255'], ['5-6', '#C67D53'], ['7+', '#8B3A2F']].map(([label, color]) => (
+            {[['1-2', '#F5C97B'], ['3-4', '#E8A255'], ['5-6', '#B4231F'], ['7+', '#8B3A2F']].map(([label, color]) => (
               <div key={label} className="flex items-center gap-1.5">
                 <div className="w-3 h-3 rounded-sm flex-shrink-0" style={{ background: color }} />
-                <span className="text-[var(--warm-charcoal)]/60">{label} temples</span>
+                <span className="text-[var(--text-secondary)]">{label} temples</span>
               </div>
             ))}
           </div>
@@ -206,15 +207,15 @@ export default function IndiaMandirMap() {
             <div className="px-4 py-3 border-b border-[var(--warm-sand)] flex items-center justify-between">
               <div>
                 <p className="font-bold text-[var(--indigo-deep)] text-sm">{activeStateName}</p>
-                <p className="text-xs text-[var(--warm-charcoal)]/50">{activeTemples.length} sacred sites</p>
+                <p className="text-xs text-[var(--text-muted)]">{activeTemples.length} sacred sites</p>
               </div>
-              <button onClick={() => { setSelectedState(null); setMobileView('map') }} className="text-[var(--warm-charcoal)]/40 hover:text-[var(--warm-charcoal)]">
-                <span className="material-symbols-outlined text-[18px]">close</span>
+              <button onClick={() => { setSelectedState(null); setMobileView('map') }} className="text-[var(--text-muted)] hover:text-[var(--warm-charcoal)]">
+                <Icon name="close" size={18} />
               </button>
             </div>
             <div className="flex-1 overflow-y-auto divide-y divide-[var(--warm-sand)]/60">
               {activeTemples.length === 0 ? (
-                <p className="p-4 text-sm text-[var(--warm-charcoal)]/40 text-center">No temples in dataset for this state</p>
+                <p className="p-4 text-sm text-[var(--text-muted)] text-center">No temples in dataset for this state</p>
               ) : activeTemples.map(t => (
                 <div
                   key={t.id}
@@ -229,22 +230,22 @@ export default function IndiaMandirMap() {
                   </div>
                   <div className="flex flex-wrap gap-1 mb-2">
                     {(t.categories || []).slice(0, 2).map(cat => (
-                      <span key={cat} className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${CATEGORY_COLORS[cat] || 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>{cat}</span>
+                      <span key={cat} className={`text-[12px] px-1.5 py-0.5 rounded-full font-medium ${CATEGORY_COLORS[cat] || 'bg-[var(--warm-sand)] text-[var(--text-secondary)]'}`}>{cat}</span>
                     ))}
                   </div>
-                  <div className="space-y-0.5 text-xs text-[var(--warm-charcoal)]/60">
-                    <p className="flex items-center gap-1"><span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'FILL' 1" }}>temple_hindu</span>{t.deity}</p>
-                    <p className="flex items-center gap-1"><span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'FILL' 1" }}>schedule</span>{t.darshan_timings}</p>
-                    <p className="flex items-center gap-1"><span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'FILL' 1" }}>location_on</span>{t.city}</p>
+                  <div className="space-y-0.5 text-xs text-[var(--text-secondary)]">
+                    <p className="flex items-center gap-1"><Icon name="temple_hindu" size={13} />{t.deity}</p>
+                    <p className="flex items-center gap-1"><Icon name="schedule" size={13} />{t.darshan_timings}</p>
+                    <p className="flex items-center gap-1"><Icon name="location_on" size={13} />{t.city}</p>
                   </div>
-                  <p className="text-xs text-[var(--warm-charcoal)]/50 mt-1.5 line-clamp-2">{t.significance}</p>
+                  <p className="text-xs text-[var(--text-muted)] mt-1.5 line-clamp-2">{t.significance}</p>
                   <a
                     href={`https://www.openstreetmap.org/?mlat=${t.coordinates.latitude}&mlon=${t.coordinates.longitude}&zoom=14`}
                     target="_blank" rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
                     className="mt-2 inline-flex items-center gap-1 text-xs text-[var(--indigo-deep)] hover:underline font-medium"
                   >
-                    <span className="material-symbols-outlined text-[12px]">map</span>View on Map
+                    <Icon name="map" size={13} />View on Map
                   </a>
                 </div>
               ))}
@@ -255,10 +256,10 @@ export default function IndiaMandirMap() {
             <div className="px-4 py-3 border-b border-[var(--warm-sand)] flex items-center justify-between">
               <div>
                 <p className="font-bold text-[var(--indigo-deep)] text-sm">{selectedCircuit.name}</p>
-                <p className="text-xs text-[var(--warm-charcoal)]/50">{selectedCircuit.total_temples} temples · {selectedCircuit.approx_duration_days} days</p>
+                <p className="text-xs text-[var(--text-muted)]">{selectedCircuit.total_temples} temples · {selectedCircuit.approx_duration_days} days</p>
               </div>
-              <button onClick={() => { setSelectedCircuit(null); setMobileView('map') }} className="text-[var(--warm-charcoal)]/40 hover:text-[var(--warm-charcoal)]">
-                <span className="material-symbols-outlined text-[18px]">close</span>
+              <button onClick={() => { setSelectedCircuit(null); setMobileView('map') }} className="text-[var(--text-muted)] hover:text-[var(--warm-charcoal)]">
+                <Icon name="close" size={18} />
               </button>
             </div>
             <div className="flex-1 overflow-y-auto divide-y divide-[var(--warm-sand)]/60">
@@ -271,18 +272,18 @@ export default function IndiaMandirMap() {
                     className="p-3 hover:bg-[var(--warm-sand)]/20 transition-colors cursor-pointer"
                   >
                     <div className="flex items-start gap-2">
-                      <div className="w-5 h-5 rounded-full bg-[var(--terracotta)] text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">{stop.stop_number}</div>
+                      <div className="w-5 h-5 rounded-full bg-[var(--terracotta)] text-white text-[12px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">{stop.stop_number}</div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-bold text-[var(--indigo-deep)]">{stop.name}</p>
-                        <p className="text-xs text-[var(--warm-charcoal)]/60">{stop.city}</p>
-                        {temple && <p className="text-xs text-[var(--warm-charcoal)]/50 mt-1 line-clamp-2">{temple.significance}</p>}
+                        <p className="text-xs text-[var(--text-secondary)]">{stop.city}</p>
+                        {temple && <p className="text-xs text-[var(--text-muted)] mt-1 line-clamp-2">{temple.significance}</p>}
                         <a
                           href={`https://www.openstreetmap.org/?mlat=${stop.coordinates.latitude}&mlon=${stop.coordinates.longitude}&zoom=13`}
                           target="_blank" rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
                           className="mt-1 inline-flex items-center gap-1 text-xs text-[var(--indigo-deep)] hover:underline"
                         >
-                          <span className="material-symbols-outlined text-[12px]">map</span>Map
+                          <Icon name="map" size={13} />Map
                         </a>
                       </div>
                     </div>
@@ -294,14 +295,14 @@ export default function IndiaMandirMap() {
         ) : (
           <div className="flex-1 flex items-center justify-center text-center p-6">
             <div>
-              <span className="material-symbols-outlined text-[48px] text-[var(--warm-charcoal)]/20 block mb-3" style={{ fontVariationSettings: "'FILL' 1" }}>temple_hindu</span>
-              <p className="text-sm font-medium text-[var(--warm-charcoal)]/40">Tap a state to explore</p>
-              <p className="text-xs text-[var(--warm-charcoal)]/30 mt-1">or select a pilgrimage circuit above</p>
+              <Icon name="temple_hindu" size={48} className="text-[var(--warm-charcoal)]/20 block mb-3" />
+              <p className="text-sm font-medium text-[var(--text-muted)]">Tap a state to explore</p>
+              <p className="text-xs text-[var(--text-muted)] mt-1">or select a pilgrimage circuit above</p>
               <div className="mt-4 text-left space-y-1">
-                <p className="text-xs text-[var(--warm-charcoal)]/50 font-semibold uppercase tracking-wide">Dataset</p>
-                <p className="text-xs text-[var(--warm-charcoal)]/40">{temples.length} sacred sites</p>
-                <p className="text-xs text-[var(--warm-charcoal)]/40">{circuits.length} pilgrimage circuits</p>
-                <p className="text-xs text-[var(--warm-charcoal)]/40">{[...new Set(temples.map(t => t.state))].length} states covered</p>
+                <p className="text-xs text-[var(--text-muted)] font-semibold uppercase tracking-wide">Dataset</p>
+                <p className="text-xs text-[var(--text-muted)]">{temples.length} sacred sites</p>
+                <p className="text-xs text-[var(--text-muted)]">{circuits.length} pilgrimage circuits</p>
+                <p className="text-xs text-[var(--text-muted)]">{[...new Set(temples.map(t => t.state))].length} states covered</p>
               </div>
             </div>
           </div>
@@ -315,9 +316,7 @@ export default function IndiaMandirMap() {
             onClick={() => setMobileView(prev => prev === 'map' ? 'list' : 'map')}
             className="bg-[var(--indigo-deep)] text-white px-4 py-2.5 rounded-full shadow-lg text-xs font-semibold flex items-center gap-1.5 border border-white/20 active:scale-95 transition-transform"
           >
-            <span className="material-symbols-outlined text-[16px]">
-              {mobileView === 'map' ? 'format_list_bulleted' : 'map'}
-            </span>
+            <Icon name={mobileView === 'map' ? 'format_list_bulleted' : 'map'} size={16} />
             {mobileView === 'map' ? 'Show List' : 'Show Map'}
           </button>
         </div>

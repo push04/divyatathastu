@@ -9,6 +9,36 @@ function getGroq() {
 
 export const maxDuration = 60
 
+// HIGH-2: In-memory rate limiter — 10 requests per user per 10-minute window
+// Note: resets on cold-start in serverless. For strict limits at scale, use Upstash Redis.
+const rateLimitStore = new Map<string, { count: number; windowStart: number }>()
+const RATE_LIMIT_MAX = 10
+const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000 // 10 minutes
+
+function checkRateLimit(userId: string): { allowed: boolean; remaining: number } {
+  const now = Date.now()
+  const entry = rateLimitStore.get(userId)
+
+  if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+    // New window
+    rateLimitStore.set(userId, { count: 1, windowStart: now })
+    // Cleanup old entries to prevent memory leak in long-running instances
+    if (rateLimitStore.size > 5000) {
+      for (const [key, val] of rateLimitStore) {
+        if (now - val.windowStart > RATE_LIMIT_WINDOW_MS) rateLimitStore.delete(key)
+      }
+    }
+    return { allowed: true, remaining: RATE_LIMIT_MAX - 1 }
+  }
+
+  if (entry.count >= RATE_LIMIT_MAX) {
+    return { allowed: false, remaining: 0 }
+  }
+
+  entry.count++
+  return { allowed: true, remaining: RATE_LIMIT_MAX - entry.count }
+}
+
 function isRateLimitError(err: any): boolean {
   return err?.status === 429 || err?.error?.type === 'tokens' ||
     (typeof err?.message === 'string' && /rate.?limit/i.test(err.message))
@@ -37,6 +67,18 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
+  // HIGH-2: Enforce per-user rate limit before any LLM call
+  const { allowed, remaining } = checkRateLimit(user.id)
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'You have reached the AI request limit. Please wait a few minutes before trying again.' },
+      {
+        status: 429,
+        headers: { 'Retry-After': '600', 'X-RateLimit-Remaining': '0' },
+      }
+    )
+  }
+
   try {
     const { messages, system, reportData, reportType, memberName, stream: useStream = true } = await req.json()
 
@@ -59,7 +101,10 @@ ${reportData ? `Report Data: ${JSON.stringify(reportData, null, 2)}` : ''}`
         max_tokens: 2048,
         temperature: 0.7,
       }))
-      return NextResponse.json({ content: completion.choices[0]?.message?.content || '' })
+      return NextResponse.json(
+        { content: completion.choices[0]?.message?.content || '' },
+        { headers: { 'X-RateLimit-Remaining': String(remaining) } }
+      )
     }
 
     // For streaming, retry applies to the initial stream creation only
@@ -82,8 +127,9 @@ ${reportData ? `Report Data: ${JSON.stringify(reportData, null, 2)}` : ''}`
             const delta = chunk.choices[0]?.delta?.content || ''
             if (delta) controller.enqueue(encoder.encode(`data: ${JSON.stringify({ choices: [{ delta: { content: delta } }] })}\n\n`))
           }
-        } catch (streamErr) {
-          console.error('Groq stream error:', streamErr)
+        } catch (streamErr: any) {
+          // MED-4: Log only a sanitized error code, not the full object
+          console.error('Groq stream error:', streamErr?.status ?? 'unknown')
         }
         controller.enqueue(encoder.encode('data: [DONE]\n\n'))
         controller.close()
@@ -95,16 +141,18 @@ ${reportData ? `Report Data: ${JSON.stringify(reportData, null, 2)}` : ''}`
         'Content-Type': 'text/event-stream',
         'Cache-Control': 'no-cache',
         'Connection': 'keep-alive',
+        'X-RateLimit-Remaining': String(remaining),
       },
     })
   } catch (err: any) {
-    console.error('Groq error:', err)
+    // MED-4: Sanitize — log only status code and type, never the raw error object
+    console.error('Groq error: status=%s type=%s', err?.status ?? 'unknown', err?.error?.type ?? 'unknown')
     if (isRateLimitError(err)) {
       return NextResponse.json(
-        { error: 'AI is busy right now (rate limit). Please wait 1–2 minutes and try again.' },
+        { error: 'The guidance engine is busy right now. Please wait a minute and try again.' },
         { status: 429 }
       )
     }
-    return NextResponse.json({ error: 'AI generation failed. Please try again.' }, { status: 500 })
+    return NextResponse.json({ error: 'Generation failed. Please try again.' }, { status: 500 })
   }
 }

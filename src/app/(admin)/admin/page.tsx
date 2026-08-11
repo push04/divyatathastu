@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 
+import Icon from '@/components/ui/Icon'
 interface Stats { users: number; reports: number; orders: number; revenue: number; activeConsultations: number; openTickets: number; events: number }
 interface RecentActivity { type: 'user' | 'report' | 'order'; label: string; time: string; icon: string }
 
@@ -61,17 +62,17 @@ export default function AdminOverviewPage() {
     <div className="p-6 space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-[var(--indigo-deep)]">Admin Overview</h1>
-        <p className="text-sm text-[var(--warm-charcoal)]/50 mt-0.5">{new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        <p className="text-sm text-[var(--text-muted)] mt-0.5">{new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         {STAT_CARDS.map(s => (
           <Link key={s.label} href={s.href} className="card-divine p-4 hover:shadow-md transition-all">
             <div className={`w-10 h-10 ${s.color} rounded-xl flex items-center justify-center text-white mb-3 shadow-sm`}>
-              <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>{s.icon}</span>
+              <Icon name={s.icon} size={20} />
             </div>
             <div className="text-2xl font-bold text-[var(--indigo-deep)]">{s.value}</div>
-            <div className="text-sm text-[var(--warm-charcoal)]/50 mt-0.5">{s.label}</div>
+            <div className="text-sm text-[var(--text-muted)] mt-0.5">{s.label}</div>
           </Link>
         ))}
       </div>
@@ -85,7 +86,7 @@ export default function AdminOverviewPage() {
           { href: '/admin/events', label: 'Manage Events', icon: 'event_note' },
         ].map(l => (
           <Link key={l.href} href={l.href} className="card-divine p-4 hover:shadow-sm transition-all text-center">
-            <span className="material-symbols-outlined text-[24px] text-[var(--indigo-deep)] mb-2 block" style={{ fontVariationSettings: "'FILL' 1" }}>{l.icon}</span>
+            <Icon name={l.icon} size={24} className="text-[var(--indigo-deep)] mb-2 block" />
             <p className="text-sm font-medium text-[var(--warm-charcoal)]">{l.label}</p>
           </Link>
         ))}
@@ -96,12 +97,12 @@ export default function AdminOverviewPage() {
         <div className="space-y-1">
           {recent.map((a, i) => (
             <div key={i} className="flex items-center gap-3 py-2.5 border-b border-[var(--warm-sand)]/60 last:border-0">
-              <span className="material-symbols-outlined text-[18px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>{a.icon}</span>
+              <Icon name={a.icon} size={18} className="text-[var(--terracotta)]" />
               <p className="text-sm text-[var(--warm-charcoal)] flex-1">{a.label}</p>
-              <span className="text-xs text-[var(--warm-charcoal)]/40">{new Date(a.time).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
+              <span className="text-xs text-[var(--text-muted)]">{new Date(a.time).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
             </div>
           ))}
-          {recent.length === 0 && <p className="text-sm text-[var(--warm-charcoal)]/40">No activity yet</p>}
+          {recent.length === 0 && <p className="text-sm text-[var(--text-muted)]">No activity yet</p>}
         </div>
       </div>
 
@@ -109,11 +110,11 @@ export default function AdminOverviewPage() {
       <div className="card-divine overflow-hidden">
         <div className="px-5 pt-5 pb-3 flex items-center justify-between border-b border-[var(--warm-sand)]">
           <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-[20px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>new_releases</span>
+            <Icon name="new_releases" size={20} className="text-[var(--saffron)]" />
             <h2 className="font-bold text-[var(--indigo-deep)]">Platform Updates</h2>
-            <span className="text-[10px] bg-[var(--saffron)] text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Latest</span>
+            <span className="text-[12px] bg-[var(--saffron)] text-white px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Latest</span>
           </div>
-          <span className="text-xs text-[var(--warm-charcoal)]/40">June 2026 · v2.0</span>
+          <span className="text-xs text-[var(--text-muted)]">June 2026 · v2.0</span>
         </div>
         <div className="divide-y divide-[var(--warm-sand)]/60">
           {[
@@ -162,15 +163,15 @@ export default function AdminOverviewPage() {
           ].map((item, i) => (
             <div key={i} className="px-5 py-4 flex gap-4">
               <div className={`w-9 h-9 rounded-xl ${item.color} flex items-center justify-center text-white shrink-0 mt-0.5`}>
-                <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>{item.icon}</span>
+                <Icon name={item.icon} size={16} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap mb-0.5">
                   <span className="font-semibold text-[var(--indigo-deep)] text-sm">{item.title}</span>
-                  <span className="text-[9px] uppercase tracking-widest font-bold px-2 py-0.5 rounded-full bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60">{item.tag}</span>
+                  <span className="text-[12px] uppercase tracking-widest font-bold px-2 py-0.5 rounded-full bg-[var(--warm-sand)] text-[var(--text-secondary)]">{item.tag}</span>
                 </div>
-                <p className="text-xs text-[var(--warm-charcoal)]/60 leading-relaxed">{item.desc}</p>
-                <p className="text-[10px] text-[var(--indigo-deep)]/50 mt-1 font-mono">{item.sub}</p>
+                <p className="text-xs text-[var(--text-secondary)] leading-relaxed">{item.desc}</p>
+                <p className="text-[12px] text-[var(--text-muted)] mt-1 font-mono">{item.sub}</p>
               </div>
             </div>
           ))}

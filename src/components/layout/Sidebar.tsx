@@ -7,13 +7,15 @@ import { cn } from '@/lib/utils/cn'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import SudarshanLoader from '@/components/SudarshanLoader'
+import LanguageSelector from '@/components/i18n/LanguageSelector'
 
+import Icon from '@/components/ui/Icon'
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
   { href: '/family', label: 'Family Circle', icon: 'family_restroom' },
   { href: '/reports', label: 'Reports', icon: 'description' },
-  { href: '/reports/generate', label: 'Generate Report', icon: 'auto_awesome' },
-  { href: '/ai-guide', label: 'AI Spiritual Guide', icon: 'psychology' },
+  { href: '/reports/generate', label: 'Generate Report', icon: 'brightness_7' },
+  { href: '/ai-guide', label: 'Spiritual Guide', icon: 'psychology' },
   { href: '/panchang', label: 'Panchang', icon: 'calendar_today' },
   { href: '/mandir-finder', label: 'Mandir Finder', icon: 'temple_hindu' },
   { href: '/pilgrimage', label: 'Pilgrimage', icon: 'travel_explore' },
@@ -21,6 +23,8 @@ const navItems = [
   { href: '/handwritten-report', label: 'Handwritten Report', icon: 'draw' },
   { href: '/orders', label: 'Orders', icon: 'package_2' },
   { href: '/consultations', label: 'Consultations', icon: 'event' },
+  { href: '/refer', label: 'Refer & Earn', icon: 'group_add' },
+  { href: '/reviews', label: 'Reviews & Rewards', icon: 'rate_review' },
   { href: '/mailbox', label: 'Mailbox', icon: 'mail' },
   { href: '/my-courses', label: 'My Courses', icon: 'school' },
   { href: '/webinars', label: 'Live Webinars', icon: 'live_tv' },
@@ -29,14 +33,16 @@ const navItems = [
   { href: '/settings', label: 'Settings', icon: 'settings' },
 ]
 
-const divineServiceItems = [
-  { href: '/divine-services', label: 'All Divine Services', icon: 'auto_awesome' },
+const divineServiceItems: { href: string; label: string; icon: string; exact?: boolean }[] = [
+  { href: '/divine-services', label: 'All Divine Services', icon: 'brightness_7' },
   { href: '/puja', label: 'Pooja & Rituals', icon: 'local_fire_department' },
   { href: '/sadhana', label: 'Saadhana', icon: 'self_improvement' },
   { href: '/mahaganpati', label: 'Mahaganpati', icon: 'brightness_5' },
   { href: '/gyanampeetham', label: 'Gyanampeetham', icon: 'school' },
   { href: '/ayurveda', label: 'Ayurveda', icon: 'spa' },
-  { href: '/ardra-jalam', label: 'Ardra Jalam', icon: 'water_drop' },
+  { href: '/ardra-jalam', label: 'Ardra Jalam', icon: 'water_drop', exact: true },
+  { href: '/ardra-jalam/nakshatra-jal', label: 'Nakshatra Jal', icon: 'water_drop' },
+  { href: '/ardra-jalam/crystal-manifestation', label: 'Crystal Manifestation', icon: 'diamond' },
   { href: '/courses', label: 'Courses', icon: 'menu_book' },
 ]
 
@@ -48,17 +54,20 @@ function NavContent({ pathname, onClose, onSignOut }: { pathname: string; onClos
         <Link href="/" className="flex items-center gap-2.5 group">
           <div className="w-8 h-8 flex-shrink-0 group-hover:scale-110 transition-transform"><SudarshanLoader px={32} /></div>
           <div>
-            <div className="text-[var(--indigo-deep)] font-bold text-sm leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>MahaTathastu</div>
-            <div className="text-[var(--terracotta)] text-[9px] tracking-[0.15em] uppercase" style={{ fontFamily: "'Sora', sans-serif" }}>My Sanctuary</div>
+            <div className="text-[var(--indigo-deep)] font-bold text-sm leading-tight" style={{ fontFamily: "var(--font-display)" }}>MahaTathastu</div>
+            <div className="text-[var(--terracotta)] text-[12px] tracking-[0.15em] uppercase" style={{ fontFamily: "var(--font-label)" }}>My Sanctuary</div>
           </div>
         </Link>
         {/* Close button (mobile only) */}
-        <button
-          onClick={onClose}
-          className="lg:hidden p-1.5 rounded-lg text-[var(--indigo-deep)]/50 hover:bg-[var(--warm-sand)] transition-colors"
-        >
-          <span className="material-symbols-outlined text-[20px]">close</span>
-        </button>
+        <div className="flex items-center gap-1">
+          <LanguageSelector />
+          <button
+            onClick={onClose}
+            className="lg:hidden p-1.5 rounded-lg text-[var(--text-muted)] hover:bg-[var(--warm-sand)] transition-colors"
+          >
+            <Icon name="close" size={20} />
+          </button>
+        </div>
       </div>
 
       {/* Nav */}
@@ -73,16 +82,11 @@ function NavContent({ pathname, onClose, onSignOut }: { pathname: string; onClos
                 'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all duration-200',
                 active
                   ? 'bg-[var(--warm-sand)] text-[var(--terracotta)] border-l-2 border-[var(--terracotta)]'
-                  : 'text-[var(--indigo-deep)]/50 hover:text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/50 border-l-2 border-transparent'
+                  : 'text-[var(--text-muted)] hover:text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/50 border-l-2 border-transparent'
               )}
             >
-              <span
-                className="material-symbols-outlined text-[18px]"
-                style={{ fontVariationSettings: active ? "'FILL' 1" : "'FILL' 0" }}
-              >
-                {icon}
-              </span>
-              <span className="font-medium text-[13px]">{label}</span>
+              <Icon name={icon} size={18} />
+              <span className="font-medium text-[14px]">{label}</span>
             </Link>
           )
         })}
@@ -90,42 +94,37 @@ function NavContent({ pathname, onClose, onSignOut }: { pathname: string; onClos
         {/* ── Divine Services Section ── */}
         <div className="pt-3 pb-1">
           <div className="mx-1 rounded-2xl overflow-hidden"
-            style={{ border: '1.5px solid #D4A017', background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)' }}>
+            style={{ border: '1.5px solid #C9992E', background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)' }}>
             {/* Section header */}
             <div className="px-3 pt-3 pb-2 flex items-center gap-2">
-              <span className="material-symbols-outlined text-[16px]" style={{ color: '#D4A017', fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
-              <span className="text-[10px] font-black tracking-[0.2em] uppercase" style={{ color: '#92400e', fontFamily: "'Sora', sans-serif" }}>
+              <Icon name="brightness_7" size={16} style={{ color: '#C9992E' }} />
+              <span className="text-[12px] font-black tracking-[0.2em] uppercase" style={{ color: '#92400e', fontFamily: "var(--font-label)" }}>
                 Divine Services
               </span>
             </div>
             {/* Service links */}
             <div className="pb-2 px-1 space-y-0.5">
-              {divineServiceItems.map(({ href, label, icon }) => {
+              {divineServiceItems.map(({ href, label, icon, exact }) => {
                 const isAll    = href === '/divine-services'
-                const active   = pathname === href || (!isAll && href !== '/dashboard' && pathname.startsWith(href))
+                const active   = pathname === href || (!isAll && !exact && href !== '/dashboard' && pathname.startsWith(href))
                 return (
                   <Link
                     key={href}
                     href={href}
                     className={cn(
-                      'flex items-center gap-2.5 px-3 py-2 rounded-xl text-[12px] transition-all duration-200',
+                      'flex items-center gap-2.5 px-3 py-2 rounded-xl text-[13px] transition-all duration-200',
                       isAll
                         ? active
-                          ? 'bg-[#D4A017] text-white font-bold'
+                          ? 'bg-[#C9992E] text-white font-bold'
                           : 'bg-[#D4A01715] text-[#92400e] font-bold hover:bg-[#D4A01725] border border-[#D4A01740]'
                         : active
-                        ? 'bg-[#92400e]/15 text-[#92400e] font-semibold border-l-2 border-[#D4A017]'
+                        ? 'bg-[#92400e]/15 text-[#92400e] font-semibold border-l-2 border-[#C9992E]'
                         : 'text-[#78350f]/60 hover:text-[#92400e] hover:bg-[#D4A01710] border-l-2 border-transparent'
                     )}
                   >
-                    <span
-                      className="material-symbols-outlined text-[15px]"
-                      style={{ fontVariationSettings: active ? "'FILL' 1" : "'FILL' 0", color: active ? 'inherit' : '#D4A017' }}
-                    >
-                      {icon}
-                    </span>
+                    <Icon name={icon} size={15} style={{ color: active ? 'inherit' : '#C9992E'  }} />
                     <span className={isAll ? 'font-bold' : 'font-medium'}>{label}</span>
-                    {isAll && <span className="ml-auto material-symbols-outlined text-[12px] opacity-60">arrow_forward</span>}
+                    {isAll && <Icon name="arrow_forward" size={13} className="ml-auto opacity-60" />}
                   </Link>
                 )
               })}
@@ -137,19 +136,19 @@ function NavContent({ pathname, onClose, onSignOut }: { pathname: string; onClos
       {/* Security badge */}
       <div className="mx-3 mb-3 p-3 rounded-xl bg-[var(--warm-sand)] border border-[var(--outline-variant)]/30">
         <div className="flex items-center gap-2 mb-1">
-          <span className="material-symbols-outlined text-[14px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>lock</span>
-          <span className="text-[10px] font-semibold tracking-widest uppercase text-[var(--saffron)]" style={{ fontFamily: "'Sora', sans-serif" }}>Vedic Security</span>
+          <Icon name="lock" size={14} className="text-[var(--saffron)]" />
+          <span className="text-[12px] font-semibold tracking-widest uppercase text-[var(--saffron)]" style={{ fontFamily: "var(--font-label)" }}>Vedic Security</span>
         </div>
-        <p className="text-[11px] text-[var(--indigo-deep)]/50 leading-relaxed">Your family data is end-to-end encrypted.</p>
+        <p className="text-[13px] text-[var(--text-muted)] leading-relaxed">Your family data is end-to-end encrypted.</p>
       </div>
 
       {/* Sign out */}
       <div className="px-3 pb-4 border-t border-[var(--outline-variant)]/30 pt-3">
         <button
           onClick={onSignOut}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[var(--indigo-deep)]/40 hover:text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/50 transition-all border-l-2 border-transparent"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-[var(--text-muted)] hover:text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/50 transition-all border-l-2 border-transparent"
         >
-          <span className="material-symbols-outlined text-[18px]">logout</span>
+          <Icon name="logout" size={18} />
           Sign Out
         </button>
       </div>
@@ -184,13 +183,13 @@ export default function Sidebar() {
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 h-14 bg-[var(--kutch-white)] border-b border-[var(--outline-variant)]/30 flex items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
           <div className="w-7 h-7 flex-shrink-0"><SudarshanLoader px={28} /></div>
-          <span className="font-bold text-sm text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>MahaTathastu</span>
+          <span className="font-bold text-sm text-[var(--indigo-deep)]" style={{ fontFamily: "var(--font-display)" }}>MahaTathastu</span>
         </Link>
         <button
           onClick={() => setMobileOpen(true)}
-          className="p-2 rounded-xl text-[var(--indigo-deep)]/60 hover:bg-[var(--warm-sand)] transition-colors"
+          className="p-2 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--warm-sand)] transition-colors"
         >
-          <span className="material-symbols-outlined text-[22px]">menu</span>
+          <Icon name="menu" size={22} />
         </button>
       </div>
 

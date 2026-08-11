@@ -1,3 +1,4 @@
+import Icon from '@/components/ui/Icon'
 ﻿import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -120,12 +121,12 @@ export default function PrivacyPolicyPage() {
     <div className="min-h-screen bg-[var(--kutch-white)]">
       <section className="page-banner">
         <div className="page-banner-inner max-w-2xl mx-auto">
-          <p className="text-[var(--saffron)] text-xs font-bold tracking-[0.2em] uppercase mb-4" style={{ fontFamily: "'Sora', sans-serif" }}>Legal</p>
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>Privacy Policy</h1>
+          <p className="t-eyebrow t-eyebrow-dark mb-4 inline-block">Legal</p>
+          <h1 className="t-display-2 text-[var(--text-on-dark)] mb-4">Privacy Policy</h1>
           <div className="ornate-divider">
-            <span className="material-symbols-outlined text-[14px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
+            <Icon name="yantra" size={16} className="text-[var(--gold-300)]" />
           </div>
-          <p className="text-white/65 text-base">Effective: 1 June 2025 &nbsp;&middot;&nbsp; Last updated: 18 June 2026</p>
+          <p className="text-[var(--text-on-dark-secondary)] text-base">Effective: 1 June 2025 &nbsp;&middot;&nbsp; Last updated: 18 June 2026</p>
         </div>
       </section>
 
@@ -133,7 +134,7 @@ export default function PrivacyPolicyPage() {
         <div className="max-w-3xl mx-auto">
           {/* Intro */}
           <div className="card-divine p-6 mb-10" style={{ background: 'linear-gradient(135deg, #FEF5EC, #FFF8E1)', borderColor: '#E8D5A0' }}>
-            <p className="text-[var(--warm-charcoal)]/80 leading-relaxed text-sm">
+            <p className="text-[var(--text-primary)] leading-relaxed text-sm">
               MahaTathastu respects your privacy deeply. Your birth data and family information are sacred - we handle them with the same reverence that Vedic tradition applies to personal charts. This policy explains exactly what we collect, why, and how we protect it.
             </p>
           </div>
@@ -142,8 +143,8 @@ export default function PrivacyPolicyPage() {
           <div className="space-y-10">
             {SECTIONS.map(sec => (
               <div key={sec.id} id={sec.id}>
-                <h2 className="text-xl font-bold text-[var(--indigo-deep)] mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>{sec.title}</h2>
-                <div className="prose prose-sm max-w-none text-[var(--warm-charcoal)]/75 leading-relaxed">
+                <h2 className="text-xl font-bold text-[var(--indigo-deep)] mb-4" style={{ fontFamily: "var(--font-display)" }}>{sec.title}</h2>
+                <div className="prose prose-sm max-w-none text-[var(--text-secondary)] leading-relaxed">
                   {sec.content.split('\n\n').map((para, i) => (
                     <p key={i} className="mb-4 text-sm leading-relaxed"
                       dangerouslySetInnerHTML={{

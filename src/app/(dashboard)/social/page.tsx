@@ -4,6 +4,7 @@ import SudarshanLoader from '@/components/SudarshanLoader'
 import { useState } from 'react'
 import { toast } from 'sonner'
 
+import Icon from '@/components/ui/Icon'
 const PLATFORMS = ['Instagram', 'Twitter/X', 'Facebook', 'LinkedIn', 'WhatsApp Status']
 const TOPICS = [
   'Daily panchang & auspicious timing',
@@ -87,10 +88,10 @@ ${platform === 'WhatsApp Status' ? 'Short, inspiring. Under 100 chars.' : ''}`,
     <div className="p-6 max-w-4xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-[var(--indigo-deep)] flex items-center gap-2">
-          <span className="material-symbols-outlined text-[26px]" style={{ fontVariationSettings: "'FILL' 1" }}>share</span>
+          <Icon name="share" size={26} />
           Social Media Generator
         </h1>
-        <p className="text-sm text-[var(--warm-charcoal)]/60 mt-0.5">AI-powered spiritual content for your social platforms</p>
+        <p className="text-sm text-[var(--text-secondary)] mt-0.5">Spiritual content for your social platforms</p>
       </div>
 
       <div className="card-divine p-6 space-y-5">
@@ -100,7 +101,7 @@ ${platform === 'WhatsApp Status' ? 'Short, inspiring. Under 100 chars.' : ''}`,
           <div className="flex flex-wrap gap-2">
             {PLATFORMS.map(p => (
               <button key={p} onClick={() => setPlatform(p)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${platform === p ? 'bg-[var(--indigo-deep)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 hover:border-[var(--indigo-deep)]'}`}>
+                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${platform === p ? 'bg-[var(--indigo-deep)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--text-secondary)] hover:border-[var(--indigo-deep)]'}`}>
                 {p}
               </button>
             ))}
@@ -113,7 +114,7 @@ ${platform === 'WhatsApp Status' ? 'Short, inspiring. Under 100 chars.' : ''}`,
           <div className="flex flex-wrap gap-2 mb-3">
             {TOPICS.map(t => (
               <button key={t} onClick={() => { setTopic(t); setCustomTopic('') }}
-                className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${topic === t && !customTopic ? 'bg-[var(--terracotta)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 hover:border-[var(--terracotta)]'}`}>
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${topic === t && !customTopic ? 'bg-[var(--terracotta)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--text-secondary)] hover:border-[var(--terracotta)]'}`}>
                 {t}
               </button>
             ))}
@@ -133,7 +134,7 @@ ${platform === 'WhatsApp Status' ? 'Short, inspiring. Under 100 chars.' : ''}`,
           <div className="flex flex-wrap gap-2">
             {['inspiring', 'informative', 'devotional', 'casual', 'poetic'].map(t => (
               <button key={t} onClick={() => setTone(t)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize transition-all ${tone === t ? 'bg-[var(--indigo-deep)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>
+                className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize transition-all ${tone === t ? 'bg-[var(--indigo-deep)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--text-secondary)]'}`}>
                 {t}
               </button>
             ))}
@@ -145,7 +146,7 @@ ${platform === 'WhatsApp Status' ? 'Short, inspiring. Under 100 chars.' : ''}`,
             <span className="flex items-center justify-center gap-2"><SudarshanLoader size="sm" /> Generating 3 posts...</span>
           ) : (
             <span className="flex items-center justify-center gap-2">
-              <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+              <Icon name="brightness_7" size={18} />
               Generate Content
             </span>
           )}
@@ -160,11 +161,11 @@ ${platform === 'WhatsApp Status' ? 'Short, inspiring. Under 100 chars.' : ''}`,
             <div key={i} className="card-divine p-5">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-sm font-bold text-[var(--indigo-deep)]">Post {i + 1} · {p.platform}</span>
-                <button onClick={() => copy(i)} className={`text-sm px-3 py-1.5 rounded-lg border transition-all ${copied === i ? 'bg-emerald-500 text-white border-emerald-500' : 'border-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 hover:border-[var(--indigo-deep)]'}`}>
+                <button onClick={() => copy(i)} className={`text-sm px-3 py-1.5 rounded-lg border transition-all ${copied === i ? 'bg-emerald-500 text-white border-emerald-500' : 'border-[var(--warm-sand)] text-[var(--text-secondary)] hover:border-[var(--indigo-deep)]'}`}>
                   {copied === i ? (
-                    <span className="inline-flex items-center gap-1"><span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span> Copied!</span>
+                    <span className="inline-flex items-center gap-1"><Icon name="check_circle" size={14} /> Copied!</span>
                   ) : (
-                    <span className="inline-flex items-center gap-1"><span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 0" }}>content_copy</span> Copy</span>
+                    <span className="inline-flex items-center gap-1"><Icon name="content_copy" size={14} /> Copy</span>
                   )}
                 </button>
               </div>
@@ -176,7 +177,7 @@ ${platform === 'WhatsApp Status' ? 'Short, inspiring. Under 100 chars.' : ''}`,
                   <span key={h} className="text-xs text-[var(--terracotta)] font-medium">{h}</span>
                 ))}
               </div>
-              {p.charCount && <p className="text-xs text-[var(--warm-charcoal)]/40 mt-2">{p.charCount} characters</p>}
+              {p.charCount && <p className="text-xs text-[var(--text-muted)] mt-2">{p.charCount} characters</p>}
             </div>
           ))}
         </div>

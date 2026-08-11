@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
+import Icon from '@/components/ui/Icon'
 interface Member {
   id: string
   full_name: string
@@ -85,16 +86,16 @@ export default function MemberProfilePage() {
   }
 
   if (loading) return <div className="flex items-center justify-center h-64"><SudarshanLoader size="sm" /></div>
-  if (!member) return <div className="p-6 text-center"><p>Member not found.</p><Link href="/family" className="text-[var(--terracotta)] inline-flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">arrow_back</span>Back</Link></div>
+  if (!member) return <div className="p-6 text-center"><p>Member not found.</p><Link href="/family" className="text-[var(--terracotta)] inline-flex items-center gap-1"><Icon name="arrow_back" size={16} />Back</Link></div>
 
   return (
     <div className="p-6 max-w-3xl mx-auto space-y-6">
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <Link href="/family" className="text-sm text-[var(--terracotta)] hover:underline inline-flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">arrow_back</span>Family</Link>
+          <Link href="/family" className="text-sm text-[var(--terracotta)] hover:underline inline-flex items-center gap-1"><Icon name="arrow_back" size={16} />Family</Link>
           <h1 className="text-2xl font-bold text-[var(--indigo-deep)] mt-2">{member.full_name}</h1>
-          <p className="text-sm text-[var(--warm-charcoal)]/60 capitalize">{member.relation} · {member.gender}</p>
+          <p className="text-sm text-[var(--text-secondary)] capitalize">{member.relation} · {member.gender}</p>
         </div>
         <div className="flex gap-2">
           <Link href={`/reports/generate?member=${memberId}`} className="btn-divine text-sm px-4 py-2">Generate Report</Link>
@@ -109,7 +110,7 @@ export default function MemberProfilePage() {
           </div>
           <div>
             <h2 className="text-lg font-bold text-[var(--indigo-deep)]">{member.full_name}</h2>
-            <p className="text-sm text-[var(--warm-charcoal)]/60">{getAge(member.date_of_birth)} years old · Born {new Date(member.date_of_birth).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+            <p className="text-sm text-[var(--text-secondary)]">{getAge(member.date_of_birth)} years old · Born {new Date(member.date_of_birth).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
           </div>
         </div>
 
@@ -121,7 +122,7 @@ export default function MemberProfilePage() {
             { label: 'Timezone', value: member.birth_timezone || 'Asia/Kolkata', icon: 'schedule' },
           ].map(item => (
             <div key={item.label} className="bg-[var(--warm-sand)] rounded-xl p-3">
-              <p className="text-xs text-[var(--warm-charcoal)]/50 mb-1 inline-flex items-center gap-1"><span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>{item.icon}</span> {item.label}</p>
+              <p className="text-xs text-[var(--text-muted)] mb-1 inline-flex items-center gap-1"><Icon name={item.icon} size={14} /> {item.label}</p>
               <p className="font-medium text-[var(--indigo-deep)] truncate">{item.value}</p>
             </div>
           ))}
@@ -132,13 +133,13 @@ export default function MemberProfilePage() {
       <section>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-[var(--indigo-deep)]">Reports ({reports.length})</h2>
-          <Link href={`/reports/generate?member=${memberId}`} className="text-sm text-[var(--terracotta)] font-medium hover:underline inline-flex items-center gap-1"><span className="material-symbols-outlined text-[15px]">add</span>New Report</Link>
+          <Link href={`/reports/generate?member=${memberId}`} className="text-sm text-[var(--terracotta)] font-medium hover:underline inline-flex items-center gap-1"><Icon name="add" size={15} />New Report</Link>
         </div>
 
         {reports.length === 0 ? (
           <div className="bg-white rounded-2xl border border-dashed border-[var(--warm-sand)] p-10 text-center">
-            <div className="flex justify-center mb-3"><span className="material-symbols-outlined text-[40px] text-[var(--indigo-deep)]" style={{ fontVariationSettings: "'FILL' 1" }}>description</span></div>
-            <p className="text-[var(--warm-charcoal)]/60 mb-4">No reports generated yet for {member.full_name}</p>
+            <div className="flex justify-center mb-3"><Icon name="description" size={40} className="text-[var(--indigo-deep)]" /></div>
+            <p className="text-[var(--text-secondary)] mb-4">No reports generated yet for {member.full_name}</p>
             <Link href={`/reports/generate?member=${memberId}`} className="btn-divine px-6 py-2.5 text-sm">Generate Report</Link>
           </div>
         ) : (
@@ -146,11 +147,11 @@ export default function MemberProfilePage() {
             {reports.map(r => (
               <Link key={r.id} href={`/reports/${r.id}`} className="flex items-center gap-3 bg-white rounded-xl p-3.5 border border-[var(--warm-sand)] hover:border-[var(--saffron)] transition-all">
                 <div className="w-10 h-10 rounded-lg bg-[var(--warm-sand)] flex items-center justify-center flex-shrink-0">
-                  <span className="material-symbols-outlined text-[20px] text-[var(--indigo-deep)]" style={{ fontVariationSettings: "'FILL' 1" }}>{r.report_type === 'kundli' ? 'brightness_7' : r.report_type === 'full_tathastu' ? 'auto_awesome' : 'description'}</span>
+                  <Icon name={r.report_type === 'kundli' ? 'brightness_7' : r.report_type === 'full_tathastu' ? 'all_inclusive' : 'description'} size={20} className="text-[var(--indigo-deep)]" />
                 </div>
                 <div className="flex-1">
                   <p className="font-medium text-sm text-[var(--indigo-deep)]">{reportTypeLabels[r.report_type] || r.report_type}</p>
-                  <p className="text-xs text-[var(--warm-charcoal)]/50">{new Date(r.created_at).toLocaleDateString('en-IN')}</p>
+                  <p className="text-xs text-[var(--text-muted)]">{new Date(r.created_at).toLocaleDateString('en-IN')}</p>
                 </div>
                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${r.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>
                   {r.status}

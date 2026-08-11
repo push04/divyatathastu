@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
+import Icon from '@/components/ui/Icon'
 interface Product {
   id: string; name: string; slug: string; description: string | null
   price: number; sale_price: number | null; stock_count: number
@@ -23,13 +24,13 @@ const PRODUCT_TYPES = ['report','ebook','consultation','yantra','gemstone','crys
 const TYPE_ICON: Record<string, string> = {
   report: 'description', ebook: 'menu_book', consultation: 'support_agent',
   yantra: 'hexagon', gemstone: 'diamond', crystal: 'diamond', physical: 'temple_hindu',
-  course: 'school', bundle: 'auto_awesome', herbal: 'eco',
+  course: 'school', bundle: 'inventory_2', herbal: 'eco',
 }
 const TYPE_GRADIENT: Record<string, string> = {
-  report: 'from-[#2F2A44] to-[#460B2F]', ebook: 'from-[#B9986B] to-[#C67D53]',
+  report: 'from-[#1B1233] to-[#2E0C28]', ebook: 'from-[#C9992E] to-[#B4231F]',
   consultation: 'from-emerald-600 to-teal-700', yantra: 'from-amber-500 to-orange-600',
-  gemstone: 'from-blue-500 to-purple-700', crystal: 'from-violet-600 to-purple-800', physical: 'from-[#C67D53] to-rose-700',
-  course: 'from-violet-600 to-purple-800', bundle: 'from-[#2F2A44] to-[#B9986B]',
+  gemstone: 'from-blue-500 to-purple-700', crystal: 'from-violet-600 to-purple-800', physical: 'from-[#B4231F] to-rose-700',
+  course: 'from-violet-600 to-purple-800', bundle: 'from-[#1B1233] to-[#C9992E]',
   herbal: 'from-green-600 to-emerald-800',
 }
 
@@ -205,12 +206,12 @@ export default function AdminProductsPage() {
         {/* Header */}
         <div className="flex items-center justify-between flex-wrap gap-3">
           <h1 className="text-xl font-bold text-[var(--indigo-deep)] flex items-center gap-2">
-            <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1", color: 'var(--terracotta)' }}>storefront</span>
+            <Icon name="storefront" size={22} style={{ color: 'var(--terracotta)'  }} />
             Products
-            <span className="text-[var(--warm-charcoal)]/40 font-normal text-base">({products.length})</span>
+            <span className="text-[var(--text-muted)] font-normal text-base">({products.length})</span>
           </h1>
           <button onClick={openCreate} className="btn-divine px-4 py-2 text-sm inline-flex items-center gap-1.5">
-            <span className="material-symbols-outlined text-[16px]">add</span>
+            <Icon name="add" size={16} />
             New Product
           </button>
         </div>
@@ -218,7 +219,7 @@ export default function AdminProductsPage() {
         {/* Filters */}
         <div className="flex gap-3 flex-wrap items-center">
           <div className="relative w-64">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-[var(--warm-charcoal)]/40">search</span>
+            <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search products..."
               className="pl-8 pr-3 py-2 rounded-lg border border-[var(--warm-sand)] text-sm w-full focus:outline-none focus:border-[var(--saffron)] bg-white text-[var(--warm-charcoal)]" />
           </div>
@@ -236,7 +237,7 @@ export default function AdminProductsPage() {
               <thead className="bg-[var(--warm-sand)]/40 border-b border-[var(--warm-sand)]">
                 <tr>
                   {['Image', 'Product', 'Type', 'Price', 'Stock', 'Status', 'Actions'].map(h => (
-                    <th key={h} className="text-left px-4 py-3 font-semibold text-[var(--warm-charcoal)]/60 text-xs uppercase tracking-wide">{h}</th>
+                    <th key={h} className="text-left px-4 py-3 font-semibold text-[var(--text-secondary)] text-xs uppercase tracking-wide">{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -252,13 +253,13 @@ export default function AdminProductsPage() {
                           <img src={imgUrl} alt={p.name} className="w-10 h-10 rounded-lg object-cover" />
                         ) : (
                           <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${TYPE_GRADIENT[typeKey] || TYPE_GRADIENT.report} flex items-center justify-center`}>
-                            <span className="material-symbols-outlined text-[16px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{TYPE_ICON[typeKey] || 'storefront'}</span>
+                            <Icon name={TYPE_ICON[typeKey] || 'storefront'} size={16} className="text-white" />
                           </div>
                         )}
                       </td>
                       <td className="px-4 py-3">
                         <p className="font-semibold text-[var(--indigo-deep)] line-clamp-1">{p.name}</p>
-                        <p className="text-xs text-[var(--warm-charcoal)]/40 font-mono mt-0.5">{p.slug}</p>
+                        <p className="text-xs text-[var(--text-muted)] font-mono mt-0.5">{p.slug}</p>
                       </td>
                       <td className="px-4 py-3">
                         <span className="text-xs px-2 py-0.5 rounded-full capitalize font-medium" style={{ background: 'var(--warm-sand)', color: 'rgba(61,52,80,0.7)' }}>
@@ -268,11 +269,11 @@ export default function AdminProductsPage() {
                       <td className="px-4 py-3">
                         <p className="font-bold text-[var(--indigo-deep)]">₹{Number(p.price).toLocaleString('en-IN')}</p>
                         {p.sale_price && (
-                          <p className="text-xs text-emerald-600 font-medium">₹{Number(p.sale_price).toLocaleString('en-IN')} <span className="text-[var(--warm-charcoal)]/40">({discount}% off)</span></p>
+                          <p className="text-xs text-emerald-600 font-medium">₹{Number(p.sale_price).toLocaleString('en-IN')} <span className="text-[var(--text-muted)]">({discount}% off)</span></p>
                         )}
                         {p.product_type === 'report' && (
-                          <Link href="/admin/report-pricing" className="text-[10px] text-indigo-400 hover:text-indigo-600 font-medium mt-0.5 flex items-center gap-0.5">
-                            <span className="material-symbols-outlined text-[10px]">edit</span>via Report Pricing
+                          <Link href="/admin/report-pricing" className="text-[12px] text-indigo-400 hover:text-indigo-600 font-medium mt-0.5 flex items-center gap-0.5">
+                            <Icon name="edit" size={12} />via Report Pricing
                           </Link>
                         )}
                       </td>
@@ -284,12 +285,12 @@ export default function AdminProductsPage() {
                       <td className="px-4 py-3">
                         <div className="flex flex-col gap-1">
                           <button onClick={() => toggleActive(p.id, p.is_active)}
-                            className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${p.is_active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/50 hover:bg-[var(--warm-sand)]/80'}`}>
+                            className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${p.is_active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-[var(--warm-sand)] text-[var(--text-muted)] hover:bg-[var(--warm-sand)]/80'}`}>
                             {p.is_active ? '● Active' : '○ Inactive'}
                           </button>
                           <button onClick={() => toggleFeatured(p.id, p.is_featured)}
                             title="Show this product on the main homepage"
-                            className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${p.is_featured ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/40 hover:bg-amber-50 hover:text-amber-600'}`}>
+                            className={`text-xs px-2.5 py-1 rounded-full font-medium transition-colors ${p.is_featured ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' : 'bg-[var(--warm-sand)] text-[var(--text-muted)] hover:bg-amber-50 hover:text-amber-600'}`}>
                             {p.is_featured ? '★ Featured' : '☆ Feature'}
                           </button>
                         </div>
@@ -297,10 +298,10 @@ export default function AdminProductsPage() {
                       <td className="px-4 py-3">
                         <div className="flex gap-2">
                           <button onClick={() => openEdit(p)} className="text-xs text-[var(--indigo-deep)] hover:underline font-medium flex items-center gap-1">
-                            <span className="material-symbols-outlined text-[14px]">edit</span>Edit
+                            <Icon name="edit" size={14} />Edit
                           </button>
                           <button onClick={() => deleteProduct(p.id)} className="text-xs text-red-500 hover:underline font-medium flex items-center gap-1">
-                            <span className="material-symbols-outlined text-[14px]">delete</span>Delete
+                            <Icon name="delete" size={14} />Delete
                           </button>
                         </div>
                       </td>
@@ -311,8 +312,8 @@ export default function AdminProductsPage() {
             </table>
             {filtered.length === 0 && (
               <div className="text-center py-12">
-                <span className="material-symbols-outlined text-[40px] text-[var(--warm-charcoal)]/20 block mb-2" style={{ fontVariationSettings: "'FILL' 1" }}>storefront</span>
-                <p className="text-[var(--warm-charcoal)]/40 text-sm">{search || typeFilter !== 'all' ? 'No products match your filter' : 'No products yet'}</p>
+                <Icon name="storefront" size={40} className="text-[var(--warm-charcoal)]/20 block mb-2" />
+                <p className="text-[var(--text-muted)] text-sm">{search || typeFilter !== 'all' ? 'No products match your filter' : 'No products yet'}</p>
               </div>
             )}
           </div>
@@ -328,13 +329,11 @@ export default function AdminProductsPage() {
             {/* Modal header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--warm-sand)] flex-shrink-0">
               <h2 className="font-bold text-[var(--indigo-deep)] text-lg flex items-center gap-2">
-                <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1", color: 'var(--terracotta)' }}>
-                  {modal === 'create' ? 'add_circle' : 'edit'}
-                </span>
+                <Icon name={modal === 'create' ? 'add_circle' : 'edit'} size={20} style={{ color: 'var(--terracotta)'  }} />
                 {modal === 'create' ? 'Create New Product' : 'Edit Product'}
               </h2>
               <button onClick={closeModal} className="p-1.5 rounded-lg hover:bg-[var(--warm-sand)] transition-colors">
-                <span className="material-symbols-outlined text-[20px] text-[var(--warm-charcoal)]/60">close</span>
+                <Icon name="close" size={20} className="text-[var(--text-secondary)]" />
               </button>
             </div>
 
@@ -343,16 +342,16 @@ export default function AdminProductsPage() {
 
               {/* Image Upload */}
               <div>
-                <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-2 uppercase tracking-wide">Product Images</label>
+                <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-2 uppercase tracking-wide">Product Images</label>
                 <div className="flex flex-wrap gap-3 mb-3">
                   {images.map((img, i) => (
                     <div key={i} className="relative group">
                       <img src={img.url} alt={img.alt || ''} className="w-20 h-20 rounded-xl object-cover border border-[var(--warm-sand)]" />
                       <button onClick={() => removeImage(i)}
-                        className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full items-center justify-center text-[10px] hidden group-hover:flex">
+                        className="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white rounded-full items-center justify-center text-[12px] hidden group-hover:flex">
                         ✕
                       </button>
-                      {i === 0 && <span className="absolute bottom-1 left-1 text-[9px] bg-black/50 text-white px-1 rounded">Main</span>}
+                      {i === 0 && <span className="absolute bottom-1 left-1 text-[12px] bg-black/50 text-white px-1 rounded">Main</span>}
                     </div>
                   ))}
 
@@ -362,25 +361,25 @@ export default function AdminProductsPage() {
                       <div className="w-4 h-4 border-2 border-[var(--saffron)] border-t-transparent rounded-full animate-spin" />
                     ) : (
                       <>
-                        <span className="material-symbols-outlined text-[22px] text-[var(--warm-charcoal)]/40">upload</span>
-                        <span className="text-[10px] text-[var(--warm-charcoal)]/40">Upload</span>
+                        <Icon name="upload" size={22} className="text-[var(--text-muted)]" />
+                        <span className="text-[12px] text-[var(--text-muted)]">Upload</span>
                       </>
                     )}
                   </button>
                   <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleFileChange} />
                 </div>
-                <p className="text-xs text-[var(--warm-charcoal)]/40">JPEG/PNG/WEBP · Max 5 MB · First image is the main display image</p>
+                <p className="text-xs text-[var(--text-muted)]">JPEG/PNG/WEBP · Max 5 MB · First image is the main display image</p>
               </div>
 
               {/* Name + Type */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1.5 uppercase tracking-wide">Name *</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 uppercase tracking-wide">Name *</label>
                   <input value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                     className={inputCls} placeholder="Product name" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1.5 uppercase tracking-wide">Type *</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 uppercase tracking-wide">Type *</label>
                   <select value={form.product_type} onChange={e => setForm(f => ({ ...f, product_type: e.target.value }))} className={inputCls}>
                     {PRODUCT_TYPES.map(t => <option key={t} value={t} className="capitalize">{t}</option>)}
                   </select>
@@ -389,14 +388,14 @@ export default function AdminProductsPage() {
 
               {/* Description */}
               <div>
-                <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1.5 uppercase tracking-wide">Description</label>
+                <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 uppercase tracking-wide">Description</label>
                 <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
                   className={inputCls + ' resize-none'} rows={3} placeholder="Detailed product description..." />
               </div>
 
               {form.product_type === 'ebook' && (
                 <div className="p-3 rounded-xl text-xs text-amber-700 bg-amber-50 border border-amber-200 flex items-start gap-2">
-                  <span className="material-symbols-outlined text-[16px] flex-shrink-0 mt-0.5">info</span>
+                  <Icon name="info" size={16} className="flex-shrink-0 mt-0.5" />
                   <span>To manage ebook PDFs and cover images, go to <strong>Admin → Ebooks</strong>. Ebook products are created and edited there to ensure the PDF is properly linked for buyers.</span>
                 </div>
               )}
@@ -404,29 +403,29 @@ export default function AdminProductsPage() {
               {/* Price + Sale Price + Stock */}
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1.5 uppercase tracking-wide">Price (₹) *</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 uppercase tracking-wide">Price (₹) *</label>
                   <input type="number" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
                     className={inputCls} placeholder="999" min="0" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1.5 uppercase tracking-wide">Sale Price (₹)</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 uppercase tracking-wide">Sale Price (₹)</label>
                   <input type="number" value={form.sale_price} onChange={e => setForm(f => ({ ...f, sale_price: e.target.value }))}
                     className={inputCls} placeholder="799 (optional)" min="0" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1.5 uppercase tracking-wide">Stock</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1.5 uppercase tracking-wide">Stock</label>
                   <input type="number" value={form.stock_count} onChange={e => setForm(f => ({ ...f, stock_count: e.target.value }))}
                     className={inputCls} placeholder="-1 = unlimited" />
-                  <p className="text-[10px] text-[var(--warm-charcoal)]/40 mt-1">-1 = unlimited</p>
+                  <p className="text-[12px] text-[var(--text-muted)] mt-1">-1 = unlimited</p>
                 </div>
               </div>
 
               {/* Preview */}
               {form.price && (
                 <div className="p-4 rounded-xl" style={{ background: 'var(--kutch-white)', border: '1px solid var(--warm-sand)' }}>
-                  <p className="text-xs font-semibold text-[var(--warm-charcoal)]/50 mb-2 uppercase tracking-wide">Price Preview</p>
+                  <p className="text-xs font-semibold text-[var(--text-muted)] mb-2 uppercase tracking-wide">Price Preview</p>
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl font-bold" style={{ color: 'var(--indigo-deep)', fontFamily: "'Playfair Display', serif" }}>
+                    <span className="text-2xl font-bold" style={{ color: 'var(--indigo-deep)', fontFamily: "var(--font-display)" }}>
                       ₹{Number(form.sale_price || form.price).toLocaleString('en-IN')}
                     </span>
                     {form.sale_price && (
@@ -444,11 +443,11 @@ export default function AdminProductsPage() {
 
             {/* Modal footer */}
             <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-[var(--warm-sand)] flex-shrink-0">
-              <button onClick={closeModal} className="px-5 py-2 text-sm text-[var(--warm-charcoal)]/50 hover:text-[var(--warm-charcoal)] transition-colors">Cancel</button>
+              <button onClick={closeModal} className="px-5 py-2 text-sm text-[var(--text-muted)] hover:text-[var(--warm-charcoal)] transition-colors">Cancel</button>
               <button onClick={save} disabled={saving || uploading}
                 className="btn-divine px-6 py-2.5 text-sm disabled:opacity-60 flex items-center gap-2">
                 {saving && <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />}
-                {modal === 'create' ? (saving ? 'Creating…' : 'Create Product') : (saving ? 'Saving…' : 'Save Changes')}
+                {modal === 'create' ? (saving ? 'Creating...' : 'Create Product') : (saving ? 'Saving...' : 'Save Changes')}
               </button>
             </div>
           </div>

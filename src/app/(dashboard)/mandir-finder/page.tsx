@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic'
 import TempleDetailModal from '@/components/mandir/TempleDetailModal'
 import type { Temple } from '@/components/mandir/TempleDetailModal'
 
+import Icon from '@/components/ui/Icon'
 const IndiaMandirMap = dynamic(() => import('@/components/IndiaMandirMap'), { ssr: false })
 
 interface Mandir {
@@ -96,7 +97,7 @@ export default function MandirFinderPage() {
     markersRef.current = data.map(m => {
       const icon = L.divIcon({
         className: '',
-        html: `<div style="background:#C67D53;color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"><span class="material-symbols-outlined" style="font-size:18px;font-variation-settings:'FILL' 1">temple_hindu</span></div>`,
+        html: `<div style="background:#B4231F;color:white;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"><Icon name="temple_hindu" /></div>`,
         iconSize: [32, 32], iconAnchor: [16, 16],
       })
       return L.marker([m.lat, m.lng], { icon }).addTo(mapInstanceRef.current).on('click', () => {
@@ -112,8 +113,8 @@ export default function MandirFinderPage() {
       <div className="flex border-b border-[var(--warm-sand)] bg-white">
         {([['map', 'map', 'India Map'], ['nearby', 'near_me', 'Near Me']] as const).map(([t, icon, label]) => (
           <button key={t} onClick={() => setTab(t as 'map' | 'nearby')}
-            className={`flex-1 py-3 flex items-center justify-center gap-2 text-sm font-medium transition-all border-b-2 ${tab === t ? 'border-[var(--terracotta)] text-[var(--terracotta)]' : 'border-transparent text-[var(--warm-charcoal)]/50 hover:text-[var(--warm-charcoal)]'}`}>
-            <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>{icon}</span>
+            className={`flex-1 py-3 flex items-center justify-center gap-2 text-sm font-medium transition-all border-b-2 ${tab === t ? 'border-[var(--terracotta)] text-[var(--terracotta)]' : 'border-transparent text-[var(--text-muted)] hover:text-[var(--warm-charcoal)]'}`}>
+            <Icon name={icon} size={18} />
             {label}
           </button>
         ))}
@@ -132,27 +133,27 @@ export default function MandirFinderPage() {
           <input value={query} onChange={e => setQuery(e.target.value)} onKeyDown={e => e.key === 'Enter' && fetchNearby()}
             placeholder="Search near me..." className="flex-1 px-3 py-2 rounded-lg border border-[var(--warm-sand)] text-sm focus:outline-none focus:border-[var(--saffron)]" />
           <button onClick={fetchNearby} className="btn-divine px-4 py-2 text-sm">
-            <span className="material-symbols-outlined text-[16px]">search</span>
+            <Icon name="search" size={16} />
           </button>
         </div>
         <div className="flex flex-col lg:flex-row flex-1 overflow-hidden relative">
           {/* List panel */}
           <div className={`lg:w-72 flex-shrink-0 overflow-y-auto border-b lg:border-b-0 lg:border-r border-[var(--warm-sand)] flex-1 lg:flex-initial lg:max-h-none ${viewMode === 'list' ? 'flex flex-col' : 'hidden lg:flex lg:flex-col'}`}>
-            {loading ? <div className="flex items-center justify-center h-24 text-[var(--warm-charcoal)]/40 text-sm">Loading...</div>
+            {loading ? <div className="flex items-center justify-center h-24 text-[var(--text-muted)] text-sm">Loading...</div>
               : mandirs.length === 0
-                ? <div className="p-4 text-sm text-[var(--warm-charcoal)]/40 text-center flex-1 flex items-center justify-center">Search to find nearby temples</div>
+                ? <div className="p-4 text-sm text-[var(--text-muted)] text-center flex-1 flex items-center justify-center">Search to find nearby temples</div>
                 : mandirs.map(m => (
                   <button key={m.id} onClick={() => { setSelected(m); mapInstanceRef.current?.flyTo([m.lat, m.lng], 13); setViewMode('map') }}
                     className={`w-full text-left p-3 border-b border-[var(--warm-sand)] hover:bg-[var(--warm-sand)] transition-all ${selected?.id === m.id ? 'bg-[var(--warm-sand)]' : ''}`}>
                     <div className="flex items-start gap-2">
-                      <span className="material-symbols-outlined text-[18px] flex-shrink-0 text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>temple_hindu</span>
+                      <Icon name="temple_hindu" size={18} className="flex-shrink-0 text-[var(--terracotta)]" />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-[var(--indigo-deep)] truncate">{m.name}</p>
-                        <p className="text-xs text-[var(--warm-charcoal)]/60">{m.city}, {m.state}</p>
+                        <p className="text-xs text-[var(--text-secondary)]">{m.city}, {m.state}</p>
                         <p className="text-xs text-[var(--terracotta)]">{m.distance} km away</p>
                       </div>
-                      <button onClick={e => { e.stopPropagation(); setPopupTemple(m); setIsPopupOpen(true) }} className="flex-shrink-0 self-center text-[var(--warm-charcoal)]/30 hover:text-[var(--indigo-deep)] transition-colors p-1">
-                        <span className="material-symbols-outlined text-[20px]">info</span>
+                      <button onClick={e => { e.stopPropagation(); setPopupTemple(m); setIsPopupOpen(true) }} className="flex-shrink-0 self-center text-[var(--text-muted)] hover:text-[var(--indigo-deep)] transition-colors p-1">
+                        <Icon name="info" size={20} />
                       </button>
                     </div>
                   </button>
@@ -166,18 +167,18 @@ export default function MandirFinderPage() {
             {selected && (
               <div className="absolute bottom-16 lg:bottom-4 right-4 left-4 lg:left-auto lg:w-72 bg-white rounded-2xl shadow-xl border border-[var(--warm-sand)] p-4 z-[1000]">
                 <div className="flex items-start justify-between mb-2">
-                  <div><p className="font-bold text-[var(--indigo-deep)] text-sm">{selected.name}</p><p className="text-xs text-[var(--warm-charcoal)]/60">{selected.city}, {selected.state}</p></div>
-                  <button onClick={() => setSelected(null)}><span className="material-symbols-outlined text-[18px] text-[var(--warm-charcoal)]/40">close</span></button>
+                  <div><p className="font-bold text-[var(--indigo-deep)] text-sm">{selected.name}</p><p className="text-xs text-[var(--text-secondary)]">{selected.city}, {selected.state}</p></div>
+                  <button onClick={() => setSelected(null)}><Icon name="close" size={18} className="text-[var(--text-muted)]" /></button>
                 </div>
-                <p className="text-xs text-[var(--warm-charcoal)]/60 mb-3"><span className="font-medium">Timing:</span> {selected.timing}</p>
+                <p className="text-xs text-[var(--text-secondary)] mb-3"><span className="font-medium">Timing:</span> {selected.timing}</p>
                 <div className="flex gap-2">
                   <a href={`https://www.openstreetmap.org/directions?to=${selected.lat},${selected.lng}`} target="_blank" rel="noopener noreferrer"
-                    className="flex-1 py-1.5 rounded-lg text-xs font-medium bg-[var(--indigo-deep)] text-white text-center flex items-center justify-center gap-1"><span className="material-symbols-outlined text-[12px]">directions</span>Directions</a>
+                    className="flex-1 py-1.5 rounded-lg text-xs font-medium bg-[var(--indigo-deep)] text-white text-center flex items-center justify-center gap-1"><Icon name="directions" size={13} />Directions</a>
                   <button 
                     onClick={() => { setPopupTemple(selected); setIsPopupOpen(true) }}
                     className="flex-1 py-1.5 rounded-lg text-xs font-medium bg-[var(--saffron)] hover:bg-[var(--saffron)]/90 text-white text-center flex items-center justify-center gap-1"
                   >
-                    <span className="material-symbols-outlined text-[12px]">info</span>Details
+                    <Icon name="info" size={13} />Details
                   </button>
                 </div>
               </div>
@@ -191,9 +192,7 @@ export default function MandirFinderPage() {
                 onClick={() => setViewMode(prev => prev === 'map' ? 'list' : 'map')}
                 className="bg-[var(--indigo-deep)] text-white px-4 py-2.5 rounded-full shadow-lg text-xs font-semibold flex items-center gap-1.5 border border-white/20 active:scale-95 transition-transform"
               >
-                <span className="material-symbols-outlined text-[16px]">
-                  {viewMode === 'map' ? 'format_list_bulleted' : 'map'}
-                </span>
+                <Icon name={viewMode === 'map' ? 'format_list_bulleted' : 'map'} size={16} />
                 {viewMode === 'map' ? 'Show List' : 'Show Map'}
               </button>
             </div>

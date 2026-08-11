@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useServiceItems } from '@/lib/hooks/useServiceItems'
 import { useServicePayment } from '@/lib/hooks/useServicePayment'
 
+import Icon from '@/components/ui/Icon'
 const SADHANA_PILLARS = [
   { icon: 'brightness_5', title: 'Mantra Deeksha', desc: 'Receive a personalized beej mantra determined by your birth nakshatra, ruling planet, and current dasha. A mantra given in proper initiation carries 1000× the power.' },
   { icon: 'air', title: 'Dhyana (Meditation)', desc: 'Learn chakra-based visualization techniques combined with pranayama - specific to your planetary constitution from the birth chart.' },
@@ -37,22 +38,22 @@ export default function SadhanaPage() {
       {/* Hero */}
       <div style={{ background: 'linear-gradient(160deg, #fdf6e3 0%, #fef3c7 50%, #fde68a 100%)', borderBottom: '2px solid rgba(217,119,6,0.3)' }}>
         <div className="max-w-5xl mx-auto px-6 py-16 text-center">
-          <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl" style={{ background: 'linear-gradient(135deg, #78350f, #92400e)' }}><span className="material-symbols-outlined text-white" style={{ fontSize: '36px', fontVariationSettings: "'FILL' 1" }}>self_improvement</span></div>
-          <p className="text-xs text-[#92400e] tracking-[0.4em] uppercase mb-3" style={{ fontFamily: "'Sora', sans-serif" }}>Divine Practice • Inner Transformation</p>
-          <h1 className="text-5xl font-black text-[#1c1917] mb-3 tracking-wide" style={{ fontFamily: "'Playfair Display', serif" }}>SAADHANA</h1>
-          <p className="text-sm text-[#78350f] tracking-[0.2em] uppercase mb-6" style={{ fontFamily: "'Sora', sans-serif" }}>
+          <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl" style={{ background: 'linear-gradient(135deg, #78350f, #92400e)' }}><Icon name="self_improvement" size={36} className="text-white" /></div>
+          <p className="text-xs text-[#92400e] tracking-[0.4em] uppercase mb-3" style={{ fontFamily: "var(--font-label)" }}>Divine Practice • Inner Transformation</p>
+          <h1 className="text-5xl font-black text-[#1c1917] mb-3 tracking-wide" style={{ fontFamily: "var(--font-display)" }}>SAADHANA</h1>
+          <p className="text-sm text-[#78350f] tracking-[0.2em] uppercase mb-6" style={{ fontFamily: "var(--font-label)" }}>
             सा धनं यस्मिन् लक्ष्मीः स्थिरा - "Wealth is stable in one whose practice is firm"
           </p>
-          <p className="text-base text-[var(--warm-charcoal)]/70 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base text-[var(--text-secondary)] max-w-2xl mx-auto leading-relaxed">
             Personalized Vedic spiritual practices - mantra deeksha, guided sadhana programs, and japa siddhi - tailored to your birth chart, nakshatra, and current planetary period. Transform karma through disciplined daily practice.
           </p>
           <div className="mt-8 flex gap-3 justify-center flex-wrap">
             <a href="#programs" className="btn-divine px-8 py-3 inline-flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]">self_improvement</span>
+              <Icon name="self_improvement" size={18} />
               Begin Sadhana
             </a>
             <Link href="/consultations" className="btn-outline-divine px-8 py-3 inline-flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]">event</span>
+              <Icon name="event" size={18} />
               Consult Acharya
             </Link>
           </div>
@@ -64,16 +65,16 @@ export default function SadhanaPage() {
         {/* 4 Pillars */}
         <section>
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Four Pillars of Vedic Saadhana</h2>
-            <p className="text-sm text-[var(--warm-charcoal)]/60 mt-2">Each element works in concert to purify the body, mind, and consciousness</p>
+            <h2 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "var(--font-display)" }}>Four Pillars of Vedic Saadhana</h2>
+            <p className="text-sm text-[var(--text-secondary)] mt-2">Each element works in concert to purify the body, mind, and consciousness</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {SADHANA_PILLARS.map(p => (
               <div key={p.title} className="bento-card p-6 flex gap-4 items-start hover:shadow-md transition-all">
-                <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style={{ background: 'linear-gradient(135deg, #fef9c3, #fde68a)' }}><span className="material-symbols-outlined text-[24px] text-[#92400e]" style={{ fontVariationSettings: "'FILL' 1" }}>{p.icon}</span></div>
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0" style={{ background: 'linear-gradient(135deg, #fef9c3, #fde68a)' }}><Icon name={p.icon} size={24} className="text-[#92400e]" /></div>
                 <div>
-                  <h3 className="font-bold text-[var(--indigo-deep)] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>{p.title}</h3>
-                  <p className="text-sm text-[var(--warm-charcoal)]/60 leading-relaxed">{p.desc}</p>
+                  <h3 className="font-bold text-[var(--indigo-deep)] mb-2" style={{ fontFamily: "var(--font-display)" }}>{p.title}</h3>
+                  <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{p.desc}</p>
                 </div>
               </div>
             ))}
@@ -84,10 +85,10 @@ export default function SadhanaPage() {
         <section id="programs">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Sadhana Programs</h2>
-              <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">Book your personalized spiritual practice initiation</p>
+              <h2 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "var(--font-display)" }}>Sadhana Programs</h2>
+              <p className="text-sm text-[var(--text-secondary)] mt-1">Book your personalized spiritual practice initiation</p>
             </div>
-            <span className="text-xs text-[var(--warm-charcoal)]/40">{items.length} available</span>
+            <span className="text-xs text-[var(--text-muted)]">{items.length} available</span>
           </div>
 
           {loading ? (
@@ -96,7 +97,7 @@ export default function SadhanaPage() {
             </div>
           ) : items.length === 0 ? (
             <div className="bento-card p-10 text-center">
-              <p className="text-[var(--warm-charcoal)]/40">Programs launching soon. Contact us to register interest.</p>
+              <p className="text-[var(--text-muted)]">Programs launching soon. Contact us to register interest.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -109,20 +110,20 @@ export default function SadhanaPage() {
                   )}
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex gap-1.5 flex-wrap">
-                      {item.is_live && <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-semibold">Live</span>}
-                      {item.badge_text && <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold" style={{ background: `${item.badge_color || '#D4A017'}20`, color: item.badge_color || '#D4A017' }}>{item.badge_text}</span>}
+                      {item.is_live && <span className="text-[12px] px-2 py-0.5 rounded-full bg-red-100 text-red-700 font-semibold">Live</span>}
+                      {item.badge_text && <span className="text-[12px] px-2 py-0.5 rounded-full font-semibold" style={{ background: `${item.badge_color || '#C9992E'}20`, color: item.badge_color || '#C9992E' }}>{item.badge_text}</span>}
                     </div>
-                    {item.duration && <span className="text-[11px] text-[var(--warm-charcoal)]/40" style={{ fontFamily: "'Sora', sans-serif" }}>{item.duration}</span>}
+                    {item.duration && <span className="text-[13px] text-[var(--text-muted)]" style={{ fontFamily: "var(--font-label)" }}>{item.duration}</span>}
                   </div>
-                  <h3 className="font-bold text-[var(--indigo-deep)] mb-2 flex-1" style={{ fontFamily: "'Playfair Display', serif" }}>{item.title}</h3>
+                  <h3 className="font-bold text-[var(--indigo-deep)] mb-2 flex-1" style={{ fontFamily: "var(--font-display)" }}>{item.title}</h3>
                   {item.subtitle && <p className="text-xs text-[var(--saffron)] font-semibold mb-2">{item.subtitle}</p>}
-                  {item.description && <p className="text-sm text-[var(--warm-charcoal)]/60 leading-relaxed mb-4 flex-1">{item.description}</p>}
-                  {item.instructor_name && <p className="text-xs text-[var(--warm-charcoal)]/50 mb-4">Guided by {item.instructor_name}</p>}
+                  {item.description && <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-4 flex-1">{item.description}</p>}
+                  {item.instructor_name && <p className="text-xs text-[var(--text-muted)] mb-4">Guided by {item.instructor_name}</p>}
                   <div className="flex items-center justify-between mt-auto pt-4 border-t border-[var(--outline-variant)]/20">
                     {item.price ? (
                       <div className="flex items-baseline gap-1.5">
                         <span className="font-bold text-[var(--terracotta)] text-lg">₹{item.price.toLocaleString('en-IN')}</span>
-                        {item.original_price && <span className="text-xs line-through text-[var(--warm-charcoal)]/30">₹{item.original_price.toLocaleString('en-IN')}</span>}
+                        {item.original_price && <span className="text-xs line-through text-[var(--text-muted)]">₹{item.original_price.toLocaleString('en-IN')}</span>}
                       </div>
                     ) : <span className="text-sm text-emerald-600 font-semibold">Free</span>}
                     {booked.has(item.id) ? (
@@ -130,7 +131,7 @@ export default function SadhanaPage() {
                     ) : (
                       <button onClick={() => bookService(item)} disabled={booking === item.id || !item.is_bookable}
                         className="btn-divine text-sm px-5 py-2 disabled:opacity-40">
-                        {booking === item.id ? 'Booking…' : item.is_bookable ? 'Book Now' : 'Notify Me'}
+                        {booking === item.id ? 'Booking...' : item.is_bookable ? 'Book Now' : 'Notify Me'}
                       </button>
                     )}
                   </div>
@@ -143,17 +144,17 @@ export default function SadhanaPage() {
         {/* 21-Day Journey */}
         <section style={{ background: 'linear-gradient(135deg, #fdf6e3, #fef9c3)', borderRadius: 20, padding: '40px', border: '1px solid rgba(217,119,6,0.3)' }}>
           <div className="text-center mb-8">
-            <div className="text-3xl mb-2 text-[#D4A017]" style={{ fontFamily: "'Playfair Display', serif" }}>ॐ</div>
-            <h2 className="text-2xl font-bold text-[#1c1917]" style={{ fontFamily: "'Playfair Display', serif" }}>The 21-Day Sadhana Arc</h2>
+            <div className="text-3xl mb-2 text-[#C9992E]" style={{ fontFamily: "var(--font-display)" }}>ॐ</div>
+            <h2 className="text-2xl font-bold text-[#1c1917]" style={{ fontFamily: "var(--font-display)" }}>The 21-Day Sadhana Arc</h2>
             <p className="text-sm text-[#78350f]/70 mt-1">Every powerful sadhana follows this ancient structure</p>
           </div>
           <div className="space-y-3">
             {SADHANA_JOURNEY.map((j, i) => (
               <div key={j.day} className="flex gap-4 items-start">
                 <div className="w-16 shrink-0 text-right">
-                  <span className="text-xs font-bold text-[#D4A017]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{j.day}</span>
+                  <span className="text-xs font-bold text-[#C9992E]" style={{ fontFamily: "var(--font-mono)" }}>{j.day}</span>
                 </div>
-                <div className="w-px bg-[#D4A017]/30 self-stretch shrink-0" />
+                <div className="w-px bg-[#C9992E]/30 self-stretch shrink-0" />
                 <div className="pb-4">
                   <p className="font-semibold text-[#1c1917] text-sm mb-0.5">{j.title}</p>
                   <p className="text-xs text-[#78350f]/60 leading-relaxed">{j.desc}</p>
@@ -165,13 +166,13 @@ export default function SadhanaPage() {
 
         {/* CTA */}
         <div className="text-center space-y-4">
-          <p className="text-sm text-[var(--warm-charcoal)]/60">Ready to begin your spiritual transformation? Speak with our acharyas.</p>
+          <p className="text-sm text-[var(--text-secondary)]">Ready to begin your spiritual transformation? Speak with our acharyas.</p>
           <div className="flex gap-3 justify-center flex-wrap">
             <a href="tel:9858784784" className="btn-divine inline-flex items-center gap-2 px-6 py-3">
-              <span className="material-symbols-outlined text-[18px]">call</span>9858784784
+              <Icon name="call" size={18} />9858784784
             </a>
             <Link href="/consultations" className="btn-outline-divine inline-flex items-center gap-2 px-6 py-3">
-              <span className="material-symbols-outlined text-[18px]">event</span>Book Consultation
+              <Icon name="event" size={18} />Book Consultation
             </Link>
           </div>
         </div>

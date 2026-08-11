@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import SudarshanLoader from '@/components/SudarshanLoader'
 
+import Icon from '@/components/ui/Icon'
 const LEVELS = ['Beginner', 'Intermediate', 'Advanced', 'All Levels']
 
 interface Course {
@@ -51,7 +52,7 @@ const EMPTY_FORM: Partial<Course> = {
   image_url: '', video_url: '',
   instructor_name: '', instructor_bio: '',
   is_featured: false, is_active: true, is_bookable: true, is_live: false,
-  max_participants: 30, badge_text: '', badge_color: '#D4A017', display_order: 0,
+  max_participants: 30, badge_text: '', badge_color: '#C9992E', display_order: 0,
 }
 
 export default function AdminCoursesPage() {
@@ -76,7 +77,7 @@ export default function AdminCoursesPage() {
         .select('*')
         .eq('category', 'course')
         .order('display_order'),
-      // No profiles join — avoids silent failure when FK isn't defined in DB
+      // No profiles join - avoids silent failure when FK isn't defined in DB
       (supabase as any)
         .from('service_bookings')
         .select('id, created_at, amount, status, payment_status, service_item_id, user_id')
@@ -226,7 +227,7 @@ export default function AdminCoursesPage() {
                 {editing && <p className="text-xs text-gray-400 mt-0.5 truncate max-w-xs">{editing.title}</p>}
               </div>
               <button onClick={closeForm} className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors">
-                <span className="material-symbols-outlined text-[18px] text-gray-500">close</span>
+                <Icon name="close" size={18} className="text-gray-500" />
               </button>
             </div>
 
@@ -247,7 +248,7 @@ export default function AdminCoursesPage() {
                     </div>
                     <div>
                       <p className="text-xs font-bold text-gray-700">{label}</p>
-                      <p className="text-[10px] text-gray-400">{desc}</p>
+                      <p className="text-[12px] text-gray-400">{desc}</p>
                     </div>
                   </button>
                 ))}
@@ -255,7 +256,7 @@ export default function AdminCoursesPage() {
 
               {/* Core info */}
               <div className="space-y-3">
-                <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Course Info</h3>
+                <h3 className="text-[12px] font-bold text-gray-400 uppercase tracking-widest">Course Info</h3>
                 <div>
                   <label className="text-xs font-semibold text-gray-600 mb-1 block">Course Title *</label>
                   <input value={form.title || ''} onChange={e => sf('title', e.target.value)}
@@ -277,14 +278,14 @@ export default function AdminCoursesPage() {
                 <div>
                   <label className="text-xs font-semibold text-gray-600 mb-1 block">Full Description</label>
                   <textarea value={form.long_description || ''} onChange={e => sf('long_description', e.target.value)}
-                    rows={4} placeholder="Detailed curriculum, what students will learn…"
+                    rows={4} placeholder="Detailed curriculum, what students will learn..."
                     className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)] resize-none" />
                 </div>
               </div>
 
               {/* Instructor */}
               <div className="space-y-3">
-                <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Instructor</h3>
+                <h3 className="text-[12px] font-bold text-gray-400 uppercase tracking-widest">Instructor</h3>
                 <div>
                   <label className="text-xs font-semibold text-gray-600 mb-1 block">Instructor Name</label>
                   <input value={form.instructor_name || ''} onChange={e => sf('instructor_name', e.target.value)}
@@ -301,7 +302,7 @@ export default function AdminCoursesPage() {
 
               {/* Details */}
               <div className="space-y-3">
-                <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Details</h3>
+                <h3 className="text-[12px] font-bold text-gray-400 uppercase tracking-widest">Details</h3>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs font-semibold text-gray-600 mb-1 block">Level</label>
@@ -331,10 +332,10 @@ export default function AdminCoursesPage() {
 
               {/* Pricing */}
               <div className="space-y-3">
-                <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Pricing</h3>
+                <h3 className="text-[12px] font-bold text-gray-400 uppercase tracking-widest">Pricing</h3>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-semibold text-gray-600 mb-1 block">Price (₹) <span className="text-gray-400 font-normal">— 0 for Free</span></label>
+                    <label className="text-xs font-semibold text-gray-600 mb-1 block">Price (₹) <span className="text-gray-400 font-normal">- 0 for Free</span></label>
                     <input type="number" min={0} value={form.price ?? ''} onChange={e => sf('price', e.target.value === '' ? null : Number(e.target.value))}
                       placeholder="0"
                       className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" />
@@ -350,7 +351,7 @@ export default function AdminCoursesPage() {
 
               {/* Media */}
               <div className="space-y-3">
-                <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Media</h3>
+                <h3 className="text-[12px] font-bold text-gray-400 uppercase tracking-widest">Media</h3>
                 <div>
                   <label className="text-xs font-semibold text-gray-600 mb-1 block">Cover Image URL</label>
                   <input value={form.image_url || ''} onChange={e => sf('image_url', e.target.value)}
@@ -363,7 +364,7 @@ export default function AdminCoursesPage() {
                     onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
                 )}
                 <div>
-                  <label className="text-xs font-semibold text-gray-600 mb-1 block">YouTube Video URL <span className="text-gray-400 font-normal">— intro / first session</span></label>
+                  <label className="text-xs font-semibold text-gray-600 mb-1 block">YouTube Video URL <span className="text-gray-400 font-normal">- intro / first session</span></label>
                   <input value={form.video_url || ''} onChange={e => sf('video_url', e.target.value)}
                     placeholder="https://youtube.com/watch?v=..."
                     className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" />
@@ -372,7 +373,7 @@ export default function AdminCoursesPage() {
 
               {/* Badge */}
               <div className="space-y-3">
-                <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Badge</h3>
+                <h3 className="text-[12px] font-bold text-gray-400 uppercase tracking-widest">Badge</h3>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs font-semibold text-gray-600 mb-1 block">Badge Text</label>
@@ -383,16 +384,16 @@ export default function AdminCoursesPage() {
                   <div>
                     <label className="text-xs font-semibold text-gray-600 mb-1 block">Badge Color</label>
                     <div className="flex items-center gap-2">
-                      <input type="color" value={form.badge_color || '#D4A017'} onChange={e => sf('badge_color', e.target.value)}
+                      <input type="color" value={form.badge_color || '#C9992E'} onChange={e => sf('badge_color', e.target.value)}
                         className="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5" />
-                      <input value={form.badge_color || '#D4A017'} onChange={e => sf('badge_color', e.target.value)}
+                      <input value={form.badge_color || '#C9992E'} onChange={e => sf('badge_color', e.target.value)}
                         className="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none" />
                     </div>
                   </div>
                 </div>
                 {form.badge_text && (
                   <span className="inline-block text-xs px-2.5 py-1 rounded-full font-semibold"
-                    style={{ background: `${form.badge_color || '#D4A017'}18`, color: form.badge_color || '#D4A017', border: `1px solid ${form.badge_color || '#D4A017'}40` }}>
+                    style={{ background: `${form.badge_color || '#C9992E'}18`, color: form.badge_color || '#C9992E', border: `1px solid ${form.badge_color || '#C9992E'}40` }}>
                     {form.badge_text}
                   </span>
                 )}
@@ -408,7 +409,7 @@ export default function AdminCoursesPage() {
               <button onClick={save} disabled={saving}
                 className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-60 flex items-center justify-center gap-2"
                 style={{ background: 'linear-gradient(135deg, var(--indigo-deep), #4338ca)' }}>
-                {saving ? <><SudarshanLoader px={16} />&nbsp;Saving…</> : editing ? 'Save Changes' : 'Create Course'}
+                {saving ? <><SudarshanLoader px={16} />&nbsp;Saving...</> : editing ? 'Save Changes' : 'Create Course'}
               </button>
             </div>
           </div>
@@ -420,23 +421,23 @@ export default function AdminCoursesPage() {
         <div className="px-6 py-4 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #312e81, #4338ca)' }}>
-              <span className="material-symbols-outlined text-white text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
+              <Icon name="school" size={18} className="text-white" />
             </div>
             <div>
               <h1 className="text-base font-bold text-[var(--indigo-deep)]">Courses</h1>
-              <p className="text-[11px] text-gray-400">{courses.length} courses · {enrollments.length} enrollments</p>
+              <p className="text-[13px] text-gray-400">{courses.length} courses · {enrollments.length} enrollments</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => loadAll()}
               className="w-9 h-9 rounded-xl border border-gray-200 bg-white flex items-center justify-center text-gray-400 hover:text-gray-600 hover:border-gray-300 transition-all"
               title="Refresh data">
-              <span className="material-symbols-outlined text-[18px]">refresh</span>
+              <Icon name="refresh" size={18} />
             </button>
             <button onClick={openNew}
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
               style={{ background: 'linear-gradient(135deg, var(--indigo-deep), #4338ca)' }}>
-              <span className="material-symbols-outlined text-[16px]">add</span>
+              <Icon name="add" size={16} />
               New Course
             </button>
           </div>
@@ -452,7 +453,7 @@ export default function AdminCoursesPage() {
           ].map(s => (
             <div key={s.l} className="flex items-baseline gap-1.5">
               <span className={`font-black text-base ${s.color}`}>{s.n}</span>
-              <span className="text-[11px] text-gray-400">{s.l}</span>
+              <span className="text-[13px] text-gray-400">{s.l}</span>
             </div>
           ))}
         </div>
@@ -480,16 +481,16 @@ export default function AdminCoursesPage() {
           <>
             <div className="flex items-center gap-3 mb-5">
               <div className="relative flex-1 max-w-xs">
-                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-300 text-[17px]">search</span>
+                <Icon name="search" size={17} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300" />
                 <input value={search} onChange={e => setSearch(e.target.value)}
-                  placeholder="Search courses or instructors…"
+                  placeholder="Search courses or instructors..."
                   className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[var(--indigo-deep)]" />
               </div>
             </div>
 
             {filtered.length === 0 ? (
               <div className="text-center py-20 text-gray-400">
-                <span className="material-symbols-outlined text-[48px] mb-3 block text-gray-200" style={{ fontVariationSettings: "'FILL' 0" }}>school</span>
+                <Icon name="school" size={48} className="mb-3 block text-gray-200" />
                 {courses.length === 0
                   ? <><p className="font-semibold mb-1">No courses yet</p><p className="text-sm">Create your first course with the button above.</p></>
                   : <p>No courses match your search.</p>}
@@ -509,20 +510,20 @@ export default function AdminCoursesPage() {
                       ) : (
                         <div className="w-20 h-20 rounded-xl flex-shrink-0 flex items-center justify-center"
                           style={{ background: 'linear-gradient(135deg, #312e81, #4338ca)' }}>
-                          <span className="material-symbols-outlined text-white/40 text-[32px]" style={{ fontVariationSettings: "'FILL' 0" }}>menu_book</span>
+                          <Icon name="menu_book" size={32} className="text-[var(--text-on-dark-muted)]" />
                         </div>
                       )}
 
                       <div className="flex-1 min-w-0">
                         {/* Badges */}
                         <div className="flex gap-1.5 flex-wrap mb-1.5">
-                          {c.is_live && <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-500 text-white font-bold">LIVE</span>}
-                          {!c.is_active && <span className="text-[10px] px-2 py-0.5 rounded-full bg-gray-200 text-gray-500 font-semibold">Inactive</span>}
-                          {!c.is_bookable && <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-semibold">Not enrollable</span>}
-                          {c.level && <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold" style={{ background: 'rgba(99,102,241,0.1)', color: '#3730a3' }}>{c.level}</span>}
+                          {c.is_live && <span className="text-[12px] px-2 py-0.5 rounded-full bg-red-500 text-white font-bold">LIVE</span>}
+                          {!c.is_active && <span className="text-[12px] px-2 py-0.5 rounded-full bg-gray-200 text-gray-500 font-semibold">Inactive</span>}
+                          {!c.is_bookable && <span className="text-[12px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-semibold">Not enrollable</span>}
+                          {c.level && <span className="text-[12px] px-2 py-0.5 rounded-full font-semibold" style={{ background: 'rgba(99,102,241,0.1)', color: '#3730a3' }}>{c.level}</span>}
                           {c.badge_text && (
-                            <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
-                              style={{ background: `${c.badge_color || '#D4A017'}18`, color: c.badge_color || '#D4A017' }}>
+                            <span className="text-[12px] px-2 py-0.5 rounded-full font-semibold"
+                              style={{ background: `${c.badge_color || '#C9992E'}18`, color: c.badge_color || '#C9992E' }}>
                               {c.badge_text}
                             </span>
                           )}
@@ -531,24 +532,24 @@ export default function AdminCoursesPage() {
                         <h3 className="font-bold text-gray-800 text-sm leading-snug truncate">{c.title}</h3>
                         {c.instructor_name && (
                           <p className="text-xs text-[var(--saffron)] mt-0.5 flex items-center gap-1">
-                            <span className="material-symbols-outlined text-[12px]" style={{ fontVariationSettings: "'FILL' 1" }}>person</span>
+                            <Icon name="person" size={13} />
                             {c.instructor_name}
                           </p>
                         )}
 
                         <div className="flex gap-3 mt-2 flex-wrap">
                           {c.duration && (
-                            <span className="text-[11px] text-gray-400 flex items-center gap-1">
-                              <span className="material-symbols-outlined text-[12px]">schedule</span>{c.duration}
+                            <span className="text-[13px] text-gray-400 flex items-center gap-1">
+                              <Icon name="schedule" size={13} />{c.duration}
                             </span>
                           )}
-                          <span className="text-[11px] text-gray-400 flex items-center gap-1">
-                            <span className="material-symbols-outlined text-[12px]">group</span>{enrollCount} enrolled
+                          <span className="text-[13px] text-gray-400 flex items-center gap-1">
+                            <Icon name="group" size={13} />{enrollCount} enrolled
                           </span>
                           {c.price ? (
-                            <span className="text-[11px] text-emerald-600 font-semibold">₹{c.price.toLocaleString('en-IN')}</span>
+                            <span className="text-[13px] text-emerald-600 font-semibold">₹{c.price.toLocaleString('en-IN')}</span>
                           ) : (
-                            <span className="text-[11px] text-blue-500 font-semibold">Free</span>
+                            <span className="text-[13px] text-blue-500 font-semibold">Free</span>
                           )}
                         </div>
                       </div>
@@ -559,24 +560,22 @@ export default function AdminCoursesPage() {
                         <button onClick={() => toggleField(c.id, 'is_active', !c.is_active)}
                           title={c.is_active ? 'Deactivate' : 'Activate'}
                           className={`w-8 h-8 rounded-lg flex items-center justify-center text-[15px] transition-all ${c.is_active ? 'bg-emerald-100 text-emerald-600 hover:bg-emerald-200' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}>
-                          <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                            {c.is_active ? 'visibility' : 'visibility_off'}
-                          </span>
+                          <Icon name={c.is_active ? 'visibility' : 'visibility_off'} size={16} />
                         </button>
                         <a href={`/admin/courses/${c.id}/curriculum`}
                           className="w-8 h-8 rounded-lg bg-violet-50 hover:bg-violet-100 flex items-center justify-center transition-all"
                           title="Manage Curriculum">
-                          <span className="material-symbols-outlined text-[16px] text-violet-600">view_module</span>
+                          <Icon name="view_module" size={16} className="text-violet-600" />
                         </a>
                         <button onClick={() => openEdit(c)}
                           className="w-8 h-8 rounded-lg bg-[var(--indigo-deep)]/10 hover:bg-[var(--indigo-deep)]/20 flex items-center justify-center transition-all">
-                          <span className="material-symbols-outlined text-[16px] text-[var(--indigo-deep)]">edit</span>
+                          <Icon name="edit" size={16} className="text-[var(--indigo-deep)]" />
                         </button>
                         <button onClick={() => deleteCourse(c.id)} disabled={deleting === c.id}
                           className="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 flex items-center justify-center transition-all disabled:opacity-40">
                           {deleting === c.id
                             ? <SudarshanLoader px={14} />
-                            : <span className="material-symbols-outlined text-[16px] text-red-500">delete</span>}
+                            : <Icon name="delete" size={16} className="text-red-500" />}
                         </button>
                       </div>
                     </div>
@@ -592,7 +591,7 @@ export default function AdminCoursesPage() {
           <>
             {enrollments.length === 0 ? (
               <div className="text-center py-20 text-gray-400">
-                <span className="material-symbols-outlined text-[48px] mb-3 block text-gray-200" style={{ fontVariationSettings: "'FILL' 0" }}>how_to_reg</span>
+                <Icon name="how_to_reg" size={48} className="mb-3 block text-gray-200" />
                 <p className="font-semibold mb-1">No enrollments yet</p>
                 <p className="text-sm">Students who enroll in courses will appear here.</p>
               </div>
@@ -601,11 +600,11 @@ export default function AdminCoursesPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-gray-100">
-                      <th className="text-left px-5 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Student</th>
-                      <th className="text-left px-5 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Course</th>
-                      <th className="text-left px-5 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Amount</th>
-                      <th className="text-left px-5 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Status</th>
-                      <th className="text-left px-5 py-3 text-[11px] font-bold text-gray-400 uppercase tracking-wider">Date</th>
+                      <th className="text-left px-5 py-3 text-[13px] font-bold text-gray-400 uppercase tracking-wider">Student</th>
+                      <th className="text-left px-5 py-3 text-[13px] font-bold text-gray-400 uppercase tracking-wider">Course</th>
+                      <th className="text-left px-5 py-3 text-[13px] font-bold text-gray-400 uppercase tracking-wider">Amount</th>
+                      <th className="text-left px-5 py-3 text-[13px] font-bold text-gray-400 uppercase tracking-wider">Status</th>
+                      <th className="text-left px-5 py-3 text-[13px] font-bold text-gray-400 uppercase tracking-wider">Date</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-50">
@@ -617,16 +616,16 @@ export default function AdminCoursesPage() {
                             {e.user_name ? (
                               <>
                                 <p className="text-xs font-semibold text-gray-800">{e.user_name}</p>
-                                {e.user_email && <p className="text-[11px] text-gray-400">{e.user_email}</p>}
+                                {e.user_email && <p className="text-[13px] text-gray-400">{e.user_email}</p>}
                               </>
                             ) : (
-                              <div className="font-mono text-[10px] text-gray-400 select-all">{e.user_id.slice(0, 8)}…</div>
+                              <div className="font-mono text-[12px] text-gray-400 select-all">{e.user_id.slice(0, 8)}...</div>
                             )}
                           </td>
                           <td className="px-5 py-3">
                             <p className="text-xs text-gray-700 font-medium line-clamp-1">{course?.title || 'Unknown'}</p>
                             {course?.instructor_name && (
-                              <p className="text-[11px] text-gray-400">{course.instructor_name}</p>
+                              <p className="text-[13px] text-gray-400">{course.instructor_name}</p>
                             )}
                           </td>
                           <td className="px-5 py-3">
@@ -635,7 +634,7 @@ export default function AdminCoursesPage() {
                               : <span className="text-xs text-blue-500 font-semibold">Free</span>}
                           </td>
                           <td className="px-5 py-3">
-                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                            <span className={`text-[12px] px-2 py-0.5 rounded-full font-semibold ${
                               e.payment_status === 'paid'
                                 ? 'bg-emerald-100 text-emerald-700'
                                 : 'bg-gray-100 text-gray-500'
@@ -643,7 +642,7 @@ export default function AdminCoursesPage() {
                               {e.payment_status === 'paid' ? 'Confirmed' : e.status}
                             </span>
                           </td>
-                          <td className="px-5 py-3 text-[11px] text-gray-400">{fmt(e.created_at)}</td>
+                          <td className="px-5 py-3 text-[13px] text-gray-400">{fmt(e.created_at)}</td>
                         </tr>
                       )
                     })}

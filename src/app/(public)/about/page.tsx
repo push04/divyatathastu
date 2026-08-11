@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import SudarshanLoader from '@/components/SudarshanLoader'
 
+import Icon from '@/components/ui/Icon'
 export const revalidate = 86400
 
 export const metadata: Metadata = {
@@ -24,29 +25,29 @@ export default function AboutPage() {
       <section className="page-banner" style={{ paddingTop: '6rem', paddingBottom: '6rem' }}>
         <div className="page-banner-inner max-w-3xl mx-auto">
           <div className="w-20 h-20 mx-auto mb-6"><SudarshanLoader px={80} /></div>
-          <p className="text-[var(--saffron)] text-xs font-bold tracking-[0.2em] uppercase mb-4" style={{ fontFamily: "'Sora', sans-serif" }}>Our Story</p>
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>About MahaTathastu</h1>
+          <p className="t-eyebrow t-eyebrow-dark mb-4 inline-block">Our Story</p>
+          <h1 className="t-display-2 text-[var(--text-on-dark)] mb-4">About MahaTathastu</h1>
           <div className="ornate-divider">
-            <span className="material-symbols-outlined text-[14px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
+            <Icon name="yantra" size={16} className="text-[var(--gold-300)]" />
           </div>
-          <p className="text-white/65 text-lg leading-relaxed">India's First 360° Holistic Life Platform - bridging ancient Vedic wisdom with modern AI technology to illuminate every soul's divine path.</p>
+          <p className="text-[var(--text-on-dark-secondary)] text-lg leading-relaxed">India's First 360° Holistic Life Platform - bridging ancient Vedic wisdom with modern precision to illuminate every soul's divine path.</p>
         </div>
       </section>
 
       {/* Mission */}
       <section className="py-16 px-6 bg-white">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-[var(--indigo-deep)] mb-6 text-center" style={{ fontFamily: "'Playfair Display', serif" }}>Our Mission</h2>
+          <h2 className="text-3xl font-bold text-[var(--indigo-deep)] mb-6 text-center" style={{ fontFamily: "var(--font-display)" }}>Our Mission</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { icon: 'my_location', title: 'Accuracy', desc: 'Our Nakshatra AI engine combines Vedic calculations with machine learning for unparalleled accuracy in astrology reports.' },
+              { icon: 'my_location', title: 'Accuracy', desc: 'Our Nakshatra engine combines classical Vedic calculations with precise astronomical data for unparalleled accuracy in astrology reports.' },
               { icon: 'public', title: 'Accessibility', desc: 'Making 5,000 years of Vedic wisdom accessible to every Indian family - in their language, at their budget.' },
               { icon: 'favorite', title: 'Authenticity', desc: 'Every recommendation is validated by our panel of expert astrologers, Ayurvedic doctors, and Vastu consultants.' },
             ].map(v => (
               <div key={v.title} className="card-divine p-6 text-center">
-                <div className="flex justify-center mb-4"><span className="material-symbols-outlined text-[40px] text-[var(--indigo-deep)]" style={{ fontVariationSettings: "'FILL' 1" }}>{v.icon}</span></div>
-                <h3 className="font-bold text-[var(--indigo-deep)] mb-2 text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>{v.title}</h3>
-                <p className="text-sm text-[var(--warm-charcoal)]/70">{v.desc}</p>
+                <div className="flex justify-center mb-4"><Icon name={v.icon} size={40} className="text-[var(--indigo-deep)]" /></div>
+                <h3 className="font-bold text-[var(--indigo-deep)] mb-2 text-lg" style={{ fontFamily: "var(--font-display)" }}>{v.title}</h3>
+                <p className="text-sm text-[var(--text-secondary)]">{v.desc}</p>
               </div>
             ))}
           </div>
@@ -64,7 +65,7 @@ export default function AboutPage() {
           ].map(s => (
             <div key={s.label}>
               <div className="text-3xl font-bold text-[var(--saffron)] mb-1">{s.value}</div>
-              <div className="text-sm text-white/60">{s.label}</div>
+              <div className="text-sm text-[var(--text-on-dark-secondary)]">{s.label}</div>
             </div>
           ))}
         </div>
@@ -73,16 +74,16 @@ export default function AboutPage() {
       {/* Team */}
       <section className="py-16 px-6 bg-[var(--kutch-white)]">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-[var(--indigo-deep)] mb-8 text-center" style={{ fontFamily: "'Playfair Display', serif" }}>Our Expert Panel</h2>
+          <h2 className="text-3xl font-bold text-[var(--indigo-deep)] mb-8 text-center" style={{ fontFamily: "var(--font-display)" }}>Our Expert Panel</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {TEAM.map(t => (
               <div key={t.name} className="card-divine p-5 flex items-center gap-4">
                 <div className="w-14 h-14 rounded-full bg-[var(--indigo-deep)] flex items-center justify-center flex-shrink-0">
-                  <span className="material-symbols-outlined text-[28px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{t.icon}</span>
+                  <Icon name={t.icon} size={28} className="text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-[var(--indigo-deep)] text-base" style={{ fontFamily: "'Playfair Display', serif" }}>{t.name}</h3>
-                  <p className="text-sm text-[var(--warm-charcoal)]/70">{t.role}</p>
+                  <h3 className="font-bold text-[var(--indigo-deep)] text-base" style={{ fontFamily: "var(--font-display)" }}>{t.name}</h3>
+                  <p className="text-sm text-[var(--text-secondary)]">{t.role}</p>
                   <p className="text-xs text-[var(--terracotta)]">{t.exp} experience</p>
                 </div>
               </div>
@@ -93,8 +94,8 @@ export default function AboutPage() {
 
       {/* CTA */}
       <section className="py-16 px-6 bg-white text-center">
-        <h2 className="text-3xl font-bold text-[var(--indigo-deep)] mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>Start Your Spiritual Journey</h2>
-        <p className="text-[var(--warm-charcoal)]/60 mb-8 max-w-lg mx-auto">Join 10,000+ families who have discovered their divine path with MahaTathastu.</p>
+        <h2 className="text-3xl font-bold text-[var(--indigo-deep)] mb-4" style={{ fontFamily: "var(--font-display)" }}>Start Your Spiritual Journey</h2>
+        <p className="text-[var(--text-secondary)] mb-8 max-w-lg mx-auto">Join 10,000+ families who have discovered their divine path with MahaTathastu.</p>
         <div className="flex gap-4 justify-center flex-wrap">
           <Link href="/register" className="btn-divine px-8 py-3">Get Started Free</Link>
           <Link href="/reports/generate" className="px-8 py-3 rounded-xl border-2 border-[var(--indigo-deep)] text-[var(--indigo-deep)] font-semibold hover:bg-[var(--indigo-deep)] hover:text-white transition-all">Generate Report</Link>

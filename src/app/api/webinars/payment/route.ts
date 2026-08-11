@@ -16,12 +16,22 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  // Admin client for all DB writes — bypasses RLS reliably
+  // Admin client for all DB writes - bypasses RLS reliably
   const admin = await createAdminClient()
   const body = await req.json()
   const { action, webinarId } = body
 
-  // Fetch webinar (price is authoritative — never trust client)
+  // MED-2: Validate inputs before touching the database
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  const ALLOWED_ACTIONS = ['free', 'create', 'verify']
+  if (!webinarId || typeof webinarId !== 'string' || !UUID_RE.test(webinarId)) {
+    return NextResponse.json({ error: 'Invalid webinarId' }, { status: 400 })
+  }
+  if (!action || !ALLOWED_ACTIONS.includes(action)) {
+    return NextResponse.json({ error: 'Invalid action' }, { status: 400 })
+  }
+
+  // Fetch webinar (price is authoritative - never trust client)
   const { data: webinar, error: wErr } = await (admin as any)
     .from('webinars')
     .select('id, title, price, max_participants, status')
@@ -47,7 +57,7 @@ export async function POST(req: NextRequest) {
 
   // ── CREATE RAZORPAY ORDER ─────────────────────────────────────────────────
   if (action === 'create') {
-    if (webinar.price <= 0) return NextResponse.json({ error: 'Webinar is free — use free action' }, { status: 400 })
+    if (webinar.price <= 0) return NextResponse.json({ error: 'Webinar is free - use free action' }, { status: 400 })
 
     // Guard 1: Don't overwrite a paid registration (prevents access revocation bug)
     const { data: existingReg } = await (admin as any)
@@ -87,7 +97,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: err?.error?.description || 'Payment gateway error. Please try again.' }, { status: 500 })
     }
 
-    // Safe upsert — only updates pending registrations (paid guard above ensures we never reach here if paid)
+    // Safe upsert - only updates pending registrations (paid guard above ensures we never reach here if paid)
     const { error: upsertErr } = await (admin as any).from('webinar_registrations').upsert(
       {
         webinar_id: webinarId,
@@ -120,7 +130,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid payment signature' }, { status: 400 })
     }
 
-    // Fetch registration and assert order_id matches — blocks cross-webinar signature replay attacks
+    // Fetch registration and assert order_id matches - blocks cross-webinar signature replay attacks
     const { data: reg } = await (admin as any)
       .from('webinar_registrations')
       .select('razorpay_order_id, payment_status')
@@ -131,7 +141,7 @@ export async function POST(req: NextRequest) {
     if (!reg) return NextResponse.json({ error: 'Registration not found' }, { status: 404 })
     if (reg.payment_status === 'paid') return NextResponse.json({ success: true, already_paid: true })
     if (reg.razorpay_order_id !== razorpayOrderId) {
-      return NextResponse.json({ error: 'Order mismatch — signature replay rejected' }, { status: 400 })
+      return NextResponse.json({ error: 'Order mismatch - signature replay rejected' }, { status: 400 })
     }
 
     const { error } = await (admin as any)

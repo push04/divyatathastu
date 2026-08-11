@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import Link from 'next/link'
 
+import Icon from '@/components/ui/Icon'
 const RELATIONS = ['Self', 'Wife', 'Husband', 'Son', 'Daughter', 'Father', 'Mother', 'Brother', 'Sister', 'Grandfather', 'Grandmother', 'Other']
 
 const TIMEZONES = [
@@ -108,15 +109,15 @@ export default function AddMemberPage() {
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <div className="mb-6">
-        <Link href="/family" className="text-sm text-[var(--terracotta)] hover:underline inline-flex items-center gap-1"><span className="material-symbols-outlined text-[16px]">arrow_back</span>Back to Family</Link>
+        <Link href="/family" className="text-sm text-[var(--terracotta)] hover:underline inline-flex items-center gap-1"><Icon name="arrow_back" size={16} />Back to Family</Link>
         <h1 className="text-2xl font-bold text-[var(--indigo-deep)] mt-3">Add Family Member</h1>
-        <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">Birth details help generate accurate Vedic astrology reports</p>
+        <p className="text-sm text-[var(--text-secondary)] mt-1">Birth details help generate accurate Vedic astrology reports</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info */}
         <div className="card-divine p-6 space-y-4">
-          <h2 className="text-lg font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Basic Information</h2>
+          <h2 className="text-lg font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "var(--font-display)" }}>Basic Information</h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -145,7 +146,7 @@ export default function AddMemberPage() {
 
           <div>
             <label className="block text-sm font-medium text-[var(--indigo-deep)] mb-1.5">
-              Gotra <span className="text-[var(--warm-charcoal)]/40 font-normal">(for Mantra Lekhnan report)</span>
+              Gotra <span className="text-[var(--text-muted)] font-normal">(for Mantra Lekhnan report)</span>
             </label>
             <input
               type="text"
@@ -175,7 +176,7 @@ export default function AddMemberPage() {
 
         {/* Birth Details */}
         <div className="card-divine p-6 space-y-4">
-          <h2 className="text-lg font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Birth Details</h2>
+          <h2 className="text-lg font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "var(--font-display)" }}>Birth Details</h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -191,7 +192,7 @@ export default function AddMemberPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-[var(--indigo-deep)] mb-1.5">
-                Birth Time <span className="text-[var(--warm-charcoal)]/40 font-normal">(for Kundli)</span>
+                Birth Time <span className="text-[var(--text-muted)] font-normal">(for Kundli)</span>
               </label>
               <input
                 type="time"
@@ -211,7 +212,7 @@ export default function AddMemberPage() {
               placeholder="e.g. Varanasi"
               className="w-full px-3 py-2.5 rounded-lg border border-[var(--warm-sand)] bg-white text-sm focus:outline-none focus:border-[var(--saffron)]"
             />
-            <p className="text-xs text-[var(--warm-charcoal)]/40 mt-1">We'll automatically find the coordinates</p>
+            <p className="text-xs text-[var(--text-muted)] mt-1">We'll automatically find the coordinates</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -250,8 +251,8 @@ export default function AddMemberPage() {
         </div>
 
         {/* Info box */}
-        <div className="bg-[var(--warm-sand)] rounded-xl p-4 text-sm text-[var(--warm-charcoal)]/70">
-          <p className="font-medium text-[var(--indigo-deep)] mb-1 inline-flex items-center gap-1"><span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>lock</span> Privacy & Security</p>
+        <div className="bg-[var(--warm-sand)] rounded-xl p-4 text-sm text-[var(--text-secondary)]">
+          <p className="font-medium text-[var(--indigo-deep)] mb-1 inline-flex items-center gap-1"><Icon name="lock" size={16} /> Privacy & Security</p>
           <p>Birth details are encrypted and used only for generating personalized Vedic reports. We never share your data.</p>
         </div>
 

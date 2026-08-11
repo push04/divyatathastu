@@ -152,14 +152,14 @@ export function NorthIndianKundli({ kundli }: { kundli: KundliData }) {
         planets={planets}
         ascRashiIdx={ascRashiIdx}
         label="NORTH INDIAN · D-1"
-        accentColor="#D4A017"
+        accentColor="#C9992E"
         bgColor="#fef9f0"
-        titleColor="#D4A017"
+        titleColor="#C9992E"
       />
       {/* Planet legend */}
       <div className="flex flex-wrap gap-x-3 gap-y-1 justify-center mt-1">
         {kundli.planets.map(p => (
-          <span key={p.name} className="text-[10px] font-semibold" style={{ color: PLANET_COLORS[p.name] || '#6b7280' }}>
+          <span key={p.name} className="text-[12px] font-semibold" style={{ color: PLANET_COLORS[p.name] || '#6b7280' }}>
             {PLANET_SHORT[p.name]} = {p.name}{p.retrograde ? ' R' : ''}
           </span>
         ))}
@@ -194,7 +194,7 @@ export function NavamshaChart({ kundli }: { kundli: KundliData }) {
         bgColor="#faf5ff"
         titleColor="#7c3aed"
       />
-      <p className="text-[10px] text-center" style={{ color: '#9ca3af' }}>
+      <p className="text-[12px] text-center" style={{ color: '#9ca3af' }}>
         Navamsha Lagna: {RASHIS[navAscIdx]} · Reveals marriage, dharma &amp; deeper soul purpose
       </p>
     </div>
@@ -229,7 +229,7 @@ export function DashaTimeline({ kundli, birthDate }: { kundli: KundliData; birth
       <div className="text-center">
         <p className="text-xs font-bold text-[var(--indigo-deep)]">
           Current Dasha: <span style={{ color: PLANET_COLORS[currentDasha] }}>{currentDasha}</span>
-          <span className="text-[var(--warm-charcoal)]/50 font-normal"> · Antardasha: </span>
+          <span className="text-[var(--text-muted)] font-normal"> · Antardasha: </span>
           <span style={{ color: PLANET_COLORS[currentAntardasha] }}>{currentAntardasha}</span>
         </p>
       </div>
@@ -248,7 +248,7 @@ export function DashaTimeline({ kundli, birthDate }: { kundli: KundliData; birth
                 background: color, opacity: isCurrent ? 1 : 0.55,
                 boxShadow: isCurrent ? `inset 0 0 0 2px rgba(255,255,255,0.5)` : 'none',
               }}>
-              <span className="text-[9px] font-bold drop-shadow-sm px-0.5 truncate">
+              <span className="text-[12px] font-bold drop-shadow-sm px-0.5 truncate">
                 {PLANET_SHORT[seg.lord]}
               </span>
               {isCurrent && (
@@ -275,11 +275,11 @@ export function DashaTimeline({ kundli, birthDate }: { kundli: KundliData; birth
                 background: isCurrent ? color + '18' : 'var(--warm-sand)',
                 border: isCurrent ? `1.5px solid ${color}` : '1px solid transparent',
               }}>
-              <p className="text-[11px] font-bold" style={{ color }}>{seg.lord}</p>
-              <p className="text-[10px] text-[var(--warm-charcoal)]/50">{seg.years} yrs</p>
-              {startYear && <p className="text-[9px] text-[var(--warm-charcoal)]/40">{startYear}–{endYear}</p>}
+              <p className="text-[13px] font-bold" style={{ color }}>{seg.lord}</p>
+              <p className="text-[12px] text-[var(--text-muted)]">{seg.years} yrs</p>
+              {startYear && <p className="text-[12px] text-[var(--text-muted)]">{startYear}–{endYear}</p>}
               {isCurrent && currentAntardasha !== seg.lord && (
-                <p className="text-[9px] font-semibold mt-0.5" style={{ color: PLANET_COLORS[currentAntardasha] }}>
+                <p className="text-[12px] font-semibold mt-0.5" style={{ color: PLANET_COLORS[currentAntardasha] }}>
                   Antar: {currentAntardasha}
                 </p>
               )}

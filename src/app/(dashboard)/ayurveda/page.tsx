@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useServiceItems } from '@/lib/hooks/useServiceItems'
 import { useServicePayment } from '@/lib/hooks/useServicePayment'
 
+import Icon from '@/components/ui/Icon'
 const DOSHAS = [
   {
     name: 'Vata', sanskrit: 'वात', element: 'Air + Ether', planet: 'Rahu / Saturn',
@@ -53,11 +54,11 @@ export default function AyurvedaPage() {
       {/* Hero */}
       <div style={{ background: 'linear-gradient(160deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%)', borderBottom: '2px solid rgba(5,150,105,0.3)' }}>
         <div className="max-w-5xl mx-auto px-6 py-16 text-center">
-          <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl" style={{ background: 'linear-gradient(135deg, #065f46, #047857)' }}><span className="material-symbols-outlined text-white" style={{ fontSize: '36px', fontVariationSettings: "'FILL' 1" }}>spa</span></div>
-          <p className="text-xs text-[#065f46] tracking-[0.4em] uppercase mb-3" style={{ fontFamily: "'Sora', sans-serif" }}>Ancient Science of Life & Healing</p>
-          <h1 className="text-5xl font-black text-[#052e16] mb-3 tracking-wide" style={{ fontFamily: "'Playfair Display', serif" }}>AYURVEDA</h1>
-          <p className="text-sm text-[#065f46] tracking-[0.15em] uppercase mb-2" style={{ fontFamily: "'Sora', sans-serif" }}>& Medical Astrology</p>
-          <p className="text-base text-[var(--warm-charcoal)]/70 max-w-2xl mx-auto leading-relaxed mt-4">
+          <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl" style={{ background: 'linear-gradient(135deg, #065f46, #047857)' }}><Icon name="spa" size={36} className="text-white" /></div>
+          <p className="text-xs text-[#065f46] tracking-[0.4em] uppercase mb-3" style={{ fontFamily: "var(--font-label)" }}>Ancient Science of Life & Healing</p>
+          <h1 className="text-5xl font-black text-[#052e16] mb-3 tracking-wide" style={{ fontFamily: "var(--font-display)" }}>AYURVEDA</h1>
+          <p className="text-sm text-[#065f46] tracking-[0.15em] uppercase mb-2" style={{ fontFamily: "var(--font-label)" }}>& Medical Astrology</p>
+          <p className="text-base text-[var(--text-secondary)] max-w-2xl mx-auto leading-relaxed mt-4">
             The sister sciences of Ayurveda (science of life) and Jyotish (planetary medicine) together offer the most complete system for health, healing, and longevity in human history. Know your prakriti, understand your planetary health signatures, and receive personalized healing protocols.
           </p>
         </div>
@@ -68,13 +69,13 @@ export default function AyurvedaPage() {
         {/* Dosha explorer */}
         <section>
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>The Three Doshas</h2>
-            <p className="text-sm text-[var(--warm-charcoal)]/60 mt-2">Your constitution is determined by the balance of these three biological forces</p>
+            <h2 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "var(--font-display)" }}>The Three Doshas</h2>
+            <p className="text-sm text-[var(--text-secondary)] mt-2">Your constitution is determined by the balance of these three biological forces</p>
           </div>
           <div className="flex gap-2 mb-6 justify-center">
             {DOSHAS.map((dos, i) => (
               <button key={dos.name} onClick={() => setActiveDosha(i)}
-                className={`px-5 py-2.5 rounded-full font-semibold text-sm transition-all ${activeDosha === i ? 'text-white shadow-md' : 'bg-white border text-[var(--warm-charcoal)]/60 hover:border-[var(--indigo-deep)]'}`}
+                className={`px-5 py-2.5 rounded-full font-semibold text-sm transition-all ${activeDosha === i ? 'text-white shadow-md' : 'bg-white border text-[var(--text-secondary)] hover:border-[var(--indigo-deep)]'}`}
                 style={activeDosha === i ? { background: dos.color } : {}}>
                 {dos.sanskrit} {dos.name}
               </button>
@@ -83,24 +84,24 @@ export default function AyurvedaPage() {
           <div className="bento-card p-8" style={{ borderTop: `4px solid ${d.color}` }}>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               <div>
-                <p className="text-xs font-semibold text-[var(--warm-charcoal)]/40 uppercase tracking-widest mb-1">Element</p>
+                <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-1">Element</p>
                 <p className="font-semibold text-[var(--indigo-deep)]">{d.element}</p>
               </div>
               <div>
-                <p className="text-xs font-semibold text-[var(--warm-charcoal)]/40 uppercase tracking-widest mb-1">Ruling Planet(s)</p>
+                <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-1">Ruling Planet(s)</p>
                 <p className="font-semibold text-[var(--indigo-deep)]">{d.planet}</p>
               </div>
               <div>
-                <p className="text-xs font-semibold text-[var(--warm-charcoal)]/40 uppercase tracking-widest mb-1">Qualities</p>
+                <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-widest mb-1">Qualities</p>
                 <p className="font-semibold text-[var(--indigo-deep)]">{d.qualities}</p>
               </div>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: d.color }}>When Imbalanced</p>
-                <p className="text-sm text-[var(--warm-charcoal)]/70 leading-relaxed">{d.imbalance}</p>
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{d.imbalance}</p>
               </div>
               <div className="sm:col-span-2">
                 <p className="text-xs font-semibold text-emerald-600 uppercase tracking-widest mb-1">How to Balance</p>
-                <p className="text-sm text-[var(--warm-charcoal)]/70 leading-relaxed">{d.balance}</p>
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{d.balance}</p>
               </div>
             </div>
           </div>
@@ -110,8 +111,8 @@ export default function AyurvedaPage() {
         <section id="consultations">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Consultation Services</h2>
-              <p className="text-sm text-[var(--warm-charcoal)]/60 mt-1">Personalized Ayurvedic & medical astrology consultations</p>
+              <h2 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "var(--font-display)" }}>Consultation Services</h2>
+              <p className="text-sm text-[var(--text-secondary)] mt-1">Personalized Ayurvedic & medical astrology consultations</p>
             </div>
           </div>
 
@@ -121,7 +122,7 @@ export default function AyurvedaPage() {
             </div>
           ) : items.length === 0 ? (
             <div className="bento-card p-10 text-center">
-              <p className="text-[var(--warm-charcoal)]/40">Services launching soon. Call us to book directly.</p>
+              <p className="text-[var(--text-muted)]">Services launching soon. Call us to book directly.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -129,19 +130,19 @@ export default function AyurvedaPage() {
                 <div key={item.id} className="bento-card p-6 flex flex-col hover:shadow-lg transition-all hover:-translate-y-0.5 border-l-4" style={{ borderLeftColor: '#059669' }}>
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex gap-1.5">
-                      {item.badge_text && <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold" style={{ background: `${item.badge_color || '#059669'}20`, color: item.badge_color || '#059669' }}>{item.badge_text}</span>}
+                      {item.badge_text && <span className="text-[12px] px-2 py-0.5 rounded-full font-semibold" style={{ background: `${item.badge_color || '#059669'}20`, color: item.badge_color || '#059669' }}>{item.badge_text}</span>}
                     </div>
-                    {item.duration && <span className="text-[11px] text-[var(--warm-charcoal)]/40 shrink-0">{item.duration}</span>}
+                    {item.duration && <span className="text-[13px] text-[var(--text-muted)] shrink-0">{item.duration}</span>}
                   </div>
-                  <h3 className="font-bold text-[var(--indigo-deep)] mb-2 text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>{item.title}</h3>
+                  <h3 className="font-bold text-[var(--indigo-deep)] mb-2 text-lg" style={{ fontFamily: "var(--font-display)" }}>{item.title}</h3>
                   {item.subtitle && <p className="text-sm text-emerald-700 font-semibold mb-2">{item.subtitle}</p>}
-                  {item.description && <p className="text-sm text-[var(--warm-charcoal)]/60 leading-relaxed mb-4 flex-1">{item.description}</p>}
-                  {item.instructor_name && <p className="text-xs text-[var(--warm-charcoal)]/50 mb-4">👤 {item.instructor_name}</p>}
+                  {item.description && <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-4 flex-1">{item.description}</p>}
+                  {item.instructor_name && <p className="text-xs text-[var(--text-muted)] mb-4">👤 {item.instructor_name}</p>}
                   <div className="flex items-center justify-between mt-auto pt-4 border-t border-[var(--outline-variant)]/20">
                     {item.price ? (
                       <div>
                         <span className="font-bold text-[var(--terracotta)] text-xl">₹{item.price.toLocaleString('en-IN')}</span>
-                        {item.original_price && <span className="text-xs line-through text-[var(--warm-charcoal)]/30 ml-2">₹{item.original_price.toLocaleString('en-IN')}</span>}
+                        {item.original_price && <span className="text-xs line-through text-[var(--text-muted)] ml-2">₹{item.original_price.toLocaleString('en-IN')}</span>}
                       </div>
                     ) : <span className="text-sm text-emerald-600 font-semibold">Free</span>}
                     {booked.has(item.id) ? (
@@ -149,8 +150,8 @@ export default function AyurvedaPage() {
                     ) : (
                       <button onClick={() => bookService(item)} disabled={booking === item.id || !item.is_bookable}
                         className="btn-divine px-5 py-2 disabled:opacity-40 text-sm inline-flex items-center gap-1.5">
-                        {booking === item.id ? 'Booking…' : item.is_bookable ? (
-                          <><span className="material-symbols-outlined text-[15px]">event</span>Book Now</>
+                        {booking === item.id ? 'Booking...' : item.is_bookable ? (
+                          <><Icon name="event" size={15} />Book Now</>
                         ) : 'Notify Me'}
                       </button>
                     )}
@@ -164,15 +165,15 @@ export default function AyurvedaPage() {
         {/* Medical Astrology */}
         <section style={{ background: 'linear-gradient(135deg, #f0fdf4, #dcfce7)', borderRadius: 20, padding: '40px', border: '1px solid rgba(5,150,105,0.2)' }}>
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-[#052e16]" style={{ fontFamily: "'Playfair Display', serif" }}>Medical Astrology - Reading Health in the Stars</h2>
+            <h2 className="text-2xl font-bold text-[#052e16]" style={{ fontFamily: "var(--font-display)" }}>Medical Astrology - Reading Health in the Stars</h2>
             <p className="text-sm text-[#065f46]/70 mt-2">Jyotish reveals the karmic basis of health conditions - and the planetary remedies</p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {MEDICAL_ASTRO_HOUSES.map(h => (
               <div key={h.house} className="bg-white rounded-2xl p-5 shadow-sm">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center font-black text-emerald-700" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{h.house}</div>
-                  <h3 className="font-bold text-[#052e16] text-sm" style={{ fontFamily: "'Playfair Display', serif" }}>{h.title}</h3>
+                  <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center font-black text-emerald-700" style={{ fontFamily: "var(--font-mono)" }}>{h.house}</div>
+                  <h3 className="font-bold text-[#052e16] text-sm" style={{ fontFamily: "var(--font-display)" }}>{h.title}</h3>
                 </div>
                 <p className="text-xs text-[#065f46]/70 leading-relaxed">{h.desc}</p>
               </div>
@@ -185,13 +186,13 @@ export default function AyurvedaPage() {
 
         {/* CTA */}
         <div className="text-center space-y-4">
-          <p className="text-sm text-[var(--warm-charcoal)]/60">Ready to understand your body's constitutional blueprint?</p>
+          <p className="text-sm text-[var(--text-secondary)]">Ready to understand your body's constitutional blueprint?</p>
           <div className="flex gap-3 justify-center flex-wrap">
             <a href="tel:9858784784" className="btn-divine inline-flex items-center gap-2 px-6 py-3">
-              <span className="material-symbols-outlined text-[18px]">call</span>9858784784
+              <Icon name="call" size={18} />9858784784
             </a>
             <Link href="/consultations" className="btn-outline-divine inline-flex items-center gap-2 px-6 py-3">
-              <span className="material-symbols-outlined text-[18px]">event</span>Book Consultation
+              <Icon name="event" size={18} />Book Consultation
             </Link>
           </div>
         </div>

@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 import { CITIES, getSavedCity, saveCity, type CityCoords } from '@/lib/utils/getLocation'
 import { useBundlePrice } from '@/lib/hooks/useBundlePrice'
 
+import Icon from '@/components/ui/Icon'
 interface Profile {
   id: string
   full_name: string
@@ -83,15 +84,15 @@ export default function SettingsPage() {
     <div className="p-6 max-w-2xl mx-auto space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-[var(--indigo-deep)] flex items-center gap-2">
-          <span className="material-symbols-outlined text-[26px]" style={{ fontVariationSettings: "'FILL' 1" }}>settings</span>
+          <Icon name="settings" size={26} />
           Settings
         </h1>
-        <p className="text-sm text-[var(--warm-charcoal)]/60 mt-0.5">Manage your account and preferences</p>
+        <p className="text-sm text-[var(--text-secondary)] mt-0.5">Manage your account and preferences</p>
       </div>
 
       {/* Profile */}
       <div className="card-divine p-6 space-y-4">
-        <h2 className="text-lg font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Profile Information</h2>
+        <h2 className="text-lg font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "var(--font-display)" }}>Profile Information</h2>
 
         <div className="flex items-center gap-4 pb-4 border-b border-[var(--warm-sand)]">
           <div className="w-16 h-16 rounded-full bg-[var(--indigo-deep)] flex items-center justify-center text-white text-2xl font-bold">
@@ -99,8 +100,8 @@ export default function SettingsPage() {
           </div>
           <div>
             <p className="font-bold text-[var(--indigo-deep)]">{profile?.full_name}</p>
-            <p className="text-sm text-[var(--warm-charcoal)]/60">{userEmail}</p>
-            <span className="text-xs bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 px-2 py-0.5 rounded-full capitalize">{profile?.role} plan</span>
+            <p className="text-sm text-[var(--text-secondary)]">{userEmail}</p>
+            <span className="text-xs bg-[var(--warm-sand)] text-[var(--text-secondary)] px-2 py-0.5 rounded-full capitalize">{profile?.role} plan</span>
           </div>
         </div>
 
@@ -116,8 +117,8 @@ export default function SettingsPage() {
         </div>
         <div>
           <label className="block text-sm font-medium text-[var(--indigo-deep)] mb-1.5">Email</label>
-          <input type="email" value={userEmail} disabled className="w-full px-3 py-2.5 rounded-lg border border-[var(--warm-sand)] text-sm bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/50" />
-          <p className="text-xs text-[var(--warm-charcoal)]/40 mt-1">Email cannot be changed</p>
+          <input type="email" value={userEmail} disabled className="w-full px-3 py-2.5 rounded-lg border border-[var(--warm-sand)] text-sm bg-[var(--warm-sand)] text-[var(--text-muted)]" />
+          <p className="text-xs text-[var(--text-muted)] mt-1">Email cannot be changed</p>
         </div>
         <button onClick={saveProfile} disabled={saving} className="btn-divine px-6 py-2.5 text-sm disabled:opacity-50">
           {saving ? 'Saving...' : 'Save Changes'}
@@ -127,8 +128,8 @@ export default function SettingsPage() {
       {/* Panchang City */}
       <div className="card-divine p-6 space-y-4">
         <div>
-          <h2 className="text-lg font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Panchang Location</h2>
-          <p className="text-sm text-[var(--warm-charcoal)]/60 mt-0.5">
+          <h2 className="text-lg font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "var(--font-display)" }}>Panchang Location</h2>
+          <p className="text-sm text-[var(--text-secondary)] mt-0.5">
             Panchang timings (sunrise, Rahu Kaal etc.) are calculated for your preferred city.
           </p>
         </div>
@@ -147,7 +148,7 @@ export default function SettingsPage() {
           </select>
           {preferredCity && (
             <div className="flex items-center justify-between mt-2">
-              <p className="text-xs text-[var(--warm-charcoal)]/40">
+              <p className="text-xs text-[var(--text-muted)]">
                 Saved: {preferredCity.name} ({preferredCity.lat.toFixed(4)}, {preferredCity.lng.toFixed(4)})
               </p>
               <button
@@ -167,7 +168,7 @@ export default function SettingsPage() {
 
       {/* Password */}
       <div className="card-divine p-6 space-y-4">
-        <h2 className="text-lg font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Change Password</h2>
+        <h2 className="text-lg font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "var(--font-display)" }}>Change Password</h2>
         <div className="space-y-3">
           <div>
             <label className="block text-sm font-medium text-[var(--indigo-deep)] mb-1.5">New Password</label>
@@ -186,17 +187,17 @@ export default function SettingsPage() {
       {/* Plan */}
       {profile?.role === 'user' && (
         <div className="card-divine p-6">
-          <h2 className="text-lg font-bold text-[var(--indigo-deep)] mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>Upgrade Plan</h2>
-          <p className="text-sm text-[var(--warm-charcoal)]/60 mb-4">Get unlimited reports for your entire family</p>
+          <h2 className="text-lg font-bold text-[var(--indigo-deep)] mb-1" style={{ fontFamily: "var(--font-display)" }}>Upgrade Plan</h2>
+          <p className="text-sm text-[var(--text-secondary)] mb-4">Get unlimited reports for your entire family</p>
           <div className="bg-gradient-to-r from-[var(--indigo-deep)] to-[var(--plum)] rounded-xl p-4 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
               <p className="font-bold">Full Tathastu</p>
-              <p className="text-sm text-white/70">14 reports · Lifetime access · All family members</p>
+              <p className="text-sm text-[var(--text-on-dark-secondary)]">14 reports · Lifetime access · All family members</p>
             </div>
             <div className="text-right">
               <p className="text-xl font-bold">₹{(bundleSalePrice ?? bundlePrice ?? 2999).toLocaleString('en-IN')}</p>
               {bundleSalePrice != null && bundlePrice != null && (
-                <p className="text-xs text-white/50 line-through">₹{bundlePrice.toLocaleString('en-IN')}</p>
+                <p className="text-xs text-[var(--text-on-dark-secondary)] line-through">₹{bundlePrice.toLocaleString('en-IN')}</p>
               )}
             </div>
           </div>
@@ -206,10 +207,10 @@ export default function SettingsPage() {
 
       {/* Account */}
       <div className="card-divine p-6 space-y-3">
-        <h2 className="text-lg font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Account</h2>
-        <p className="text-sm text-[var(--warm-charcoal)]/60">Member since {profile?.created_at ? new Date(profile.created_at).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) : '-'}</p>
-        <button onClick={signOut} className="w-full flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[var(--warm-sand)] text-sm text-[var(--warm-charcoal)]/70 hover:border-[var(--indigo-deep)] hover:text-[var(--indigo-deep)] transition-all">
-          <span className="material-symbols-outlined text-[18px]">logout</span>
+        <h2 className="text-lg font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "var(--font-display)" }}>Account</h2>
+        <p className="text-sm text-[var(--text-secondary)]">Member since {profile?.created_at ? new Date(profile.created_at).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) : '-'}</p>
+        <button onClick={signOut} className="w-full flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[var(--warm-sand)] text-sm text-[var(--text-secondary)] hover:border-[var(--indigo-deep)] hover:text-[var(--indigo-deep)] transition-all">
+          <Icon name="logout" size={18} />
           Sign Out
         </button>
       </div>

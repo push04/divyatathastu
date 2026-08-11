@@ -1,4 +1,4 @@
-// Shakti Chakra Analysis — Nakshatra → Chakra Mapping
+// Shakti Chakra Analysis - Nakshatra → Chakra Mapping
 
 export interface ChakraData {
   name: string
@@ -28,15 +28,15 @@ const NAKSHATRA_CHAKRA: Record<string, number> = {
 
 // Per Vedic astrology: each planet governs specific chakra centres
 const PLANET_CHAKRA_MODIFIER: Record<string, number[]> = {
-  'Sun':     [2],       // Solar Plexus — will, identity, fire principle
-  'Moon':    [1, 3, 5], // Sacral + Heart + Third Eye — emotions, love, intuition
-  'Mars':    [0, 2],    // Root + Solar Plexus — survival instincts, aggression
-  'Mercury': [4],       // Throat — communication, expression
-  'Jupiter': [5, 6],    // Third Eye + Crown — wisdom, spiritual expansion
-  'Venus':   [1, 3],    // Sacral + Heart — pleasure, love, creativity
-  'Saturn':  [0],       // Root — karma, discipline, foundations
-  'Rahu':    [2, 5],    // Solar Plexus + Third Eye — obsession, illusion, ambition
-  'Ketu':    [6, 0],    // Crown + Root — spiritual liberation, past karma
+  'Sun':     [2],       // Solar Plexus - will, identity, fire principle
+  'Moon':    [1, 3, 5], // Sacral + Heart + Third Eye - emotions, love, intuition
+  'Mars':    [0, 2],    // Root + Solar Plexus - survival instincts, aggression
+  'Mercury': [4],       // Throat - communication, expression
+  'Jupiter': [5, 6],    // Third Eye + Crown - wisdom, spiritual expansion
+  'Venus':   [1, 3],    // Sacral + Heart - pleasure, love, creativity
+  'Saturn':  [0],       // Root - karma, discipline, foundations
+  'Rahu':    [2, 5],    // Solar Plexus + Third Eye - obsession, illusion, ambition
+  'Ketu':    [6, 0],    // Crown + Root - spiritual liberation, past karma
 }
 
 const CHAKRAS = [
@@ -101,7 +101,7 @@ const CHAKRAS = [
 export function calculateChakras(nakshatra: string, planets: Array<{ name: string; house: number }>) {
   const primaryChakraIdx = NAKSHATRA_CHAKRA[nakshatra] ?? 3
 
-  // Base levels — random variation seeded by nakshatra
+  // Base levels - random variation seeded by nakshatra
   const nakshatraIdx = Object.keys(NAKSHATRA_CHAKRA).indexOf(nakshatra)
   const seed = nakshatraIdx > 0 ? nakshatraIdx : 10
 
@@ -110,17 +110,17 @@ export function calculateChakras(nakshatra: string, planets: Array<{ name: strin
     return 35 + ((seed * (i + 1)) % 45)
   })
 
-  // Planet modifiers — Kendra/Trikona = strength, Dusthana = debilitation
+  // Planet modifiers - Kendra/Trikona = strength, Dusthana = debilitation
   planets.forEach(planet => {
     const affected = PLANET_CHAKRA_MODIFIER[planet.name]
     if (!affected) return
     const h = planet.house
     const strength =
-      [1, 4, 7, 10].includes(h) ?  10 :   // Kendra — angular, powerful
-      [5, 9].includes(h)         ?   8 :   // Trikona — auspicious, spiritual
-      h === 11                   ?   5 :   // Upachaya — gains
+      [1, 4, 7, 10].includes(h) ?  10 :   // Kendra - angular, powerful
+      [5, 9].includes(h)         ?   8 :   // Trikona - auspicious, spiritual
+      h === 11                   ?   5 :   // Upachaya - gains
       [2, 3].includes(h)         ?   2 :   // Mild
-      [6, 8, 12].includes(h)     ?  -8 :   // Dusthana — challenging
+      [6, 8, 12].includes(h)     ?  -8 :   // Dusthana - challenging
                                       0
     affected.forEach(chakraIdx => {
       baseLevels[chakraIdx] = Math.min(95, Math.max(10, baseLevels[chakraIdx] + strength))

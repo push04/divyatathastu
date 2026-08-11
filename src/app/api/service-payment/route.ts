@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import crypto from 'crypto'
+import { notifyAdmin, sendOrderConfirmation } from '@/lib/email'
 
 function getRazorpay() {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  // Admin client bypasses RLS for all DB writes — user auth is already verified above
+  // Admin client bypasses RLS for all DB writes - user auth is already verified above
   const admin = await createAdminClient()
 
   const url = new URL(req.url)
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
     const { service_item_id, notes, preferred_date, quantity } = await req.json()
     if (!service_item_id) return NextResponse.json({ error: 'service_item_id required' }, { status: 400 })
 
-    // Fetch authoritative price — prevents client-side tampering
+    // Fetch authoritative price - prevents client-side tampering
     const { data: item, error: itemErr } = await (admin as any)
       .from('service_items')
       .select('id, title, price, is_active, is_bookable')
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest) {
 
     if (!item.is_bookable) return NextResponse.json({ error: 'This service is not yet open for booking. Please contact us.' }, { status: 400 })
 
-    // Reject if DB price is not set — never trust client-provided amount
+    // Reject if DB price is not set - never trust client-provided amount
     if (item.price === null || item.price === undefined || (item.price as number) <= 0) {
       return NextResponse.json({ error: 'Service price not configured. Please contact support.' }, { status: 400 })
     }
@@ -64,6 +65,20 @@ export async function POST(req: NextRequest) {
         console.error('[service-payment/mock] insert failed:', bErr.message)
         return NextResponse.json({ error: 'Booking failed. Try again.' }, { status: 500 })
       }
+      notifyAdmin({
+        event: 'Service Booked (test mode)',
+        summary: `${item.title} - ${user.email || user.id}`,
+        details: {
+          'Service': item.title,
+          'Customer': user.email || user.id,
+          'Quantity': qty,
+          'Amount': `₹${totalAmount.toLocaleString('en-IN')}`,
+          'Notes': notes || '',
+          'Booking ID': booking?.id,
+        },
+        adminPath: '/admin/services',
+        accent: '#7C3AED',
+      })
       return NextResponse.json({ success: true, mock: true, booking_id: booking?.id })
     }
 
@@ -120,7 +135,7 @@ export async function POST(req: NextRequest) {
 
     // Ownership guard: verify this booking belongs to the calling user
     const { data: booking } = await (admin as any).from('service_bookings')
-      .select('user_id, razorpay_order_id')
+      .select('user_id, razorpay_order_id, amount, notes, service_item_id, payment_status')
       .eq('id', booking_id)
       .single()
     if (!booking || booking.user_id !== user.id) {
@@ -128,6 +143,10 @@ export async function POST(req: NextRequest) {
     }
     if (booking.razorpay_order_id !== razorpay_order_id) {
       return NextResponse.json({ error: 'Order mismatch' }, { status: 400 })
+    }
+    if (booking.payment_status === 'paid') {
+      // Retry of an already-verified payment - do not re-send the receipt or alert.
+      return NextResponse.json({ success: true, already_paid: true })
     }
 
     const { error: updErr } = await (admin as any).from('service_bookings').update({
@@ -140,6 +159,41 @@ export async function POST(req: NextRequest) {
       console.error('[service-payment/verify] update failed:', updErr.message)
       return NextResponse.json({ error: 'Payment recorded but status update failed. Contact support.' }, { status: 500 })
     }
+
+    const { data: svc } = await (admin as any).from('service_items')
+      .select('title, category')
+      .eq('id', booking.service_item_id)
+      .maybeSingle()
+    const serviceTitle: string = svc?.title || booking.notes || 'MahaTathastu Service'
+    const amount: number = Number(booking.amount) || 0
+
+    // Receipt for the customer
+    if (user.email) {
+      const name = (user.user_metadata?.full_name as string) || user.email.split('@')[0] || 'Seeker'
+      void sendOrderConfirmation(user.email, name, {
+        orderNumber: `SVC-${String(booking_id).slice(0, 8).toUpperCase()}`,
+        items: [{ name: serviceTitle, price: amount, quantity: 1, product_type: svc?.category || 'service' }],
+        subtotal: amount,
+        discount: 0,
+        total: amount,
+        paymentId: razorpay_payment_id,
+      }).catch((e: any) => console.warn('[service-payment] receipt email failed:', e?.message))
+    }
+
+    notifyAdmin({
+      event: 'Service Booked',
+      summary: `${serviceTitle} - ₹${amount.toLocaleString('en-IN')}`,
+      details: {
+        'Service': serviceTitle,
+        'Customer': user.email || user.id,
+        'Amount': `₹${amount.toLocaleString('en-IN')}`,
+        'Notes': booking.notes || '',
+        'Payment ID': razorpay_payment_id,
+        'Booking ID': booking_id,
+      },
+      adminPath: '/admin/services',
+      accent: '#7C3AED',
+    })
 
     return NextResponse.json({ success: true })
   }

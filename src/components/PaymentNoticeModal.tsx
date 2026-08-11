@@ -1,5 +1,6 @@
 'use client'
 
+import Icon from '@/components/ui/Icon'
 interface Props {
   serviceName: string
   amount: number
@@ -20,20 +21,15 @@ export default function PaymentNoticeModal({ serviceName, amount, onConfirm, onC
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b" style={{ borderColor: '#f0e4c4' }}>
           <div className="flex items-center gap-3 mb-1">
-            <span
-              className="material-symbols-outlined text-[22px]"
-              style={{ color: '#92400e', fontVariationSettings: "'FILL' 1" }}
-            >
-              info
-            </span>
+            <Icon name="info" size={22} style={{ color: '#92400e' }} />
             <h2
               className="text-base font-bold"
-              style={{ fontFamily: "'Playfair Display', serif", color: '#3b1f00' }}
+              style={{ fontFamily: "var(--font-display)", color: '#3b1f00' }}
             >
               Before you proceed
             </h2>
           </div>
-          <p className="text-[11px] uppercase tracking-widest font-semibold" style={{ color: '#D4A017', fontFamily: "'Sora', sans-serif" }}>
+          <p className="text-[13px] uppercase tracking-widest font-semibold" style={{ color: '#C9992E', fontFamily: "var(--font-label)" }}>
             Payment Policy · Please Read
           </p>
         </div>
@@ -43,18 +39,18 @@ export default function PaymentNoticeModal({ serviceName, amount, onConfirm, onC
           {/* Service + Amount */}
           <div className="rounded-xl px-4 py-3 flex items-center justify-between" style={{ background: '#fef3c7', border: '1px solid #fde68a' }}>
             <div>
-              <p className="text-[10px] uppercase tracking-widest font-semibold mb-0.5" style={{ color: '#92400e', fontFamily: "'Sora', sans-serif" }}>Booking for</p>
-              <p className="text-sm font-bold" style={{ color: '#3b1f00', fontFamily: "'Sora', sans-serif" }}>{serviceName}</p>
+              <p className="text-[12px] uppercase tracking-widest font-semibold mb-0.5" style={{ color: '#92400e', fontFamily: "var(--font-label)" }}>Booking for</p>
+              <p className="text-sm font-bold" style={{ color: '#3b1f00', fontFamily: "var(--font-label)" }}>{serviceName}</p>
             </div>
-            <p className="text-lg font-black" style={{ color: '#92400e', fontFamily: "'JetBrains Mono', monospace" }}>
+            <p className="text-lg font-black" style={{ color: '#92400e', fontFamily: "var(--font-mono)" }}>
               ₹{amount.toLocaleString('en-IN')}
             </p>
           </div>
 
           {/* Notice text */}
-          <div className="space-y-3 text-[13px] leading-relaxed" style={{ color: '#4a3520', fontFamily: "'DM Sans', sans-serif" }}>
+          <div className="space-y-3 text-[14px] leading-relaxed" style={{ color: '#4a3520', fontFamily: "var(--font-body)" }}>
             <p>
-              All services at MahaTathastu — consultations, poojas, sadhanas, courses, and digital reports — are <strong style={{ color: '#92400e' }}>non-refundable once payment is made.</strong>
+              All services at MahaTathastu - consultations, poojas, sadhanas, courses, and digital reports - are <strong style={{ color: '#92400e' }}>non-refundable once payment is made.</strong>
             </p>
             <p>
               This is because every service is personally prepared for you. Our Acharyas set aside dedicated time, our priests begin ritual preparations on your behalf, and reports are generated specifically for your birth details. Once this process begins, it cannot be reversed.
@@ -70,14 +66,14 @@ export default function PaymentNoticeModal({ serviceName, amount, onConfirm, onC
               >
                 +91 92748 15269
               </a>{' '}
-              — we are happy to answer every question.
+              - we are happy to answer every question.
             </p>
           </div>
 
           {/* Non-refundable highlight */}
           <div className="rounded-xl px-4 py-3 flex items-start gap-3" style={{ background: '#fff7ed', border: '1px solid #fed7aa' }}>
-            <span className="material-symbols-outlined text-[18px] mt-0.5 shrink-0" style={{ color: '#ea580c', fontVariationSettings: "'FILL' 1" }}>block</span>
-            <p className="text-[12px] font-semibold leading-snug" style={{ color: '#9a3412', fontFamily: "'Sora', sans-serif" }}>
+            <Icon name="block" size={18} className="mt-0.5 shrink-0" style={{ color: '#ea580c' }} />
+            <p className="text-[13px] font-semibold leading-snug" style={{ color: '#9a3412', fontFamily: "var(--font-label)" }}>
               No cancellations or refunds after payment is confirmed. Rescheduling of live sessions is subject to availability and must be requested at least 24 hours in advance.
             </p>
           </div>
@@ -88,14 +84,14 @@ export default function PaymentNoticeModal({ serviceName, amount, onConfirm, onC
           <button
             onClick={onConfirm}
             className="w-full py-3 rounded-xl text-sm font-bold text-white transition-opacity hover:opacity-90"
-            style={{ background: 'linear-gradient(135deg, #92400e, #78350f)', fontFamily: "'Sora', sans-serif", letterSpacing: '0.02em' }}
+            style={{ background: 'linear-gradient(135deg, #92400e, #78350f)', fontFamily: "var(--font-label)", letterSpacing: '0.02em' }}
           >
-            I understand — Proceed to Pay ₹{amount.toLocaleString('en-IN')}
+            I understand - Proceed to Pay ₹{amount.toLocaleString('en-IN')}
           </button>
           <button
             onClick={onCancel}
             className="w-full py-2.5 rounded-xl text-sm font-semibold transition-colors hover:bg-amber-50"
-            style={{ color: '#92400e', border: '1.5px solid #e8d5a3', fontFamily: "'Sora', sans-serif" }}
+            style={{ color: '#92400e', border: '1.5px solid #e8d5a3', fontFamily: "var(--font-label)" }}
           >
             Go back
           </button>

@@ -1,13 +1,46 @@
 ﻿import type { Metadata } from 'next'
-import { DM_Sans } from 'next/font/google'
+import { DM_Sans, Martel, Sora, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import { Toaster } from 'sonner'
+import { LanguageProvider } from '@/components/i18n/LanguageProvider'
+import LanguagePrompt from '@/components/i18n/LanguagePrompt'
+import ChatWidget from '@/components/chat/ChatWidget'
+
+/* ── Type system ───────────────────────────────────────────────────────────
+   All four families are self-hosted through next/font: no render-blocking
+   <link> to fonts.googleapis.com, and each gets a size-adjusted fallback so
+   swapping in doesn't shift layout.
+
+   Martel replaces Playfair Display as the display face. It's a Devanagari-
+   native serif - sturdy and low-contrast rather than high-contrast "luxury
+   editorial" - which both gives the brand a voice of its own and finally sets
+   the Sanskrit shlokas in the real typeface instead of a system fallback. */
+const martel = Martel({
+  subsets: ['latin', 'devanagari'],
+  weight: ['400', '600', '700', '800', '900'],
+  variable: '--font-martel',
+  display: 'swap',
+})
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
   variable: '--font-dm-sans',
   display: 'swap',
 })
+
+const sora = Sora({
+  subsets: ['latin'],
+  variable: '--font-sora',
+  display: 'swap',
+})
+
+const jetbrains = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-jetbrains',
+  display: 'swap',
+})
+
+const fontVars = `${martel.variable} ${dmSans.variable} ${sora.variable} ${jetbrains.variable}`
 
 const SITE_URL = 'https://www.mahatathastu.com'
 
@@ -67,25 +100,26 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={dmSans.variable} suppressHydrationWarning>
+    <html lang="en" className={fontVars} suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Playfair Display, Sora, JetBrains Mono — loaded as <link> (parallel, non-blocking CSS parse) */}
-        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Sora:wght@300..800&family=JetBrains+Mono:wght@300..800&display=swap" rel="stylesheet" />
-        {/* Material Symbols icon font */}
-        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+        {/* No font <link>s and no Material Symbols icon font: all four families
+            are self-hosted via next/font, and every icon on the site now comes
+            from the single in-app <Icon> set (see components/ui/Icon.tsx). */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_SCHEMA) }} />
       </head>
       <body className="antialiased min-h-screen flex flex-col">
-        {children}
+        <LanguageProvider>
+          {children}
+          <LanguagePrompt />
+          <ChatWidget />
+        </LanguageProvider>
         <Toaster
           position="top-right"
           toastOptions={{
             style: {
-              background: 'var(--indigo-deep)',
-              color: 'var(--kutch-white)',
-              border: '1px solid var(--plum-light)',
+              background: 'var(--surface-dark-raised)',
+              color: 'var(--text-on-dark)',
+              border: '1px solid var(--border-dark)',
             },
           }}
         />

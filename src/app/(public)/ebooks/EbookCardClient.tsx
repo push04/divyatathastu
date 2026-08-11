@@ -68,7 +68,7 @@ function CoverIllustration({ title }: { title: string }) {
     })
     return (
       <svg width="100" height="70" viewBox="0 0 100 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {beads.map((b, i) => <circle key={i} cx={b.cx} cy={b.cy} r="9" stroke="#D4A043" strokeOpacity="0.25" strokeWidth="1.2" fill="none" />)}
+        {beads.map((b, i) => <circle key={i} cx={b.cx} cy={b.cy} r="9" stroke="#C9992E" strokeOpacity="0.25" strokeWidth="1.2" fill="none" />)}
       </svg>
     )
   }
@@ -99,22 +99,22 @@ function EbookCover({ book }: { book: any }) {
         className="absolute bottom-0 left-0 right-0 flex items-center pl-3"
         style={{ height: '28px', background: `${bg}99` }}
       >
-        <span className="text-white text-[9px] uppercase tracking-widest" style={{ fontFamily: "'Sora', sans-serif" }}>
+        <span className="text-white text-[12px] uppercase tracking-widest" style={{ fontFamily: "var(--font-label)" }}>
           {book.category}
         </span>
       </div>
       {isFree && (
         <div
-          className="absolute top-2 right-2 font-bold text-[9px] px-2 py-0.5 rounded-sm"
-          style={{ background: 'var(--saffron)', color: '#0F1628', fontFamily: "'Sora', sans-serif" }}
+          className="absolute top-2 right-2 font-bold text-[12px] px-2 py-0.5 rounded-sm"
+          style={{ background: 'var(--saffron)', color: '#0F1628', fontFamily: "var(--font-label)" }}
         >
           FREE
         </div>
       )}
       {book.bestseller && (
         <div
-          className="absolute top-2 left-2 font-bold text-[9px] px-2 py-0.5 rounded-sm"
-          style={{ background: 'var(--terracotta)', color: 'white', fontFamily: "'Sora', sans-serif" }}
+          className="absolute top-2 left-2 font-bold text-[12px] px-2 py-0.5 rounded-sm"
+          style={{ background: 'var(--terracotta)', color: 'white', fontFamily: "var(--font-label)" }}
         >
           Bestseller
         </div>
@@ -132,34 +132,34 @@ export function EbookCard({ book }: { book: any }) {
     <div className="flex flex-col overflow-hidden rounded-xl" style={{ background: 'white', border: '1px solid rgba(200,190,180,0.5)' }}>
       <EbookCover book={book} />
       <div className="p-5 flex flex-col flex-1">
-        <span className="text-[10px] uppercase tracking-widest" style={{ fontFamily: "'Sora', sans-serif", color: catTextColor }}>
+        <span className="text-[12px] uppercase tracking-widest" style={{ fontFamily: "var(--font-label)", color: catTextColor }}>
           {book.category}
         </span>
-        <h3 className="mt-2 font-bold leading-snug line-clamp-2" style={{ fontFamily: "'Playfair Display', serif", fontSize: '17px', color: 'var(--indigo-deep)' }}>
+        <h3 className="mt-2 font-bold leading-snug line-clamp-2" style={{ fontFamily: "var(--font-display)", fontSize: '17px', color: 'var(--indigo-deep)' }}>
           {book.title}
         </h3>
         {book.author && (
-          <p className="mt-1" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '13px', color: 'rgba(28,30,74,0.45)' }}>
+          <p className="mt-1" style={{ fontFamily: "var(--font-body)", fontSize: '13px', color: 'rgba(28,30,74,0.45)' }}>
             by {book.author}
           </p>
         )}
-        <p className="mt-2 line-clamp-2 flex-1" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '13px', color: 'rgba(28,30,74,0.55)' }}>
+        <p className="mt-2 line-clamp-2 flex-1" style={{ fontFamily: "var(--font-body)", fontSize: '13px', color: 'rgba(28,30,74,0.55)' }}>
           {book.description}
         </p>
         {(book.pages || book.rating) && (
-          <div className="flex items-center gap-3 mt-3" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '12px', color: 'rgba(28,30,74,0.45)' }}>
+          <div className="flex items-center gap-3 mt-3" style={{ fontFamily: "var(--font-body)", fontSize: '12px', color: 'rgba(28,30,74,0.45)' }}>
             {book.pages && <span className="flex items-center gap-1"><FileText size={12} />{book.pages} pages</span>}
             {book.rating && <span className="flex items-center gap-1"><Star size={12} color="var(--saffron)" fill="var(--saffron)" />{book.rating}{book.reviews ? ` (${book.reviews.toLocaleString()})` : ''}</span>}
           </div>
         )}
         <div className="mt-4">
           {isFree ? (
-            <span className="font-bold text-sm" style={{ fontFamily: "'Sora', sans-serif", color: 'var(--terracotta)' }}>FREE</span>
+            <span className="font-bold text-sm" style={{ fontFamily: "var(--font-label)", color: 'var(--terracotta)' }}>FREE</span>
           ) : (
             <div className="flex items-baseline gap-1.5">
-              <span className="font-bold" style={{ fontFamily: "'Playfair Display', serif", fontSize: '18px', color: 'var(--indigo-deep)' }}>&#8377;{book.price.toLocaleString('en-IN')}</span>
+              <span className="font-bold" style={{ fontFamily: "var(--font-display)", fontSize: '18px', color: 'var(--indigo-deep)' }}>&#8377;{book.price.toLocaleString('en-IN')}</span>
               {book.original_price > 0 && <span style={{ fontSize: '13px', color: 'rgba(28,30,74,0.3)', textDecoration: 'line-through' }}>&#8377;{book.original_price.toLocaleString('en-IN')}</span>}
-              {save > 0 && <span style={{ fontSize: '11px', color: 'rgba(198,125,83,0.8)', fontFamily: "'DM Sans', sans-serif" }}>Save &#8377;{save}</span>}
+              {save > 0 && <span style={{ fontSize: '11px', color: 'rgba(198,125,83,0.8)', fontFamily: "var(--font-body)" }}>Save &#8377;{save}</span>}
             </div>
           )}
         </div>
@@ -167,7 +167,7 @@ export function EbookCard({ book }: { book: any }) {
           href={isFree ? '/my-library' : `/shop?category=ebook&book=${book.id}`}
           className="mt-3 w-full font-semibold transition-colors text-center block"
           style={{
-            fontFamily: "'DM Sans', sans-serif",
+            fontFamily: "var(--font-body)",
             fontSize: '14px',
             background: 'var(--indigo-deep)',
             color: 'white',

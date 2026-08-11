@@ -14,6 +14,10 @@ const PROTECTED_PATHS = [
   '/settings',
   '/handwritten-report',
   '/shop/checkout',
+  // Reviews are members-only by design, and referral links/credits are
+  // per-account, so both belong behind the login wall.
+  '/reviews',
+  '/refer',
 ]
 
 export async function middleware(request: NextRequest) {
@@ -41,6 +45,17 @@ export async function middleware(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
   const path = request.nextUrl.pathname
+
+  // HIGH-4: Protect all /api/admin/* routes at the middleware level (defense-in-depth)
+  if (path.startsWith('/api/admin')) {
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+    if (profile?.role !== 'admin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+  }
 
   const isProtected = PROTECTED_PATHS.some(p => path === p || path.startsWith(p + '/'))
 

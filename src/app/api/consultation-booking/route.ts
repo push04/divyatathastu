@@ -2,20 +2,37 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import { sendEmail } from '@/lib/email'
 import crypto from 'crypto'
+import {
+  PREDEFINED_SLOTS,
+  CONSULTATION_PRICING_KEY,
+  DEFAULT_CONSULTATION_PRICING,
+  DEFAULT_SPECIALIZATION,
+  isValidSpecialization,
+  normalizePricing,
+  resolveSlotPrice,
+  type ConsultationPricing,
+} from '@/lib/constants/consultation'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.mahatathastu.com'
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'info@mahatathastu.com'
 
-const PREDEFINED_SLOTS = [
-  { start: '17:00', end: '17:45' },
-  { start: '17:45', end: '18:30' },
-  { start: '18:30', end: '19:15' },
-  { start: '19:15', end: '20:00' },
-  { start: '20:00', end: '20:45' },
-  { start: '20:45', end: '21:30' },
-  { start: '21:30', end: '22:15' },
-  { start: '22:15', end: '23:00' },
-]
+/**
+ * Read the admin-configured price map. Falls back to the seed defaults - it
+ * must never fall back to "free", because the price shown on the booking page
+ * and the amount charged at Razorpay both derive from this.
+ */
+async function loadPricing(admin: any): Promise<ConsultationPricing> {
+  try {
+    const { data } = await admin
+      .from('settings')
+      .select('value')
+      .eq('key', CONSULTATION_PRICING_KEY)
+      .maybeSingle()
+    return normalizePricing(data?.value)
+  } catch {
+    return { ...DEFAULT_CONSULTATION_PRICING }
+  }
+}
 
 function fmtTime(t: string) {
   if (!t) return t
@@ -40,7 +57,7 @@ function getRazorpay() {
   })
 }
 
-// POST /api/consultation-booking — book a slot
+// POST /api/consultation-booking - book a slot
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -52,9 +69,15 @@ export async function POST(req: NextRequest) {
   const admin = await createAdminClient()
 
   if (action === 'create') {
-    const { date, start_time, end_time, specialization, notes } = await req.json()
+    const { date, start_time, end_time, specialization, notes, expected_price } = await req.json()
     if (!date || !start_time || !end_time) {
       return NextResponse.json({ error: 'date, start_time, end_time required' }, { status: 400 })
+    }
+    // MED-2: Validate date and time formats to prevent unexpected query injection
+    const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
+    const TIME_RE = /^\d{2}:\d{2}$/
+    if (!DATE_RE.test(date) || !TIME_RE.test(start_time.substring(0, 5)) || !TIME_RE.test(end_time.substring(0, 5))) {
+      return NextResponse.json({ error: 'Invalid date or time format' }, { status: 400 })
     }
 
     // Count booked slots for the day
@@ -66,20 +89,27 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'This day is fully booked. Please choose another date.' }, { status: 400 })
     }
 
-    // Find existing slot for this time
+    // Find existing slot for this time.
+    // `.maybeSingle()` used to error out whenever two rows shared a start time
+    // (e.g. two experts), which silently produced a duplicate slot below.
     const normStart = start_time.substring(0, 5)
     const normEnd = end_time.substring(0, 5)
-    const { data: slot } = await (admin as any).from('consultation_slots')
-      .select('id, is_booked, is_blocked, price')
+    const { data: slotRows } = await (admin as any).from('consultation_slots')
+      .select('id, is_booked, is_blocked, price, specialization')
       .eq('date', date)
       .like('start_time', `${normStart}%`)
-      .maybeSingle()
+      .order('created_at', { ascending: true })
+      .limit(1)
+    const slot = (slotRows || [])[0] || null
 
     if (slot?.is_blocked) return NextResponse.json({ error: 'This slot is not available.' }, { status: 400 })
     if (slot?.is_booked) return NextResponse.json({ error: 'This slot is already booked.' }, { status: 400 })
 
+    const requestedSpec = isValidSpecialization(specialization) ? specialization : DEFAULT_SPECIALIZATION
+    const pricing = await loadPricing(admin)
+
     let slotId: string
-    let slotPrice = 0
+    let slotPrice: number
 
     if (!slot) {
       // Auto-create the slot using admin client (bypasses RLS)
@@ -89,8 +119,9 @@ export async function POST(req: NextRequest) {
         .limit(1)
         .maybeSingle()
 
-      const requestedSpec = specialization || 'Astrology'
-      const derivedPrice = (requestedSpec === 'Vastu') ? 21000 : (requestedSpec === 'Astro Vastu' ? 35000 : 11000)
+      // Price comes from the admin-configured map for the requested
+      // specialization - the same value the booking page displayed.
+      slotPrice = resolveSlotPrice(null, requestedSpec, pricing)
 
       const { data: newSlot, error: slotErr } = await (admin as any).from('consultation_slots').insert({
         expert_id: expert?.id || null,
@@ -101,23 +132,40 @@ export async function POST(req: NextRequest) {
         is_blocked: false,
         duration_minutes: 45,
         specialization: requestedSpec,
-        price: derivedPrice,
+        price: slotPrice,
       }).select('id, price').single()
 
       if (slotErr || !newSlot) {
         return NextResponse.json({ error: 'Failed to create slot: ' + slotErr?.message }, { status: 500 })
       }
       slotId = newSlot.id
-      slotPrice = newSlot.price || derivedPrice
+      // Trust what the DB actually stored, but keep 0 as 0.
+      slotPrice = resolveSlotPrice(newSlot.price, requestedSpec, pricing)
     } else {
       // Slot exists and is available. We do NOT claim it here to enforce "first payment then booking".
       // We will claim it atomically in the verify step.
       slotId = slot.id
-      slotPrice = slot.price || 11000
+      // `slot.price ?? default` - the old `slot.price || 11000` turned an
+      // admin's deliberately free slot (price 0) into an ₹11,000 charge.
+      slotPrice = resolveSlotPrice(slot.price, slot.specialization || requestedSpec, pricing)
+    }
+
+    // Guard against ever charging something other than what the seeker was
+    // shown. The client sends the price it rendered; a mismatch aborts the
+    // booking instead of silently billing a different amount.
+    if (expected_price !== undefined && expected_price !== null) {
+      const shown = Number(expected_price)
+      if (!Number.isFinite(shown) || Math.round(shown) !== Math.round(slotPrice)) {
+        return NextResponse.json({
+          error: 'The price for this slot has changed. Please refresh and try again.',
+          price: slotPrice,
+          price_changed: true,
+        }, { status: 409 })
+      }
     }
 
     if (slotPrice === 0) {
-      // Free slot — book immediately (Atomic claim)
+      // Free slot - book immediately (Atomic claim)
       const { data: claimed } = await (admin as any).from('consultation_slots')
         .update({ is_booked: true })
         .eq('id', slotId)
@@ -135,7 +183,8 @@ export async function POST(req: NextRequest) {
       }).select('id').single()
 
       if (bookErr || !booking) {
-        console.error('Booking insert error (free slot):', bookErr)
+        // MED-4: Sanitize — log only error code, not full object
+        console.error('Booking insert error (free slot): code=%s', bookErr?.code ?? 'unknown')
         await (admin as any).from('consultation_slots').update({ is_booked: false }).eq('id', slotId)
         return NextResponse.json({ error: 'Booking failed. Please try again.' }, { status: 500 })
       }
@@ -144,7 +193,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: true, booking_id: booking.id, mock: true })
     }
 
-    // Paid slot — initialize Razorpay
+    // Paid slot - initialize Razorpay
     if (!process.env.RAZORPAY_KEY_ID) {
       // Mock mode
       const { data: booking, error: bookErr } = await (admin as any).from('consultation_bookings').insert({
@@ -158,7 +207,8 @@ export async function POST(req: NextRequest) {
       }).select('id').single()
 
       if (bookErr || !booking) {
-        console.error('Booking insert error (mock paid slot):', bookErr)
+        // MED-4: Sanitize — log only error code
+        console.error('Booking insert error (mock paid slot): code=%s', bookErr?.code ?? 'unknown')
         return NextResponse.json({ error: 'Booking failed. Please try again.' }, { status: 500 })
       }
       await sendConfirmationEmails(admin, user.id, user.email, date, start_time, end_time, slotPrice)
@@ -188,7 +238,8 @@ export async function POST(req: NextRequest) {
     }).select('id').single()
 
     if (bookErr || !booking) {
-      console.error('Booking insert error (Razorpay paid slot):', bookErr)
+      // MED-4: Sanitize — log only error code
+      console.error('Booking insert error (Razorpay paid slot): code=%s', bookErr?.code ?? 'unknown')
       return NextResponse.json({ error: 'Booking failed. Please try again.' }, { status: 500 })
     }
 
@@ -197,7 +248,11 @@ export async function POST(req: NextRequest) {
       order_id: order.id,
       amount: order.amount,
       booking_id: booking.id,
-      key: process.env.RAZORPAY_KEY_ID,
+      price: slotPrice,
+      // The publishable key. The client used to read `data.key` from this
+      // response while the server deliberately omitted it, so `key` was
+      // undefined and the Razorpay dialog never opened for paid slots.
+      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || null,
     })
   }
 
@@ -214,7 +269,9 @@ export async function POST(req: NextRequest) {
     }
 
     const { data: booking } = await (admin as any).from('consultation_bookings')
-      .select('user_id, razorpay_order_id, slot_id, consultation_slots(date, start_time, end_time, price)')
+      // `notes` is read further down when flagging a double-booking collision -
+      // it was not being selected, so the flag was appended to `undefined`.
+      .select('user_id, razorpay_order_id, slot_id, notes, consultation_slots(date, start_time, end_time, price)')
       .eq('id', booking_id)
       .single()
 
@@ -273,13 +330,13 @@ async function sendConfirmationEmails(admin: any, userId: string, userEmail: str
   const userName = profile?.full_name || userEmail || 'Devotee'
   const priceText = slotPrice > 0 ? `₹${slotPrice.toLocaleString('en-IN')}` : 'Complimentary'
   const dateText = formatDate(date)
-  const timeText = `${fmtTime(start_time)} – ${fmtTime(end_time)}`
+  const timeText = `${fmtTime(start_time)} - ${fmtTime(end_time)}`
 
   // Email to user
   if (userEmail) {
     sendEmail(
       userEmail,
-      '✅ Consultation Booked — MahaTathastu',
+      '✅ Consultation Booked - MahaTathastu',
       `<div style="font-family:Georgia,serif;max-width:560px;margin:auto;color:#2d1b00;background:#fffbf2;padding:32px;border-radius:16px;border:1px solid #e8d5a3">
         <h2 style="color:#6b21a8;font-size:22px;margin-bottom:4px">Consultation Confirmed 🙏</h2>
         <p style="color:#78350f;font-size:14px;margin-bottom:20px">Namaste ${userName}, your session is confirmed.</p>
@@ -298,7 +355,7 @@ async function sendConfirmationEmails(admin: any, userId: string, userEmail: str
   // Email to admin
   sendEmail(
     ADMIN_EMAIL,
-    `📅 New Consultation Booking — ${userName}`,
+    `📅 New Consultation Booking - ${userName}`,
     `<div style="font-family:Georgia,serif;max-width:560px;margin:auto;color:#2d1b00;background:#f0fdf4;padding:32px;border-radius:16px;border:1px solid #bbf7d0">
       <h2 style="color:#166534;font-size:20px;margin-bottom:16px">New Consultation Booking</h2>
       <div style="background:#fff;border-radius:12px;border:1px solid #bbf7d0;padding:20px;margin-bottom:20px">
@@ -312,7 +369,7 @@ async function sendConfirmationEmails(admin: any, userId: string, userEmail: str
   ).catch(() => {})
 }
 
-// GET /api/consultation-booking?date=YYYY-MM-DD — fetch slot status for a date
+// GET /api/consultation-booking?date=YYYY-MM-DD - fetch slot status for a date
 export async function GET(req: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -322,12 +379,29 @@ export async function GET(req: NextRequest) {
   const date = searchParams.get('date')
   if (!date) return NextResponse.json({ error: 'date required' }, { status: 400 })
 
+  const specParam = searchParams.get('specialization')
+  const requestedSpec = isValidSpecialization(specParam) ? specParam : DEFAULT_SPECIALIZATION
+
+  // Read pricing through whichever client is available. Falling back to the
+  // seed defaults is essential: returning 0 here is what made slots read
+  // "Complimentary" while the booking endpoint charged full price.
+  let pricing: ConsultationPricing
+  try {
+    pricing = await loadPricing(await createAdminClient())
+  } catch {
+    pricing = await loadPricing(supabase)
+  }
+
   const { data: rawSlots } = await (supabase as any).from('consultation_slots')
-    .select('id, start_time, end_time, is_booked, is_blocked, price')
+    .select('id, start_time, end_time, is_booked, is_blocked, price, specialization')
     .eq('date', date)
   const slots: any[] = rawSlots || []
 
-  // Merge predefined slots with DB state
+  // Merge predefined slots with DB state.
+  // A slot with no DB row is NOT free - it resolves to the configured price
+  // for the requested specialization, which is exactly what booking it will
+  // charge. `price: dbSlot?.price || 0` was the source of the "Complimentary"
+  // label on slots that then billed ₹11,000.
   const merged = PREDEFINED_SLOTS.map(ps => {
     const dbSlot = slots.find(s => s.start_time?.substring(0, 5) === ps.start)
     return {
@@ -335,10 +409,11 @@ export async function GET(req: NextRequest) {
       end: ps.end,
       is_booked: dbSlot?.is_booked || false,
       is_blocked: dbSlot?.is_blocked || false,
-      price: dbSlot?.price || 0,
+      price: resolveSlotPrice(dbSlot?.price, dbSlot?.specialization || requestedSpec, pricing),
+      specialization: dbSlot?.specialization || requestedSpec,
       slot_id: dbSlot?.id || null,
     }
   })
 
-  return NextResponse.json({ success: true, slots: merged })
+  return NextResponse.json({ success: true, slots: merged, pricing, specialization: requestedSpec })
 }

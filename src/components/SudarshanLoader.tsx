@@ -32,14 +32,14 @@
       {/* 12-toothed serrated outer star */}
       <polygon
         points="100,4 121.5,19.8 148,16.9 158.7,41.3 183.1,52 180.2,78.5 196,100 180.2,121.5 183.1,148 158.7,158.7 148,183.1 121.5,180.2 100,196 78.5,180.2 52,183.1 41.3,158.7 16.9,148 19.8,121.5 4,100 19.8,78.5 16.9,52 41.3,41.3 52,16.9 78.5,19.8"
-        fill="#E36414"
+        fill="#D9741A"
       />
 
       {/* Warm cream disc - no dark blue showing between spokes */}
       <circle cx="100" cy="100" r="82" fill="#FEF5EC" />
 
       {/* Outer saffron ring */}
-      <circle cx="100" cy="100" r="80" fill="none" stroke="#E36414" strokeWidth="2.5" />
+      <circle cx="100" cy="100" r="80" fill="none" stroke="#D9741A" strokeWidth="2.5" />
 
       {/* 16 outer lotus petals */}
       {outerPetals.map((angle) => (
@@ -49,22 +49,22 @@
           cy="28"
           rx="5"
           ry="11"
-          fill="#E36414"
-          stroke="#D4A017"
+          fill="#D9741A"
+          stroke="#C9992E"
           strokeWidth="0.7"
           transform={`rotate(${angle}, 100, 100)`}
         />
       ))}
 
       {/* Gold separator ring */}
-      <circle cx="100" cy="100" r="62" fill="none" stroke="#D4A017" strokeWidth="2" />
+      <circle cx="100" cy="100" r="62" fill="none" stroke="#C9992E" strokeWidth="2" />
 
       {/* 8 dark indigo diamond spokes */}
       {spokes.map((angle) => (
         <path
           key={angle}
           d="M 100,41 L 96.5,51 L 100,59 L 103.5,51 Z"
-          fill="#2F2A44"
+          fill="#1B1233"
           transform={`rotate(${angle}, 100, 100)`}
         />
       ))}
@@ -76,13 +76,13 @@
           cx="100"
           cy="50"
           r="2.5"
-          fill="#E36414"
+          fill="#D9741A"
           transform={`rotate(${angle}, 100, 100)`}
         />
       ))}
 
       {/* Gold inner ring */}
-      <circle cx="100" cy="100" r="40" fill="none" stroke="#D4A017" strokeWidth="2.5" />
+      <circle cx="100" cy="100" r="40" fill="none" stroke="#C9992E" strokeWidth="2.5" />
 
       {/* 8 inner terracotta petals */}
       {innerPetals.map((angle) => (
@@ -92,25 +92,25 @@
           cy="65"
           rx="3.5"
           ry="8"
-          fill="#C67D53"
-          stroke="#D4A017"
+          fill="#B4231F"
+          stroke="#C9992E"
           strokeWidth="0.6"
           transform={`rotate(${angle}, 100, 100)`}
         />
       ))}
 
       {/* Center hub - dark with gold ring */}
-      <circle cx="100" cy="100" r="27" fill="#2F2A44" />
-      <circle cx="100" cy="100" r="25" fill="none" stroke="#D4A017" strokeWidth="1.5" />
+      <circle cx="100" cy="100" r="27" fill="#1B1233" />
+      <circle cx="100" cy="100" r="25" fill="none" stroke="#C9992E" strokeWidth="1.5" />
 
       {/* Center saffron jewel */}
-      <circle cx="100" cy="100" r="16" fill="#E36414" />
+      <circle cx="100" cy="100" r="16" fill="#D9741A" />
 
       {/* Hub core */}
-      <circle cx="100" cy="100" r="9" fill="#2F2A44" />
+      <circle cx="100" cy="100" r="9" fill="#1B1233" />
 
       {/* Golden dot */}
-      <circle cx="100" cy="100" r="5" fill="#D4A017" />
+      <circle cx="100" cy="100" r="5" fill="#C9992E" />
     </svg>
   )
 }

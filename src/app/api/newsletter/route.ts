@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { createClient as createServerClient } from '@/lib/supabase/server'
+import { notifyAdmin } from '@/lib/email'
 
 export const dynamic = 'force-dynamic'
 
@@ -53,10 +54,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to subscribe. Please try again.' }, { status: 500 })
   }
 
+  notifyAdmin({
+    event: 'Newsletter Subscription',
+    summary: `${name?.trim() || 'Someone'} subscribed (${email.toLowerCase().trim()})`,
+    details: { 'Email': email.toLowerCase().trim(), 'Name': name?.trim() || '', 'Source': source },
+    accent: '#7C3AED',
+  })
+
   return NextResponse.json({ success: true })
 }
 
-// Allow admin to list subscribers — protected by Supabase session (role = admin)
+// Allow admin to list subscribers - protected by Supabase session (role = admin)
 export async function GET(req: NextRequest) {
   const auth = await createServerClient()
   const { data: { user } } = await auth.auth.getUser()

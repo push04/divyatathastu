@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
+import Icon from '@/components/ui/Icon'
 interface Event {
   id: string
   title: string
@@ -153,11 +154,11 @@ export default function AdminEventsPage() {
     <div className="p-6 space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <h1 className="text-xl font-bold text-[var(--indigo-deep)] flex items-center gap-2">
-          <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>event_note</span>
-          Events <span className="text-[var(--warm-charcoal)]/40 font-normal">({events.length})</span>
+          <Icon name="event_note" size={20} />
+          Events <span className="text-[var(--text-muted)] font-normal">({events.length})</span>
         </h1>
         <button onClick={openCreate} className="btn-divine px-4 py-2 text-sm inline-flex items-center gap-2">
-          <span className="material-symbols-outlined text-[16px]">add</span>
+          <Icon name="add" size={16} />
           Create Event
         </button>
       </div>
@@ -167,7 +168,7 @@ export default function AdminEventsPage() {
         {['all', ...EVENT_TYPES].map(t => (
           <button key={t}
             onClick={() => setFilter(t)}
-            className={`px-3 py-1 rounded-full text-xs font-medium capitalize transition-all ${filter === t ? 'bg-[var(--indigo-deep)] text-white' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 hover:bg-[var(--warm-sand)]/80'}`}>
+            className={`px-3 py-1 rounded-full text-xs font-medium capitalize transition-all ${filter === t ? 'bg-[var(--indigo-deep)] text-white' : 'bg-[var(--warm-sand)] text-[var(--text-secondary)] hover:bg-[var(--warm-sand)]/80'}`}>
             {t}
           </button>
         ))}
@@ -181,7 +182,7 @@ export default function AdminEventsPage() {
               <img src={ev.cover_image_url} alt={ev.title} className="w-20 h-16 object-cover rounded-lg flex-shrink-0" />
             ) : (
               <div className="w-20 h-16 rounded-lg bg-[var(--indigo-deep)]/10 flex items-center justify-center flex-shrink-0">
-                <span className="material-symbols-outlined text-[24px] text-[var(--indigo-deep)]/30" style={{ fontVariationSettings: "'FILL' 1" }}>event</span>
+                <Icon name="event" size={24} className="text-[var(--text-muted)]" />
               </div>
             )}
             <div className="flex-1 min-w-0">
@@ -190,10 +191,10 @@ export default function AdminEventsPage() {
                   <p className="font-semibold text-[var(--indigo-deep)]">{ev.title}</p>
                   <div className="flex items-center gap-2 mt-1 flex-wrap">
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${TYPE_COLORS[ev.type] || 'bg-gray-100 text-gray-600'}`}>{ev.type}</span>
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${ev.is_published ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/50'}`}>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${ev.is_published ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--warm-sand)] text-[var(--text-muted)]'}`}>
                       {ev.is_published ? 'Published' : 'Draft'}
                     </span>
-                    <span className="text-xs text-[var(--warm-charcoal)]/40">
+                    <span className="text-xs text-[var(--text-muted)]">
                       {new Date(ev.start_datetime).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </span>
                     {ev.is_free ? (
@@ -202,7 +203,7 @@ export default function AdminEventsPage() {
                       <span className="text-xs text-[var(--terracotta)] font-medium">₹{ev.price?.toLocaleString('en-IN')}</span>
                     )}
                   </div>
-                  {ev.location && <p className="text-xs text-[var(--warm-charcoal)]/50 mt-1 flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">location_on</span>{ev.location}</p>}
+                  {ev.location && <p className="text-xs text-[var(--text-muted)] mt-1 flex items-center gap-1"><Icon name="location_on" size={13} />{ev.location}</p>}
                 </div>
                 <div className="flex gap-2 flex-shrink-0">
                   <button onClick={() => togglePublish(ev)} className="text-xs text-[var(--indigo-deep)] hover:underline font-medium">{ev.is_published ? 'Unpublish' : 'Publish'}</button>
@@ -215,8 +216,8 @@ export default function AdminEventsPage() {
         ))}
         {filtered.length === 0 && (
           <div className="text-center py-16 card-divine">
-            <span className="material-symbols-outlined text-[48px] text-[var(--warm-charcoal)]/20 block mb-2" style={{ fontVariationSettings: "'FILL' 1" }}>event_note</span>
-            <p className="text-[var(--warm-charcoal)]/40 text-sm">No events yet. Create your first event.</p>
+            <Icon name="event_note" size={48} className="text-[var(--warm-charcoal)]/20 block mb-2" />
+            <p className="text-[var(--text-muted)] text-sm">No events yet. Create your first event.</p>
           </div>
         )}
       </div>
@@ -227,21 +228,21 @@ export default function AdminEventsPage() {
           <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="flex items-center justify-between p-5 border-b border-[var(--warm-sand)]">
               <h2 className="font-bold text-[var(--indigo-deep)] text-lg">{modal === 'create' ? 'Create Event' : 'Edit Event'}</h2>
-              <button onClick={() => setModal(null)} className="text-[var(--warm-charcoal)]/40 hover:text-[var(--warm-charcoal)] p-1">
-                <span className="material-symbols-outlined">close</span>
+              <button onClick={() => setModal(null)} className="text-[var(--text-muted)] hover:text-[var(--warm-charcoal)] p-1">
+                <Icon name="close" />
               </button>
             </div>
 
             <div className="p-5 space-y-4">
               {/* Cover image */}
               <div>
-                <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Cover Image</label>
+                <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Cover Image</label>
                 <div className="flex items-center gap-3">
                   {coverPreview ? (
                     <img src={coverPreview} alt="cover" className="w-24 h-16 object-cover rounded-lg border border-[var(--warm-sand)]" />
                   ) : (
                     <div className="w-24 h-16 rounded-lg bg-[var(--warm-sand)] flex items-center justify-center">
-                      <span className="material-symbols-outlined text-[20px] text-[var(--warm-charcoal)]/30">image</span>
+                      <Icon name="image" size={20} className="text-[var(--text-muted)]" />
                     </div>
                   )}
                   <label className="cursor-pointer px-3 py-2 rounded-lg border border-[var(--warm-sand)] text-xs font-medium text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/50 transition-colors">
@@ -253,37 +254,37 @@ export default function AdminEventsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
-                  <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Title *</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Title *</label>
                   <input type="text" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} className={inputCls} placeholder="Event title..." />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Type</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Type</label>
                   <select value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))} className={inputCls}>
                     {EVENT_TYPES.map(t => <option key={t} value={t} className="capitalize">{t.charAt(0).toUpperCase() + t.slice(1)}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Max Attendees</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Max Attendees</label>
                   <input type="number" value={form.max_attendees} onChange={e => setForm(f => ({ ...f, max_attendees: e.target.value }))} className={inputCls} placeholder="Unlimited" min="1" />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Start Date & Time *</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Start Date & Time *</label>
                   <input type="datetime-local" value={form.start_datetime} onChange={e => setForm(f => ({ ...f, start_datetime: e.target.value }))} className={inputCls} />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">End Date & Time</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">End Date & Time</label>
                   <input type="datetime-local" value={form.end_datetime} onChange={e => setForm(f => ({ ...f, end_datetime: e.target.value }))} className={inputCls} />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Location</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Location</label>
                   <input type="text" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} className={inputCls} placeholder="Physical location or 'Online'" />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Meeting Link (for online events)</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Meeting Link (for online events)</label>
                   <input type="url" value={form.meeting_link} onChange={e => setForm(f => ({ ...f, meeting_link: e.target.value }))} className={inputCls} placeholder="https://meet.google.com/..." />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Description</label>
+                  <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Description</label>
                   <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={3} className={`${inputCls} resize-none`} placeholder="Event description..." />
                 </div>
 
@@ -295,7 +296,7 @@ export default function AdminEventsPage() {
                   </label>
                   {!form.is_free && (
                     <div className="flex items-center gap-2 flex-1">
-                      <span className="text-sm text-[var(--warm-charcoal)]/60">₹</span>
+                      <span className="text-sm text-[var(--text-secondary)]">₹</span>
                       <input type="number" value={form.price} onChange={e => setForm(f => ({ ...f, price: Number(e.target.value) }))} className={inputCls} min="0" placeholder="Price" />
                     </div>
                   )}
@@ -311,9 +312,9 @@ export default function AdminEventsPage() {
             </div>
 
             <div className="flex gap-3 p-5 border-t border-[var(--warm-sand)]">
-              <button onClick={() => setModal(null)} className="flex-1 px-4 py-2 rounded-xl border border-[var(--warm-sand)] text-sm font-medium text-[var(--warm-charcoal)]/60 hover:bg-[var(--warm-sand)]/40 transition-colors">Cancel</button>
+              <button onClick={() => setModal(null)} className="flex-1 px-4 py-2 rounded-xl border border-[var(--warm-sand)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--warm-sand)]/40 transition-colors">Cancel</button>
               <button onClick={handleSave} disabled={saving} className="flex-1 btn-divine px-4 py-2 text-sm disabled:opacity-50 inline-flex items-center justify-center gap-2">
-                <span className="material-symbols-outlined text-[16px]">{saving ? 'hourglass_empty' : 'save'}</span>
+                <Icon name={saving ? 'hourglass_empty' : 'save'} size={16} />
                 {saving ? 'Saving...' : (modal === 'create' ? 'Create Event' : 'Save Changes')}
               </button>
             </div>

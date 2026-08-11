@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import SudarshanLoader from '@/components/SudarshanLoader'
 
+import Icon from '@/components/ui/Icon'
 interface Purchase {
   id: string
   download_count: number
@@ -79,9 +80,9 @@ export default function MyLibraryPage() {
           <Link href="/shop?category=ebook" className="btn-divine text-sm">Browse Ebooks</Link>
         </div>
         <div className="card-divine p-16 text-center">
-          <span className="material-symbols-outlined text-[64px] text-[var(--warm-sand)] block mb-4" style={{ fontVariationSettings: "'FILL' 1" }}>menu_book</span>
+          <Icon name="menu_book" size={64} className="text-[var(--warm-sand)] block mb-4" />
           <h2 className="text-xl font-semibold text-[var(--indigo-deep)] mb-2">No ebooks yet</h2>
-          <p className="text-sm text-[var(--warm-charcoal)]/60 mb-6">Purchase an ebook from the store to start reading.</p>
+          <p className="text-sm text-[var(--text-secondary)] mb-6">Purchase an ebook from the store to start reading.</p>
           <Link href="/shop?category=ebook" className="btn-divine text-sm">Browse Ebooks</Link>
         </div>
       </div>
@@ -93,7 +94,7 @@ export default function MyLibraryPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-[var(--indigo-deep)]">My Ebook Library</h1>
-          <p className="text-sm text-[var(--warm-charcoal)]/60">{purchases.length} book{purchases.length !== 1 ? 's' : ''} purchased</p>
+          <p className="text-sm text-[var(--text-secondary)]">{purchases.length} book{purchases.length !== 1 ? 's' : ''} purchased</p>
         </div>
         <Link href="/shop?category=ebook" className="btn-divine text-sm">Browse More</Link>
       </div>
@@ -114,13 +115,13 @@ export default function MyLibraryPage() {
               >
                 <div className="flex gap-3 items-start">
                   <div className="w-10 h-12 rounded-lg bg-gradient-to-br from-[var(--saffron)] to-[var(--indigo-deep)] flex items-center justify-center flex-shrink-0">
-                    <span className="material-symbols-outlined text-[20px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{icon}</span>
+                    <Icon name={icon} size={20} className="text-white" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-sm text-[var(--indigo-deep)] leading-snug line-clamp-2">{ebook.title}</p>
-                    <p className="text-xs text-[var(--warm-charcoal)]/50 mt-0.5">{ebook.author || 'MahaTathastu'}</p>
+                    <p className="text-xs text-[var(--text-muted)] mt-0.5">{ebook.author || 'MahaTathastu'}</p>
                     <p className="text-xs mt-1.5 flex items-center gap-1" style={{ color: 'rgba(28,30,74,0.4)' }}>
-                      <span className="material-symbols-outlined text-[11px]">lock</span>
+                      <Icon name="lock" size={13} />
                       View-only
                     </p>
                   </div>
@@ -141,36 +142,36 @@ export default function MyLibraryPage() {
                 <>
                   <div className="flex items-center gap-4 mb-6">
                     <div className="w-16 h-20 rounded-xl bg-gradient-to-br from-[var(--saffron)] to-[var(--indigo-deep)] flex items-center justify-center shadow-lg flex-shrink-0">
-                      <span className="material-symbols-outlined text-[36px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{icon}</span>
+                      <Icon name={icon} size={36} className="text-white" />
                     </div>
                     <div>
                       <h2 className="text-xl font-bold text-[var(--indigo-deep)]">{ebook.title}</h2>
-                      <p className="text-sm text-[var(--warm-charcoal)]/60">by {ebook.author || 'MahaTathastu'}</p>
+                      <p className="text-sm text-[var(--text-secondary)]">by {ebook.author || 'MahaTathastu'}</p>
                       {ebook.language && (
-                        <span className="text-xs bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 px-2 py-0.5 rounded-full mt-1 inline-block">{ebook.language}</span>
+                        <span className="text-xs bg-[var(--warm-sand)] text-[var(--text-secondary)] px-2 py-0.5 rounded-full mt-1 inline-block">{ebook.language}</span>
                       )}
                     </div>
                   </div>
 
                   {ebook.description && (
-                    <p className="text-sm text-[var(--warm-charcoal)]/60 leading-relaxed mb-6">{ebook.description}</p>
+                    <p className="text-sm text-[var(--text-secondary)] leading-relaxed mb-6">{ebook.description}</p>
                   )}
 
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div className="text-center p-3 bg-[var(--kutch-white)] rounded-lg">
                       <p className="text-sm font-bold text-[var(--indigo-deep)]">{new Date(active.purchased_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
-                      <p className="text-xs text-[var(--warm-charcoal)]/50">Purchased On</p>
+                      <p className="text-xs text-[var(--text-muted)]">Purchased On</p>
                     </div>
                     <div className="text-center p-3 bg-[var(--kutch-white)] rounded-lg">
                       <p className="text-2xl font-bold text-[var(--indigo-deep)]">{active.download_count}</p>
-                      <p className="text-xs text-[var(--warm-charcoal)]/50">Sessions</p>
+                      <p className="text-xs text-[var(--text-muted)]">Sessions</p>
                     </div>
                   </div>
 
                   {tags.length > 0 && (
                     <div className="flex flex-wrap gap-2 mb-6">
                       {tags.map((tag: string) => (
-                        <span key={tag} className="text-xs bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 px-2 py-0.5 rounded-full capitalize">{tag.replace(/-/g, ' ')}</span>
+                        <span key={tag} className="text-xs bg-[var(--warm-sand)] text-[var(--text-secondary)] px-2 py-0.5 rounded-full capitalize">{tag.replace(/-/g, ' ')}</span>
                       ))}
                     </div>
                   )}
@@ -179,11 +180,11 @@ export default function MyLibraryPage() {
                     onClick={() => openReader(ebook.id)}
                     className="btn-divine w-full py-3 inline-flex items-center justify-center gap-2"
                   >
-                    <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_stories</span>
+                    <Icon name="auto_stories" size={18} />
                     Read Book
                   </button>
-                  <p className="text-xs text-center text-[var(--warm-charcoal)]/40 mt-2 flex items-center justify-center gap-1">
-                    <span className="material-symbols-outlined text-[12px]">lock</span>
+                  <p className="text-xs text-center text-[var(--text-muted)] mt-2 flex items-center justify-center gap-1">
+                    <Icon name="lock" size={13} />
                     View-only · No download · Protected
                   </p>
                 </>

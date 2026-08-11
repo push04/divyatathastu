@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 
+import Icon from '@/components/ui/Icon'
 export default function NewsletterStrip() {
   const [email, setEmail] = useState('')
   const [state, setState] = useState<'idle' | 'loading' | 'success' | 'duplicate' | 'error'>('idle')
@@ -28,8 +29,8 @@ export default function NewsletterStrip() {
     return (
       <div className="border-t border-[var(--outline-variant)]/20 bg-[var(--warm-sand)]/60 py-5 px-6">
         <div className="max-w-7xl mx-auto flex items-center justify-center gap-3">
-          <span className="material-symbols-outlined text-[18px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-          <p className="text-sm text-[var(--indigo-deep)]/70" style={{ fontFamily: "'Sora', sans-serif" }}>
+          <Icon name="check_circle" size={18} className="text-[var(--terracotta)]" />
+          <p className="text-sm text-[var(--text-secondary)]" style={{ fontFamily: "var(--font-label)" }}>
             {state === 'duplicate' ? 'You are already subscribed to the Adhyatmic Digest.' : 'Subscribed. Your first digest arrives in the next 3-day cycle.'}
           </p>
         </div>
@@ -44,12 +45,12 @@ export default function NewsletterStrip() {
 
           {/* Copy */}
           <div className="flex items-center gap-3 shrink-0">
-            <span className="material-symbols-outlined text-[22px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+            <Icon name="brightness_7" size={22} className="text-[var(--terracotta)]" />
             <div>
-              <p className="text-sm font-semibold text-[var(--indigo-deep)] leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <p className="text-sm font-semibold text-[var(--indigo-deep)] leading-tight" style={{ fontFamily: "var(--font-display)" }}>
                 Adhyatmic Digest
               </p>
-              <p className="text-xs text-[var(--indigo-deep)]/50 mt-0.5" style={{ fontFamily: "'Sora', sans-serif" }}>
+              <p className="text-xs text-[var(--text-muted)] mt-0.5" style={{ fontFamily: "var(--font-label)" }}>
                 Vedic wisdom delivered every 3 days
               </p>
             </div>
@@ -63,15 +64,15 @@ export default function NewsletterStrip() {
               onChange={e => setEmail(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && subscribe()}
               placeholder="your@email.com"
-              className="flex-1 sm:w-64 text-sm px-3.5 py-2.5 rounded-lg outline-none border border-[var(--outline-variant)]/40 focus:border-[var(--terracotta)]/50 bg-white text-[var(--indigo-deep)] placeholder:text-[var(--indigo-deep)]/30 transition-colors"
-              style={{ fontFamily: "'Sora', sans-serif" }}
+              className="flex-1 sm:w-64 text-sm px-3.5 py-2.5 rounded-lg outline-none border border-[var(--outline-variant)]/40 focus:border-[var(--terracotta)]/50 bg-white text-[var(--indigo-deep)] placeholder:text-[var(--text-muted)] transition-colors"
+              style={{ fontFamily: "var(--font-label)" }}
               disabled={state === 'loading'}
             />
             <button
               onClick={subscribe}
               disabled={state === 'loading' || !email}
               className="px-4 py-2.5 rounded-lg text-sm font-semibold text-white transition-opacity disabled:opacity-40"
-              style={{ background: 'var(--terracotta)', fontFamily: "'Sora', sans-serif" }}
+              style={{ background: 'var(--terracotta)', fontFamily: "var(--font-label)" }}
             >
               {state === 'loading' ? 'Subscribing...' : 'Subscribe'}
             </button>
@@ -79,7 +80,7 @@ export default function NewsletterStrip() {
 
         </div>
         {state === 'error' && (
-          <p className="text-xs text-red-500 mt-2 text-center sm:text-right" style={{ fontFamily: "'Sora', sans-serif" }}>
+          <p className="text-xs text-red-500 mt-2 text-center sm:text-right" style={{ fontFamily: "var(--font-label)" }}>
             Something went wrong. Please try again.
           </p>
         )}

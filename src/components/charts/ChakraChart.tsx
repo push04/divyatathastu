@@ -88,11 +88,11 @@ export default function ChakraChart({ data }: { data: ChakraData }) {
               {/* Info + bar */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-baseline gap-2 mb-1">
-                  <span className="text-[11px] font-semibold text-[var(--warm-charcoal)]/80"
-                    style={{ fontFamily: "'Playfair Display', serif" }}>
+                  <span className="text-[13px] font-semibold text-[var(--text-primary)]"
+                    style={{ fontFamily: "var(--font-display)" }}>
                     {meta?.label || chakra.name}
                   </span>
-                  <span className="text-[10px] text-[var(--warm-charcoal)]/40">
+                  <span className="text-[12px] text-[var(--text-muted)]">
                     {meta?.eng || ''} · {meta?.element || chakra.element || ''}
                   </span>
                 </div>
@@ -107,8 +107,8 @@ export default function ChakraChart({ data }: { data: ChakraData }) {
                   />
                 </div>
                 <div className="flex justify-between mt-0.5">
-                  <span className="text-[9px]" style={{ color }}>{status}</span>
-                  <span className="text-[9px] text-[var(--warm-charcoal)]/40">{score}%</span>
+                  <span className="text-[12px]" style={{ color }}>{status}</span>
+                  <span className="text-[12px] text-[var(--text-muted)]">{score}%</span>
                 </div>
               </div>
             </div>
@@ -120,9 +120,9 @@ export default function ChakraChart({ data }: { data: ChakraData }) {
       {typeof data.overallBalance === 'number' && (
         <div className="bg-gradient-to-r from-[var(--warm-sand)] to-amber-50 rounded-xl p-3 border border-[var(--saffron)]/20">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-semibold text-[var(--warm-charcoal)]/70">Overall Chakra Balance</span>
+            <span className="text-xs font-semibold text-[var(--text-secondary)]">Overall Chakra Balance</span>
             <span className="text-lg font-bold text-[var(--terracotta)]"
-              style={{ fontFamily: "'Playfair Display', serif" }}>
+              style={{ fontFamily: "var(--font-display)" }}>
               {data.overallBalance}%
             </span>
           </div>

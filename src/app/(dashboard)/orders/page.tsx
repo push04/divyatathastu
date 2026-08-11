@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
+import Icon from '@/components/ui/Icon'
 interface Order {
   id: string
   order_number: string
@@ -30,7 +31,7 @@ const STATUS_STYLES: Record<string, string> = {
   completed: 'bg-teal-100 text-teal-700',
   refunded: 'bg-orange-100 text-orange-700',
   failed: 'bg-red-100 text-red-700',
-  cancelled: 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60',
+  cancelled: 'bg-[var(--warm-sand)] text-[var(--text-secondary)]',
 }
 
 const DELIVERY_STEPS = [
@@ -60,9 +61,9 @@ function DeliveryTracker({ status, trackingNumber }: { status: string; trackingN
   if (isCancelled) {
     return (
       <div className="flex items-center gap-2 py-2 px-3 rounded-xl bg-red-50 border border-red-100">
-        <span className="material-symbols-outlined text-[18px] text-red-400" style={{ fontVariationSettings: "'FILL' 1" }}>cancel</span>
+        <Icon name="cancel" size={18} className="text-red-400" />
         <span className="text-sm font-medium text-red-600 capitalize">{status}</span>
-        <span className="text-xs text-red-400">— This order was {status}</span>
+        <span className="text-xs text-red-400">- This order was {status}</span>
       </div>
     )
   }
@@ -92,12 +93,9 @@ function DeliveryTracker({ status, trackingNumber }: { status: string; trackingN
                     ? 'bg-gradient-to-br from-[var(--saffron)] to-[var(--terracotta)] shadow-md'
                     : 'bg-white border-2 border-[var(--warm-sand)]'
                 } ${isActive ? 'scale-110 ring-4 ring-[var(--saffron)]/20' : ''}`}>
-                  <span className={`material-symbols-outlined text-[18px] ${isDone ? 'text-white' : 'text-[var(--warm-charcoal)]/30'}`}
-                    style={{ fontVariationSettings: isDone ? "'FILL' 1" : "'FILL' 0" }}>
-                    {step.icon}
-                  </span>
+                  <Icon name={step.icon} size={18} className={`${isDone ? 'text-white' : 'text-[var(--text-muted)]'}`} />
                 </div>
-                <p className={`text-[10px] text-center leading-tight font-medium ${isDone ? 'text-[var(--terracotta)]' : 'text-[var(--warm-charcoal)]/40'}`}>
+                <p className={`text-[12px] text-center leading-tight font-medium ${isDone ? 'text-[var(--terracotta)]' : 'text-[var(--text-muted)]'}`}>
                   {step.label}
                 </p>
               </div>
@@ -109,9 +107,9 @@ function DeliveryTracker({ status, trackingNumber }: { status: string; trackingN
       {/* Tracking number */}
       {trackingNumber && (
         <div className="flex items-center gap-3 p-3 rounded-xl bg-cyan-50 border border-cyan-100">
-          <span className="material-symbols-outlined text-[20px] text-cyan-600" style={{ fontVariationSettings: "'FILL' 1" }}>local_shipping</span>
+          <Icon name="local_shipping" size={20} className="text-cyan-600" />
           <div className="flex-1 min-w-0">
-            <p className="text-[10px] font-semibold text-cyan-500 uppercase tracking-wide">Tracking Number</p>
+            <p className="text-[12px] font-semibold text-cyan-500 uppercase tracking-wide">Tracking Number</p>
             <p className="font-mono font-bold text-cyan-800 text-sm truncate">{trackingNumber}</p>
           </div>
           <button
@@ -119,7 +117,7 @@ function DeliveryTracker({ status, trackingNumber }: { status: string; trackingN
             className="flex-shrink-0 p-1.5 rounded-lg bg-white border border-cyan-200 text-cyan-600 hover:bg-cyan-100 transition-colors"
             title="Copy tracking number"
           >
-            <span className="material-symbols-outlined text-[16px]">content_copy</span>
+            <Icon name="content_copy" size={16} />
           </button>
         </div>
       )}
@@ -155,24 +153,24 @@ export default function OrdersPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-black text-[var(--indigo-deep)] inline-flex items-center gap-2">
-            <span className="material-symbols-outlined text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>package_2</span>
+            <Icon name="package_2" size={24} />
             My Orders
           </h1>
-          <p className="text-sm text-[var(--warm-charcoal)]/60 mt-0.5">{orders.length} order{orders.length !== 1 ? 's' : ''}</p>
+          <p className="text-sm text-[var(--text-secondary)] mt-0.5">{orders.length} order{orders.length !== 1 ? 's' : ''}</p>
         </div>
         <Link href="/shop" className="text-sm text-[var(--terracotta)] font-semibold hover:underline inline-flex items-center gap-1">
           Continue Shopping
-          <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+          <Icon name="arrow_forward" size={14} />
         </Link>
       </div>
 
       {orders.length === 0 ? (
         <div className="card-divine p-16 text-center">
           <div className="flex justify-center mb-4">
-            <span className="material-symbols-outlined text-[48px] text-[var(--indigo-deep)]" style={{ fontVariationSettings: "'FILL' 1" }}>package_2</span>
+            <Icon name="package_2" size={48} className="text-[var(--indigo-deep)]" />
           </div>
           <h2 className="text-xl font-bold text-[var(--indigo-deep)] mb-2">No orders yet</h2>
-          <p className="text-[var(--warm-charcoal)]/60 mb-6">Explore our sacred products and reports</p>
+          <p className="text-[var(--text-secondary)] mb-6">Explore our sacred products and reports</p>
           <Link href="/shop" className="btn-divine px-8 py-3">Visit Shop</Link>
         </div>
       ) : (
@@ -191,25 +189,23 @@ export default function OrdersPage() {
                     order.status === 'processing' ? 'bg-blue-50' :
                     'bg-[var(--warm-sand)]/40'
                   }`}>
-                    <span className={`material-symbols-outlined text-[20px] ${
+                    <Icon name={['delivered', 'completed'].includes(order.status) ? 'task_alt' :
+                       order.status === 'shipped' ? 'local_shipping' :
+                       order.status === 'processing' ? 'manufacturing' : 'package_2'} className={`text-[20px] ${
                       ['delivered', 'completed'].includes(order.status) ? 'text-teal-500' :
                       order.status === 'shipped' ? 'text-cyan-500' :
                       order.status === 'processing' ? 'text-blue-500' :
                       'text-[var(--indigo-deep)]'
-                    }`} style={{ fontVariationSettings: "'FILL' 1" }}>
-                      {['delivered', 'completed'].includes(order.status) ? 'task_alt' :
-                       order.status === 'shipped' ? 'local_shipping' :
-                       order.status === 'processing' ? 'manufacturing' : 'package_2'}
-                    </span>
+                    }`} />
                   </div>
                   <div>
                     <p className="font-bold text-[var(--indigo-deep)] text-sm">{order.order_number}</p>
-                    <p className="text-xs text-[var(--warm-charcoal)]/50">
+                    <p className="text-xs text-[var(--text-muted)]">
                       {new Date(order.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
                       {' · '}{order.items?.length || 0} item{(order.items?.length || 0) !== 1 ? 's' : ''}
                       {order.tracking_number && (
                         <span className="ml-1.5 inline-flex items-center gap-0.5 text-cyan-600">
-                          <span className="material-symbols-outlined text-[11px]">local_shipping</span>
+                          <Icon name="local_shipping" size={13} />
                           Tracking available
                         </span>
                       )}
@@ -219,13 +215,11 @@ export default function OrdersPage() {
                 <div className="flex items-center gap-3">
                   <div className="text-right">
                     <p className="font-bold text-[var(--indigo-deep)]">₹{order.total?.toLocaleString('en-IN')}</p>
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${STATUS_STYLES[order.status] || 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${STATUS_STYLES[order.status] || 'bg-[var(--warm-sand)] text-[var(--text-secondary)]'}`}>
                       {order.status}
                     </span>
                   </div>
-                  <span className="material-symbols-outlined text-[18px] text-[var(--warm-charcoal)]/30">
-                    {expanded === order.id ? 'expand_less' : 'expand_more'}
-                  </span>
+                  <Icon name={expanded === order.id ? 'expand_less' : 'expand_more'} size={18} className="text-[var(--text-muted)]" />
                 </div>
               </button>
 
@@ -233,16 +227,16 @@ export default function OrdersPage() {
                 <div className="border-t border-[var(--warm-sand)]">
                   {/* Delivery tracking */}
                   <div className="px-4 pt-4 pb-3">
-                    <p className="text-[10px] font-semibold text-[var(--warm-charcoal)]/50 uppercase tracking-wide mb-3">Delivery Status</p>
+                    <p className="text-[12px] font-semibold text-[var(--text-muted)] uppercase tracking-wide mb-3">Delivery Status</p>
                     <DeliveryTracker status={order.status} trackingNumber={order.tracking_number} />
                   </div>
 
                   {/* Admin note */}
                   {order.notes && (
                     <div className="mx-4 mb-3 flex gap-3 p-3 rounded-xl bg-amber-50 border border-amber-100">
-                      <span className="material-symbols-outlined text-[20px] text-amber-500 flex-shrink-0 mt-0.5" style={{ fontVariationSettings: "'FILL' 1" }}>notifications</span>
+                      <Icon name="notifications" size={20} className="text-amber-500 flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-[10px] font-semibold text-amber-600 uppercase tracking-wide mb-0.5">Message from our Team</p>
+                        <p className="text-[12px] font-semibold text-amber-600 uppercase tracking-wide mb-0.5">Message from our Team</p>
                         <p className="text-sm text-amber-900">{order.notes}</p>
                       </div>
                     </div>
@@ -250,17 +244,17 @@ export default function OrdersPage() {
 
                   {/* Order items */}
                   <div className="px-4 pb-4">
-                    <p className="text-[10px] font-semibold text-[var(--warm-charcoal)]/50 uppercase tracking-wide mb-2">Order Items</p>
+                    <p className="text-[12px] font-semibold text-[var(--text-muted)] uppercase tracking-wide mb-2">Order Items</p>
                     <div className="space-y-2">
                       {order.items?.map((item: any, i: number) => (
                         <div key={i} className="flex justify-between text-sm">
-                          <span className="text-[var(--warm-charcoal)]/70">{item.name} × {item.quantity}</span>
+                          <span className="text-[var(--text-secondary)]">{item.name} × {item.quantity}</span>
                           <span className="font-medium text-[var(--indigo-deep)]">₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
                         </div>
                       ))}
                       <div className="border-t border-[var(--warm-sand)] pt-2 mt-2 space-y-1 text-sm">
                         {order.subtotal != null && (
-                          <div className="flex justify-between text-[var(--warm-charcoal)]/60">
+                          <div className="flex justify-between text-[var(--text-secondary)]">
                             <span>Subtotal</span><span>₹{order.subtotal?.toLocaleString('en-IN')}</span>
                           </div>
                         )}
@@ -273,7 +267,7 @@ export default function OrdersPage() {
                           <span>Total Paid</span><span>₹{order.total?.toLocaleString('en-IN')}</span>
                         </div>
                       </div>
-                      <p className="text-xs text-[var(--warm-charcoal)]/40 pt-1">
+                      <p className="text-xs text-[var(--text-muted)] pt-1">
                         Payment: {order.payment_method || 'N/A'} · Order: {order.order_number}
                       </p>
                     </div>

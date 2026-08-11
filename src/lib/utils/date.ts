@@ -28,7 +28,7 @@ export function nowInTimeZone(timeZone: string): Date {
   const p: Record<string, string> = {}
   for (const { type, value } of parts) p[type] = value
 
-  // Some engines emit hour '24' for midnight — normalize to '00'.
+  // Some engines emit hour '24' for midnight - normalize to '00'.
   const hour = p.hour === '24' ? '00' : p.hour
 
   return new Date(+p.year, +p.month - 1, +p.day, +hour, +p.minute, +p.second)

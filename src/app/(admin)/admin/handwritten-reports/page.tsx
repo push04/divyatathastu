@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
+import Icon from '@/components/ui/Icon'
 interface ReportRequest {
   id: string
   user_id: string
@@ -137,15 +138,15 @@ export default function AdminHandwrittenReportsPage() {
     <div className="p-6 space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <h1 className="text-xl font-bold text-[var(--indigo-deep)] flex items-center gap-2">
-          <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>draw</span>
-          Handwritten Reports <span className="text-[var(--warm-charcoal)]/40 font-normal">({requests.length})</span>
+          <Icon name="draw" size={20} />
+          Handwritten Reports <span className="text-[var(--text-muted)] font-normal">({requests.length})</span>
         </h1>
         <div className="flex gap-1.5 flex-wrap">
           {['all', 'pending', 'in_progress', 'completed', 'rejected'].map(s => (
             <button
               key={s}
               onClick={() => setFilter(s)}
-              className={`px-3 py-1 rounded-full text-xs font-medium capitalize transition-all ${filter === s ? 'bg-[var(--indigo-deep)] text-white' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 hover:bg-[var(--warm-sand)]/80'}`}
+              className={`px-3 py-1 rounded-full text-xs font-medium capitalize transition-all ${filter === s ? 'bg-[var(--indigo-deep)] text-white' : 'bg-[var(--warm-sand)] text-[var(--text-secondary)] hover:bg-[var(--warm-sand)]/80'}`}
             >
               {s === 'in_progress' ? 'In Progress' : s.charAt(0).toUpperCase() + s.slice(1)}
             </button>
@@ -161,25 +162,25 @@ export default function AdminHandwrittenReportsPage() {
               <div>
                 <p className="font-semibold text-[var(--indigo-deep)]">
                   {REPORT_TYPES[r.report_type] || r.report_type}
-                  {r.family_members?.full_name && <span className="text-[var(--warm-charcoal)]/50 font-normal"> · {r.family_members.full_name}</span>}
+                  {r.family_members?.full_name && <span className="text-[var(--text-muted)] font-normal"> · {r.family_members.full_name}</span>}
                 </p>
-                <p className="text-xs text-[var(--warm-charcoal)]/50 mt-0.5">
+                <p className="text-xs text-[var(--text-muted)] mt-0.5">
                   {r.profiles?.full_name || 'Unknown'}{r.profiles?.phone ? ` · ${r.profiles.phone}` : ''}
                 </p>
-                <p className="text-xs text-[var(--warm-charcoal)]/30 mt-0.5">
+                <p className="text-xs text-[var(--text-muted)] mt-0.5">
                   {new Date(r.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
-                <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${STATUS_STYLE[r.status] || 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>
+                <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${STATUS_STYLE[r.status] || 'bg-[var(--warm-sand)] text-[var(--text-secondary)]'}`}>
                   {r.status === 'in_progress' ? 'In Progress' : r.status.charAt(0).toUpperCase() + r.status.slice(1)}
                 </span>
               </div>
             </div>
 
             {r.description && (
-              <div className="rounded-lg p-3 text-sm text-[var(--warm-charcoal)]/70" style={{ background: 'var(--warm-sand)' }}>
-                <span className="text-xs font-semibold text-[var(--warm-charcoal)]/40 uppercase tracking-wide block mb-1">User Description</span>
+              <div className="rounded-lg p-3 text-sm text-[var(--text-secondary)]" style={{ background: 'var(--warm-sand)' }}>
+                <span className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide block mb-1">User Description</span>
                 {r.description}
               </div>
             )}
@@ -188,7 +189,7 @@ export default function AdminHandwrittenReportsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {/* Status change */}
               <div>
-                <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Change Status</label>
+                <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Change Status</label>
                 <select
                   value={r.status}
                   onChange={e => updateStatus(r.id, e.target.value)}
@@ -203,16 +204,16 @@ export default function AdminHandwrittenReportsPage() {
 
               {/* Upload report */}
               <div>
-                <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Upload Report</label>
+                <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Upload Report</label>
                 {uploading === r.id ? (
-                  <div className="flex items-center gap-2 text-xs text-[var(--warm-charcoal)]/60">
-                    <span className="material-symbols-outlined text-[14px] animate-spin">hourglass_empty</span>
+                  <div className="flex items-center gap-2 text-xs text-[var(--text-secondary)]">
+                    <Icon name="hourglass_empty" size={14} className="animate-spin" />
                     Uploading...
                   </div>
                 ) : r.file_url ? (
                   <div className="flex items-center gap-2">
                     <a href={r.file_url} target="_blank" rel="noopener noreferrer" className="text-xs text-emerald-600 font-medium hover:underline flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                      <Icon name="check_circle" size={14} />
                       {r.file_name || 'View Report'}
                     </a>
                     <label className="cursor-pointer text-xs text-[var(--terracotta)] hover:underline">
@@ -222,7 +223,7 @@ export default function AdminHandwrittenReportsPage() {
                   </div>
                 ) : (
                   <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-dashed border-[var(--warm-sand)] text-xs font-medium text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/50 transition-colors">
-                    <span className="material-symbols-outlined text-[14px]">upload</span>
+                    <Icon name="upload" size={14} />
                     Upload PDF / Image
                     <input type="file" accept=".pdf,image/*" className="hidden" onChange={e => handleFileChange(r.id, r.user_id, e)} />
                   </label>
@@ -231,7 +232,7 @@ export default function AdminHandwrittenReportsPage() {
 
               {/* Admin notes */}
               <div>
-                <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Internal Notes</label>
+                <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Internal Notes</label>
                 <div className="flex gap-1">
                   <input
                     type="text"
@@ -251,8 +252,8 @@ export default function AdminHandwrittenReportsPage() {
 
         {filtered.length === 0 && (
           <div className="text-center py-16 card-divine">
-            <span className="material-symbols-outlined text-[48px] text-[var(--warm-charcoal)]/20 block mb-2" style={{ fontVariationSettings: "'FILL' 1" }}>draw</span>
-            <p className="text-[var(--warm-charcoal)]/40 text-sm">No handwritten report requests{filter !== 'all' ? ` with status "${filter}"` : ''} yet.</p>
+            <Icon name="draw" size={48} className="text-[var(--warm-charcoal)]/20 block mb-2" />
+            <p className="text-[var(--text-muted)] text-sm">No handwritten report requests{filter !== 'all' ? ` with status "${filter}"` : ''} yet.</p>
           </div>
         )}
       </div>

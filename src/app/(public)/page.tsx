@@ -40,7 +40,7 @@ const LOCAL_BIZ_SCHEMA = {
 
 export const metadata: Metadata = {
   title: { absolute: 'MahaTathastu | Vedic Astrology & Holistic Reports' },
-  description: "14 personalized holistic life reports for your entire family - Vedic astrology, numerology, chakra, Vastu, Prakriti & more. Powered by Nakshatra AI.",
+  description: "14 personalized holistic life reports for your entire family - Vedic astrology, numerology, chakra, Vastu, Prakriti & more. Built on the Nakshatra Vedic engine.",
   alternates: { canonical: '/' },
 }
 

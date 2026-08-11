@@ -12,6 +12,7 @@ import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
+import Icon from '@/components/ui/Icon'
 class SectionErrorBoundary extends Component<{ children: ReactNode; name?: string }, { error: Error | null }> {
   constructor(props: { children: ReactNode; name?: string }) {
     super(props)
@@ -25,9 +26,9 @@ class SectionErrorBoundary extends Component<{ children: ReactNode; name?: strin
     if (this.state.error) {
       return (
         <div className="card-divine p-6 text-center print:hidden">
-          <span className="material-symbols-outlined text-[32px] text-amber-400 mb-2 block" style={{ fontVariationSettings: "'FILL' 1" }}>warning</span>
+          <Icon name="warning" size={32} className="text-amber-400 mb-2 block" />
           <p className="font-semibold text-[var(--indigo-deep)] text-sm">This section could not be displayed</p>
-          <p className="text-xs text-[var(--warm-charcoal)]/50 mt-1">{this.state.error.message}</p>
+          <p className="text-xs text-[var(--text-muted)] mt-1">{this.state.error.message}</p>
         </div>
       )
     }
@@ -83,10 +84,10 @@ function Section({ title, icon, children, printAlwaysOpen }: { title: string; ic
         className="w-full flex items-center justify-between p-5 text-left print:hidden"
       >
         <div className="flex items-center gap-2">
-          {icon && <span className="material-symbols-outlined text-[20px] text-[var(--indigo-deep)]" style={{ fontVariationSettings: "'FILL' 1" }}>{icon}</span>}
+          {icon && <Icon name={icon} size={20} className="text-[var(--indigo-deep)]" />}
           <h2 className="font-black text-[var(--indigo-deep)] text-lg">{title}</h2>
         </div>
-        <span className="material-symbols-outlined text-[18px] text-[var(--warm-charcoal)]/40">{open ? 'expand_less' : 'expand_more'}</span>
+        <Icon name={open ? 'expand_less' : 'expand_more'} size={18} className="text-[var(--text-muted)]" />
       </button>
       {/* Print: static section heading */}
       <div className="hidden print:block px-5 pt-3 pb-2" style={{ borderBottom: '1.5px solid rgba(212,160,23,0.35)' }}>
@@ -163,7 +164,7 @@ function InfoCard({ label, value, large }: { label: string; value: string | numb
   if (!value && value !== 0) return null
   return (
     <div className="bg-[var(--warm-sand)] rounded-xl p-3 text-center">
-      <p className="text-xs text-[var(--warm-charcoal)]/50 mb-1">{label}</p>
+      <p className="text-xs text-[var(--text-muted)] mb-1">{label}</p>
       <p className={`font-bold text-[var(--indigo-deep)] ${large ? 'text-2xl' : ''}`}>{value}</p>
     </div>
   )
@@ -191,14 +192,14 @@ function KundliSection({ data, birthDate }: { data: any; birthDate?: string }) {
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
             <h3 className="text-base font-extrabold text-[var(--indigo-deep)] mb-3 flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-[15px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>grid_4x4</span>
+              <Icon name="grid_4x4" size={15} className="text-[var(--saffron)]" />
               North Indian Kundli (D-1)
             </h3>
             <NorthIndianKundli kundli={k} />
           </div>
           <div>
             <h3 className="text-base font-extrabold text-[var(--indigo-deep)] mb-3 flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-[15px] text-[var(--plum)]" style={{ fontVariationSettings: "'FILL' 1" }}>grid_4x4</span>
+              <Icon name="grid_4x4" size={15} className="text-[var(--plum)]" />
               Navamsha Chart (D-9)
             </h3>
             <NavamshaChart kundli={k} />
@@ -210,7 +211,7 @@ function KundliSection({ data, birthDate }: { data: any; birthDate?: string }) {
       {k.dashaLord && (
         <div className="mt-6">
           <h3 className="text-base font-extrabold text-[var(--indigo-deep)] mb-3 flex items-center gap-1.5">
-            <span className="material-symbols-outlined text-[15px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>timeline</span>
+            <Icon name="timeline" size={15} className="text-[var(--terracotta)]" />
             Vimshottari Dasha Sequence
           </h3>
           <DashaTimeline kundli={k} birthDate={birthDate} />
@@ -223,7 +224,7 @@ function KundliSection({ data, birthDate }: { data: any; birthDate?: string }) {
           <div className="overflow-x-auto rounded-xl border border-[var(--warm-sand)]">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 text-xs">
+                <tr className="bg-[var(--warm-sand)] text-[var(--text-secondary)] text-xs">
                   <th className="text-left px-3 py-2.5 font-semibold">Planet</th>
                   <th className="text-left px-3 py-2.5 font-semibold">Sign (Rashi)</th>
                   <th className="text-left px-3 py-2.5 font-semibold">Degree</th>
@@ -239,11 +240,11 @@ function KundliSection({ data, birthDate }: { data: any; birthDate?: string }) {
                       {p.name}
                       {p.retrograde && <span className="ml-1 text-xs text-[var(--terracotta)]">(R)</span>}
                     </td>
-                    <td className="px-3 py-2 text-[var(--warm-charcoal)]/80">{p.rashi}</td>
-                    <td className="px-3 py-2 text-[var(--warm-charcoal)]/60">{p.degree?.toFixed(2)}°</td>
-                    <td className="px-3 py-2 text-[var(--warm-charcoal)]/80">{p.house}</td>
-                    <td className="px-3 py-2 text-[var(--warm-charcoal)]/70">{p.nakshatra}</td>
-                    <td className="px-3 py-2 text-[var(--warm-charcoal)]/60">{p.pada}</td>
+                    <td className="px-3 py-2 text-[var(--text-primary)]">{p.rashi}</td>
+                    <td className="px-3 py-2 text-[var(--text-secondary)]">{p.degree?.toFixed(2)}°</td>
+                    <td className="px-3 py-2 text-[var(--text-primary)]">{p.house}</td>
+                    <td className="px-3 py-2 text-[var(--text-secondary)]">{p.nakshatra}</td>
+                    <td className="px-3 py-2 text-[var(--text-secondary)]">{p.pada}</td>
                   </tr>
                 ))}
               </tbody>
@@ -257,14 +258,14 @@ function KundliSection({ data, birthDate }: { data: any; birthDate?: string }) {
           {analysis.yogas?.length > 0 && (
             <div>
               <h3 className="text-base font-extrabold text-[var(--indigo-deep)] mb-2 flex items-center gap-1">
-                <span className="material-symbols-outlined text-[14px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>stars</span>
+                <Icon name="stars" size={14} className="text-[var(--saffron)]" />
                 Yogas in your Chart
               </h3>
               <div className="space-y-2">
                 {analysis.yogas.map((y: any) => (
                   <div key={y.name} className="bg-gradient-to-r from-[var(--warm-sand)] to-amber-50 rounded-xl p-3 border-l-4 border-[var(--saffron)]">
                     <p className="font-bold text-[var(--indigo-deep)] text-sm">{y.name}</p>
-                    <p className="text-xs text-[var(--warm-charcoal)]/70 mt-0.5">{y.description}</p>
+                    <p className="text-xs text-[var(--text-secondary)] mt-0.5">{y.description}</p>
                   </div>
                 ))}
               </div>
@@ -279,23 +280,23 @@ function KundliSection({ data, birthDate }: { data: any; birthDate?: string }) {
               { label: 'Finance', icon: 'payments', value: analysis.finance },
             ].filter(i => i.value).map(item => (
               <div key={item.label} className="bg-[var(--warm-sand)] rounded-xl p-4">
-                <p className="text-xs font-bold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-1">{item.label}</p>
-                <p className="text-sm text-[var(--warm-charcoal)]/80 leading-relaxed">{item.value}</p>
+                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">{item.label}</p>
+                <p className="text-sm text-[var(--text-primary)] leading-relaxed">{item.value}</p>
               </div>
             ))}
           </div>
 
           {analysis.currentPhase && (
             <div className="bg-gradient-to-br from-[var(--indigo-deep)] to-[var(--plum)] rounded-xl p-4 text-white">
-              <p className="text-xs text-white/50 uppercase tracking-wider mb-1">Current Dasha Phase</p>
+              <p className="text-xs text-[var(--text-on-dark-secondary)] uppercase tracking-wider mb-1">Current Dasha Phase</p>
               <p className="text-sm leading-relaxed">{analysis.currentPhase}</p>
             </div>
           )}
 
           {analysis.nakshatraProfile && (
             <div className="bg-[var(--warm-sand)] rounded-xl p-4">
-              <p className="text-xs font-bold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-2">Nakshatra Profile</p>
-              <p className="text-sm text-[var(--warm-charcoal)]/80 leading-relaxed">{analysis.nakshatraProfile}</p>
+              <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Nakshatra Profile</p>
+              <p className="text-sm text-[var(--text-primary)] leading-relaxed">{analysis.nakshatraProfile}</p>
             </div>
           )}
 
@@ -306,7 +307,7 @@ function KundliSection({ data, birthDate }: { data: any; birthDate?: string }) {
                 {analysis.houseThemes.map((h: any) => (
                   <div key={h.house} className="flex gap-3 text-sm py-1.5 border-b border-[var(--warm-sand)]">
                     <span className="font-bold text-[var(--terracotta)] w-24 flex-shrink-0">{h.house}</span>
-                    <span className="text-[var(--warm-charcoal)]/70">{h.insight}</span>
+                    <span className="text-[var(--text-secondary)]">{h.insight}</span>
                   </div>
                 ))}
               </div>
@@ -317,7 +318,7 @@ function KundliSection({ data, birthDate }: { data: any; birthDate?: string }) {
             <div className="bg-[var(--warm-sand)] rounded-xl p-4">
               <p className="text-xs font-bold text-[var(--saffron)] uppercase tracking-wider mb-2">Remedies</p>
               {analysis.remedies.map((r: string, i: number) => (
-                <p key={i} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {r}</p>
+                <p key={i} className="text-sm text-[var(--text-secondary)] py-0.5">• {r}</p>
               ))}
             </div>
           )}
@@ -346,28 +347,28 @@ function NumerologySection({ data }: { data: any }) {
       {n.interpretation?.lifePath && (
         <div className="mt-4 bg-gradient-to-br from-violet-50 to-[var(--warm-sand)] rounded-xl p-4 border-l-4 border-violet-400">
           <p className="text-sm font-bold text-[var(--indigo-deep)] mb-1">Life Path {n.lifePathNumber}: {n.interpretation.lifePathTitle || 'Your Soul Mission'}</p>
-          <p className="text-sm text-[var(--warm-charcoal)]/80 leading-relaxed">{n.interpretation.lifePath}</p>
+          <p className="text-sm text-[var(--text-primary)] leading-relaxed">{n.interpretation.lifePath}</p>
         </div>
       )}
 
       {n.interpretation?.destiny && (
         <div className="mt-3 bg-[var(--warm-sand)] rounded-xl p-3">
-          <p className="text-xs font-bold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-1">Destiny Number {n.destinyNumber}</p>
-          <p className="text-sm text-[var(--warm-charcoal)]/80">{n.interpretation.destiny}</p>
+          <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">Destiny Number {n.destinyNumber}</p>
+          <p className="text-sm text-[var(--text-primary)]">{n.interpretation.destiny}</p>
         </div>
       )}
 
       {n.interpretation?.soulUrge && (
         <div className="mt-3 bg-[var(--warm-sand)] rounded-xl p-3">
-          <p className="text-xs font-bold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-1">Soul Urge Number {n.soulUrgeNumber}</p>
-          <p className="text-sm text-[var(--warm-charcoal)]/80">{n.interpretation.soulUrge}</p>
+          <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">Soul Urge Number {n.soulUrgeNumber}</p>
+          <p className="text-sm text-[var(--text-primary)]">{n.interpretation.soulUrge}</p>
         </div>
       )}
 
       {n.interpretation?.personalYear && (
         <div className="mt-3 bg-gradient-to-r from-amber-50 to-[var(--warm-sand)] rounded-xl p-3 border-l-4 border-[var(--saffron)]">
           <p className="text-xs font-bold text-[var(--saffron)] uppercase tracking-wider mb-1">Personal Year {n.personalYearNumber} - {new Date().getFullYear()}</p>
-          <p className="text-sm text-[var(--warm-charcoal)]/80">{n.interpretation.personalYear}</p>
+          <p className="text-sm text-[var(--text-primary)]">{n.interpretation.personalYear}</p>
         </div>
       )}
 
@@ -376,7 +377,7 @@ function NumerologySection({ data }: { data: any }) {
           {n.luckyNumbers.map((num: number) => (
             <span key={num} className="px-3 py-1.5 bg-[var(--indigo-deep)] text-white text-sm rounded-full font-bold">{num}</span>
           ))}
-          <span className="text-xs text-[var(--warm-charcoal)]/50 self-center ml-1">Lucky Numbers</span>
+          <span className="text-xs text-[var(--text-muted)] self-center ml-1">Lucky Numbers</span>
         </div>
       )}
 
@@ -385,14 +386,14 @@ function NumerologySection({ data }: { data: any }) {
           {n.luckyDays.map((d: string) => (
             <span key={d} className="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs rounded-full font-medium">{d}</span>
           ))}
-          <span className="text-xs text-[var(--warm-charcoal)]/50 self-center ml-1">Lucky Days</span>
+          <span className="text-xs text-[var(--text-muted)] self-center ml-1">Lucky Days</span>
         </div>
       )}
 
       {n.karmaNumbers?.length > 0 && (
         <div className="mt-3 bg-[var(--warm-sand)] rounded-xl p-3">
           <p className="text-xs font-bold text-[var(--terracotta)]/80 uppercase tracking-wider mb-1">Karmic Lessons</p>
-          <p className="text-sm text-[var(--warm-charcoal)]/70">{n.interpretation?.karmaLesson || `Numbers ${n.karmaNumbers.join(', ')} indicate areas where karmic growth is needed.`}</p>
+          <p className="text-sm text-[var(--text-secondary)]">{n.interpretation?.karmaLesson || `Numbers ${n.karmaNumbers.join(', ')} indicate areas where karmic growth is needed.`}</p>
         </div>
       )}
     </Section>
@@ -445,10 +446,10 @@ function ChakraSection({ data }: { data: any }) {
                   <div className="flex items-center justify-between mb-1.5 flex-wrap gap-1">
                     <div>
                       <span className="font-bold text-[var(--indigo-deep)]">{c.name}</span>
-                      {c.sanskrit && <span className="ml-1.5 text-xs text-[var(--warm-charcoal)]/50 italic">{c.sanskrit}</span>}
-                      {c.element && <span className="ml-1.5 text-[10px] text-[var(--warm-charcoal)]/40">· {c.element}</span>}
+                      {c.sanskrit && <span className="ml-1.5 text-xs text-[var(--text-muted)] italic">{c.sanskrit}</span>}
+                      {c.element && <span className="ml-1.5 text-[12px] text-[var(--text-muted)]">· {c.element}</span>}
                     </div>
-                    <span className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold text-white ${isBalanced ? 'bg-emerald-500' : isBlocked ? 'bg-red-500' : 'bg-amber-500'}`}>
+                    <span className={`text-[12px] px-2.5 py-0.5 rounded-full font-bold text-white ${isBalanced ? 'bg-emerald-500' : isBlocked ? 'bg-red-500' : 'bg-amber-500'}`}>
                       {c.status}
                     </span>
                   </div>
@@ -461,32 +462,32 @@ function ChakraSection({ data }: { data: any }) {
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                     {c.mantras?.length > 0 && (
                       <div className="bg-white/60 rounded-xl p-2.5">
-                        <p className="font-semibold text-[var(--warm-charcoal)]/50 mb-0.5">Beej Mantra</p>
+                        <p className="font-semibold text-[var(--text-muted)] mb-0.5">Beej Mantra</p>
                         <p className="font-black text-base leading-none" style={{ color: cd.color }}>{c.mantras[0]}</p>
                       </div>
                     )}
                     {c.crystals?.length > 0 && (
                       <div className="bg-white/60 rounded-xl p-2.5">
-                        <p className="font-semibold text-[var(--warm-charcoal)]/50 mb-0.5">Crystals</p>
+                        <p className="font-semibold text-[var(--text-muted)] mb-0.5">Crystals</p>
                         <p className="text-[var(--indigo-deep)] font-medium">{c.crystals.slice(0, 2).join(', ')}</p>
                       </div>
                     )}
                     {c.yoga?.length > 0 && (
                       <div className="bg-white/60 rounded-xl p-2.5">
-                        <p className="font-semibold text-[var(--warm-charcoal)]/50 mb-0.5">Yoga</p>
+                        <p className="font-semibold text-[var(--text-muted)] mb-0.5">Yoga</p>
                         <p className="text-[var(--indigo-deep)] font-medium">{c.yoga[0]}</p>
                       </div>
                     )}
                     {c.foods?.length > 0 && (
                       <div className="bg-white/60 rounded-xl p-2.5">
-                        <p className="font-semibold text-[var(--warm-charcoal)]/50 mb-0.5">Foods</p>
+                        <p className="font-semibold text-[var(--text-muted)] mb-0.5">Foods</p>
                         <p className="text-[var(--indigo-deep)] font-medium">{c.foods.slice(0, 2).join(', ')}</p>
                       </div>
                     )}
                   </div>
 
                   {c.affirmations?.length > 0 && (
-                    <p className="mt-2.5 text-xs italic text-[var(--warm-charcoal)]/60 border-l-2 pl-2.5" style={{ borderColor: cd.color }}>
+                    <p className="mt-2.5 text-xs italic text-[var(--text-secondary)] border-l-2 pl-2.5" style={{ borderColor: cd.color }}>
                       "{c.affirmations[0]}"
                     </p>
                   )}
@@ -508,20 +509,20 @@ function YantraSection({ data }: { data: any }) {
         <div className="bg-gradient-to-br from-amber-50 to-[var(--warm-sand)] rounded-xl p-4 border-l-4 border-[var(--saffron)]">
           <p className="text-xs font-bold text-[var(--saffron)] uppercase tracking-wider mb-1">Personal Yantra</p>
           <p className="font-bold text-[var(--indigo-deep)] text-base">{data.primaryYantra?.name}</p>
-          <p className="text-xs mt-1 text-[var(--warm-charcoal)]/60">Deity: {data.primaryYantra?.deity}</p>
-          <p className="text-xs mt-1 italic text-[var(--warm-charcoal)]/70">{data.primaryYantra?.mantra}</p>
+          <p className="text-xs mt-1 text-[var(--text-secondary)]">Deity: {data.primaryYantra?.deity}</p>
+          <p className="text-xs mt-1 italic text-[var(--text-secondary)]">{data.primaryYantra?.mantra}</p>
         </div>
         <div className="bg-gradient-to-br from-[var(--warm-sand)] to-rose-50 rounded-xl p-4 border-l-4 border-rose-400">
           <p className="text-xs font-bold text-rose-500 uppercase tracking-wider mb-1">Power Gemstone</p>
           <p className="font-bold text-[var(--indigo-deep)] text-base">{data.gemstone?.primary}</p>
-          <p className="text-xs mt-1 text-[var(--warm-charcoal)]/60">Wear on {data.gemstone?.finger} finger</p>
-          <p className="text-xs mt-0.5 text-[var(--warm-charcoal)]/60">Metal: {data.gemstone?.metal}</p>
+          <p className="text-xs mt-1 text-[var(--text-secondary)]">Wear on {data.gemstone?.finger} finger</p>
+          <p className="text-xs mt-0.5 text-[var(--text-secondary)]">Metal: {data.gemstone?.metal}</p>
         </div>
       </div>
 
       {data.colourTherapy?.power && (
         <div className="mt-4">
-          <p className="text-xs font-bold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-2">Power Colours</p>
+          <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Power Colours</p>
           <div className="flex gap-2 flex-wrap">
             {(Array.isArray(data.colourTherapy.power) ? data.colourTherapy.power : [data.colourTherapy.power]).map((c: string) => (
               <ColorBadge key={c} name={c} />
@@ -532,10 +533,10 @@ function YantraSection({ data }: { data: any }) {
 
       {data.primaryYantra?.benefits?.length > 0 && (
         <div className="mt-4">
-          <p className="text-xs font-bold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-2">Yantra Benefits</p>
+          <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Yantra Benefits</p>
           <div className="flex gap-2 flex-wrap">
             {data.primaryYantra.benefits.map((b: string) => (
-              <span key={b} className="text-xs bg-[var(--warm-sand)] px-2.5 py-1 rounded-full text-[var(--warm-charcoal)]/70">{b}</span>
+              <span key={b} className="text-xs bg-[var(--warm-sand)] px-2.5 py-1 rounded-full text-[var(--text-secondary)]">{b}</span>
             ))}
           </div>
         </div>
@@ -543,8 +544,8 @@ function YantraSection({ data }: { data: any }) {
 
       {data.primaryYantra?.installation && (
         <div className="mt-3 bg-[var(--warm-sand)] rounded-xl p-3">
-          <p className="text-xs font-bold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-1">How to Install</p>
-          <p className="text-sm text-[var(--warm-charcoal)]/70">{data.primaryYantra.installation}</p>
+          <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">How to Install</p>
+          <p className="text-sm text-[var(--text-secondary)]">{data.primaryYantra.installation}</p>
         </div>
       )}
 
@@ -625,7 +626,7 @@ function MantraSection({ data }: { data: any }) {
       <Section title="Customized Mantra Lekhan Report" icon="edit_note">
         {/* Opening invocation */}
         <div className="mt-4 bg-gradient-to-br from-[var(--saffron)]/10 to-[var(--indigo-deep)]/10 rounded-xl p-4 text-center border border-[var(--saffron)]/30">
-          <p className="text-xs text-[var(--warm-charcoal)]/50 uppercase tracking-wider mb-2">उद्घाटन मंत्र</p>
+          <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider mb-2">उद्घाटन मंत्र</p>
           <p className="text-sm font-bold text-[var(--indigo-deep)] leading-relaxed">{ml.openingInvocation}</p>
         </div>
 
@@ -641,7 +642,7 @@ function MantraSection({ data }: { data: any }) {
             { label: 'गोत्र', value: m?.gotra },
           ].filter(i => i.value).map(item => (
             <div key={item.label} className="bg-[var(--warm-sand)] rounded-lg p-2">
-              <p className="text-[var(--warm-charcoal)]/50">{item.label}</p>
+              <p className="text-[var(--text-muted)]">{item.label}</p>
               <p className="font-semibold text-[var(--indigo-deep)] mt-0.5">{item.value}</p>
             </div>
           ))}
@@ -649,8 +650,8 @@ function MantraSection({ data }: { data: any }) {
 
         {/* Purpose */}
         <div className="mt-3 bg-[var(--warm-sand)] rounded-xl p-4">
-          <p className="text-xs text-[var(--warm-charcoal)]/50 uppercase tracking-wider mb-1">उद्देश्य</p>
-          <p className="text-sm text-[var(--warm-charcoal)]/80 leading-relaxed">{ml.purpose}</p>
+          <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider mb-1">उद्देश्य</p>
+          <p className="text-sm text-[var(--text-primary)] leading-relaxed">{ml.purpose}</p>
         </div>
 
         {/* Section header */}
@@ -669,20 +670,20 @@ function MantraSection({ data }: { data: any }) {
           {/* Step 1 */}
           <div className="border border-[var(--indigo-deep)]/20 rounded-xl overflow-hidden">
             <div className="bg-[var(--indigo-deep)] px-4 py-2 flex items-center justify-between">
-              <p className="text-white text-sm font-bold">चरण 1 — सार्वभौमिक गणपति मंत्र</p>
+              <p className="text-white text-sm font-bold">चरण 1 - सार्वभौमिक गणपति मंत्र</p>
               <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">{ml.step1.times}× लिखें</span>
             </div>
             <div className="p-4 bg-white text-center space-y-1">
               <p className="text-2xl font-bold text-[var(--indigo-deep)] leading-relaxed">{ml.step1.mantra}</p>
-              <p className="text-sm text-[var(--warm-charcoal)]/60 italic">{ml.step1.transliteration}</p>
-              <p className="text-xs text-[var(--warm-charcoal)]/50">({ml.step1.meaning})</p>
+              <p className="text-sm text-[var(--text-secondary)] italic">{ml.step1.transliteration}</p>
+              <p className="text-xs text-[var(--text-muted)]">({ml.step1.meaning})</p>
             </div>
           </div>
 
           {/* Step 2 */}
           <div className="border border-[var(--saffron)]/30 rounded-xl overflow-hidden">
             <div className="bg-[var(--saffron)] px-4 py-2 flex items-center justify-between">
-              <p className="text-white text-sm font-bold">चरण 2 — गायत्री मंत्र</p>
+              <p className="text-white text-sm font-bold">चरण 2 - गायत्री मंत्र</p>
               <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">{ml.step2.times}× लिखें</span>
             </div>
             <div className="p-4 bg-white text-center">
@@ -694,33 +695,33 @@ function MantraSection({ data }: { data: any }) {
           {ml.step3 ? (
             <div className="border border-[var(--plum)]/30 rounded-xl overflow-hidden">
               <div className="bg-[var(--plum)] px-4 py-2 flex items-center justify-between">
-                <p className="text-white text-sm font-bold">चरण 3 — नक्षत्र गणपति मंत्र</p>
+                <p className="text-white text-sm font-bold">चरण 3 - नक्षत्र गणपति मंत्र</p>
                 <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">{ml.step3.times}× लिखें</span>
               </div>
               <div className="p-4 bg-white text-center space-y-1">
                 <p className="text-2xl font-bold text-[var(--plum)] leading-relaxed">{ml.step3.mantra}</p>
-                <p className="text-sm text-[var(--warm-charcoal)]/60 italic">{ml.step3.transliteration}</p>
-                <p className="text-xs text-[var(--warm-charcoal)]/50">({ml.step3.meaning})</p>
+                <p className="text-sm text-[var(--text-secondary)] italic">{ml.step3.transliteration}</p>
+                <p className="text-xs text-[var(--text-muted)]">({ml.step3.meaning})</p>
               </div>
             </div>
           ) : (
             <div className="border border-gray-200 rounded-xl p-4 bg-gray-50 text-center">
-              <p className="text-xs text-[var(--warm-charcoal)]/50">चरण 3 — पुष्य नक्षत्र के लिए नक्षत्र गणपति मंत्र नहीं है</p>
+              <p className="text-xs text-[var(--text-muted)]">चरण 3 - पुष्य नक्षत्र के लिए नक्षत्र गणपति मंत्र नहीं है</p>
             </div>
           )}
 
           {/* Step 4 */}
           <div className="border border-teal-400/40 rounded-xl overflow-hidden">
             <div className="bg-teal-600 px-4 py-2 flex items-center justify-between">
-              <p className="text-white text-sm font-bold">चरण 4 — विष्णु सहस्रनाम श्लोक</p>
+              <p className="text-white text-sm font-bold">चरण 4 - विष्णु सहस्रनाम श्लोक</p>
               <span className="bg-white/20 text-white text-xs px-2 py-0.5 rounded-full">{ml.step4.times}× लिखें</span>
             </div>
             <div className="p-4 bg-white space-y-3">
-              <p className="text-xs text-[var(--warm-charcoal)]/40 text-right">श्लोक {ml.step4.number}</p>
+              <p className="text-xs text-[var(--text-muted)] text-right">श्लोक {ml.step4.number}</p>
               <p className="text-lg font-bold text-[var(--indigo-deep)] leading-relaxed text-center">{ml.step4.sanskrit}</p>
               <div className="border-t border-gray-100 pt-3">
-                <p className="text-xs text-[var(--warm-charcoal)]/50 uppercase tracking-wider mb-1">अर्थ</p>
-                <p className="text-xs text-[var(--warm-charcoal)]/70 leading-relaxed">{ml.step4.arth}</p>
+                <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider mb-1">अर्थ</p>
+                <p className="text-xs text-[var(--text-secondary)] leading-relaxed">{ml.step4.arth}</p>
               </div>
             </div>
           </div>
@@ -743,8 +744,8 @@ function MantraSection({ data }: { data: any }) {
             <>
               <div className="mt-5">
                 <p className="text-sm font-extrabold text-[var(--indigo-deep)] mb-2 flex items-center gap-1.5">
-                  <span className="material-symbols-outlined text-[16px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
-                  अभ्यास विवरण — {ml.nakshatra} नक्षत्र ({lord} राशि)
+                  <Icon name="brightness_7" size={16} className="text-[var(--saffron)]" />
+                  अभ्यास विवरण - {ml.nakshatra} नक्षत्र ({lord} राशि)
                 </p>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="rounded-xl p-3" style={{ background: '#fffbeb', border: '1px solid #fde68a' }}>
@@ -785,11 +786,11 @@ function MantraSection({ data }: { data: any }) {
               {/* Spiritual Benefits */}
               <div className="mt-3 rounded-xl p-3" style={{ background: '#f0fdf4', border: '1px solid #bbf7d0' }}>
                 <p className="text-xs font-bold mb-1.5" style={{ color: '#14532d' }}>
-                  फलश्रुति — आध्यात्मिक लाभ (Spiritual Benefits)
+                  फलश्रुति - आध्यात्मिक लाभ (Spiritual Benefits)
                 </p>
                 <p className="text-xs leading-relaxed" style={{ color: '#166534' }}>{practice.benefit}</p>
                 <p className="text-xs leading-relaxed mt-1" style={{ color: '#15803d' }}>
-                  इस विशेष अभ्यास से लग्न नक्षत्र की ऊर्जा संतुलित होती है। लग्न नक्षत्र शक्तिशाली होने पर जीवन के सभी क्षेत्रों — स्वास्थ्य, करियर, संबंध, और आध्यात्मिकता — में सकारात्मक परिवर्तन आते हैं।
+                  इस विशेष अभ्यास से लग्न नक्षत्र की ऊर्जा संतुलित होती है। लग्न नक्षत्र शक्तिशाली होने पर जीवन के सभी क्षेत्रों - स्वास्थ्य, करियर, संबंध, और आध्यात्मिकता - में सकारात्मक परिवर्तन आते हैं।
                 </p>
               </div>
 
@@ -804,7 +805,7 @@ function MantraSection({ data }: { data: any }) {
                   <div key={ms.days} className="rounded-lg p-2" style={{ background: ms.bg, border: `1px solid ${ms.color}40` }}>
                     <p className="text-xl font-black" style={{ color: ms.color }}>{ms.days}</p>
                     <p className="text-xs font-bold" style={{ color: ms.color }}>{ms.label}</p>
-                    <p className="text-[10px] mt-0.5" style={{ color: '#6b7280' }}>{ms.desc}</p>
+                    <p className="text-[12px] mt-0.5" style={{ color: '#6b7280' }}>{ms.desc}</p>
                   </div>
                 ))}
               </div>
@@ -812,7 +813,7 @@ function MantraSection({ data }: { data: any }) {
               {/* Important Rules */}
               <div className="mt-3 rounded-xl p-3" style={{ background: '#fff7ed', border: '1px solid #fed7aa' }}>
                 <p className="text-xs font-bold mb-2" style={{ color: '#7c2d12' }}>
-                  महत्वपूर्ण नियम (Practice Rules — Must Follow)
+                  महत्वपूर्ण नियम (Practice Rules - Must Follow)
                 </p>
                 <div className="grid grid-cols-2 gap-x-4 gap-y-1">
                   {[
@@ -837,7 +838,7 @@ function MantraSection({ data }: { data: any }) {
               {/* Closing Prayer */}
               <div className="mt-3 rounded-xl p-4 text-center" style={{ background: '#faf5ff', border: '1px solid #e9d5ff' }}>
                 <p className="text-xs font-bold mb-2" style={{ color: '#4c1d95' }}>
-                  समापन प्रार्थना (Closing Sankalpa — Write After Each Session)
+                  समापन प्रार्थना (Closing Sankalpa - Write After Each Session)
                 </p>
                 <p className="text-sm font-bold leading-relaxed" style={{ color: '#5b21b6' }}>
                   ॐ तत् सत् | यत् फलम् अस्तु तत् सर्वं श्री गुरुचरणार्पणम् अस्तु ॥
@@ -847,13 +848,13 @@ function MantraSection({ data }: { data: any }) {
                 </p>
                 <div className="mt-3 grid grid-cols-3 gap-2 ml-closing-breakdown">
                   {[
-                    { label: 'Before Writing', value: 'Sankalpa — सत्य संकल्प' },
+                    { label: 'Before Writing', value: 'Sankalpa - सत्य संकल्प' },
                     { label: 'While Writing', value: 'Single-pointed focus' },
                     { label: 'After Writing', value: 'Closing prayer above' },
                   ].map(item => (
                     <div key={item.label} className="rounded-lg p-2" style={{ background: 'white', border: '1px solid #ddd6fe' }}>
-                      <p className="text-[10px] font-bold" style={{ color: '#6d28d9' }}>{item.label}</p>
-                      <p className="text-[10px] mt-0.5" style={{ color: '#7c3aed' }}>{item.value}</p>
+                      <p className="text-[12px] font-bold" style={{ color: '#6d28d9' }}>{item.label}</p>
+                      <p className="text-[12px] mt-0.5" style={{ color: '#7c3aed' }}>{item.value}</p>
                     </div>
                   ))}
                 </div>
@@ -878,8 +879,8 @@ function MantraSection({ data }: { data: any }) {
                   ].map((item, i) => (
                     item.desc ? (
                       <div key={i} className="rounded-lg px-2 py-1 text-center" style={{ background: item.color + '15', border: `1px solid ${item.color}40` }}>
-                        <p className="text-[9px] font-bold" style={{ color: item.color }}>{item.label}</p>
-                        <p className="text-[9px]" style={{ color: item.color }}>{item.desc}</p>
+                        <p className="text-[12px] font-bold" style={{ color: item.color }}>{item.label}</p>
+                        <p className="text-[12px]" style={{ color: item.color }}>{item.desc}</p>
                       </div>
                     ) : <span key={i} style={{ color: '#94a3b8', fontWeight: 700 }}>→</span>
                   ))}
@@ -897,17 +898,17 @@ function MantraSection({ data }: { data: any }) {
     <Section title="Mantra Chanting Guidance" icon="temple_hindu">
       <div className="mt-4 space-y-4">
         <div className="bg-gradient-to-br from-[var(--indigo-deep)] to-[var(--plum)] rounded-xl p-5 text-white text-center">
-          <p className="text-xs text-white/50 uppercase tracking-wider mb-2">Your Beej Mantra</p>
+          <p className="text-xs text-[var(--text-on-dark-secondary)] uppercase tracking-wider mb-2">Your Beej Mantra</p>
           <p className="text-2xl font-bold leading-relaxed">{chanting.beejMantra}</p>
-          <p className="text-sm mt-3 text-white/80">Chant <span className="font-bold">{chanting.dailyCount}</span> times daily</p>
-          <p className="text-xs mt-1 text-white/50">Best time: {chanting.bestTime} · Face {chanting.direction} · Mala: {chanting.mala}</p>
+          <p className="text-sm mt-3 text-[var(--text-on-dark)]">Chant <span className="font-bold">{chanting.dailyCount}</span> times daily</p>
+          <p className="text-xs mt-1 text-[var(--text-on-dark-secondary)]">Best time: {chanting.bestTime} · Face {chanting.direction} · Mala: {chanting.mala}</p>
         </div>
 
         {namaAkshara && (
           <div className="bg-[var(--warm-sand)] rounded-xl p-4 text-center">
-            <p className="text-xs text-[var(--warm-charcoal)]/50 uppercase tracking-wider mb-1">Nama Akshara (Birth Syllable)</p>
+            <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider mb-1">Nama Akshara (Birth Syllable)</p>
             <p className="text-3xl font-bold text-[var(--indigo-deep)]">{namaAkshara}</p>
-            {chanting.namaJapaGuidance && <p className="text-xs text-[var(--warm-charcoal)]/60 mt-2 leading-relaxed">{chanting.namaJapaGuidance}</p>}
+            {chanting.namaJapaGuidance && <p className="text-xs text-[var(--text-secondary)] mt-2 leading-relaxed">{chanting.namaJapaGuidance}</p>}
           </div>
         )}
 
@@ -919,7 +920,7 @@ function MantraSection({ data }: { data: any }) {
             { label: 'Best Day', value: chanting.bestDay },
           ].filter(i => i.value).map(item => (
             <div key={item.label} className="bg-[var(--warm-sand)] rounded-lg p-3">
-              <p className="text-xs text-[var(--warm-charcoal)]/50 mb-0.5">{item.label}</p>
+              <p className="text-xs text-[var(--text-muted)] mb-0.5">{item.label}</p>
               <p className="font-medium text-[var(--indigo-deep)] text-xs">{item.value}</p>
             </div>
           ))}
@@ -931,7 +932,7 @@ function MantraSection({ data }: { data: any }) {
             {chanting.sequence.map((s: string, i: number) => (
               <div key={i} className="flex gap-3 py-1.5 text-sm">
                 <span className="w-5 h-5 rounded-full bg-[var(--saffron)] text-white text-xs flex items-center justify-center font-bold flex-shrink-0">{i + 1}</span>
-                <span className="text-[var(--warm-charcoal)]/70">{s}</span>
+                <span className="text-[var(--text-secondary)]">{s}</span>
               </div>
             ))}
           </div>
@@ -940,11 +941,11 @@ function MantraSection({ data }: { data: any }) {
         {likhitJapa && (
           <div className="bg-[var(--warm-sand)] rounded-xl p-4">
             <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Likhit Japa (Written Mantra Practice)</p>
-            <p className="text-sm text-[var(--warm-charcoal)]/80 font-medium">{likhitJapa.mantra}</p>
+            <p className="text-sm text-[var(--text-primary)] font-medium">{likhitJapa.mantra}</p>
             <div className="mt-2 grid grid-cols-3 gap-2 text-xs">
-              <div><span className="text-[var(--warm-charcoal)]/50">Count: </span><span>{likhitJapa.count}</span></div>
-              <div><span className="text-[var(--warm-charcoal)]/50">Pen: </span><span>{likhitJapa.pen}</span></div>
-              <div><span className="text-[var(--warm-charcoal)]/50">Paper: </span><span>{likhitJapa.paper}</span></div>
+              <div><span className="text-[var(--text-muted)]">Count: </span><span>{likhitJapa.count}</span></div>
+              <div><span className="text-[var(--text-muted)]">Pen: </span><span>{likhitJapa.pen}</span></div>
+              <div><span className="text-[var(--text-muted)]">Paper: </span><span>{likhitJapa.paper}</span></div>
             </div>
           </div>
         )}
@@ -970,7 +971,7 @@ function VastuSection({ data }: { data: any }) {
           )}
           {data.currentDashaLord && (
             <div className="bg-[var(--warm-sand)] rounded-xl p-3">
-              <p className="text-xs text-[var(--warm-charcoal)]/50 mb-1">Ruling Planet</p>
+              <p className="text-xs text-[var(--text-muted)] mb-1">Ruling Planet</p>
               <p className="font-bold text-[var(--indigo-deep)]">{data.currentDashaLord}</p>
             </div>
           )}
@@ -985,9 +986,9 @@ function VastuSection({ data }: { data: any }) {
             { label: 'Prayer Room', icon: 'temple_hindu', value: data.prayerRoom },
           ].filter(i => i.value).map(item => (
             <div key={item.label} className="flex gap-3 items-start py-2.5 border-b border-[var(--warm-sand)]">
-              <span className="material-symbols-outlined text-[16px] text-[var(--saffron)] mt-0.5" style={{ fontVariationSettings: "'FILL' 1" }}>{item.icon}</span>
+              <Icon name={item.icon} size={16} className="text-[var(--saffron)] mt-0.5" />
               <span className="text-sm font-semibold text-[var(--indigo-deep)] w-28 flex-shrink-0">{item.label}</span>
-              <span className="text-sm text-[var(--warm-charcoal)]/70">{item.value}</span>
+              <span className="text-sm text-[var(--text-secondary)]">{item.value}</span>
             </div>
           ))}
         </div>
@@ -998,8 +999,8 @@ function VastuSection({ data }: { data: any }) {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {Object.entries(data.colors).map(([room, color]) => (
                 <div key={room} className="bg-[var(--warm-sand)] rounded-lg p-2.5 text-xs">
-                  <p className="font-bold text-[var(--indigo-deep)]/60 capitalize mb-0.5">{room.replace(/([A-Z])/g, ' $1')}</p>
-                  <p className="text-[var(--warm-charcoal)]/70">{color as string}</p>
+                  <p className="font-bold text-[var(--text-secondary)] capitalize mb-0.5">{room.replace(/([A-Z])/g, ' $1')}</p>
+                  <p className="text-[var(--text-secondary)]">{color as string}</p>
                 </div>
               ))}
             </div>
@@ -1021,7 +1022,7 @@ function VastuSection({ data }: { data: any }) {
           <div className="bg-[var(--warm-sand)] rounded-xl p-4">
             <p className="text-xs font-bold text-[var(--terracotta)] uppercase tracking-wider mb-2">Vastu Remedies</p>
             {data.remedies.map((r: string, i: number) => (
-              <p key={i} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {r}</p>
+              <p key={i} className="text-sm text-[var(--text-secondary)] py-0.5">• {r}</p>
             ))}
           </div>
         )}
@@ -1045,7 +1046,7 @@ function MuhurtaSection({ data }: { data: any }) {
     <Section title="Muhurta - Auspicious Timing Guide" icon="schedule">
       <div className="mt-4 space-y-5">
         {data.overview && (
-          <p className="text-sm text-[var(--warm-charcoal)]/80 leading-relaxed bg-gradient-to-r from-amber-50 to-[var(--warm-sand)] rounded-xl p-4 border-l-4 border-[var(--saffron)]">
+          <p className="text-sm text-[var(--text-primary)] leading-relaxed bg-gradient-to-r from-amber-50 to-[var(--warm-sand)] rounded-xl p-4 border-l-4 border-[var(--saffron)]">
             {data.overview}
           </p>
         )}
@@ -1079,13 +1080,13 @@ function MuhurtaSection({ data }: { data: any }) {
           {data.luckyTime && (
             <div className="bg-[var(--warm-sand)] rounded-xl p-3">
               <p className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1">Best Time of Day</p>
-              <p className="text-sm text-[var(--warm-charcoal)]/80">{data.luckyTime}</p>
+              <p className="text-sm text-[var(--text-primary)]">{data.luckyTime}</p>
             </div>
           )}
           {data.unluckyTime && (
             <div className="bg-[var(--warm-sand)] rounded-xl p-3">
               <p className="text-xs font-bold text-red-500 uppercase tracking-wider mb-1">Avoid (Rahu Kaal)</p>
-              <p className="text-sm text-[var(--warm-charcoal)]/80">{data.unluckyTime}</p>
+              <p className="text-sm text-[var(--text-primary)]">{data.unluckyTime}</p>
             </div>
           )}
         </div>
@@ -1098,7 +1099,7 @@ function MuhurtaSection({ data }: { data: any }) {
               {Object.entries(data.rahuKaalChart).map(([day, time]) => (
                 <div key={day} className="bg-white/70 rounded-lg p-2 text-xs">
                   <p className="font-bold text-[var(--indigo-deep)]">{day.slice(0, 3)}</p>
-                  <p className="text-[var(--warm-charcoal)]/60">{time as string}</p>
+                  <p className="text-[var(--text-secondary)]">{time as string}</p>
                 </div>
               ))}
             </div>
@@ -1111,9 +1112,9 @@ function MuhurtaSection({ data }: { data: any }) {
           <div className="space-y-2">
             {TIMING_ITEMS.filter(i => i.value).map(item => (
               <div key={item.label} className="flex gap-3 items-start py-2.5 border-b border-[var(--warm-sand)]">
-                <span className="material-symbols-outlined text-[16px] text-[var(--saffron)] mt-0.5 flex-shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>{item.icon}</span>
+                <Icon name={item.icon} size={16} className="text-[var(--saffron)] mt-0.5 flex-shrink-0" />
                 <span className="text-sm font-semibold text-[var(--indigo-deep)] w-36 flex-shrink-0">{item.label}</span>
-                <span className="text-sm text-[var(--warm-charcoal)]/70">{item.value}</span>
+                <span className="text-sm text-[var(--text-secondary)]">{item.value}</span>
               </div>
             ))}
           </div>
@@ -1144,7 +1145,7 @@ function MuhurtaSection({ data }: { data: any }) {
         {/* Personal year note */}
         {data.currentYearNote && (
           <div className="bg-gradient-to-br from-[var(--indigo-deep)] to-[var(--plum)] rounded-xl p-4 text-white">
-            <p className="text-xs text-white/50 uppercase tracking-wider mb-1">Personal Year Timing</p>
+            <p className="text-xs text-[var(--text-on-dark-secondary)] uppercase tracking-wider mb-1">Personal Year Timing</p>
             <p className="text-sm">{data.currentYearNote}</p>
           </div>
         )}
@@ -1152,13 +1153,13 @@ function MuhurtaSection({ data }: { data: any }) {
         {/* Hora guide */}
         {data.horaGuide && (
           <div className="bg-[var(--warm-sand)] rounded-xl p-4">
-            <p className="text-xs font-bold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-1">Planetary Hora Guide</p>
-            <p className="text-xs text-[var(--warm-charcoal)]/60 mb-3">{data.horaGuide.description}</p>
+            <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">Planetary Hora Guide</p>
+            <p className="text-xs text-[var(--text-secondary)] mb-3">{data.horaGuide.description}</p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
               {data.horaGuide.firstHoraByDay && Object.entries(data.horaGuide.firstHoraByDay).map(([day, hora]) => (
                 <div key={day} className="bg-white/70 rounded-lg p-2 text-xs">
                   <p className="font-bold text-[var(--indigo-deep)]">{day.slice(0, 3)}</p>
-                  <p className="text-[var(--warm-charcoal)]/60 text-[10px]">{hora as string}</p>
+                  <p className="text-[var(--text-secondary)] text-[12px]">{hora as string}</p>
                 </div>
               ))}
             </div>
@@ -1177,14 +1178,14 @@ function RemediesSection({ data }: { data: any }) {
         {data.dailyPractices?.length > 0 && (
           <div>
             <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2 flex items-center gap-1">
-              <span className="material-symbols-outlined text-[14px] text-emerald-500" style={{ fontVariationSettings: "'FILL' 1" }}>today</span>
+              <Icon name="today" size={14} className="text-emerald-500" />
               Daily Practices
             </p>
             <div className="space-y-1.5">
               {data.dailyPractices.map((p: string, i: number) => (
                 <div key={i} className="flex gap-2.5 items-start">
                   <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 text-xs flex items-center justify-center font-bold flex-shrink-0 mt-0.5">{i + 1}</span>
-                  <span className="text-sm text-[var(--warm-charcoal)]/70">{p}</span>
+                  <span className="text-sm text-[var(--text-secondary)]">{p}</span>
                 </div>
               ))}
             </div>
@@ -1193,12 +1194,12 @@ function RemediesSection({ data }: { data: any }) {
         {data.weeklyPractices?.length > 0 && (
           <div>
             <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2 flex items-center gap-1">
-              <span className="material-symbols-outlined text-[14px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>calendar_view_week</span>
+              <Icon name="calendar_view_week" size={14} className="text-[var(--saffron)]" />
               Weekly Practices
             </p>
             <div className="space-y-1.5">
               {data.weeklyPractices.map((p: string, i: number) => (
-                <p key={i} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {p}</p>
+                <p key={i} className="text-sm text-[var(--text-secondary)] py-0.5">• {p}</p>
               ))}
             </div>
           </div>
@@ -1209,8 +1210,8 @@ function RemediesSection({ data }: { data: any }) {
             {data.gemstones.map((g: any, i: number) => (
               <div key={g.stone} className={`rounded-xl p-3 text-sm mb-2 ${i === 0 ? 'bg-gradient-to-r from-amber-50 to-[var(--warm-sand)] border border-amber-200' : 'bg-[var(--warm-sand)]'}`}>
                 <p className="font-bold text-[var(--indigo-deep)]">{g.stone}</p>
-                {g.purpose && <p className="text-xs text-[var(--warm-charcoal)]/70 mt-0.5">{g.purpose}</p>}
-                {g.weight && <p className="text-xs text-[var(--warm-charcoal)]/60 mt-0.5">Weight: {g.weight} · Wear on: {g.wearingDay}</p>}
+                {g.purpose && <p className="text-xs text-[var(--text-secondary)] mt-0.5">{g.purpose}</p>}
+                {g.weight && <p className="text-xs text-[var(--text-secondary)] mt-0.5">Weight: {g.weight} · Wear on: {g.wearingDay}</p>}
               </div>
             ))}
           </div>
@@ -1218,19 +1219,19 @@ function RemediesSection({ data }: { data: any }) {
         {data.dietRecommendations?.length > 0 && (
           <div>
             <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2 flex items-center gap-1">
-              <span className="material-symbols-outlined text-[14px] text-emerald-500" style={{ fontVariationSettings: "'FILL' 1" }}>nutrition</span>
+              <Icon name="nutrition" size={14} className="text-emerald-500" />
               Diet & Food Remedies
             </p>
             {data.dietRecommendations.map((d: string, i: number) => (
-              <p key={i} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {d}</p>
+              <p key={i} className="text-sm text-[var(--text-secondary)] py-0.5">• {d}</p>
             ))}
           </div>
         )}
         {data.charityItems?.length > 0 && (
           <div className="bg-[var(--warm-sand)] rounded-xl p-3">
-            <p className="text-xs font-bold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-2">Dana (Charity Items)</p>
+            <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-2">Dana (Charity Items)</p>
             {data.charityItems.map((c: string, i: number) => (
-              <p key={i} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {c}</p>
+              <p key={i} className="text-sm text-[var(--text-secondary)] py-0.5">• {c}</p>
             ))}
           </div>
         )}
@@ -1239,21 +1240,21 @@ function RemediesSection({ data }: { data: any }) {
             {data.luckyNumbers.map((n: number) => (
               <span key={n} className="px-3 py-1.5 bg-[var(--indigo-deep)] text-white text-sm rounded-full font-bold">{n}</span>
             ))}
-            <span className="text-xs text-[var(--warm-charcoal)]/50">Lucky Numbers</span>
+            <span className="text-xs text-[var(--text-muted)]">Lucky Numbers</span>
           </div>
         )}
         {data.yantras?.length > 0 && (
           <div>
             <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Yantras</p>
             {data.yantras.map((y: string, i: number) => (
-              <p key={i} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {y}</p>
+              <p key={i} className="text-sm text-[var(--text-secondary)] py-0.5">• {y}</p>
             ))}
           </div>
         )}
         {data.annualPooja && (
           <div className="bg-gradient-to-r from-amber-50 to-[var(--warm-sand)] rounded-xl p-3 border-l-4 border-[var(--saffron)]">
             <p className="text-xs font-bold text-[var(--saffron)] uppercase tracking-wider mb-1">Annual Ritual</p>
-            <p className="text-sm text-[var(--warm-charcoal)]/70">{data.annualPooja}</p>
+            <p className="text-sm text-[var(--text-secondary)]">{data.annualPooja}</p>
           </div>
         )}
       </div>
@@ -1271,7 +1272,7 @@ function GenericSection({ title, icon, data }: { title: string; icon: string; da
             return (
               <div key={key} className="flex gap-3">
                 <span className="text-sm font-semibold text-[var(--indigo-deep)] w-36 flex-shrink-0 capitalize">{key.replace(/_/g, ' ')}</span>
-                <span className="text-sm text-[var(--warm-charcoal)]/70">{value}</span>
+                <span className="text-sm text-[var(--text-secondary)]">{value}</span>
               </div>
             )
           }
@@ -1344,25 +1345,25 @@ function OmMandala({ size = 180 }: { size?: number }) {
   const cx = size / 2, cy = size / 2, r = size * 0.44
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      <circle cx={cx} cy={cy} r={r} fill="none" stroke="#D4A017" strokeWidth="2" />
-      <circle cx={cx} cy={cy} r={r * 0.85} fill="none" stroke="#D4A017" strokeWidth="0.7" strokeOpacity="0.5" />
-      <circle cx={cx} cy={cy} r={r * 0.65} fill="none" stroke="#D4A017" strokeWidth="0.5" strokeOpacity="0.35" />
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke="#C9992E" strokeWidth="2" />
+      <circle cx={cx} cy={cy} r={r * 0.85} fill="none" stroke="#C9992E" strokeWidth="0.7" strokeOpacity="0.5" />
+      <circle cx={cx} cy={cy} r={r * 0.65} fill="none" stroke="#C9992E" strokeWidth="0.5" strokeOpacity="0.35" />
       {Array.from({ length: 8 }, (_, i) => {
         const a = (i * 45 - 22.5) * Math.PI / 180
         const ox = cx + r * 0.72 * Math.cos(a), oy = cy + r * 0.72 * Math.sin(a)
         return <ellipse key={i} cx={ox} cy={oy} rx={r * 0.16} ry={r * 0.3}
           transform={`rotate(${i * 45 + 67.5}, ${ox}, ${oy})`}
-          fill="#D4A017" fillOpacity="0.14" stroke="#D4A017" strokeWidth="0.5" />
+          fill="#C9992E" fillOpacity="0.14" stroke="#C9992E" strokeWidth="0.5" />
       })}
       {Array.from({ length: 12 }, (_, i) => {
         const a = i * 30 * Math.PI / 180
         return <line key={i}
           x1={cx + r * 0.35 * Math.cos(a)} y1={cy + r * 0.35 * Math.sin(a)}
           x2={cx + r * 0.9 * Math.cos(a)} y2={cy + r * 0.9 * Math.sin(a)}
-          stroke="#D4A017" strokeWidth="0.4" strokeOpacity="0.22" />
+          stroke="#C9992E" strokeWidth="0.4" strokeOpacity="0.22" />
       })}
       <text x={cx} y={cy + size * 0.09} textAnchor="middle" fontSize={size * 0.35}
-        fill="#D4A017" style={{ fontFamily: 'serif', fontWeight: 'bold' }}>ॐ</text>
+        fill="#C9992E" style={{ fontFamily: 'serif', fontWeight: 'bold' }}>ॐ</text>
     </svg>
   )
 }
@@ -1378,7 +1379,7 @@ function SriYantraPanel({ size = 180 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
       {[1, 0.9, 0.8].map((r, i) => (
-        <circle key={i} cx={cx} cy={cy} r={s * r * 1.15} fill="none" stroke="#D4A017"
+        <circle key={i} cx={cx} cy={cy} r={s * r * 1.15} fill="none" stroke="#C9992E"
           strokeWidth={i === 0 ? 1.5 : 0.5} strokeOpacity={1 - i * 0.3} />
       ))}
       {Array.from({ length: 16 }, (_, i) => {
@@ -1386,18 +1387,18 @@ function SriYantraPanel({ size = 180 }: { size?: number }) {
         const ox = cx + s * 1.05 * Math.cos(a), oy = cy + s * 1.05 * Math.sin(a)
         return <ellipse key={i} cx={ox} cy={oy} rx={s * 0.09} ry={s * 0.17}
           transform={`rotate(${i * 22.5 + 90}, ${ox}, ${oy})`}
-          fill="#D4A017" fillOpacity="0.1" stroke="#D4A017" strokeWidth="0.4" strokeOpacity="0.3" />
+          fill="#C9992E" fillOpacity="0.1" stroke="#C9992E" strokeWidth="0.4" strokeOpacity="0.3" />
       })}
       {[
-        { s: 1.0, inv: false, c: '#E36414' }, { s: 1.0, inv: true, c: '#2F2A44' },
-        { s: 0.75, inv: false, c: '#E36414' }, { s: 0.75, inv: true, c: '#2F2A44' },
-        { s: 0.5, inv: false, c: '#E36414' }, { s: 0.5, inv: true, c: '#2F2A44' },
-        { s: 0.3, inv: false, c: '#E36414' }, { s: 0.3, inv: true, c: '#2F2A44' },
+        { s: 1.0, inv: false, c: '#D9741A' }, { s: 1.0, inv: true, c: '#1E1630' },
+        { s: 0.75, inv: false, c: '#D9741A' }, { s: 0.75, inv: true, c: '#1E1630' },
+        { s: 0.5, inv: false, c: '#D9741A' }, { s: 0.5, inv: true, c: '#1E1630' },
+        { s: 0.3, inv: false, c: '#D9741A' }, { s: 0.3, inv: true, c: '#1E1630' },
       ].map((t, i) => (
         <polygon key={i} points={tri(t.s, t.inv)} fill="none" stroke={t.c}
           strokeWidth={i < 2 ? 1.5 : 1} strokeOpacity={1 - i * 0.07} />
       ))}
-      <circle cx={cx} cy={cy} r={5} fill="#D4A017" />
+      <circle cx={cx} cy={cy} r={5} fill="#C9992E" />
     </svg>
   )
 }
@@ -1410,8 +1411,8 @@ function VastuCompassPanel({ size = 170 }: { size?: number }) {
   ]
   return (
     <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
-      <circle cx={cx} cy={cy} r={r + 7} fill="#fef9f0" stroke="#D4A017" strokeWidth="1.5" />
-      <circle cx={cx} cy={cy} r={r} fill="none" stroke="#D4A017" strokeWidth="0.5" strokeOpacity="0.3" />
+      <circle cx={cx} cy={cy} r={r + 7} fill="#fef9f0" stroke="#C9992E" strokeWidth="1.5" />
+      <circle cx={cx} cy={cy} r={r} fill="none" stroke="#C9992E" strokeWidth="0.5" strokeOpacity="0.3" />
       {DIRS.map((d, i) => {
         const a = i * 45 * Math.PI / 180
         const x1 = cx + r * 0.22 * Math.sin(a), y1 = cy - r * 0.22 * Math.cos(a)
@@ -1425,9 +1426,9 @@ function VastuCompassPanel({ size = 170 }: { size?: number }) {
           </g>
         )
       })}
-      <circle cx={cx} cy={cy} r={r * 0.26} fill="#2F2A44" fillOpacity="0.08" stroke="#2F2A44" strokeWidth="1" />
-      <text x={cx} y={cy - 3} textAnchor="middle" fontSize={9} fill="#2F2A44" fontWeight="bold">VASTU</text>
-      <text x={cx} y={cy + 9} textAnchor="middle" fontSize={8} fill="#2F2A44">पुरुष</text>
+      <circle cx={cx} cy={cy} r={r * 0.26} fill="#1E1630" fillOpacity="0.08" stroke="#1E1630" strokeWidth="1" />
+      <text x={cx} y={cy - 3} textAnchor="middle" fontSize={9} fill="#1E1630" fontWeight="bold">VASTU</text>
+      <text x={cx} y={cy + 9} textAnchor="middle" fontSize={8} fill="#1E1630">पुरुष</text>
     </svg>
   )
 }
@@ -1458,14 +1459,14 @@ function MoonArchetypePanel({ archetype }: { archetype?: string }) {
         {([[18,18],[108,12],[12,95],[108,95],[55,10],[90,44],[28,50],[75,28]] as [number,number][]).map(([x,y],i) => (
           <circle key={i} cx={x} cy={y} r={i % 2 === 0 ? 2.2 : 1.5} fill="#f59e0b" opacity={0.85} />
         ))}
-        {/* Crescent moon — gold disc with dark cutout overlay */}
-        <circle cx="57" cy="65" r="31" fill="#D4A017" />
+        {/* Crescent moon - gold disc with dark cutout overlay */}
+        <circle cx="57" cy="65" r="31" fill="#C9992E" />
         <circle cx="71" cy="57" r="27" fill="#1e293b" />
-        <circle cx="57" cy="65" r="31" fill="none" stroke="#D4A017" strokeWidth="0.8" opacity="0.4" />
+        <circle cx="57" cy="65" r="31" fill="none" stroke="#C9992E" strokeWidth="0.8" opacity="0.4" />
       </svg>
       {archetype && (
         <p className="text-center text-xs font-bold text-[var(--indigo-deep)] bg-[var(--warm-sand)] px-3 py-1.5 rounded-full"
-          style={{ fontFamily: "'Playfair Display', serif" }}>
+          style={{ fontFamily: "var(--font-display)" }}>
           {archetype}
         </p>
       )}
@@ -1477,7 +1478,7 @@ function DMITPanel({ intelligences }: { intelligences?: Array<{ type: string; sc
   if (!intelligences?.length) return (
     <div className="flex flex-col items-center gap-2">
       <div className="w-32 h-32 rounded-full border-2 border-dashed border-[var(--warm-sand)] flex items-center justify-center text-4xl">🧠</div>
-      <p className="text-xs text-[var(--warm-charcoal)]/40 uppercase tracking-wider">Intelligence Profile</p>
+      <p className="text-xs text-[var(--text-muted)] uppercase tracking-wider">Intelligence Profile</p>
     </div>
   )
   const cx = 80, cy = 80, maxR = 62, minR = 15
@@ -1492,13 +1493,13 @@ function DMITPanel({ intelligences }: { intelligences?: Array<{ type: string; sc
             const r = minR + (maxR - minR) * scale
             return `${cx + r * Math.cos(a)},${cy + r * Math.sin(a)}`
           }).join(' ')}
-          fill="none" stroke="#D4A017" strokeWidth="0.5" strokeOpacity="0.3" />
+          fill="none" stroke="#C9992E" strokeWidth="0.5" strokeOpacity="0.3" />
       ))}
       {intelligences.map((_, i) => {
         const a = (i / count) * Math.PI * 2 - Math.PI / 2
         return <line key={i} x1={cx + minR * Math.cos(a)} y1={cy + minR * Math.sin(a)}
           x2={cx + maxR * Math.cos(a)} y2={cy + maxR * Math.sin(a)}
-          stroke="#D4A017" strokeWidth="0.4" strokeOpacity="0.3" />
+          stroke="#C9992E" strokeWidth="0.4" strokeOpacity="0.3" />
       })}
       <polygon
         points={intelligences.map((intel, i) => {
@@ -1521,8 +1522,8 @@ function DMITPanel({ intelligences }: { intelligences?: Array<{ type: string; sc
           </g>
         )
       })}
-      <circle cx={cx} cy={cy} r={minR} fill="#2F2A44" fillOpacity="0.1" stroke="#2F2A44" strokeWidth="0.5" />
-      <text x={cx} y={cy + 4} textAnchor="middle" fontSize="7" fill="#2F2A44" fontWeight="bold">DMIT</text>
+      <circle cx={cx} cy={cy} r={minR} fill="#1E1630" fillOpacity="0.1" stroke="#1E1630" strokeWidth="0.5" />
+      <text x={cx} y={cy + 4} textAnchor="middle" fontSize="7" fill="#1E1630" fontWeight="bold">DMIT</text>
     </svg>
   )
 }
@@ -1546,7 +1547,7 @@ function ColourWheelPanel({ size = 150 }: { size?: number }) {
         )
       })}
       <circle cx={cx} cy={cy} r={r - 26} fill="#fef9f0" />
-      <text x={cx} y={cy - 3} textAnchor="middle" fontSize={size * 0.1} fill="#2F2A44" fontWeight="bold">COLOUR</text>
+      <text x={cx} y={cy - 3} textAnchor="middle" fontSize={size * 0.1} fill="#1E1630" fontWeight="bold">COLOUR</text>
       <text x={cx} y={cy + 10} textAnchor="middle" fontSize={size * 0.08} fill="#9ca3af">THERAPY</text>
     </svg>
   )
@@ -1558,7 +1559,7 @@ function AnnualArcPanel({ year = new Date().getFullYear() }: { year?: number }) 
   const MC = ['#3b82f6','#6366f1','#8b5cf6','#ec4899','#f97316','#f59e0b','#eab308','#22c55e','#10b981','#14b8a6','#0284c7','#3b82f6']
   return (
     <svg viewBox="0 0 180 155" width="180" height="155">
-      <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`} fill="none" stroke="#D4A017" strokeWidth="2" strokeOpacity="0.25" />
+      <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`} fill="none" stroke="#C9992E" strokeWidth="2" strokeOpacity="0.25" />
       {MONTHS.map((m, i) => {
         const a = (i / 11) * Math.PI * 0.95 + 0.025
         const x = cx - r * Math.cos(a), y = cy - r * Math.sin(a)
@@ -1571,8 +1572,8 @@ function AnnualArcPanel({ year = new Date().getFullYear() }: { year?: number }) 
       })}
       <circle cx={cx} cy={cy - 22} r="20" fill="#f59e0b" fillOpacity="0.18" stroke="#f59e0b" strokeWidth="1.5" />
       <text x={cx} y={cy - 16} textAnchor="middle" fontSize="18" fill="#f59e0b">☉</text>
-      <text x={cx} y={cy + 8} textAnchor="middle" fontSize="15" fontWeight="bold" fill="#2F2A44"
-        style={{ fontFamily: "'Playfair Display', serif" }}>{year}</text>
+      <text x={cx} y={cy + 8} textAnchor="middle" fontSize="15" fontWeight="bold" fill="#1E1630"
+        style={{ fontFamily: "var(--font-display)" }}>{year}</text>
     </svg>
   )
 }
@@ -1587,7 +1588,7 @@ function RemediesPanel() {
           </div>
         ))}
       </div>
-      <p className="text-[10px] text-[var(--warm-charcoal)]/40 text-center font-medium tracking-widest uppercase">Upāya · Remedies</p>
+      <p className="text-[12px] text-[var(--text-muted)] text-center font-medium tracking-widest uppercase">Upāya · Remedies</p>
     </div>
   )
 }
@@ -1616,14 +1617,14 @@ function ChapterSpread({ chapter, height }: { chapter: BookChapter; height: numb
         </svg>
 
         {/* Saffron top accent */}
-        <div style={{ height: 3, background: 'linear-gradient(90deg, transparent, #D4A017 40%, #D4A017 60%, transparent)', borderRadius: 2, marginBottom: 20 }} />
+        <div style={{ height: 3, background: 'linear-gradient(90deg, transparent, #C9992E 40%, #C9992E 60%, transparent)', borderRadius: 2, marginBottom: 20 }} />
 
         {/* Chapter identity */}
         <div style={{ marginBottom: 16 }}>
           <p style={{ fontSize: 9, color: '#B8860B', letterSpacing: '0.35em', textTransform: 'uppercase', fontWeight: 700, marginBottom: 5 }}>
             CHAPTER {chapter.number}
           </p>
-          <h2 style={{ fontFamily: "'Playfair Display', Georgia, serif", fontSize: 26, fontWeight: 900, color: '#2F2A44', margin: '0 0 4px', lineHeight: 1.25 }}>
+          <h2 style={{ fontFamily: "'Martel', Georgia, serif", fontSize: 26, fontWeight: 900, color: '#1E1630', margin: '0 0 4px', lineHeight: 1.25 }}>
             {chapter.title}
           </h2>
           <p style={{ fontFamily: 'Georgia, serif', fontSize: 14, color: '#B8860B', margin: 0 }}>
@@ -1639,7 +1640,7 @@ function ChapterSpread({ chapter, height }: { chapter: BookChapter; height: numb
 
         {/* Bottom Om */}
         <div style={{ textAlign: 'center', fontSize: 22, color: 'rgba(212,160,23,0.4)', marginTop: 12, fontFamily: 'Georgia, serif', letterSpacing: '0.1em' }}>ॐ</div>
-        <div style={{ height: 3, background: 'linear-gradient(90deg, transparent, #D4A017 40%, #D4A017 60%, transparent)', borderRadius: 2, marginTop: 12 }} />
+        <div style={{ height: 3, background: 'linear-gradient(90deg, transparent, #C9992E 40%, #C9992E 60%, transparent)', borderRadius: 2, marginTop: 12 }} />
       </div>
 
       {/* Book spine shadow */}
@@ -1648,10 +1649,10 @@ function ChapterSpread({ chapter, height }: { chapter: BookChapter; height: numb
       {/* RIGHT PAGE - content */}
       <div style={{ flex: 1, background: '#FFFFFF', overflowY: 'auto', display: 'flex', flexDirection: 'column' }} className="book-scroll">
         {/* Mobile chapter header */}
-        <div className="md:hidden" style={{ background: 'linear-gradient(90deg, #fdf6e3, #fef9ed)', borderBottom: '2px solid #D4A017', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
+        <div className="md:hidden" style={{ background: 'linear-gradient(90deg, #fdf6e3, #fef9ed)', borderBottom: '2px solid #C9992E', padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
           <span style={{ fontSize: 10, fontWeight: 700, color: '#B8860B', letterSpacing: '0.15em' }}>CH. {chapter.number}</span>
           <div style={{ width: 1, height: 14, background: 'rgba(212,160,23,0.5)' }} />
-          <span style={{ fontSize: 12, color: '#2F2A44', fontWeight: 600 }}>{chapter.title}</span>
+          <span style={{ fontSize: 12, color: '#1E1630', fontWeight: 600 }}>{chapter.title}</span>
         </div>
         <div style={{ padding: '20px 24px 32px', flex: 1 }}>
           <SectionErrorBoundary name={chapter.title}>
@@ -1721,15 +1722,15 @@ function BookViewer({ chapters }: { chapters: BookChapter[] }) {
       {/* ── Top chrome bar - light theme ── */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '10px 16px', borderBottom: '2px solid #D4A017',
+        padding: '10px 16px', borderBottom: '2px solid #C9992E',
         background: 'linear-gradient(90deg, #fdf6e3, #fef9ed, #fdf6e3)',
         borderRadius: isFS ? 0 : '16px 16px 0 0',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ fontSize: 20, color: '#D4A017', fontFamily: 'Georgia, serif' }}>ॐ</span>
+          <span style={{ fontSize: 20, color: '#C9992E', fontFamily: 'Georgia, serif' }}>ॐ</span>
           <div>
             <p style={{ fontSize: 9, color: '#B8860B', letterSpacing: '0.2em', textTransform: 'uppercase', margin: 0, fontWeight: 600 }}>MahaTathastu · Tathastu</p>
-            <p style={{ fontSize: 13, fontWeight: 700, color: '#2F2A44', margin: 0, fontFamily: "'Playfair Display', serif" }}>{cur.title}</p>
+            <p style={{ fontSize: 13, fontWeight: 700, color: '#1E1630', margin: 0, fontFamily: "var(--font-display)" }}>{cur.title}</p>
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -1737,8 +1738,8 @@ function BookViewer({ chapters }: { chapters: BookChapter[] }) {
             {displayIdx + 1} of {active.length}
           </span>
           <button onClick={toggleFullscreen}
-            style={{ background: 'white', border: '1px solid rgba(212,160,23,0.4)', borderRadius: 8, padding: '5px 10px', color: '#2F2A44', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
-            <span className="material-symbols-outlined" style={{ fontSize: 16 }}>{isFS ? 'fullscreen_exit' : 'fullscreen'}</span>
+            style={{ background: 'white', border: '1px solid rgba(212,160,23,0.4)', borderRadius: 8, padding: '5px 10px', color: '#1E1630', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4, boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
+            <Icon name={isFS ? 'fullscreen_exit' : 'fullscreen'} size={16} />
             <span style={{ fontSize: 11, fontWeight: 600 }}>{isFS ? 'Exit' : 'Fullscreen'}</span>
           </button>
         </div>
@@ -1757,7 +1758,7 @@ function BookViewer({ chapters }: { chapters: BookChapter[] }) {
             opacity: displayIdx === 0 ? 0.35 : 1, transition: 'all 0.2s', flexShrink: 0,
             boxShadow: displayIdx > 0 ? '0 4px 15px rgba(0,0,0,0.1)' : 'none',
           }}>
-          <span className="material-symbols-outlined" style={{ fontSize: 26, color: '#2F2A44' }}>chevron_left</span>
+          <Icon name="chevron_left" size={26} style={{ color: '#1E1630'  }} />
         </button>
 
         {/* The book itself */}
@@ -1787,21 +1788,21 @@ function BookViewer({ chapters }: { chapters: BookChapter[] }) {
             opacity: displayIdx === active.length - 1 ? 0.35 : 1, transition: 'all 0.2s', flexShrink: 0,
             boxShadow: displayIdx < active.length - 1 ? '0 4px 15px rgba(0,0,0,0.1)' : 'none',
           }}>
-          <span className="material-symbols-outlined" style={{ fontSize: 26, color: '#2F2A44' }}>chevron_right</span>
+          <Icon name="chevron_right" size={26} style={{ color: '#1E1630'  }} />
         </button>
       </div>
 
       {/* ── Chapter dots & reading progress - light ── */}
       <div style={{ padding: '10px 60px', display: 'flex', alignItems: 'center', gap: 10, background: isFS ? '#fdf8f0' : undefined }}>
         <div style={{ flex: 1, height: 3, background: 'rgba(212,160,23,0.15)', borderRadius: 2, overflow: 'hidden' }}>
-          <div style={{ height: '100%', width: `${((displayIdx + 1) / active.length) * 100}%`, background: 'linear-gradient(90deg, #2F2A44, #D4A017)', transition: 'width 0.4s ease', borderRadius: 2 }} />
+          <div style={{ height: '100%', width: `${((displayIdx + 1) / active.length) * 100}%`, background: 'linear-gradient(90deg, #1E1630, #C9992E)', transition: 'width 0.4s ease', borderRadius: 2 }} />
         </div>
         <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
           {active.map((c, i) => (
             <button key={c.id} onClick={() => goTo(i)} title={c.title}
               style={{
                 border: 'none', cursor: 'pointer', padding: 0, borderRadius: 99,
-                background: i === displayIdx ? '#2F2A44' : 'rgba(212,160,23,0.35)',
+                background: i === displayIdx ? '#1E1630' : 'rgba(212,160,23,0.35)',
                 width: i === displayIdx ? 20 : 7, height: 7,
                 transition: 'all 0.3s',
               }} />
@@ -1848,7 +1849,7 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
     load()
   }, [reportId, supabase])
 
-  // Poll every 3s while report is processing — ownership filter matches initial load
+  // Poll every 3s while report is processing - ownership filter matches initial load
   useEffect(() => {
     if (report?.status !== 'processing' || !familyId) return
     const interval = setInterval(async () => {
@@ -1875,22 +1876,22 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
     <div className="p-6 text-center">
       <p>Report not found.</p>
       <Link href="/reports" className="text-[var(--terracotta)] inline-flex items-center gap-1">
-        <span className="material-symbols-outlined text-[16px]">arrow_back</span>Reports
+        <Icon name="arrow_back" size={16} />Reports
       </Link>
     </div>
   )
   if (report.status === 'processing') return (
     <div className="p-6 flex flex-col items-center justify-center min-h-[60vh] gap-6">
       <div style={{ borderRadius: 20, overflow: 'hidden', boxShadow: '0 16px 48px rgba(47,42,68,0.2)', maxWidth: 400, width: '100%', textAlign: 'center' }}>
-        <div style={{ background: 'linear-gradient(160deg, #0f0b22 0%, #2F2A44 55%, #3a1e04 100%)', padding: '36px 32px 30px', position: 'relative', overflow: 'hidden' }}>
+        <div style={{ background: 'linear-gradient(160deg, #0f0b22 0%, #1E1630 55%, #3a1e04 100%)', padding: '36px 32px 30px', position: 'relative', overflow: 'hidden' }}>
           <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 280, height: 280, border: '1px solid rgba(212,160,23,0.1)', borderRadius: '50%', pointerEvents: 'none' }} />
           <div style={{ marginBottom: 14 }}><SudarshanLoader size="lg" /></div>
         </div>
         <div style={{ background: '#FDFAF5', padding: '24px 28px 28px' }}>
-          <p style={{ fontWeight: 700, color: '#2F2A44', fontSize: 17, fontFamily: "'Playfair Display', serif", marginBottom: 6 }}>Crafting Your Sacred Report</p>
+          <p style={{ fontWeight: 700, color: '#1E1630', fontSize: 17, fontFamily: "var(--font-display)", marginBottom: 6 }}>Crafting Your Sacred Report</p>
           <p style={{ fontSize: 13, color: 'rgba(42,32,28,0.55)', marginBottom: 20 }}>This page will refresh automatically when ready</p>
           <Link href="/reports/generate" className="text-sm text-[var(--terracotta)] hover:underline inline-flex items-center justify-center gap-1">
-            <span className="material-symbols-outlined text-[16px]">arrow_back</span>Back to Generate
+            <Icon name="arrow_back" size={16} />Back to Generate
           </Link>
         </div>
       </div>
@@ -1949,9 +1950,9 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
               ))}
             </div>
             <div className="bg-[var(--warm-sand)] rounded-xl p-3">
-              <p className="text-xs text-[var(--warm-charcoal)]/50 mb-1">Dominant Dosha</p>
+              <p className="text-xs text-[var(--text-muted)] mb-1">Dominant Dosha</p>
               <p className="font-bold text-[var(--indigo-deep)] text-lg">{d.prakriti?.dominant}</p>
-              {d.prakriti?.secondary && <p className="text-sm text-[var(--warm-charcoal)]/60">Secondary: {d.prakriti.secondary}</p>}
+              {d.prakriti?.secondary && <p className="text-sm text-[var(--text-secondary)]">Secondary: {d.prakriti.secondary}</p>}
             </div>
             {d.prakriti?.diet?.length > 0 && (
               <div>
@@ -1964,7 +1965,7 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
             {d.prakriti?.lifestyle?.length > 0 && (
               <div>
                 <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Lifestyle Guidelines</p>
-                {d.prakriti.lifestyle.map((l: string) => <p key={l} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {l}</p>)}
+                {d.prakriti.lifestyle.map((l: string) => <p key={l} className="text-sm text-[var(--text-secondary)] py-0.5">• {l}</p>)}
               </div>
             )}
             {d.prakriti?.avoid?.length > 0 && (
@@ -2013,7 +2014,7 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
           <div className="mt-4 space-y-4">
             <div className="bg-gradient-to-br from-violet-50 to-[var(--warm-sand)] rounded-xl p-4 border-l-4 border-violet-400">
               <p className="text-lg font-bold text-[var(--indigo-deep)]">{d.psychology?.moonPersonalityType} Archetype</p>
-              <p className="text-sm text-[var(--warm-charcoal)]/70 mt-1">{d.psychology?.emotionalPatterns}</p>
+              <p className="text-sm text-[var(--text-secondary)] mt-1">{d.psychology?.emotionalPatterns}</p>
             </div>
             {(d.psychology?.coreTrait || d.psychology?.strengths)?.length > 0 && (
               <div>
@@ -2033,21 +2034,21 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
                 { label: 'Stress Triggers', value: d.psychology?.stressTriggers },
               ].filter(i => i.value).map(item => (
                 <div key={item.label} className="bg-[var(--warm-sand)] rounded-xl p-3">
-                  <p className="text-xs font-bold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-1">{item.label}</p>
-                  <p className="text-sm text-[var(--warm-charcoal)]/80">{item.value}</p>
+                  <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">{item.label}</p>
+                  <p className="text-sm text-[var(--text-primary)]">{item.value}</p>
                 </div>
               ))}
             </div>
             {d.psychology?.growthEdge && (
               <div className="bg-gradient-to-r from-amber-50 to-[var(--warm-sand)] rounded-xl p-4 border-l-4 border-[var(--saffron)]">
                 <p className="text-xs font-bold text-[var(--saffron)] uppercase tracking-wider mb-1">Growth Edge</p>
-                <p className="text-sm text-[var(--warm-charcoal)]/80">{d.psychology.growthEdge}</p>
+                <p className="text-sm text-[var(--text-primary)]">{d.psychology.growthEdge}</p>
               </div>
             )}
             {d.psychology?.shadowWork?.length > 0 && (
               <div>
                 <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Shadow Work Themes</p>
-                {d.psychology.shadowWork.map((s: string) => <p key={s} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {s}</p>)}
+                {d.psychology.shadowWork.map((s: string) => <p key={s} className="text-sm text-[var(--text-secondary)] py-0.5">• {s}</p>)}
               </div>
             )}
           </div>
@@ -2069,8 +2070,8 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
           <div className="mt-4 space-y-4">
             {d.dmit?.learningStyle && (
               <div className="bg-[var(--warm-sand)] rounded-xl p-3">
-                <p className="text-xs font-bold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-1">Learning Style</p>
-                <p className="text-sm text-[var(--warm-charcoal)]/80">{d.dmit.learningStyle}</p>
+                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">Learning Style</p>
+                <p className="text-sm text-[var(--text-primary)]">{d.dmit.learningStyle}</p>
               </div>
             )}
             {d.dmit?.dominantIntelligences?.length > 0 && (
@@ -2104,7 +2105,7 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
                 <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Career Alignment</p>
                 <div className="flex gap-2 flex-wrap">
                   {d.dmit.careerAlignment.map((c: string) => (
-                    <span key={c} className="text-xs bg-[var(--warm-sand)] px-2.5 py-1 rounded-full text-[var(--warm-charcoal)]/70">{c}</span>
+                    <span key={c} className="text-xs bg-[var(--warm-sand)] px-2.5 py-1 rounded-full text-[var(--text-secondary)]">{c}</span>
                   ))}
                 </div>
               </div>
@@ -2133,10 +2134,10 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
                     <div className="flex gap-0.5 mb-2.5 rounded-lg overflow-hidden h-4">
                       {cols.map((c: string) => <div key={c} className="flex-1 h-full" style={{ backgroundColor: nameToColor(c) }} />)}
                     </div>
-                    <p className="text-[10px] font-bold uppercase tracking-wider mb-1.5" style={{ color: item.accent }}>{item.label}</p>
+                    <p className="text-[12px] font-bold uppercase tracking-wider mb-1.5" style={{ color: item.accent }}>{item.label}</p>
                     <div className="flex flex-col gap-1">
                       {cols.map((c: string) => (
-                        <span key={c} className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--indigo-deep)]">
+                        <span key={c} className="inline-flex items-center gap-1.5 text-[13px] font-medium text-[var(--indigo-deep)]">
                           <ColorSwatch name={c} size="sm" />{c}
                         </span>
                       ))}
@@ -2153,21 +2154,21 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
                     <ColorSwatch name={d.colourTherapy.chromotherapy.primaryColor || ''} size="lg" />
                     <div>
                       <p className="font-bold text-[var(--indigo-deep)]">{d.colourTherapy.chromotherapy.primaryColor}</p>
-                      <p className="text-xs text-[var(--warm-charcoal)]/50">Primary Healing Color</p>
+                      <p className="text-xs text-[var(--text-muted)]">Primary Healing Color</p>
                     </div>
                   </div>
-                  {d.colourTherapy.chromotherapy.sessions && <p className="text-sm text-[var(--warm-charcoal)]/70">• {d.colourTherapy.chromotherapy.sessions}</p>}
-                  {d.colourTherapy.chromotherapy.duration && <p className="text-sm text-[var(--warm-charcoal)]/70">• Duration: {d.colourTherapy.chromotherapy.duration}</p>}
+                  {d.colourTherapy.chromotherapy.sessions && <p className="text-sm text-[var(--text-secondary)]">• {d.colourTherapy.chromotherapy.sessions}</p>}
+                  {d.colourTherapy.chromotherapy.duration && <p className="text-sm text-[var(--text-secondary)]">• Duration: {d.colourTherapy.chromotherapy.duration}</p>}
                   {d.colourTherapy.chromotherapy.waterSolarization && (
-                    <p className="mt-2 text-xs text-[var(--warm-charcoal)]/55 italic">{d.colourTherapy.chromotherapy.waterSolarization}</p>
+                    <p className="mt-2 text-xs text-[var(--text-muted)] italic">{d.colourTherapy.chromotherapy.waterSolarization}</p>
                   )}
                 </div>
               </div>
             )}
             {d.colourTherapy?.colorMeditation && (
               <div className="bg-gradient-to-br from-violet-50 to-indigo-50 border border-violet-100 rounded-xl p-4">
-                <p className="text-[10px] font-bold text-violet-600 uppercase tracking-wider mb-1.5">Colour Meditation</p>
-                <p className="text-sm text-[var(--warm-charcoal)]/75 leading-relaxed">{d.colourTherapy.colorMeditation}</p>
+                <p className="text-[12px] font-bold text-violet-600 uppercase tracking-wider mb-1.5">Colour Meditation</p>
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{d.colourTherapy.colorMeditation}</p>
               </div>
             )}
           </div>
@@ -2183,7 +2184,7 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
           <div className="mt-4 space-y-3">
             {d.annualPrediction?.overallTheme && (
               <div className="bg-gradient-to-br from-[var(--indigo-deep)] to-[var(--plum)] rounded-xl p-4 text-white">
-                <p className="text-xs text-white/50 uppercase tracking-wider mb-1">Annual Theme</p>
+                <p className="text-xs text-[var(--text-on-dark-secondary)] uppercase tracking-wider mb-1">Annual Theme</p>
                 <p className="text-sm leading-relaxed">{d.annualPrediction.overallTheme}</p>
               </div>
             )}
@@ -2191,8 +2192,8 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
               <div key={q.period} className="flex gap-4 items-start py-2.5 border-b border-[var(--warm-sand)]">
                 <span className="text-sm font-bold text-[var(--terracotta)] w-32 flex-shrink-0">{q.period}</span>
                 <div>
-                  {q.theme && <p className="text-xs font-semibold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-0.5">{q.theme}</p>}
-                  <p className="text-sm text-[var(--warm-charcoal)]/70">{q.guidance}</p>
+                  {q.theme && <p className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider mb-0.5">{q.theme}</p>}
+                  <p className="text-sm text-[var(--text-secondary)]">{q.guidance}</p>
                   {q.focus && <p className="text-xs text-[var(--saffron)] mt-0.5">Focus: {q.focus}</p>}
                 </div>
               </div>
@@ -2226,20 +2227,20 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
             </div>
             {d.childDevelopment?.learningStyle && (
               <div className="bg-[var(--warm-sand)] rounded-xl p-3">
-                <p className="text-xs font-bold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-1">Learning Style</p>
-                <p className="text-sm text-[var(--warm-charcoal)]/80">{d.childDevelopment.learningStyle}</p>
+                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">Learning Style</p>
+                <p className="text-sm text-[var(--text-primary)]">{d.childDevelopment.learningStyle}</p>
               </div>
             )}
             {d.childDevelopment?.milestones?.length > 0 && (
               <div>
                 <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Key Milestones</p>
-                {d.childDevelopment.milestones.map((m: string) => <p key={m} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {m}</p>)}
+                {d.childDevelopment.milestones.map((m: string) => <p key={m} className="text-sm text-[var(--text-secondary)] py-0.5">• {m}</p>)}
               </div>
             )}
             {d.childDevelopment?.parentingAdvice?.length > 0 && (
               <div className="bg-[var(--warm-sand)] rounded-xl p-4">
                 <p className="text-xs font-bold text-[var(--saffron)] uppercase tracking-wider mb-2">Parenting Guidance</p>
-                {d.childDevelopment.parentingAdvice.map((a: string) => <p key={a} className="text-sm text-[var(--warm-charcoal)]/70 py-0.5">• {a}</p>)}
+                {d.childDevelopment.parentingAdvice.map((a: string) => <p key={a} className="text-sm text-[var(--text-secondary)] py-0.5">• {a}</p>)}
               </div>
             )}
           </div>
@@ -2263,11 +2264,11 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
                 <p className={`text-4xl font-bold ${d.mobile.compatibility >= 70 ? 'text-emerald-600' : d.mobile.compatibility >= 40 ? 'text-amber-600' : 'text-red-600'}`}>{d.mobile.compatibility}%</p>
               </div>
             )}
-            {d.mobile?.analysis && <p className="text-sm text-[var(--warm-charcoal)]/70">{d.mobile.analysis}</p>}
+            {d.mobile?.analysis && <p className="text-sm text-[var(--text-secondary)]">{d.mobile.analysis}</p>}
             {d.mobile?.suggestion && (
               <div className="bg-[var(--warm-sand)] rounded-xl p-3">
-                <p className="text-xs font-bold text-[var(--indigo-deep)]/60 uppercase tracking-wider mb-1">Suggestion</p>
-                <p className="text-sm text-[var(--warm-charcoal)]/70">{d.mobile.suggestion}</p>
+                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">Suggestion</p>
+                <p className="text-sm text-[var(--text-secondary)]">{d.mobile.suggestion}</p>
               </div>
             )}
           </div>
@@ -2378,19 +2379,19 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
         <div className="flex items-start justify-between mb-6 flex-wrap gap-3 no-print">
           <div>
             <Link href="/reports" className="text-sm text-[var(--terracotta)] hover:underline inline-flex items-center gap-1">
-              <span className="material-symbols-outlined text-[16px]">arrow_back</span>Reports
+              <Icon name="arrow_back" size={16} />Reports
             </Link>
-            <h1 className="text-2xl font-bold text-[var(--indigo-deep)] mt-1" style={{ fontFamily: "'Playfair Display', serif" }}>{title}</h1>
+            <h1 className="text-2xl font-bold text-[var(--indigo-deep)] mt-1" style={{ fontFamily: "var(--font-display)" }}>{title}</h1>
             {member && (
-              <p className="text-sm text-[var(--warm-charcoal)]/60 mt-0.5">
+              <p className="text-sm text-[var(--text-secondary)] mt-0.5">
                 {member.full_name} · {member.place_of_birth || ''} · {new Date(report.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}
               </p>
             )}
           </div>
           <div className="flex items-center gap-2 flex-wrap justify-end">
             <div className="flex items-center bg-[var(--warm-sand)] rounded-lg p-0.5 gap-0.5">
-              <button onClick={() => setLang('en')} className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all ${lang === 'en' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--warm-charcoal)]/60 hover:text-[var(--indigo-deep)]'}`}>EN</button>
-              <button onClick={() => setLang('hi')} className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all ${lang === 'hi' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--warm-charcoal)]/60 hover:text-[var(--indigo-deep)]'}`}>हिं</button>
+              <button onClick={() => setLang('en')} className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all ${lang === 'en' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--text-secondary)] hover:text-[var(--indigo-deep)]'}`}>EN</button>
+              <button onClick={() => setLang('hi')} className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all ${lang === 'hi' ? 'bg-[var(--indigo-deep)] text-white' : 'text-[var(--text-secondary)] hover:text-[var(--indigo-deep)]'}`}>हिं</button>
             </div>
             <span className={`text-sm px-3 py-1 rounded-full font-medium ${isGenerated ? 'bg-emerald-100 text-emerald-700' : report.status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
               {report.status}
@@ -2398,7 +2399,7 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
             {isGenerated && (
               <button onClick={handleDownload}
                 className="flex items-center gap-2 px-4 py-2 bg-[var(--indigo-deep)] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-opacity">
-                <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>print</span>
+                <Icon name="print" size={18} />
                 Save as PDF
               </button>
             )}
@@ -2409,14 +2410,14 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
         {!isGenerated ? (
           <div className="card-divine p-10 text-center no-print" style={{ background: 'linear-gradient(160deg, rgba(47,42,68,0.04), rgba(212,160,23,0.04))' }}>
             <SudarshanLoader size="lg" />
-            <p className="font-bold text-[var(--indigo-deep)] mt-4" style={{ fontFamily: "'Playfair Display', serif" }}>Report is being prepared…</p>
-            <p className="text-sm text-[var(--warm-charcoal)]/50 mt-1">This will update automatically once complete</p>
+            <p className="font-bold text-[var(--indigo-deep)] mt-4" style={{ fontFamily: "var(--font-display)" }}>Report is being prepared...</p>
+            <p className="text-sm text-[var(--text-muted)] mt-1">This will update automatically once complete</p>
           </div>
         ) : visibleChapters.length > 0 ? (
           <div className="no-print"><BookViewer chapters={visibleChapters} /></div>
         ) : (
           <div className="card-divine p-8 text-center no-print">
-            <p className="text-[var(--warm-charcoal)]/60">Report content not yet available.</p>
+            <p className="text-[var(--text-secondary)]">Report content not yet available.</p>
           </div>
         )}
 
@@ -2469,11 +2470,11 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
                   <div style={{ width: '60%', height: 1, background: 'rgba(200,146,42,0.4)', margin: '0 auto 10px' }} />
                   <div style={{ background: 'rgba(200,146,42,0.1)', border: '1px solid rgba(200,146,42,0.35)', borderRadius: 6, padding: '8px 10px', marginBottom: 10 }}>
                     <p style={{ fontSize: 9, color: '#6b3a2a', lineHeight: 1.6, margin: 0, fontStyle: 'italic' }}>
-                      "ज्ञानम् परमं बलम्" —<br />Knowledge is the highest power.
+                      "ज्ञानम् परमं बलम्" -<br />Knowledge is the highest power.
                     </p>
                   </div>
                   <p style={{ fontSize: 7.5, color: '#bbb', lineHeight: 1.5, margin: 0 }}>
-                    AI tools were utilized during development; all inventive steps, claims, and final outcomes are attributable to human ingenuity and supervision.
+                    All inventive steps, claims, and final outcomes are attributable to human ingenuity and supervision.
                   </p>
                 </div>
               </div>
@@ -2575,7 +2576,7 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
                   <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid #c8922a' }}>
                     <div style={{ fontSize: 13, fontWeight: 700, color: '#1a3a8c', marginBottom: 8 }}>Divine Wisdom Behind the Tathastu Report</div>
                     <p style={{ fontSize: 10.5, color: '#1a1a1a', lineHeight: 1.75, marginBottom: 12 }}>
-                      Preparing a Tathastu Report is not just a process — it is a sacred responsibility. Each report is carefully created based on multiple dimensions of life, integrating the wisdom of Vedic Astrology, Bhrigu Nandi Nadi, and Jaimini Jyotish.
+                      Preparing a Tathastu Report is not just a process - it is a sacred responsibility. Each report is carefully created based on multiple dimensions of life, integrating the wisdom of Vedic Astrology, Bhrigu Nandi Nadi, and Jaimini Jyotish.
                     </p>
                   </div>
 
@@ -2640,10 +2641,10 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
                   </div>
 
                   <div style={{ marginTop: 10, textAlign: 'center', background: '#1a3a8c', borderRadius: 6, padding: '8px 12px' }}>
-                    <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.7)', marginBottom: 3 }}>✓ Lifetime Report Support &nbsp; ✓ Complete Guidance & Remedies</div>
+                    <div style={{ fontSize: 9, color: 'var(--text-on-dark-secondary)', marginBottom: 3 }}>✓ Lifetime Report Support &nbsp; ✓ Complete Guidance & Remedies</div>
                     <div style={{ fontSize: 10, fontWeight: 700, color: '#c8922a' }}>With Remedies Contact:</div>
                     <div style={{ fontSize: 16, fontWeight: 900, color: 'white', marginTop: 2 }}>9858784784</div>
-                    <div style={{ fontSize: 8, color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>www.mahatathastu.com</div>
+                    <div style={{ fontSize: 8, color: 'var(--text-on-dark-secondary)', marginTop: 2 }}>www.mahatathastu.com</div>
                   </div>
                 </div>
               </div>
@@ -2654,7 +2655,7 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
           <div style={{ pageBreakAfter: 'always', background: '#fffdf7', fontFamily: 'Georgia, serif', padding: '36px 44px', outline: '1px solid rgba(200,146,42,0.4)', outlineOffset: '-8px' }}>
             <div style={{ textAlign: 'center', marginBottom: 20, paddingBottom: 14, borderBottom: '2px solid #c8922a' }}>
               <div style={{ fontSize: 28, color: '#cc2200', marginBottom: 4 }}>ॐ गं गणपतये नमः</div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: '#1a3a8c' }}>श्री गणपति मंत्र — Mangalacharana</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: '#1a3a8c' }}>श्री गणपति मंत्र - Mangalacharana</div>
               <div style={{ fontSize: 10, color: '#c8922a', marginTop: 4, letterSpacing: '0.15em' }}>AUSPICIOUS INVOCATION · CHANT BEFORE BEGINNING ANY SADHANA</div>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
@@ -2678,21 +2679,21 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
             </div>
             {/* Dvadasha Nama - full width */}
             <div style={{ marginTop: 14, background: '#1a3a8c', borderRadius: 10, padding: '14px 18px', color: 'white' }}>
-              <div style={{ fontSize: 10, fontWeight: 700, color: '#c8922a', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.15em' }}>Dvadasha Nama — 12 Sacred Names of Ganesha</div>
+              <div style={{ fontSize: 10, fontWeight: 700, color: '#c8922a', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.15em' }}>Dvadasha Nama - 12 Sacred Names of Ganesha</div>
               <div style={{ fontSize: 12, color: '#f5ede0', lineHeight: 1.9 }}>
                 सुमुख • एकदन्त • कपिल • गजकर्णक • लम्बोदर • विकट • विघ्ननाश • गणाधिप • धूमकेतु • गणाध्यक्ष • फालचन्द्र • गजानन
               </div>
-              <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.6)', marginTop: 6 }}>
+              <div style={{ fontSize: 9, color: 'var(--text-on-dark-secondary)', marginTop: 6 }}>
                 Recite these 12 names each morning for complete obstacle removal and divine blessings.
               </div>
             </div>
           </div>
 
-          {/* DVĀTRIṂŚAD GAṆAPATI PAGE — 32 Divine Forms */}
+          {/* DVĀTRIṂŚAD GAṆAPATI PAGE - 32 Divine Forms */}
           <div style={{ pageBreakAfter: 'always', background: '#fffdf7', fontFamily: 'Georgia, serif', padding: '32px 44px', outline: '1px solid rgba(200,146,42,0.4)', outlineOffset: '-8px' }}>
             <div style={{ textAlign: 'center', marginBottom: 16, paddingBottom: 12, borderBottom: '2px solid #c8922a' }}>
               <div style={{ fontSize: 22, color: '#cc2200', marginBottom: 3 }}>ॐ श्री गणेशाय नमः</div>
-              <div style={{ fontSize: 15, fontWeight: 700, color: '#1a3a8c' }}>द्वात्रिंशद् गणपति — 32 Divine Forms</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: '#1a3a8c' }}>द्वात्रिंशद् गणपति - 32 Divine Forms</div>
               <div style={{ fontSize: 9, color: '#c8922a', marginTop: 3, letterSpacing: '0.15em' }}>FROM MUDGALA PURĀṆA · RECITE EACH MANTRA 3× FOR COMPLETE PROTECTION & BLESSINGS</div>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: 7 }}>
@@ -2742,16 +2743,16 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
             </div>
             <div style={{ marginTop: 12, padding: '8px 14px', background: 'rgba(26,58,140,0.06)', borderRadius: 7, borderLeft: '3px solid #1a3a8c' }}>
               <div style={{ fontSize: 8, color: '#1a3a8c', lineHeight: 1.8 }}>
-                <strong>Dvātriṃśad Gaṇapati Pāṭha:</strong> Recite all 32 mantras 3× each — ideally on Ganesh Chaturthi or Sankashti Chaturthi — while offering durva grass or modak. Completing this pāṭha bestows supreme protection, removal of all obstacles, and Ganesha&apos;s complete blessings across all 32 dimensions of life.
+                <strong>Dvātriṃśad Gaṇapati Pāṭha:</strong> Recite all 32 mantras 3× each - ideally on Ganesh Chaturthi or Sankashti Chaturthi - while offering durva grass or modak. Completing this pāṭha bestows supreme protection, removal of all obstacles, and Ganesha&apos;s complete blessings across all 32 dimensions of life.
               </div>
             </div>
           </div>
 
           {/* TABLE OF CONTENTS */}
           <div style={{ padding: '44px', pageBreakAfter: 'always' }}>
-            <div style={{ borderBottom: '2px solid #D4A017', paddingBottom: 14, marginBottom: 28 }}>
-              <p style={{ fontSize: 10, color: '#D4A017', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 4 }}>Navigation</p>
-              <h2 style={{ fontFamily: 'Georgia, serif', fontSize: 22, color: '#2F2A44', fontWeight: 700, margin: 0 }}>Table of Contents</h2>
+            <div style={{ borderBottom: '2px solid #C9992E', paddingBottom: 14, marginBottom: 28 }}>
+              <p style={{ fontSize: 10, color: '#C9992E', letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: 4 }}>Navigation</p>
+              <h2 style={{ fontFamily: 'Georgia, serif', fontSize: 22, color: '#1E1630', fontWeight: 700, margin: 0 }}>Table of Contents</h2>
             </div>
             {[
               { label: 'Cover', desc: 'Report Identity & Date' },
@@ -2760,7 +2761,7 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
               { label: 'Appendix', desc: 'Disclaimer, Guidance Notes & Closing' },
             ].map((item, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '9px 0', borderBottom: '1px solid #f3f4f6' }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: '#D4A017', width: 100, flexShrink: 0 }}>{item.label}</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: '#C9992E', width: 100, flexShrink: 0 }}>{item.label}</span>
                 <div style={{ flex: 1, borderBottom: '1px dashed #d1d5db', height: 1 }} />
                 <span style={{ fontSize: 11, color: '#374151', maxWidth: 300, textAlign: 'right' }}>{item.desc}</span>
               </div>

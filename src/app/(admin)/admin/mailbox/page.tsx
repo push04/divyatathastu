@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
+import Icon from '@/components/ui/Icon'
 interface Thread { id: string; subject: string; status: string; created_at: string; last_message_at: string; profiles: { full_name: string } | null }
 interface Message { id: string; thread_id: string; sender_id: string; content: string; created_at: string }
 
@@ -11,7 +12,7 @@ function FilterBar({ filter, setFilter }: { filter: string; setFilter: (f: strin
   return (
     <div className="flex gap-1">
       {['open', 'closed'].map(f => (
-        <button key={f} onClick={() => setFilter(f)} className={`flex-1 py-1.5 rounded-lg text-xs font-medium capitalize transition-all ${filter === f ? 'bg-[var(--indigo-deep)] text-white' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>{f}</button>
+        <button key={f} onClick={() => setFilter(f)} className={`flex-1 py-1.5 rounded-lg text-xs font-medium capitalize transition-all ${filter === f ? 'bg-[var(--indigo-deep)] text-white' : 'bg-[var(--warm-sand)] text-[var(--text-secondary)]'}`}>{f}</button>
       ))}
     </div>
   )
@@ -71,11 +72,11 @@ export default function AdminMailboxPage() {
           {threads.map(t => (
             <button key={t.id} onClick={() => setActive(t)} className={`w-full text-left p-3 border-b border-[var(--warm-sand)]/60 hover:bg-[var(--warm-sand)]/30 transition-colors ${active?.id === t.id ? 'bg-[var(--warm-sand)]/40 border-l-2 border-l-[var(--terracotta)]' : ''}`}>
               <p className="text-sm font-semibold text-[var(--indigo-deep)] truncate">{t.subject}</p>
-              <p className="text-xs text-[var(--warm-charcoal)]/50">{(t.profiles as any)?.full_name || 'Unknown'}</p>
-              <p className="text-xs text-[var(--warm-charcoal)]/30">{new Date(t.last_message_at).toLocaleDateString('en-IN')}</p>
+              <p className="text-xs text-[var(--text-muted)]">{(t.profiles as any)?.full_name || 'Unknown'}</p>
+              <p className="text-xs text-[var(--text-muted)]">{new Date(t.last_message_at).toLocaleDateString('en-IN')}</p>
             </button>
           ))}
-          {threads.length === 0 && <p className="p-4 text-sm text-[var(--warm-charcoal)]/40 text-center">No {filter} tickets</p>}
+          {threads.length === 0 && <p className="p-4 text-sm text-[var(--text-muted)] text-center">No {filter} tickets</p>}
         </div>
       </div>
 
@@ -87,10 +88,10 @@ export default function AdminMailboxPage() {
             {threads.map(t => (
               <button key={t.id} onClick={() => setActive(t)} className="w-full text-left p-3 border-b border-[var(--warm-sand)]/60 hover:bg-[var(--warm-sand)]/30 transition-colors">
                 <p className="text-sm font-semibold text-[var(--indigo-deep)] truncate">{t.subject}</p>
-                <p className="text-xs text-[var(--warm-charcoal)]/50">{(t.profiles as any)?.full_name || 'Unknown'}</p>
+                <p className="text-xs text-[var(--text-muted)]">{(t.profiles as any)?.full_name || 'Unknown'}</p>
               </button>
             ))}
-            {threads.length === 0 && <p className="p-4 text-sm text-[var(--warm-charcoal)]/40 text-center">No {filter} tickets</p>}
+            {threads.length === 0 && <p className="p-4 text-sm text-[var(--text-muted)] text-center">No {filter} tickets</p>}
           </div>
         </div>
       )}
@@ -100,12 +101,12 @@ export default function AdminMailboxPage() {
         {active ? (
           <>
             <div className="px-4 lg:px-6 py-3 border-b border-[var(--warm-sand)] bg-white flex items-center justify-between gap-3">
-              <button onClick={() => setActive(null)} className="lg:hidden text-[var(--warm-charcoal)]/40 hover:text-[var(--warm-charcoal)]">
-                <span className="material-symbols-outlined text-[20px]">arrow_back</span>
+              <button onClick={() => setActive(null)} className="lg:hidden text-[var(--text-muted)] hover:text-[var(--warm-charcoal)]">
+                <Icon name="arrow_back" size={20} />
               </button>
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-[var(--indigo-deep)] truncate">{active.subject}</p>
-                <p className="text-xs text-[var(--warm-charcoal)]/40">{(active.profiles as any)?.full_name}</p>
+                <p className="text-xs text-[var(--text-muted)]">{(active.profiles as any)?.full_name}</p>
               </div>
               {filter === 'open' && <button onClick={() => closeThread(active.id)} className="text-xs text-red-500 border border-red-200 px-3 py-1 rounded-lg hover:bg-red-50 transition-colors">Close Thread</button>}
             </div>
@@ -113,7 +114,7 @@ export default function AdminMailboxPage() {
               {messages.map(m => (
                 <div key={m.id} className={`flex ${m.sender_id === userId ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[70%] rounded-xl px-4 py-2.5 text-sm ${m.sender_id === userId ? 'bg-[var(--indigo-deep)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--warm-charcoal)]'}`}>
-                    {m.sender_id === userId && <p className="text-xs font-bold text-white/50 mb-1">Support Agent</p>}
+                    {m.sender_id === userId && <p className="text-xs font-bold text-[var(--text-on-dark-secondary)] mb-1">Support Agent</p>}
                     <p>{m.content}</p>
                   </div>
                 </div>
@@ -130,8 +131,8 @@ export default function AdminMailboxPage() {
         ) : (
           <div className="flex-1 flex items-center justify-center text-center">
             <div>
-              <span className="material-symbols-outlined text-[56px] text-[var(--warm-charcoal)]/20 mb-3 block" style={{ fontVariationSettings: "'FILL' 1" }}>mail</span>
-              <p className="text-[var(--warm-charcoal)]/40">Select a thread to view</p>
+              <Icon name="mail" size={56} className="text-[var(--warm-charcoal)]/20 mb-3 block" />
+              <p className="text-[var(--text-muted)]">Select a thread to view</p>
             </div>
           </div>
         )}

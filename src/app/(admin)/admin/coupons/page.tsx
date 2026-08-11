@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
+import Icon from '@/components/ui/Icon'
 interface Coupon {
   id: string; code: string; discount_type: 'percentage' | 'flat'; discount_value: number
   min_order_amount: number; max_uses: number | null; used_count: number
@@ -91,55 +92,55 @@ export default function AdminCouponsPage() {
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-xl font-bold text-[var(--indigo-deep)] flex items-center gap-2">
-        <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>redeem</span>
-        Coupons <span className="text-[var(--warm-charcoal)]/40 font-normal">({coupons.length})</span>
+        <Icon name="redeem" size={20} />
+        Coupons <span className="text-[var(--text-muted)] font-normal">({coupons.length})</span>
       </h1>
 
       {/* Create / Edit form */}
       <div className="card-divine p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-bold text-[var(--indigo-deep)] flex items-center gap-2">
-            <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>{editingId ? 'edit' : 'add_circle'}</span>
+            <Icon name={editingId ? 'edit' : 'add_circle'} size={16} />
             {editingId ? 'Edit Coupon' : 'Create New Coupon'}
           </h2>
           {editingId && (
-            <button onClick={resetForm} className="text-xs text-[var(--warm-charcoal)]/50 hover:text-red-500 flex items-center gap-1 transition-colors">
-              <span className="material-symbols-outlined text-[14px]">close</span> Cancel
+            <button onClick={resetForm} className="text-xs text-[var(--text-muted)] hover:text-red-500 flex items-center gap-1 transition-colors">
+              <Icon name="close" size={14} /> Cancel
             </button>
           )}
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Code *</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Code *</label>
             <input type="text" value={form.code} onChange={e => setForm(f => ({ ...f, code: e.target.value.toUpperCase() }))} placeholder="SAVE20" className={`${inputCls} uppercase font-mono`} disabled={!!editingId} />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Type</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Type</label>
             <select value={form.discount_type} onChange={e => setForm(f => ({ ...f, discount_type: e.target.value }))} className={inputCls}>
               <option value="percentage">Percentage (%)</option>
               <option value="flat">Fixed Amount (₹)</option>
             </select>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Value</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Value</label>
             <input type="number" value={form.discount_value} onChange={e => setForm(f => ({ ...f, discount_value: Number(e.target.value) }))} className={inputCls} />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Min Order (₹)</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Min Order (₹)</label>
             <input type="number" value={form.min_order_amount} onChange={e => setForm(f => ({ ...f, min_order_amount: Number(e.target.value) }))} className={inputCls} />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Max Uses (blank = unlimited)</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Max Uses (blank = unlimited)</label>
             <input type="number" value={form.max_uses} onChange={e => setForm(f => ({ ...f, max_uses: e.target.value }))} className={inputCls} />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Expires At</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Expires At</label>
             <input type="date" value={form.expires_at} onChange={e => setForm(f => ({ ...f, expires_at: e.target.value }))} min={new Date().toISOString().split('T')[0]} className={inputCls} />
           </div>
         </div>
         <button onClick={saveCoupon} disabled={saving} className="mt-4 btn-divine px-6 py-2 text-sm disabled:opacity-50 inline-flex items-center gap-2">
-          <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>{saving ? 'hourglass_empty' : editingId ? 'save' : 'redeem'}</span>
+          <Icon name={saving ? 'hourglass_empty' : editingId ? 'save' : 'redeem'} size={16} />
           {saving ? 'Saving...' : editingId ? 'Save Changes' : 'Create Coupon'}
         </button>
       </div>
@@ -149,7 +150,7 @@ export default function AdminCouponsPage() {
           <thead className="bg-[var(--warm-sand)]/40 border-b border-[var(--warm-sand)]">
             <tr>
               {['Code', 'Discount', 'Min Order', 'Used', 'Expires', 'Status', 'Actions'].map(h => (
-                <th key={h} className="text-left px-4 py-3 font-semibold text-[var(--warm-charcoal)]/60 text-xs uppercase tracking-wide">{h}</th>
+                <th key={h} className="text-left px-4 py-3 font-semibold text-[var(--text-secondary)] text-xs uppercase tracking-wide">{h}</th>
               ))}
             </tr>
           </thead>
@@ -158,11 +159,11 @@ export default function AdminCouponsPage() {
               <tr key={c.id} className={`hover:bg-[var(--warm-sand)]/20 transition-colors ${editingId === c.id ? 'bg-amber-50' : ''}`}>
                 <td className="px-4 py-3 font-bold text-[var(--indigo-deep)] font-mono tracking-wider">{c.code}</td>
                 <td className="px-4 py-3 text-[var(--warm-charcoal)]">{c.discount_type === 'percentage' ? `${c.discount_value}%` : `₹${c.discount_value}`}</td>
-                <td className="px-4 py-3 text-[var(--warm-charcoal)]/60">₹{c.min_order_amount}</td>
-                <td className="px-4 py-3 text-[var(--warm-charcoal)]/60">{c.used_count}{c.max_uses ? `/${c.max_uses}` : ''}</td>
-                <td className="px-4 py-3 text-[var(--warm-charcoal)]/60 text-xs">{c.expires_at ? new Date(c.expires_at).toLocaleDateString('en-IN') : 'Never'}</td>
+                <td className="px-4 py-3 text-[var(--text-secondary)]">₹{c.min_order_amount}</td>
+                <td className="px-4 py-3 text-[var(--text-secondary)]">{c.used_count}{c.max_uses ? `/${c.max_uses}` : ''}</td>
+                <td className="px-4 py-3 text-[var(--text-secondary)] text-xs">{c.expires_at ? new Date(c.expires_at).toLocaleDateString('en-IN') : 'Never'}</td>
                 <td className="px-4 py-3">
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${c.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/50'}`}>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${c.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--warm-sand)] text-[var(--text-muted)]'}`}>
                     {c.is_active ? 'Active' : 'Inactive'}
                   </span>
                 </td>
@@ -177,7 +178,7 @@ export default function AdminCouponsPage() {
             ))}
           </tbody>
         </table>
-        {coupons.length === 0 && <div className="text-center py-12"><p className="text-[var(--warm-charcoal)]/40 text-sm">No coupons yet</p></div>}
+        {coupons.length === 0 && <div className="text-center py-12"><p className="text-[var(--text-muted)] text-sm">No coupons yet</p></div>}
       </div>
     </div>
   )

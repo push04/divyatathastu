@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react'
 import { cn } from '@/lib/utils/cn'
 import { createClient } from '@/lib/supabase/client'
 
+import Icon from '@/components/ui/Icon'
 const adminNav = [
   { href: '/admin', label: 'Overview', icon: 'bar_chart' },
   { href: '/admin/users', label: 'Users', icon: 'group' },
@@ -24,6 +25,7 @@ const adminNav = [
   { href: '/admin/handwritten-reports', label: 'Handwritten Reports', icon: 'draw' },
   { href: '/admin/courses', label: 'Courses', icon: 'school' },
   { href: '/admin/services', label: 'Divine Services', icon: 'spa' },
+  { href: '/admin/reviews', label: 'Reviews', icon: 'rate_review' },
   { href: '/admin/coupons', label: 'Coupons', icon: 'redeem' },
   { href: '/admin/report-pricing', label: 'Report Pricing', icon: 'price_change' },
   { href: '/admin/notifications', label: 'Notifications', icon: 'notifications' },
@@ -37,13 +39,13 @@ function AdminSidebarContent({ onClose }: { onClose?: () => void }) {
         <div className="flex items-center gap-2.5">
           <SudarshanLoader px={28} />
           <div>
-            <div className="text-sm font-bold text-white/80">MahaTathastu</div>
-            <div className="text-xs text-white/40 mt-0.5">Admin Panel</div>
+            <div className="text-sm font-bold text-[var(--text-on-dark)]">MahaTathastu</div>
+            <div className="text-xs text-[var(--text-on-dark-muted)] mt-0.5">Admin Panel</div>
           </div>
         </div>
         {onClose && (
-          <button onClick={onClose} className="lg:hidden text-white/50 hover:text-white p-1">
-            <span className="material-symbols-outlined text-[20px]">close</span>
+          <button onClick={onClose} className="lg:hidden text-[var(--text-on-dark-secondary)] hover:text-white p-1">
+            <Icon name="close" size={20} />
           </button>
         )}
       </div>
@@ -58,23 +60,18 @@ function AdminSidebarContent({ onClose }: { onClose?: () => void }) {
                 'flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-all',
                 active
                   ? 'bg-white/20 text-white'
-                  : 'text-white/60 hover:text-white hover:bg-white/10'
+                  : 'text-[var(--text-on-dark-secondary)] hover:text-white hover:bg-white/10'
               )}
             >
-              <span
-                className="material-symbols-outlined text-[18px]"
-                style={{ fontVariationSettings: active ? "'FILL' 1" : "'FILL' 0" }}
-              >
-                {icon}
-              </span>
+              <Icon name={icon} size={18} />
               {label}
             </Link>
           )
         })}
       </nav>
       <div className="px-4 py-4 border-t border-white/10">
-        <Link href="/dashboard" className="text-xs text-white/40 hover:text-white flex items-center gap-1">
-          <span className="material-symbols-outlined text-[14px]">arrow_back</span>
+        <Link href="/dashboard" className="text-xs text-[var(--text-on-dark-muted)] hover:text-white flex items-center gap-1">
+          <Icon name="arrow_back" size={14} />
           Back to App
         </Link>
       </div>
@@ -119,10 +116,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="lg:hidden fixed top-0 left-0 right-0 z-40 h-14 bg-[var(--indigo-deep)] text-white flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <SudarshanLoader px={22} />
-          <span className="text-sm font-bold text-white/80">MahaTathastu</span>
+          <span className="text-sm font-bold text-[var(--text-on-dark)]">MahaTathastu</span>
         </div>
-        <button onClick={() => setMobileOpen(true)} className="text-white/70 hover:text-white p-1">
-          <span className="material-symbols-outlined text-[22px]">menu</span>
+        <button onClick={() => setMobileOpen(true)} className="text-[var(--text-on-dark-secondary)] hover:text-white p-1">
+          <Icon name="menu" size={22} />
         </button>
       </div>
 

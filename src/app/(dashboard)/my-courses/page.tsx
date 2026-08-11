@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import SudarshanLoader from '@/components/SudarshanLoader'
 
+import Icon from '@/components/ui/Icon'
 interface EnrolledCourse {
   booking_id: string
   enrolled_at: string
@@ -128,12 +129,12 @@ export default function MyCoursesPage() {
               <div className="flex items-start justify-between mb-4 px-1">
                 <div>
                   <h3 className="text-white font-bold text-lg leading-tight"
-                    style={{ fontFamily: "'Playfair Display', serif" }}>
+                    style={{ fontFamily: "var(--font-display)" }}>
                     {videoModal.course.title}
                   </h3>
                   {videoModal.course.instructor_name && (
-                    <p className="text-white/50 text-sm mt-1 flex items-center gap-1.5">
-                      <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>person</span>
+                    <p className="text-[var(--text-on-dark-secondary)] text-sm mt-1 flex items-center gap-1.5">
+                      <Icon name="person" size={14} />
                       with {videoModal.course.instructor_name}
                     </p>
                   )}
@@ -141,7 +142,7 @@ export default function MyCoursesPage() {
                 <button
                   onClick={() => setVideoModal(null)}
                   className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all ml-4 shrink-0">
-                  <span className="material-symbols-outlined text-[20px]">close</span>
+                  <Icon name="close" size={20} />
                 </button>
               </div>
 
@@ -158,16 +159,16 @@ export default function MyCoursesPage() {
                   />
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center h-64 rounded-2xl text-white/40 gap-4"
+                <div className="flex flex-col items-center justify-center h-64 rounded-2xl text-[var(--text-on-dark-muted)] gap-4"
                   style={{ background: 'rgba(255,255,255,0.04)' }}>
-                  <span className="material-symbols-outlined text-[48px]" style={{ fontVariationSettings: "'FILL' 0" }}>videocam_off</span>
+                  <Icon name="videocam_off" size={48} />
                   <p className="text-sm">Course video not yet available</p>
                   <p className="text-xs text-white/25">Our team will share access within 24 hours of enrollment</p>
                 </div>
               )}
 
               {videoModal.course.description && (
-                <p className="text-white/40 text-xs mt-4 px-1 leading-relaxed line-clamp-3">
+                <p className="text-[var(--text-on-dark-muted)] text-xs mt-4 px-1 leading-relaxed line-clamp-3">
                   {videoModal.course.description}
                 </p>
               )}
@@ -182,10 +183,10 @@ export default function MyCoursesPage() {
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg shrink-0"
               style={{ background: 'linear-gradient(135deg, #312e81, #4338ca)' }}>
-              <span className="material-symbols-outlined text-white text-[28px]" style={{ fontVariationSettings: "'FILL' 1" }}>school</span>
+              <Icon name="school" size={28} className="text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-black text-[#1e1b4b] tracking-wide" style={{ fontFamily: "'Playfair Display', serif" }}>My Courses</h1>
+              <h1 className="text-3xl font-black text-[#1e1b4b] tracking-wide" style={{ fontFamily: "var(--font-display)" }}>My Courses</h1>
               <p className="text-sm text-[#312e81]/60 mt-0.5">Your enrolled learning programs</p>
             </div>
           </div>
@@ -198,8 +199,8 @@ export default function MyCoursesPage() {
                 { n: courses.filter(c => !c.course.is_live).length, l: 'Recorded' },
               ].map(s => (
                 <div key={s.l} className="text-center">
-                  <div className="text-2xl font-black" style={{ color: 'var(--terracotta)', fontFamily: "'Playfair Display', serif" }}>{s.n}</div>
-                  <div className="text-[10px] uppercase tracking-widest text-[#312e81]/50 mt-0.5" style={{ fontFamily: "'Sora', sans-serif" }}>{s.l}</div>
+                  <div className="text-2xl font-black" style={{ color: 'var(--terracotta)', fontFamily: "var(--font-display)" }}>{s.n}</div>
+                  <div className="text-[12px] uppercase tracking-widest text-[#312e81]/50 mt-0.5" style={{ fontFamily: "var(--font-label)" }}>{s.l}</div>
                 </div>
               ))}
             </div>
@@ -212,21 +213,21 @@ export default function MyCoursesPage() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 gap-5">
             <SudarshanLoader size="md" />
-            <p className="text-[var(--warm-charcoal)]/40 text-sm">Loading your courses…</p>
+            <p className="text-[var(--text-muted)] text-sm">Loading your courses...</p>
           </div>
         ) : courses.length === 0 ? (
           /* ── Empty state ── */
           <div className="bento-card p-10 sm:p-16 text-center max-w-lg mx-auto mt-8">
             <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"
               style={{ background: 'linear-gradient(135deg, #eef2ff, #e0e7ff)' }}>
-              <span className="material-symbols-outlined text-[40px] text-[var(--indigo-deep)]" style={{ fontVariationSettings: "'FILL' 0" }}>school</span>
+              <Icon name="school" size={40} className="text-[var(--indigo-deep)]" />
             </div>
-            <h2 className="text-xl font-bold text-[var(--indigo-deep)] mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>No Courses Yet</h2>
-            <p className="text-sm text-[var(--warm-charcoal)]/50 leading-relaxed mb-7">
+            <h2 className="text-xl font-bold text-[var(--indigo-deep)] mb-3" style={{ fontFamily: "var(--font-display)" }}>No Courses Yet</h2>
+            <p className="text-sm text-[var(--text-muted)] leading-relaxed mb-7">
               You haven&apos;t enrolled in any courses yet. Browse our Vedic science curriculum and begin your journey.
             </p>
             <Link href="/courses" className="btn-divine px-8 py-3 inline-flex items-center gap-2 text-sm">
-              <span className="material-symbols-outlined text-[18px]">explore</span>
+              <Icon name="explore" size={18} />
               Browse Courses
             </Link>
           </div>
@@ -236,11 +237,11 @@ export default function MyCoursesPage() {
             {courses.length > 2 && (
               <div className="mb-6">
                 <div className="relative max-w-xs">
-                  <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--warm-charcoal)]/35 text-[18px]">search</span>
+                  <Icon name="search" size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
                   <input
                     value={search}
                     onChange={e => setSearch(e.target.value)}
-                    placeholder="Search courses…"
+                    placeholder="Search courses..."
                     className="w-full pl-9 pr-4 py-2.5 text-sm border border-[var(--warm-sand)] rounded-xl focus:outline-none focus:border-[var(--indigo-deep)] bg-white"
                   />
                 </div>
@@ -268,7 +269,7 @@ export default function MyCoursesPage() {
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                           <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(30,27,75,0.55) 0%, transparent 55%)' }} />
                           {ec.course.is_live && (
-                            <span className="absolute top-3 left-3 text-[10px] px-2.5 py-0.5 rounded-full bg-red-500 text-white font-bold shadow">LIVE</span>
+                            <span className="absolute top-3 left-3 text-[12px] px-2.5 py-0.5 rounded-full bg-red-500 text-white font-bold shadow">LIVE</span>
                           )}
                           {hasVideo && (
                             <button
@@ -276,7 +277,7 @@ export default function MyCoursesPage() {
                               className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                             >
                               <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border border-white/30">
-                                <span className="material-symbols-outlined text-white text-[32px]" style={{ fontVariationSettings: "'FILL' 1" }}>play_arrow</span>
+                                <Icon name="play_arrow" size={32} className="text-white" />
                               </div>
                             </button>
                           )}
@@ -284,16 +285,16 @@ export default function MyCoursesPage() {
                       ) : (
                         <div className="relative w-full h-36 flex items-center justify-center"
                           style={{ background: 'linear-gradient(135deg, #312e81 0%, #4338ca 100%)' }}>
-                          <span className="material-symbols-outlined text-[56px] text-white/15" style={{ fontVariationSettings: "'FILL' 0" }}>menu_book</span>
+                          <Icon name="menu_book" size={56} className="text-white/15" />
                           {ec.course.is_live && (
-                            <span className="absolute top-3 left-3 text-[10px] px-2.5 py-0.5 rounded-full bg-red-500 text-white font-bold">LIVE</span>
+                            <span className="absolute top-3 left-3 text-[12px] px-2.5 py-0.5 rounded-full bg-red-500 text-white font-bold">LIVE</span>
                           )}
                           {hasVideo && (
                             <button
                               onClick={() => setVideoModal(ec)}
                               className="absolute inset-0 flex items-center justify-center group/play">
                               <div className="w-14 h-14 rounded-full bg-white/15 group-hover/play:bg-white/25 flex items-center justify-center border border-white/20 transition-all">
-                                <span className="material-symbols-outlined text-white text-[30px]" style={{ fontVariationSettings: "'FILL' 1" }}>play_arrow</span>
+                                <Icon name="play_arrow" size={30} className="text-white" />
                               </div>
                             </button>
                           )}
@@ -303,44 +304,44 @@ export default function MyCoursesPage() {
                       <div className="p-5 flex flex-col flex-1">
                         {/* Level + badge */}
                         <div className="flex gap-1.5 flex-wrap mb-2.5">
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold flex items-center gap-1">
-                            <span className="material-symbols-outlined text-[11px]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                          <span className="text-[12px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-semibold flex items-center gap-1">
+                            <Icon name="check_circle" size={13} />
                             Enrolled
                           </span>
                           {ec.course.level && (
-                            <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
+                            <span className="text-[12px] px-2 py-0.5 rounded-full font-semibold"
                               style={{ background: 'rgba(99,102,241,0.1)', color: '#3730a3' }}>
                               {ec.course.level}
                             </span>
                           )}
                           {ec.course.badge_text && (
-                            <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
-                              style={{ background: `${ec.course.badge_color || '#D4A017'}18`, color: ec.course.badge_color || '#D4A017' }}>
+                            <span className="text-[12px] px-2 py-0.5 rounded-full font-semibold"
+                              style={{ background: `${ec.course.badge_color || '#C9992E'}18`, color: ec.course.badge_color || '#C9992E' }}>
                               {ec.course.badge_text}
                             </span>
                           )}
                         </div>
 
                         <h3 className="font-bold text-[var(--indigo-deep)] text-sm leading-snug mb-2"
-                          style={{ fontFamily: "'Playfair Display', serif" }}>
+                          style={{ fontFamily: "var(--font-display)" }}>
                           {ec.course.title}
                         </h3>
 
                         {ec.course.instructor_name && (
-                          <p className="text-[11px] text-[var(--saffron)] mb-2 flex items-center gap-1">
-                            <span className="material-symbols-outlined text-[13px]" style={{ fontVariationSettings: "'FILL' 1" }}>person</span>
+                          <p className="text-[13px] text-[var(--saffron)] mb-2 flex items-center gap-1">
+                            <Icon name="person" size={14} />
                             {ec.course.instructor_name}
                           </p>
                         )}
 
                         {ec.course.duration && (
-                          <p className="text-[11px] text-[var(--warm-charcoal)]/40 mb-2 flex items-center gap-1">
-                            <span className="material-symbols-outlined text-[12px]">schedule</span>
+                          <p className="text-[13px] text-[var(--text-muted)] mb-2 flex items-center gap-1">
+                            <Icon name="schedule" size={13} />
                             {ec.course.duration}
                           </p>
                         )}
 
-                        <p className="text-[10px] text-[var(--warm-charcoal)]/35 mt-auto pt-3 border-t border-[var(--outline-variant)]/20">
+                        <p className="text-[12px] text-[var(--text-muted)] mt-auto pt-3 border-t border-[var(--outline-variant)]/20">
                           Enrolled {enrolledAt(ec.enrolled_at)}
                           {ec.amount > 0 && ` · ₹${ec.amount.toLocaleString('en-IN')} paid`}
                         </p>
@@ -350,21 +351,21 @@ export default function MyCoursesPage() {
                       <div className="px-5 pb-4 flex gap-2">
                         <Link href={`/my-courses/${ec.course.id}`}
                           className="flex-1 btn-divine text-xs py-2.5 inline-flex items-center justify-center gap-1.5">
-                          <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>play_lesson</span>
+                          <Icon name="play_lesson" size={16} />
                           Open Course
                         </Link>
                         {hasVideo && (
                           <button
                             onClick={() => setVideoModal(ec)}
                             title="Quick preview"
-                            className="w-10 h-10 rounded-xl flex items-center justify-center border border-[var(--warm-sand)] text-[var(--indigo-deep)]/50 hover:border-[var(--indigo-deep)] hover:text-[var(--indigo-deep)] transition-all">
-                            <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>play_circle</span>
+                            className="w-10 h-10 rounded-xl flex items-center justify-center border border-[var(--warm-sand)] text-[var(--text-muted)] hover:border-[var(--indigo-deep)] hover:text-[var(--indigo-deep)] transition-all">
+                            <Icon name="play_circle" size={18} />
                           </button>
                         )}
                         <Link href="/courses"
-                          className="w-10 h-10 rounded-xl flex items-center justify-center border border-[var(--warm-sand)] text-[var(--indigo-deep)]/40 hover:border-[var(--indigo-deep)] hover:text-[var(--indigo-deep)] transition-all"
+                          className="w-10 h-10 rounded-xl flex items-center justify-center border border-[var(--warm-sand)] text-[var(--text-muted)] hover:border-[var(--indigo-deep)] hover:text-[var(--indigo-deep)] transition-all"
                           title="Browse more courses">
-                          <span className="material-symbols-outlined text-[18px]">explore</span>
+                          <Icon name="explore" size={18} />
                         </Link>
                       </div>
                     </motion.div>
@@ -377,7 +378,7 @@ export default function MyCoursesPage() {
             <div className="mt-10 text-center">
               <Link href="/courses"
                 className="btn-outline-divine px-8 py-3 inline-flex items-center gap-2 text-sm">
-                <span className="material-symbols-outlined text-[18px]">explore</span>
+                <Icon name="explore" size={18} />
                 Browse More Courses
               </Link>
             </div>

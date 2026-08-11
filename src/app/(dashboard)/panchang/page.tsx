@@ -5,6 +5,7 @@ import SudarshanLoader from '@/components/SudarshanLoader'
 import { useEffect, useState, useRef } from 'react'
 import { getSavedCity, saveCity } from '@/lib/utils/getLocation'
 
+import Icon from '@/components/ui/Icon'
 interface ChogPeriod {
   name: string; quality: string; color: string
   start: string; end: string; startH: number; endH: number; period: 'day' | 'night'
@@ -15,6 +16,13 @@ interface HoraPeriod {
 interface DoGhatiPeriod {
   name: string; kala: string; period: 'day' | 'night'; nakshatra: string
   start: string; end: string; startH: number; endH: number; index: number
+}
+
+interface Span {
+  index: number; name: string
+  start: string; end: string
+  startH: number; endH: number
+  endsNextDay: boolean
 }
 
 interface PanchangData {
@@ -29,6 +37,14 @@ interface PanchangData {
   hora: HoraPeriod[]
   choghadiya: ChogPeriod[]
   doGhatiMuhurt: DoGhatiPeriod[]
+  // A civil day almost always carries two nakshatras (and sometimes two
+  // tithis). These arrays hold every element active from sunrise to the next
+  // sunrise; the scalar fields above remain the value at sunrise.
+  nakshatraSpans?: Span[]
+  tithiSpans?: Span[]
+  yogaSpans?: Span[]
+  karanaSpans?: Span[]
+  vedicDayEnd?: string
 }
 
 const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December']
@@ -46,11 +62,17 @@ const CITIES = [
   { name: 'Jaipur',     lat: 26.9124, lng: 75.7873 },
 ]
 
+// The five angas. Each can change during the day, so each renders its full
+// list of spans rather than a single value.
+const ANGA_ITEMS = [
+  { key: 'tithi',     spanKey: 'tithiSpans',     icon: 'dark_mode',    label: 'Tithi',     desc: 'Lunar day' },
+  { key: 'nakshatra', spanKey: 'nakshatraSpans', icon: 'star',         label: 'Nakshatra', desc: 'Lunar mansion' },
+  { key: 'yoga',      spanKey: 'yogaSpans',      icon: 'brightness_7', label: 'Yoga',      desc: 'Sun-Moon combination' },
+  { key: 'karana',    spanKey: 'karanaSpans',    icon: 'bolt',         label: 'Karana',    desc: 'Half-tithi period' },
+] as const
+
+// Fixed values - one number for the whole day.
 const DATA_ITEMS = [
-  { key: 'tithi',          icon: 'dark_mode',    label: 'Tithi',           desc: 'Lunar day',             accent: false },
-  { key: 'nakshatra',      icon: 'star',         label: 'Nakshatra',       desc: 'Lunar mansion',         accent: false },
-  { key: 'yoga',           icon: 'brightness_7', label: 'Yoga',            desc: 'Sun-Moon combination',  accent: false },
-  { key: 'karana',         icon: 'bolt',         label: 'Karana',          desc: 'Half-tithi period',     accent: false },
   { key: 'sunrise',        icon: 'light_mode',   label: 'Sunrise',         desc: 'Best time for prayers', accent: false },
   { key: 'sunset',         icon: 'wb_twilight',  label: 'Sunset',          desc: 'Evening aarti time',    accent: false },
   { key: 'moonSign',       icon: 'nightlight',   label: 'Moon Sign',       desc: 'Chandra Rashi',         accent: false },
@@ -67,6 +89,74 @@ const PLANET_SYMBOL: Record<string, string> = {
 const CHOG_MEANING: Record<string, string> = {
   Amrit: 'Very Auspicious', Shubh: 'Auspicious', Labh: 'Profitable', Char: 'Travel/Movement',
   Udveg: 'Avoid', Rog: 'Inauspicious', Kaal: 'Inauspicious',
+}
+
+/* ── Anga card ──────────────────────────────────────────────────────
+   Renders one of the five angas across the whole Vedic day. Most days hold
+   two nakshatras; showing only the sunrise value (as this page used to) is
+   wrong from the moment the first one ends. Each span carries the clock time
+   it hands over, and the span covering "now" is highlighted on today's date.
+   ─────────────────────────────────────────────────────────────────── */
+function AngaCard({ icon, label, desc, spans, fallback, nowH, isToday }: {
+  icon: string; label: string; desc: string
+  spans: Span[] | undefined; fallback: string
+  nowH: number; isToday: boolean
+}) {
+  const list = spans && spans.length > 0 ? spans : null
+  // `nowH` is 0-24; spans past midnight carry endH > 24, so compare against
+  // both the raw hour and its +24 form.
+  const isNow = (s: Span) =>
+    isToday && ((nowH >= s.startH && nowH < s.endH) || (nowH + 24 >= s.startH && nowH + 24 < s.endH))
+
+  return (
+    <div className="rounded-xl p-4" style={{ background: 'var(--warm-sand)', border: '1px solid transparent' }}>
+      <div className="flex items-center gap-2 mb-2.5">
+        <Icon name={icon} size={18} style={{ color: 'var(--terracotta)' }} />
+        <span style={{ fontFamily: "var(--font-label)", fontSize: 12, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: 'rgba(28,30,74,0.55)' }}>
+          {label}
+        </span>
+        {list && list.length > 1 && (
+          <span className="ml-auto px-2 py-0.5 rounded-full font-bold"
+            style={{ fontSize: 11, background: 'rgba(198,125,83,0.14)', color: 'var(--terracotta)', fontFamily: "var(--font-label)" }}>
+            {list.length} today
+          </span>
+        )}
+      </div>
+
+      {!list ? (
+        <p style={{ fontFamily: "var(--font-body)", fontSize: 17, fontWeight: 700, color: 'var(--indigo-deep)', lineHeight: 1.35 }}>{fallback}</p>
+      ) : (
+        <div className="space-y-1.5">
+          {list.map((s, i) => {
+            const active = isNow(s)
+            return (
+              <div key={`${s.name}-${i}`} className="rounded-lg px-2.5 py-2"
+                style={{
+                  background: active ? 'rgba(198,125,83,0.13)' : 'rgba(255,255,255,0.62)',
+                  border: `1px solid ${active ? 'rgba(198,125,83,0.45)' : 'transparent'}`,
+                }}>
+                <div className="flex items-baseline justify-between gap-2 flex-wrap">
+                  <span style={{ fontFamily: "var(--font-body)", fontSize: 16, fontWeight: 700, color: active ? 'var(--terracotta)' : 'var(--indigo-deep)', lineHeight: 1.3 }}>
+                    {s.name}
+                  </span>
+                  {active && (
+                    <span className="px-1.5 py-0.5 rounded-full font-bold text-white"
+                      style={{ fontSize: 10, background: 'var(--terracotta)', fontFamily: "var(--font-label)" }}>NOW</span>
+                  )}
+                </div>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: 13, color: 'rgba(28,30,74,0.6)', marginTop: 2 }}>
+                  {i === 0 ? 'from sunrise' : `from ${s.start}`} → till <strong style={{ color: 'rgba(28,30,74,0.8)' }}>{s.end}</strong>
+                  {s.endsNextDay && <span style={{ opacity: 0.7 }}> (next day)</span>}
+                </p>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      <p style={{ fontFamily: "var(--font-body)", fontSize: 12, color: 'rgba(28,30,74,0.45)', marginTop: 8 }}>{desc}</p>
+    </div>
+  )
 }
 
 function CalendarDay({ date, isToday, isCurrentMonth, isSelected, onClick }: {
@@ -202,9 +292,9 @@ function ChoghadiyaChakra({ choghadiya, currentH }: { choghadiya: ChogPeriod[]; 
       {/* Center hub */}
       <circle cx={cx} cy={cy} r={rHub} fill="url(#hubGrad)" />
       <circle cx={cx} cy={cy} r={rHub - 4} fill="none" stroke="#c8922a" strokeWidth="1" />
-      <text x={cx} y={cy - 13} textAnchor="middle" fontSize={8} fill="#D4A017" fontWeight="bold">चोघड़िया</text>
+      <text x={cx} y={cy - 13} textAnchor="middle" fontSize={8} fill="#C9992E" fontWeight="bold">चोघड़िया</text>
       <text x={cx} y={cy + 4} textAnchor="middle" fontSize={20} fill="white" fontWeight="900" fontFamily="Georgia, serif">ॐ</text>
-      <text x={cx} y={cy + 18} textAnchor="middle" fontSize={6.5} fill="#D4A017" letterSpacing="2">CHAKRA</text>
+      <text x={cx} y={cy + 18} textAnchor="middle" fontSize={6.5} fill="#C9992E" letterSpacing="2">CHAKRA</text>
 
       {/* Ring labels */}
       <text x={cx} y={14} textAnchor="middle" fontSize={7} fill="#fbbf24" letterSpacing="3" fontWeight="600">DAY RING</text>
@@ -277,49 +367,59 @@ export default function PanchangPage() {
         <div className="absolute right-[-60px] top-1/2 -translate-y-1/2 opacity-[0.04] select-none pointer-events-none">
           <SudarshanLoader px={220} spin={false} />
         </div>
-        <div className="relative max-w-5xl mx-auto flex items-center justify-between flex-wrap gap-4">
+        <div className="relative max-w-6xl mx-auto flex items-end justify-between flex-wrap gap-4">
           <div>
-            <p className="text-xs font-semibold tracking-widest uppercase mb-1" style={{ color: 'var(--saffron)', fontFamily: "'Sora', sans-serif" }}>Vedic Calendar</p>
-            <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: 28, fontWeight: 700, color: 'white', lineHeight: 1.2 }}>Daily Panchang</h1>
-            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: 'rgba(255,255,255,0.5)', marginTop: 4 }}>{dateLabel}</p>
+            <p className="font-semibold tracking-widest uppercase mb-1.5" style={{ color: 'var(--saffron)', fontFamily: "var(--font-label)", fontSize: 13 }}>Vedic Calendar</p>
+            <h1 style={{ fontFamily: "var(--font-display)", fontSize: 34, fontWeight: 700, color: 'white', lineHeight: 1.15 }}>Daily Panchang</h1>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: 15, color: 'var(--text-on-dark-secondary)', marginTop: 6 }}>{dateLabel}</p>
+            {panchang?.nakshatraSpans && panchang.nakshatraSpans.length > 1 && (
+              <p className="inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 rounded-full"
+                style={{ background: 'rgba(255,255,255,0.10)', border: '1px solid rgba(255,255,255,0.18)', fontFamily: "var(--font-body)", fontSize: 13, color: 'white' }}>
+                <Icon name="star" size={15} style={{ color: 'var(--saffron)' }} />
+                {panchang.nakshatraSpans.map(s => s.name).join(' → ')}
+              </p>
+            )}
           </div>
           <select
             value={city.name}
             onChange={e => handleCityChange(e.target.value)}
             style={{
-              fontFamily: "'DM Sans', sans-serif", fontSize: 13,
+              fontFamily: "var(--font-body)", fontSize: 15,
               background: 'rgba(255,255,255,0.1)', color: 'white',
-              border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, padding: '8px 12px',
+              border: '1px solid rgba(255,255,255,0.2)', borderRadius: 10, padding: '10px 14px',
               outline: 'none', cursor: 'pointer',
             }}
           >
-            {CITIES.map(c => <option key={c.name} value={c.name} style={{ background: '#2F2A44', color: 'white' }}>{c.name}</option>)}
+            {CITIES.map(c => <option key={c.name} value={c.name} style={{ background: '#1B1233', color: 'white' }}>{c.name}</option>)}
           </select>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="max-w-5xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-5 gap-6">
+      {/* Content.
+          `items-start` stops the two columns from stretching each other, and
+          the right column is a flex column whose panel grows - together these
+          remove the large empty gap that used to sit under the shorter card. */}
+      <div className="max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-5 gap-5 items-start">
 
         {/* Left column - calendar + moon + festivals */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="lg:col-span-2 space-y-4 lg:sticky lg:top-4">
           <div className="bg-white rounded-2xl border border-[var(--warm-sand)] shadow-sm p-5">
             <div className="flex items-center justify-between mb-4">
               <button onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() - 1))}
-                className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[var(--warm-sand)] transition-colors text-[var(--indigo-deep)]/50">
-                <span className="material-symbols-outlined text-[18px]">chevron_left</span>
+                className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[var(--warm-sand)] transition-colors text-[var(--text-muted)]">
+                <Icon name="chevron_left" size={18} />
               </button>
-              <h2 style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, color: 'var(--indigo-deep)', fontSize: 16 }}>
+              <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, color: 'var(--indigo-deep)', fontSize: 16 }}>
                 {MONTH_NAMES[viewMonth.getMonth()]} {viewMonth.getFullYear()}
               </h2>
               <button onClick={() => setViewMonth(new Date(viewMonth.getFullYear(), viewMonth.getMonth() + 1))}
-                className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[var(--warm-sand)] transition-colors text-[var(--indigo-deep)]/50">
-                <span className="material-symbols-outlined text-[18px]">chevron_right</span>
+                className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[var(--warm-sand)] transition-colors text-[var(--text-muted)]">
+                <Icon name="chevron_right" size={18} />
               </button>
             </div>
             <div className="grid grid-cols-7 gap-1 mb-1">
               {['Su','Mo','Tu','We','Th','Fr','Sa'].map(d => (
-                <div key={d} className="text-center py-1" style={{ fontFamily: "'Sora', sans-serif", fontSize: 10, fontWeight: 700, color: 'rgba(28,30,74,0.35)', letterSpacing: '0.05em' }}>{d}</div>
+                <div key={d} className="text-center py-1" style={{ fontFamily: "var(--font-label)", fontSize: 10, fontWeight: 700, color: 'rgba(28,30,74,0.35)', letterSpacing: '0.05em' }}>{d}</div>
               ))}
             </div>
             <div className="grid grid-cols-7 gap-1">
@@ -335,7 +435,7 @@ export default function PanchangPage() {
             </div>
             <div className="mt-4 pt-4 border-t border-[var(--warm-sand)] text-center">
               <button onClick={() => { setSelectedDate(today); setViewMonth(today) }}
-                style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: 'var(--terracotta)', fontWeight: 500 }}
+                style={{ fontFamily: "var(--font-body)", fontSize: 13, color: 'var(--terracotta)', fontWeight: 500 }}
                 className="hover:underline">
                 Go to Today
               </button>
@@ -345,115 +445,152 @@ export default function PanchangPage() {
           {panchang && (
             <div className="bg-white rounded-2xl border border-[var(--warm-sand)] shadow-sm p-4 flex items-center gap-4">
               <MoonGlyph tithiNum={panchang.tithiNum} />
-              <div>
-                <p style={{ fontFamily: "'Sora', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(28,30,74,0.4)' }}>Moon Phase</p>
-                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 600, color: 'var(--indigo-deep)', marginTop: 2 }}>{panchang.moonPhase}</p>
+              <div className="min-w-0">
+                <p style={{ fontFamily: "var(--font-label)", fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(28,30,74,0.45)' }}>Moon Phase</p>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: 16, fontWeight: 600, color: 'var(--indigo-deep)', marginTop: 3 }}>{panchang.moonPhase}</p>
               </div>
+            </div>
+          )}
+
+          {/* Sun timings - fills the column and saves a trip to the tab */}
+          {panchang && (
+            <div className="bg-white rounded-2xl border border-[var(--warm-sand)] shadow-sm p-4 grid grid-cols-2 gap-3">
+              {[
+                { icon: 'light_mode',  label: 'Sunrise', value: panchang.sunrise, color: 'var(--saffron)' },
+                { icon: 'wb_twilight', label: 'Sunset',  value: panchang.sunset,  color: 'var(--terracotta)' },
+              ].map(x => (
+                <div key={x.label} className="flex items-center gap-2.5">
+                  <Icon name={x.icon} size={22} style={{ color: x.color }} />
+                  <div className="min-w-0">
+                    <p style={{ fontFamily: "var(--font-label)", fontSize: 11, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(28,30,74,0.45)' }}>{x.label}</p>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: 16, fontWeight: 700, color: 'var(--indigo-deep)' }}>{x.value}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
 
           {/* Upcoming festivals */}
           <div className="bg-white rounded-2xl border border-[var(--warm-sand)] shadow-sm p-5">
-            <h3 className="flex items-center gap-2 mb-4" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 700, color: 'var(--indigo-deep)' }}>
-              <span className="material-symbols-outlined text-[16px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>celebration</span>
+            <h3 className="flex items-center gap-2 mb-4" style={{ fontFamily: "var(--font-body)", fontSize: 15, fontWeight: 700, color: 'var(--indigo-deep)' }}>
+              <Icon name="celebration" size={18} className="text-[var(--terracotta)]" />
               Upcoming Tithis
             </h3>
             <div className="space-y-3">
               {(panchang?.festivals ?? [{ name: 'Ekadashi', days: 11 }, { name: 'Purnima (Full Moon)', days: 15 }, { name: 'Amavasya (New Moon)', days: 29 }]).map(f => (
-                <div key={f.name} className="flex items-center justify-between">
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: 'var(--indigo-deep)' }}>{f.name}</span>
-                  <span className="px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: 'var(--warm-sand)', color: 'var(--terracotta)', fontFamily: "'Sora', sans-serif" }}>
+                <div key={f.name} className="flex items-center justify-between gap-2">
+                  <span style={{ fontFamily: "var(--font-body)", fontSize: 15, color: 'var(--indigo-deep)' }}>{f.name}</span>
+                  <span className="px-2.5 py-1 rounded-full font-medium whitespace-nowrap" style={{ background: 'var(--warm-sand)', color: 'var(--terracotta)', fontFamily: "var(--font-label)", fontSize: 12.5 }}>
                     {f.days === 1 ? 'Tomorrow' : `in ${f.days} days`}
                   </span>
                 </div>
               ))}
             </div>
           </div>
-
-          {/* Choghadiya Chakra wheel */}
-          {panchang?.choghadiya && (
-            <div className="bg-white rounded-2xl border border-[var(--warm-sand)] shadow-sm p-5">
-              <h3 className="flex items-center gap-2 mb-4" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 700, color: 'var(--indigo-deep)' }}>
-                <span className="material-symbols-outlined text-[16px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>donut_large</span>
-                Choghadiya Chakra
-              </h3>
-              <div className="flex justify-center">
-                <ChoghadiyaChakra choghadiya={panchang.choghadiya} currentH={isToday ? nowH : -1} />
-              </div>
-              {/* Legend */}
-              <div className="mt-3 grid grid-cols-3 gap-1.5 text-[10px]">
-                {[['#10b981','Amrit'],['#3b82f6','Shubh'],['#22c55e','Labh'],['#f59e0b','Char'],['#ef4444','Udveg'],['#dc2626','Rog'],['#6b7280','Kaal']].map(([color, name]) => (
-                  <div key={name} className="flex items-center gap-1">
-                    <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: color as string }} />
-                    <span style={{ color: 'var(--warm-charcoal)', fontFamily: "'Sora', sans-serif" }}>{name}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
-        {/* Right column - tabbed features */}
-        <div className="lg:col-span-3 space-y-4">
+        {/* Right column - tabbed features.
+            `flex flex-col` + a growing panel means the card fills the row
+            instead of leaving dead space beside the taller left column. */}
+        <div className="lg:col-span-3 flex flex-col gap-4">
 
           {/* Tab bar */}
-          <div className="bg-white rounded-2xl border border-[var(--warm-sand)] shadow-sm overflow-hidden">
+          <div className="bg-white rounded-2xl border border-[var(--warm-sand)] shadow-sm overflow-hidden flex flex-col flex-1">
             <div className="flex overflow-x-auto" style={{ borderBottom: '1px solid var(--warm-sand)' }}>
               {[
                 { id: 'panchang',   icon: 'brightness_7', label: 'Panchang' },
                 { id: 'hora',       icon: 'schedule',      label: 'Live Hora',    live: isToday },
                 { id: 'choghadiya', icon: 'wb_sunny',      label: 'Choghadiya',   live: isToday },
                 { id: 'doghati',    icon: 'timer',         label: 'Do Ghati',     badge: '48 min' },
-                { id: 'guidance',   icon: 'auto_awesome',  label: 'Guidance' },
+                { id: 'guidance',   icon: 'brightness_7',  label: 'Guidance' },
               ].map(tab => (
                 <button key={tab.id} onClick={() => setRightTab(tab.id as typeof rightTab)}
-                  className="flex items-center gap-1.5 px-4 py-3 text-xs font-bold whitespace-nowrap flex-shrink-0 transition-all border-b-2"
+                  className="flex items-center gap-1.5 px-4 py-3.5 font-bold whitespace-nowrap flex-shrink-0 transition-all border-b-2"
                   style={{
                     borderBottomColor: rightTab === tab.id ? 'var(--terracotta)' : 'transparent',
-                    color: rightTab === tab.id ? 'var(--terracotta)' : 'rgba(28,30,74,0.45)',
+                    color: rightTab === tab.id ? 'var(--terracotta)' : 'rgba(28,30,74,0.5)',
                     background: rightTab === tab.id ? 'rgba(198,125,83,0.04)' : 'transparent',
-                    fontFamily: "'Sora', sans-serif",
+                    fontFamily: "var(--font-label)",
+                    fontSize: 13.5,
                   }}>
-                  <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>{tab.icon}</span>
+                  <Icon name={tab.icon} size={16} />
                   {tab.label}
-                  {tab.live && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold">LIVE</span>}
-                  {tab.badge && <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 font-bold">{tab.badge}</span>}
+                  {tab.live && <span className="text-[11px] px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-bold">LIVE</span>}
+                  {tab.badge && <span className="text-[11px] px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 font-bold">{tab.badge}</span>}
                 </button>
               ))}
             </div>
 
-            <div className="p-5">
+            <div className="p-5 flex-1">
               {/* ── PANCHANG TAB ── */}
               {rightTab === 'panchang' && (
                 loading ? (
                   <div className="flex items-center justify-center h-48">
                     <div className="text-center">
                       <SudarshanLoader size="md" className="opacity-30" />
-                      <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, color: 'rgba(28,30,74,0.35)', marginTop: 12 }}>Computing positions…</p>
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: 12, color: 'rgba(28,30,74,0.35)', marginTop: 12 }}>Computing positions...</p>
                     </div>
                   </div>
                 ) : panchang ? (
-                  <div className="grid grid-cols-2 gap-2.5">
-                    {DATA_ITEMS.map(item => {
-                      const value = panchang[item.key as keyof PanchangData] as string
-                      if (!value) return null
-                      return (
-                        <div key={item.key} className="rounded-xl p-3"
-                          style={{ background: item.accent ? 'rgba(209,67,67,0.06)' : 'var(--warm-sand)', border: item.accent ? '1px solid rgba(209,67,67,0.2)' : '1px solid transparent' }}>
-                          <div className="flex items-center gap-1.5 mb-1.5">
-                            <span className="material-symbols-outlined" style={{ fontSize: 13, fontVariationSettings: "'FILL' 1", color: item.accent ? '#D14343' : 'var(--terracotta)' }}>{item.icon}</span>
-                            <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 10, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: item.accent ? 'rgba(209,67,67,0.7)' : 'rgba(28,30,74,0.45)' }}>{item.label}</span>
-                          </div>
-                          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 700, color: item.accent ? '#D14343' : 'var(--indigo-deep)', lineHeight: 1.3 }}>{value}</p>
-                          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: 'rgba(28,30,74,0.38)', marginTop: 2 }}>{item.desc}</p>
-                        </div>
-                      )
-                    })}
+                  <div className="space-y-5">
+                    {/* ── The five angas, each across the full Vedic day ── */}
+                    <div>
+                      <p className="mb-2.5" style={{ fontFamily: "var(--font-label)", fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(28,30,74,0.4)' }}>
+                        Panch Anga · sunrise to sunrise
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {ANGA_ITEMS.map(item => (
+                          <AngaCard
+                            key={item.key}
+                            icon={item.icon}
+                            label={item.label}
+                            desc={item.desc}
+                            spans={panchang[item.spanKey] as Span[] | undefined}
+                            fallback={panchang[item.key] as string}
+                            nowH={nowH}
+                            isToday={isToday}
+                          />
+                        ))}
+                      </div>
+                      {panchang.nakshatraSpans && panchang.nakshatraSpans.length > 1 && (
+                        <p className="mt-3 flex items-start gap-1.5" style={{ fontFamily: "var(--font-body)", fontSize: 13, color: 'rgba(28,30,74,0.55)', lineHeight: 1.55 }}>
+                          <Icon name="info" size={15} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--terracotta)' }} />
+                          <span>
+                            The Moon crosses into a new nakshatra during this day, so <strong>{panchang.nakshatraSpans.length} nakshatras</strong> apply -
+                            use the one covering your intended muhurat, not just the sunrise value.
+                          </span>
+                        </p>
+                      )}
+                    </div>
+
+                    {/* ── Fixed values for the day ── */}
+                    <div>
+                      <p className="mb-2.5" style={{ fontFamily: "var(--font-label)", fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'rgba(28,30,74,0.4)' }}>
+                        Timings &amp; Positions
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                        {DATA_ITEMS.map(item => {
+                          const value = panchang[item.key as keyof PanchangData] as string
+                          if (!value) return null
+                          return (
+                            <div key={item.key} className="rounded-xl p-4"
+                              style={{ background: item.accent ? 'rgba(209,67,67,0.06)' : 'var(--warm-sand)', border: item.accent ? '1px solid rgba(209,67,67,0.2)' : '1px solid transparent' }}>
+                              <div className="flex items-center gap-2 mb-2">
+                                <Icon name={item.icon} size={18} style={{ color: item.accent ? '#D14343' : 'var(--terracotta)' }} />
+                                <span style={{ fontFamily: "var(--font-label)", fontSize: 12, fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase', color: item.accent ? 'rgba(209,67,67,0.75)' : 'rgba(28,30,74,0.55)' }}>{item.label}</span>
+                              </div>
+                              <p style={{ fontFamily: "var(--font-body)", fontSize: 16, fontWeight: 700, color: item.accent ? '#D14343' : 'var(--indigo-deep)', lineHeight: 1.35 }}>{value}</p>
+                              <p style={{ fontFamily: "var(--font-body)", fontSize: 12, color: 'rgba(28,30,74,0.45)', marginTop: 3 }}>{item.desc}</p>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
                   </div>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-48 text-center">
                     <SudarshanLoader px={36} spin={false} className="opacity-20" />
-                    <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: 'rgba(28,30,74,0.4)', marginTop: 8 }}>Select a date to view panchang</p>
+                    <p style={{ fontFamily: "var(--font-body)", fontSize: 13, color: 'rgba(28,30,74,0.4)', marginTop: 8 }}>Select a date to view panchang</p>
                   </div>
                 )
               )}
@@ -461,37 +598,37 @@ export default function PanchangPage() {
               {/* ── HORA TAB ── */}
               {rightTab === 'hora' && (
                 !panchang ? (
-                  <p className="text-center text-sm text-[var(--warm-charcoal)]/40 py-12">Select a date first</p>
+                  <p className="text-center text-sm text-[var(--text-muted)] py-12">Select a date first</p>
                 ) : (
                   <div>
                     {isToday && currentHora && (
-                      <div className="mb-4 flex items-center gap-3 rounded-xl px-4 py-3" style={{ background: currentHora.color + '18', border: `1.5px solid ${currentHora.color}50` }}>
-                        <span style={{ fontSize: 24, color: currentHora.color }}>{PLANET_SYMBOL[currentHora.planet]}</span>
+                      <div className="mb-4 flex items-center gap-3 rounded-xl px-4 py-3.5" style={{ background: currentHora.color + '18', border: `1.5px solid ${currentHora.color}50` }}>
+                        <span style={{ fontSize: 30, color: currentHora.color }}>{PLANET_SYMBOL[currentHora.planet]}</span>
                         <div>
-                          <p style={{ fontFamily: "'Sora', sans-serif", fontSize: 13, fontWeight: 700, color: currentHora.color }}>Current Hora: {currentHora.planet}</p>
-                          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: 'rgba(28,30,74,0.5)' }}>{currentHora.start} – {currentHora.end}</p>
+                          <p style={{ fontFamily: "var(--font-label)", fontSize: 15, fontWeight: 700, color: currentHora.color }}>Current Hora: {currentHora.planet}</p>
+                          <p style={{ fontFamily: "var(--font-body)", fontSize: 13, color: 'rgba(28,30,74,0.55)' }}>{currentHora.start} - {currentHora.end}</p>
                         </div>
-                        <span className="ml-auto text-[10px] px-2 py-1 rounded-full font-bold text-white animate-pulse" style={{ background: currentHora.color }}>LIVE</span>
+                        <span className="ml-auto text-[11px] px-2.5 py-1 rounded-full font-bold text-white animate-pulse" style={{ background: currentHora.color }}>LIVE</span>
                       </div>
                     )}
-                    <div className="space-y-1 max-h-80 overflow-y-auto pr-1">
+                    <div className="space-y-1.5">
                       {panchang.hora.filter(h => h.isDay).map((h, i) => {
                         const isCurrent = isToday && nowH >= h.startH && nowH < h.endH
                         return (
-                          <div key={i} className="flex items-center gap-3 rounded-xl px-3 py-2 transition-all"
+                          <div key={i} className="flex items-center gap-3 rounded-xl px-3.5 py-2.5 transition-all"
                             style={{ background: isCurrent ? h.color + '15' : 'var(--warm-sand)', border: isCurrent ? `1.5px solid ${h.color}50` : '1px solid transparent' }}>
-                            <span style={{ fontSize: 20, color: h.color, width: 28, textAlign: 'center' }}>{PLANET_SYMBOL[h.planet]}</span>
+                            <span style={{ fontSize: 24, color: h.color, width: 32, textAlign: 'center' }}>{PLANET_SYMBOL[h.planet]}</span>
                             <div className="flex-1">
-                              <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 12, fontWeight: isCurrent ? 700 : 600, color: isCurrent ? h.color : 'var(--indigo-deep)' }}>{h.planet}</span>
-                              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: 'rgba(28,30,74,0.45)', marginLeft: 8 }}>{h.start} – {h.end}</span>
+                              <span style={{ fontFamily: "var(--font-label)", fontSize: 15, fontWeight: isCurrent ? 700 : 600, color: isCurrent ? h.color : 'var(--indigo-deep)' }}>{h.planet}</span>
+                              <span style={{ fontFamily: "var(--font-body)", fontSize: 13, color: 'rgba(28,30,74,0.5)', marginLeft: 10 }}>{h.start} - {h.end}</span>
                             </div>
-                            {isCurrent && <span className="text-[10px] px-2 py-0.5 rounded-full font-bold text-white" style={{ background: h.color }}>Now</span>}
+                            {isCurrent && <span className="text-[11px] px-2 py-0.5 rounded-full font-bold text-white" style={{ background: h.color }}>Now</span>}
                           </div>
                         )
                       })}
                     </div>
-                    <p className="mt-3 text-[10px] text-[var(--warm-charcoal)]/40" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                      Chaldean order - 12 day horas from sunrise. Each planeta rules activities suited to its nature.
+                    <p className="mt-4 text-[13px] text-[var(--text-muted)] leading-relaxed" style={{ fontFamily: "var(--font-body)" }}>
+                      Chaldean order - 12 day horas from sunrise. Each planet rules activities suited to its nature.
                     </p>
                   </div>
                 )
@@ -500,24 +637,24 @@ export default function PanchangPage() {
               {/* ── CHOGHADIYA TAB ── */}
               {rightTab === 'choghadiya' && (
                 !panchang ? (
-                  <p className="text-center text-sm text-[var(--warm-charcoal)]/40 py-12">Select a date first</p>
+                  <p className="text-center text-sm text-[var(--text-muted)] py-12">Select a date first</p>
                 ) : (
                   <div>
                     {currentChog && isToday && (
-                      <div className="mb-4 flex items-center gap-3 rounded-xl px-4 py-2.5" style={{ background: currentChog.color + '15', border: `1.5px solid ${currentChog.color}` }}>
+                      <div className="mb-4 flex items-center gap-3 rounded-xl px-4 py-3" style={{ background: currentChog.color + '15', border: `1.5px solid ${currentChog.color}` }}>
                         <div className="w-3 h-3 rounded-full animate-pulse flex-shrink-0" style={{ background: currentChog.color }} />
                         <div>
-                          <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 12, fontWeight: 700, color: currentChog.color }}>{currentChog.name} - {CHOG_MEANING[currentChog.name]}</span>
-                          <span className="block" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: 'rgba(28,30,74,0.6)' }}>{currentChog.start} – {currentChog.end}</span>
+                          <span style={{ fontFamily: "var(--font-label)", fontSize: 15, fontWeight: 700, color: currentChog.color }}>{currentChog.name} - {CHOG_MEANING[currentChog.name]}</span>
+                          <span className="block" style={{ fontFamily: "var(--font-body)", fontSize: 13, color: 'rgba(28,30,74,0.6)' }}>{currentChog.start} - {currentChog.end}</span>
                         </div>
-                        <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full font-bold text-white" style={{ background: currentChog.color }}>Current</span>
+                        <span className="ml-auto text-[11px] px-2.5 py-1 rounded-full font-bold text-white" style={{ background: currentChog.color }}>Current</span>
                       </div>
                     )}
-                    <div className="flex gap-1 bg-[var(--warm-sand)] rounded-lg p-0.5 mb-4 w-fit">
+                    <div className="flex gap-1 bg-[var(--warm-sand)] rounded-lg p-1 mb-4 w-fit">
                       {(['day','night'] as const).map(tab => (
                         <button key={tab} onClick={() => setActiveChogTab(tab)}
-                          className="px-4 py-1.5 rounded-md text-xs font-bold transition-all"
-                          style={{ background: activeChogTab === tab ? 'var(--indigo-deep)' : 'transparent', color: activeChogTab === tab ? 'white' : 'var(--warm-charcoal)', fontFamily: "'Sora', sans-serif" }}>
+                          className="px-4 py-2 rounded-md font-bold transition-all"
+                          style={{ background: activeChogTab === tab ? 'var(--indigo-deep)' : 'transparent', color: activeChogTab === tab ? 'white' : 'var(--warm-charcoal)', fontFamily: "var(--font-label)", fontSize: 13 }}>
                           {tab === 'day' ? 'Din (Day)' : 'Raat (Night)'}
                         </button>
                       ))}
@@ -527,16 +664,37 @@ export default function PanchangPage() {
                         const isCurrent = isToday && nowH >= c.startH && nowH < c.endH
                         const isGood = ['Amrit','Shubh','Labh'].includes(c.name)
                         return (
-                          <div key={i} className="flex items-center gap-3 rounded-xl px-3 py-2"
+                          <div key={i} className="flex items-center gap-3 rounded-xl px-3.5 py-2.5"
                             style={{ background: isCurrent ? c.color + '15' : isGood ? c.color + '0A' : 'var(--warm-sand)', border: isCurrent ? `1.5px solid ${c.color}50` : '1px solid transparent' }}>
                             <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: c.color }} />
-                            <span style={{ fontFamily: "'Sora', sans-serif", fontSize: 11, fontWeight: 700, color: c.color, minWidth: 52 }}>{c.name}</span>
-                            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 11, color: 'rgba(28,30,74,0.6)', flex: 1 }}>{c.start} – {c.end}</span>
-                            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 10, color: isGood ? '#15803d' : '#dc2626', fontWeight: 600 }}>{CHOG_MEANING[c.name]}</span>
+                            <span style={{ fontFamily: "var(--font-label)", fontSize: 14, fontWeight: 700, color: c.color, minWidth: 60 }}>{c.name}</span>
+                            <span style={{ fontFamily: "var(--font-body)", fontSize: 13.5, color: 'rgba(28,30,74,0.62)', flex: 1 }}>{c.start} - {c.end}</span>
+                            <span className="hidden sm:inline" style={{ fontFamily: "var(--font-body)", fontSize: 12.5, color: isGood ? '#15803d' : '#dc2626', fontWeight: 600 }}>{CHOG_MEANING[c.name]}</span>
                             {isCurrent && <span className="w-1.5 h-1.5 rounded-full animate-pulse ml-1" style={{ background: c.color }} />}
                           </div>
                         )
                       })}
+                    </div>
+
+                    {/* Chakra wheel - moved here from the left column, where it
+                        made that column ~380px taller than this one and left a
+                        large empty gap beside the shorter tab panel. */}
+                    <div className="mt-6 pt-5" style={{ borderTop: '1px solid var(--warm-sand)' }}>
+                      <h3 className="flex items-center gap-2 mb-4" style={{ fontFamily: "var(--font-body)", fontSize: 15, fontWeight: 700, color: 'var(--indigo-deep)' }}>
+                        <Icon name="donut_large" size={18} className="text-[var(--saffron)]" />
+                        Choghadiya Chakra
+                      </h3>
+                      <div className="flex justify-center">
+                        <ChoghadiyaChakra choghadiya={panchang.choghadiya} currentH={isToday ? nowH : -1} />
+                      </div>
+                      <div className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-2">
+                        {[['#10b981','Amrit'],['#3b82f6','Shubh'],['#22c55e','Labh'],['#f59e0b','Char'],['#ef4444','Udveg'],['#dc2626','Rog'],['#6b7280','Kaal']].map(([color, name]) => (
+                          <div key={name} className="flex items-center gap-1.5">
+                            <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: color as string }} />
+                            <span style={{ color: 'var(--warm-charcoal)', fontFamily: "var(--font-label)", fontSize: 13 }}>{name}</span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )
@@ -545,7 +703,7 @@ export default function PanchangPage() {
               {/* ── DO GHATI TAB ── */}
               {rightTab === 'doghati' && (
                 !panchang || !panchang.doGhatiMuhurt?.length ? (
-                  <p className="text-center text-sm text-[var(--warm-charcoal)]/40 py-12">Select a date first</p>
+                  <p className="text-center text-sm text-[var(--text-muted)] py-12">Select a date first</p>
                 ) : (
                   <div>
                     {(() => {
@@ -553,48 +711,48 @@ export default function PanchangPage() {
                       const kalas   = [...new Set(windows.map(w => w.kala))]
                       const firstW  = panchang.doGhatiMuhurt.find(m => m.period === activeDgTab)
                       const dgMin   = firstW ? Math.round((firstW.endH - firstW.startH) * 60) : 0
-                      const borderColor = activeDgTab === 'day' ? '#D4A017' : '#6366f1'
+                      const borderColor = activeDgTab === 'day' ? '#C9992E' : '#6366f1'
                       return (
                         <>
-                          <p className="text-xs text-[var(--warm-charcoal)]/50 mb-3 leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                            <strong>Do Ghati</strong> = 2 Ghati = day ÷ 15 equal windows. Each window today is <strong>~{dgMin} min</strong> for this location — sizes change with sunrise/sunset. Each window also carries its own presiding <strong>Nakshatra</strong>, per the classical Do Ghati sequence — separate from the Moon&apos;s nakshatra for the day (shown on the Panchang tab).
+                          <p className="mb-4 leading-relaxed" style={{ fontFamily: "var(--font-body)", fontSize: 13.5, color: 'rgba(28,30,74,0.55)' }}>
+                            <strong>Do Ghati</strong> = 2 Ghati = day ÷ 15 equal windows. Each window today is <strong>~{dgMin} min</strong> for this location - sizes change with sunrise/sunset. Each window also carries its own presiding <strong>Nakshatra</strong>, per the classical Do Ghati sequence - separate from the Moon&apos;s nakshatra for the day (shown on the Panchang tab).
                           </p>
-                          <div className="flex gap-1 bg-[var(--warm-sand)] rounded-lg p-0.5 mb-4 w-fit">
+                          <div className="flex gap-1 bg-[var(--warm-sand)] rounded-lg p-1 mb-4 w-fit">
                             {(['day','night'] as const).map(t => (
                               <button key={t} onClick={() => setActiveDgTab(t)}
-                                className="px-4 py-1.5 rounded-md text-xs font-bold transition-all"
-                                style={{ background: activeDgTab === t ? 'var(--indigo-deep)' : 'transparent', color: activeDgTab === t ? 'white' : 'var(--warm-charcoal)', fontFamily: "'Sora', sans-serif" }}>
+                                className="px-4 py-2 rounded-md font-bold transition-all"
+                                style={{ background: activeDgTab === t ? 'var(--indigo-deep)' : 'transparent', color: activeDgTab === t ? 'white' : 'var(--warm-charcoal)', fontFamily: "var(--font-label)", fontSize: 13 }}>
                                 {t === 'day' ? '☀ Daytime (15)' : '🌙 Nighttime (15)'}
                               </button>
                             ))}
                           </div>
-                          <div className="space-y-4 max-h-[380px] overflow-y-auto pr-1">
+                          <div className="space-y-4">
                             {kalas.map(kala => (
                               <div key={kala}>
-                                <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5 px-1"
-                                  style={{ color: borderColor, fontFamily: "'Sora', sans-serif" }}>{kala}</p>
+                                <p className="font-bold uppercase tracking-widest mb-2 px-1"
+                                  style={{ color: borderColor, fontFamily: "var(--font-label)", fontSize: 12.5 }}>{kala}</p>
                                 <div className="space-y-1">
                                   {windows.filter(w => w.kala === kala).map(m => {
                                     const isCurrent = isToday && nowH >= m.startH && nowH < m.endH
                                     return (
-                                      <div key={m.index} className="flex items-center gap-3 rounded-xl px-3 py-2"
+                                      <div key={m.index} className="flex items-center gap-3 rounded-xl px-3.5 py-2.5"
                                         style={{
                                           background: isCurrent ? borderColor + '22' : borderColor + '0C',
                                           border: `1.5px solid ${borderColor}${isCurrent ? 'cc' : '28'}`,
                                         }}>
-                                        <span className="text-[10px] font-bold tabular-nums w-5 text-right shrink-0 opacity-50"
-                                          style={{ fontFamily: "'JetBrains Mono', monospace" }}>{m.index}</span>
-                                        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 12, fontWeight: isCurrent ? 700 : 500, color: isCurrent ? borderColor : 'rgba(28,30,74,0.72)', flex: 1 }}>
-                                          {m.start} – {m.end}
+                                        <span className="font-bold tabular-nums w-5 text-right shrink-0 opacity-50"
+                                          style={{ fontFamily: "var(--font-mono)", fontSize: 13 }}>{m.index}</span>
+                                        <span style={{ fontFamily: "var(--font-body)", fontSize: 14, fontWeight: isCurrent ? 700 : 500, color: isCurrent ? borderColor : 'rgba(28,30,74,0.75)', flex: 1 }}>
+                                          {m.start} - {m.end}
                                         </span>
-                                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0"
-                                          style={{ fontFamily: "'Sora', sans-serif", color: borderColor, background: borderColor + '18' }}>
+                                        <span className="font-semibold px-2.5 py-1 rounded-full shrink-0"
+                                          style={{ fontFamily: "var(--font-label)", fontSize: 12.5, color: borderColor, background: borderColor + '18' }}>
                                           {m.nakshatra}
                                         </span>
                                         {isCurrent && (
                                           <div className="flex items-center gap-1.5">
                                             <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: borderColor }} />
-                                            <span className="text-[10px] font-bold" style={{ color: borderColor }}>Now</span>
+                                            <span className="font-bold" style={{ color: borderColor, fontSize: 12.5 }}>Now</span>
                                           </div>
                                         )}
                                       </div>
@@ -604,8 +762,8 @@ export default function PanchangPage() {
                               </div>
                             ))}
                           </div>
-                          <p className="mt-3 text-[10px] text-[var(--warm-charcoal)]/40" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                            Window durations vary by location &amp; season — matches drikpanchang calculation.
+                          <p className="mt-4 leading-relaxed" style={{ fontFamily: "var(--font-body)", fontSize: 13, color: 'rgba(28,30,74,0.5)' }}>
+                            Window durations vary by location &amp; season - matches drikpanchang calculation.
                           </p>
                         </>
                       )
@@ -616,20 +774,39 @@ export default function PanchangPage() {
 
               {/* ── GUIDANCE TAB ── */}
               {rightTab === 'guidance' && (
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   {[
                     { icon: 'light_mode',      text: `Begin prayers after sunrise - ${panchang?.sunrise || '-'}` },
-                    { icon: 'bedtime',         text: `Brahma Muhurta (meditation): ${panchang?.brahmaHour || '4:30 – 6:00 AM'}` },
-                    { icon: 'schedule',        text: `Abhijit Muhurat (auspicious): ${panchang?.abhijitMuhurat || '11:48 – 12:36 PM'}` },
+                    { icon: 'bedtime',         text: `Brahma Muhurta (meditation): ${panchang?.brahmaHour || '4:30 - 6:00 AM'}` },
+                    { icon: 'schedule',        text: `Abhijit Muhurat (auspicious): ${panchang?.abhijitMuhurat || '11:48 - 12:36 PM'}` },
                     { icon: 'local_florist',   text: 'Abhishek & puja: best performed before noon' },
                     { icon: 'warning',         text: `Rahu Kaal - avoid new ventures: ${panchang?.rahuKaal || '-'}` },
                     { icon: 'candle',          text: `Light deepam at sunset - ${panchang?.sunset || '-'}` },
                   ].map(({ icon, text }) => (
-                    <div key={text} className="flex items-start gap-2.5">
-                      <span className="material-symbols-outlined flex-shrink-0 mt-0.5" style={{ fontSize: 14, fontVariationSettings: "'FILL' 1", color: icon === 'warning' ? '#D14343' : 'var(--terracotta)' }}>{icon}</span>
-                      <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: 'rgba(28,30,74,0.65)', lineHeight: 1.5 }}>{text}</p>
+                    <div key={text} className="flex items-start gap-3 rounded-xl px-4 py-3"
+                      style={{ background: icon === 'warning' ? 'rgba(209,67,67,0.06)' : 'var(--warm-sand)' }}>
+                      <Icon name={icon} size={19} className="flex-shrink-0 mt-0.5" style={{ color: icon === 'warning' ? '#D14343' : 'var(--terracotta)' }} />
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: 15, color: 'rgba(28,30,74,0.72)', lineHeight: 1.55 }}>{text}</p>
                     </div>
                   ))}
+
+                  {/* Nakshatra hand-over is the single most actionable timing
+                      on this page for choosing a muhurat. */}
+                  {panchang?.nakshatraSpans && panchang.nakshatraSpans.length > 1 && (
+                    <div className="flex items-start gap-3 rounded-xl px-4 py-3" style={{ background: 'rgba(198,125,83,0.09)', border: '1px solid rgba(198,125,83,0.25)' }}>
+                      <Icon name="star" size={19} className="flex-shrink-0 mt-0.5" style={{ color: 'var(--terracotta)' }} />
+                      <p style={{ fontFamily: "var(--font-body)", fontSize: 15, color: 'rgba(28,30,74,0.72)', lineHeight: 1.55 }}>
+                        Nakshatra changes today:{' '}
+                        {panchang.nakshatraSpans.map((s, i) => (
+                          <span key={i}>
+                            {i > 0 && ', then '}
+                            <strong>{s.name}</strong> till {s.end}{s.endsNextDay ? ' (next day)' : ''}
+                          </span>
+                        ))}
+                        . Pick your muhurat inside the span you want.
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

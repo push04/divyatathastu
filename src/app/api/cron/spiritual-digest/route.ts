@@ -6,7 +6,7 @@ import { sendSpiritualDigest, type DigestContent } from '@/lib/email'
 export const maxDuration = 60
 export const dynamic = 'force-dynamic'
 
-// Cycling topics — one per 3-day window (8 topics × 3 days = 24-day cycle)
+// Cycling topics - one per 3-day window (8 topics × 3 days = 24-day cycle)
 const TOPICS = [
   'Vedic Astrology & Jyotish Wisdom',
   'Nakshatra Insights & Star Power',
@@ -62,16 +62,17 @@ Return ONLY the 8 sections separated by "---". No labels, no extra text.`
       parts[3] || 'Small consistent practices create lasting change.',
     ],
     mantra: parts[4] || 'Om Namah Shivaya',
-    mantraTranslation: parts[5] || 'I bow to Shiva, the inner self — a mantra of purification and surrender.',
+    mantraTranslation: parts[5] || 'I bow to Shiva, the inner self - a mantra of purification and surrender.',
     practicalTip: parts[6] || 'Take 5 minutes today to sit quietly, breathe deeply, and set one clear intention for the day.',
     closing: parts[7] || 'May divine wisdom illuminate every step of your sacred journey.',
   }
 }
 
 export async function GET(req: NextRequest) {
-  // Vercel cron authentication — check whenever CRON_SECRET is set (not just production)
+  // Vercel cron authentication - always require the secret; fail-closed when not set
   const authHeader = req.headers.get('authorization')
-  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  const cronSecret = process.env.CRON_SECRET
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

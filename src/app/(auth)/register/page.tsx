@@ -1,8 +1,8 @@
 ﻿'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { createClient } from '@/lib/supabase/client'
 import { CheckCircle, Shield, Users, Clock } from 'lucide-react'
@@ -18,7 +18,7 @@ const TRUST = [
 ]
 
 const INPUT_BASE: React.CSSProperties = {
-  fontFamily: "'DM Sans', sans-serif",
+  fontFamily: "var(--font-body)",
   fontSize: '14px',
   color: 'var(--indigo-deep)',
   background: 'white',
@@ -39,7 +39,7 @@ function Field({
   const [focused, setFocused] = useState(false)
   return (
     <div>
-      <label style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '13px', fontWeight: 500, color: 'rgba(28,30,74,0.7)', display: 'block', marginBottom: '6px' }}>
+      <label style={{ fontFamily: "var(--font-body)", fontSize: '13px', fontWeight: 500, color: 'rgba(28,30,74,0.7)', display: 'block', marginBottom: '6px' }}>
         {label}
       </label>
       <input
@@ -58,7 +58,7 @@ function Field({
         onBlur={() => setFocused(false)}
       />
       {helper && (
-        <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '12px', color: 'rgba(28,30,74,0.35)', marginTop: '4px' }}>
+        <p style={{ fontFamily: "var(--font-body)", fontSize: '12px', color: 'rgba(28,30,74,0.35)', marginTop: '4px' }}>
           {helper}
         </p>
       )}
@@ -66,14 +66,71 @@ function Field({
   )
 }
 
+/** Key used to carry a referral code across an OAuth round-trip. */
+const REF_STORAGE_KEY = 'mt_referral_code'
+
 export default function RegisterPage() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterForm />
+    </Suspense>
+  )
+}
+
+function RegisterForm() {
   const [form, setForm] = useState({ name: '', email: '', password: '', phone: '' })
   const [loading, setLoading] = useState(false)
+  const [refCode, setRefCode] = useState('')
   const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = createClient()
+
+  // A referral link lands here as /register?ref=CODE. Stash it so a Google
+  // sign-up (which leaves and returns) does not lose the attribution.
+  useEffect(() => {
+    const fromUrl = searchParams.get('ref')
+    if (fromUrl) {
+      const clean = fromUrl.trim().toUpperCase()
+      setRefCode(clean)
+      try { sessionStorage.setItem(REF_STORAGE_KEY, clean) } catch {}
+      return
+    }
+    try {
+      const stored = sessionStorage.getItem(REF_STORAGE_KEY)
+      if (stored) setRefCode(stored)
+    } catch {}
+  }, [searchParams])
 
   function update(field: string, val: string) {
     setForm(prev => ({ ...prev, [field]: val }))
+  }
+
+  /**
+   * Best-effort - a failed claim must never block a successful signup.
+   *
+   * The stored code is only cleared once the server gives a definitive answer.
+   * If there is no session yet (email confirmation pending) the call 401s and
+   * the code stays put, so <ReferralClaimer/> in the dashboard layout can
+   * finish the job on the first authenticated page. Clearing it here
+   * unconditionally silently lost the referral.
+   */
+  async function claimReferral() {
+    if (!refCode) return
+    try {
+      const res = await fetch('/api/referrals', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'claim', code: refCode }),
+      })
+      if (res.status === 401) return   // not signed in yet - retry later
+      if (res.ok) {
+        const j = await res.json().catch(() => null)
+        toast.success(`Referral applied — welcome via ${j?.referrer_name || 'your friend'}!`)
+      }
+      try { sessionStorage.removeItem(REF_STORAGE_KEY) } catch {}
+    } catch {
+      // Network error - keep the code so the dashboard can retry.
+    }
   }
 
   async function handleRegister(e: React.FormEvent) {
@@ -82,7 +139,7 @@ export default function RegisterPage() {
     const { error } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
-      options: { data: { full_name: form.name, phone: form.phone } },
+      options: { data: { full_name: form.name, phone: form.phone, referral_code: refCode || undefined } },
     })
     if (error) {
       toast.error(error.message)
@@ -93,6 +150,7 @@ export default function RegisterPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type: 'welcome', to: form.email, name: form.name }),
       }).catch(() => {})
+      await claimReferral()
       router.push('/dashboard')
     }
     setLoading(false)
@@ -117,8 +175,8 @@ export default function RegisterPage() {
         {/* Mobile: compact header */}
         <div className="lg:hidden flex items-center gap-3 p-6" style={{ minHeight: '80px' }}>
           <div className="w-8 h-8 flex-shrink-0"><SudarshanLoader px={32} /></div>
-          <span style={{ fontFamily: "'Playfair Display', serif", color: 'white', fontWeight: 700, fontSize: '16px' }}>MahaTathastu</span>
-          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '12px', color: 'rgba(255,255,255,0.45)', marginLeft: 'auto' }}>India's holistic platform</span>
+          <span style={{ fontFamily: "var(--font-display)", color: 'white', fontWeight: 700, fontSize: '16px' }}>MahaTathastu</span>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: '12px', color: 'var(--text-on-dark-muted)', marginLeft: 'auto' }}>India's holistic platform</span>
         </div>
 
         {/* Desktop: full panel */}
@@ -126,14 +184,14 @@ export default function RegisterPage() {
           {/* Wordmark */}
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 flex-shrink-0"><SudarshanLoader px={36} /></div>
-            <span style={{ fontFamily: "'Playfair Display', serif", color: 'white', fontWeight: 700, fontSize: '18px' }}>MahaTathastu</span>
+            <span style={{ fontFamily: "var(--font-display)", color: 'white', fontWeight: 700, fontSize: '18px' }}>MahaTathastu</span>
           </div>
 
           {/* Center content */}
           <div className="flex-1 flex flex-col justify-center py-6">
             <p
               className="mb-5"
-              style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: '21px', color: 'rgba(255,255,255,0.8)', maxWidth: '300px', lineHeight: 1.55 }}
+              style={{ fontFamily: "var(--font-display)", fontStyle: 'italic', fontSize: '21px', color: 'var(--text-on-dark)', maxWidth: '300px', lineHeight: 1.55 }}
             >
               तत् सत् - That is Truth. Know thyself fully.
             </p>
@@ -143,7 +201,7 @@ export default function RegisterPage() {
               {TRUST.map(({ Icon, text }) => (
                 <div key={text} className="flex items-start gap-3 py-2">
                   <Icon size={15} color="var(--saffron)" className="flex-shrink-0 mt-0.5" />
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '13px', color: 'rgba(255,255,255,0.65)' }}>{text}</span>
+                  <span style={{ fontFamily: "var(--font-body)", fontSize: '13px', color: 'var(--text-on-dark-secondary)' }}>{text}</span>
                 </div>
               ))}
             </div>
@@ -151,11 +209,11 @@ export default function RegisterPage() {
 
           {/* Testimonial snippet */}
           <div>
-            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '40px', color: 'rgba(212,160,67,0.2)', lineHeight: 1 }}>&ldquo;</div>
-            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '13px', color: 'rgba(255,255,255,0.55)', fontStyle: 'italic', maxWidth: '280px', marginTop: '4px' }}>
+            <div style={{ fontFamily: "var(--font-display)", fontSize: '40px', color: 'rgba(212,160,67,0.2)', lineHeight: 1 }}>&ldquo;</div>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: '13px', color: 'var(--text-on-dark-secondary)', fontStyle: 'italic', maxWidth: '280px', marginTop: '4px' }}>
               The child development report for my son was spot-on. Best investment for our family.
             </p>
-            <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '10px', color: 'rgba(255,255,255,0.35)', marginTop: '8px' }}>
+            <p style={{ fontFamily: "var(--font-label)", fontSize: '10px', color: 'var(--text-on-dark-muted)', marginTop: '8px' }}>
               - Priya S., Mumbai
             </p>
           </div>
@@ -167,11 +225,11 @@ export default function RegisterPage() {
         <div className="w-full max-w-md">
           <h1
             className="mb-1"
-            style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, fontSize: '32px', color: 'var(--indigo-deep)' }}
+            style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: '32px', color: 'var(--indigo-deep)' }}
           >
             Create your account
           </h1>
-          <p className="mb-8" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '14px', color: 'rgba(28,30,74,0.5)' }}>
+          <p className="mb-8" style={{ fontFamily: "var(--font-body)", fontSize: '14px', color: 'rgba(28,30,74,0.5)' }}>
             Your free Tathastu family account - add unlimited family members.
           </p>
 
@@ -180,7 +238,7 @@ export default function RegisterPage() {
             onClick={handleGoogleLogin}
             className="w-full flex items-center justify-center gap-3 font-semibold transition-colors mb-6"
             style={{
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "var(--font-body)",
               fontSize: '14px',
               color: 'var(--indigo-deep)',
               background: 'white',
@@ -211,9 +269,36 @@ export default function RegisterPage() {
           {/* Divider */}
           <div className="flex items-center gap-3 mb-6">
             <div className="flex-1 h-px" style={{ background: 'rgba(28,30,74,0.1)' }} />
-            <span style={{ fontFamily: "'Sora', sans-serif", fontSize: '11px', color: 'rgba(28,30,74,0.3)' }}>or</span>
+            <span style={{ fontFamily: "var(--font-label)", fontSize: '11px', color: 'rgba(28,30,74,0.3)' }}>or</span>
             <div className="flex-1 h-px" style={{ background: 'rgba(28,30,74,0.1)' }} />
           </div>
+
+          {/* Referral attribution - confirms to the invitee that their
+              friend's link was picked up, and lets them correct a typo. */}
+          {refCode && (
+            <div
+              className="flex items-center gap-3 mb-5 px-4 py-3 rounded-xl"
+              style={{ background: 'rgba(201,153,46,0.10)', border: '1px solid rgba(201,153,46,0.3)' }}
+            >
+              <CheckCircle size={18} color="var(--saffron)" className="flex-shrink-0" />
+              <div className="min-w-0">
+                <p style={{ fontFamily: "var(--font-body)", fontSize: '13px', fontWeight: 600, color: 'var(--indigo-deep)' }}>
+                  Invited by a friend
+                </p>
+                <p style={{ fontFamily: "var(--font-body)", fontSize: '12px', color: 'rgba(28,30,74,0.6)' }}>
+                  Referral code <strong style={{ letterSpacing: '0.08em' }}>{refCode}</strong> will be applied to your account.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => { setRefCode(''); try { sessionStorage.removeItem(REF_STORAGE_KEY) } catch {} }}
+                className="ml-auto flex-shrink-0"
+                style={{ fontFamily: "var(--font-body)", fontSize: '12px', color: 'rgba(28,30,74,0.45)', textDecoration: 'underline' }}
+              >
+                Remove
+              </button>
+            </div>
+          )}
 
           <form onSubmit={handleRegister} className="space-y-4">
             <Field label="Full Name" field="name" placeholder="Your name as it appears on your ID" value={form.name} onChange={v => update('name', v)} />
@@ -231,7 +316,7 @@ export default function RegisterPage() {
               disabled={loading}
               className="w-full font-semibold transition-opacity mt-2"
               style={{
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "var(--font-body)",
                 fontSize: '15px',
                 background: 'var(--terracotta)',
                 color: 'white',
@@ -240,16 +325,16 @@ export default function RegisterPage() {
                 opacity: loading ? 0.7 : 1,
               }}
             >
-              {loading ? 'Creating account…' : 'Create My Family Account'}
+              {loading ? 'Creating account...' : 'Create My Family Account'}
             </button>
           </form>
 
-          <p className="text-center mt-5" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '13px', color: 'rgba(28,30,74,0.5)' }}>
+          <p className="text-center mt-5" style={{ fontFamily: "var(--font-body)", fontSize: '13px', color: 'rgba(28,30,74,0.5)' }}>
             Already have an account?{' '}
             <Link href="/login" style={{ color: 'var(--terracotta)', fontWeight: 500 }}>Sign in →</Link>
           </p>
 
-          <p className="text-center mt-6" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '11px', color: 'rgba(28,30,74,0.35)' }}>
+          <p className="text-center mt-6" style={{ fontFamily: "var(--font-body)", fontSize: '11px', color: 'rgba(28,30,74,0.35)' }}>
             By creating an account, you agree to our Terms and Privacy Policy. We never sell your data.
           </p>
         </div>

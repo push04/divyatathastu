@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
+import Icon from '@/components/ui/Icon'
 // ─── Crystal Data ─────────────────────────────────────────────────────────────
 const CRYSTAL_STATIC: Record<string, {
   id: string; name: string; sanskrit: string; slug: string
@@ -118,7 +119,7 @@ const CRYSTAL_STATIC: Record<string, {
     wearing: 'Pendant on full moon nights or near meditation space.',
     mantra: 'OM Chandraya Namah',
     fallbackPrice: 1099, salePrice: 1299,
-    color: '#0E7490', accent: '#ECFEFF', symbol: 'auto_awesome',
+    color: '#0E7490', accent: '#ECFEFF', symbol: 'diamond',
   },
 }
 
@@ -260,16 +261,16 @@ function buildMathResult(
   }
 
   const INSIGHTS: Record<number, string> = {
-    1:'You carry the solar frequency of independent leadership. Your soul blueprint is that of the pioneer — built to initiate, create, and forge new paths.',
+    1:'You carry the solar frequency of independent leadership. Your soul blueprint is that of the pioneer - built to initiate, create, and forge new paths.',
     2:'Your Moon-ruled soul operates through sensitivity and deep relational intelligence. You are the diplomat, the nurturer, the one who brings people together.',
-    3:'Jupiter governs your expansive nature. You are a communicator, teacher, and creator by soul design — here to inspire through joy and expression.',
-    4:'Rahu gives you earthly mastery. Disciplined, methodical, and structured — you are built to create lasting foundations that outlive you.',
+    3:'Jupiter governs your expansive nature. You are a communicator, teacher, and creator by soul design - here to inspire through joy and expression.',
+    4:'Rahu gives you earthly mastery. Disciplined, methodical, and structured - you are built to create lasting foundations that outlive you.',
     5:'Mercury blesses you with adaptability and intellect. Variety, travel, and ideas fuel your dharma. Freedom is your greatest teacher.',
     6:'Venus rules your life path, gifting you beauty, love, and a profound artistic nature. Harmony and family are at the core of your soul mission.',
-    7:'Ketu guides you inward — the mystic and philosopher, seeking liberation through wisdom. Solitude is your teacher, not your punishment.',
+    7:'Ketu guides you inward - the mystic and philosopher, seeking liberation through wisdom. Solitude is your teacher, not your punishment.',
     8:'Saturn demands karmic accountability. Your path brings power through discipline and responsibility. What you build is meant to last.',
-    9:'Mars completes the cycle in you — a warrior of compassion, built for service and transformation. You are the humanitarian of the zodiac.',
-    11:'You carry the Master 11 vibration — heightened intuition and a mission to inspire humanity through spiritual channels.',
+    9:'Mars completes the cycle in you - a warrior of compassion, built for service and transformation. You are the humanitarian of the zodiac.',
+    11:'You carry the Master 11 vibration - heightened intuition and a mission to inspire humanity through spiritual channels.',
     22:'The Master Builder. You are encoded to manifest the greatest visions into physical reality. Yours is the most powerful Life Path.',
     33:'The Master Teacher. Your entire existence is an act of sacred service and unconditional love.',
   }
@@ -282,19 +283,14 @@ function buildMathResult(
   }
 }
 
-// ─── Crystal Icon — clean SVG shape per stone ────────────────────────────────
+// ─── Crystal Icon - clean SVG shape per stone ────────────────────────────────
 function CrystalIcon({ color, symbol, size = 40 }: { color: string; symbol: string; size?: number }) {
   return (
     <div
       className="flex items-center justify-center rounded-xl flex-shrink-0"
       style={{ width: size, height: size, background: `${color}15`, border: `1.5px solid ${color}30` }}
     >
-      <span
-        className="material-symbols-outlined"
-        style={{ fontSize: size * 0.5, color, fontVariationSettings: "'FILL' 1" }}
-      >
-        {symbol}
-      </span>
+      <Icon name={symbol} style={{ color }} />
     </div>
   )
 }
@@ -333,24 +329,24 @@ function CrystalCard({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-1 flex-wrap">
               <span
-                className="text-[10px] font-bold tracking-[0.2em] uppercase px-2.5 py-0.5 rounded-full"
-                style={{ background: `${crystal.color}12`, color: crystal.color, fontFamily: "'Sora', sans-serif" }}
+                className="text-[12px] font-bold tracking-[0.2em] uppercase px-2.5 py-0.5 rounded-full"
+                style={{ background: `${crystal.color}12`, color: crystal.color, fontFamily: "var(--font-label)" }}
               >
-                {RANK_NUM[rank]} — {RANK_LABEL[rank]}
+                {RANK_NUM[rank]} - {RANK_LABEL[rank]}
               </span>
               {isPrimary && (
                 <span
-                  className="text-[10px] font-bold tracking-[0.15em] uppercase px-2.5 py-0.5 rounded-full"
-                  style={{ background: '#FEF3C7', color: '#92400E', fontFamily: "'Sora', sans-serif" }}
+                  className="text-[12px] font-bold tracking-[0.15em] uppercase px-2.5 py-0.5 rounded-full"
+                  style={{ background: '#FEF3C7', color: '#92400E', fontFamily: "var(--font-label)" }}
                 >
                   Best Match
                 </span>
               )}
             </div>
-            <h3 className="text-xl sm:text-2xl font-bold text-[#2F2A44]" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h3 className="text-xl sm:text-2xl font-bold text-[#1B1233]" style={{ fontFamily: "var(--font-display)" }}>
               {crystal.name}
             </h3>
-            <p className="text-sm text-[#9C8F85] mt-0.5" style={{ fontFamily: "'Sora', sans-serif", letterSpacing: '0.08em' }}>
+            <p className="text-sm text-[#9C8F85] mt-0.5" style={{ fontFamily: "var(--font-label)", letterSpacing: '0.08em' }}>
               {crystal.sanskrit}
             </p>
           </div>
@@ -359,7 +355,7 @@ function CrystalCard({
         {/* Properties row */}
         <div
           className="grid grid-cols-3 gap-3 mb-6 p-4 rounded-xl"
-          style={{ background: '#FBFAF7', border: '1px solid #EDE8E2' }}
+          style={{ background: '#FAF6EF', border: '1px solid #EDE8E2' }}
         >
           {([
             ['Chakra', crystal.chakra],
@@ -367,19 +363,19 @@ function CrystalCard({
             ['Element', crystal.element],
           ] as [string, string][]).map(([l, v]) => (
             <div key={l}>
-              <p className="text-[9px] font-bold uppercase tracking-widest text-[#B5A89E] mb-1" style={{ fontFamily: "'Sora', sans-serif" }}>{l}</p>
-              <p className="text-xs font-semibold text-[#2F2A44] leading-tight">{v}</p>
+              <p className="text-[12px] font-bold uppercase tracking-widest text-[#B5A89E] mb-1" style={{ fontFamily: "var(--font-label)" }}>{l}</p>
+              <p className="text-xs font-semibold text-[#1B1233] leading-tight">{v}</p>
             </div>
           ))}
         </div>
 
-        {/* AI rationale */}
+        {/* Rationale */}
         {rationale && (
           <div
             className="mb-6 p-4 rounded-xl"
             style={{ background: `${crystal.color}08`, border: `1px solid ${crystal.color}25` }}
           >
-            <p className="text-[10px] font-bold tracking-[0.18em] uppercase mb-2" style={{ color: crystal.color, fontFamily: "'Sora', sans-serif" }}>
+            <p className="text-[12px] font-bold tracking-[0.18em] uppercase mb-2" style={{ color: crystal.color, fontFamily: "var(--font-label)" }}>
               Vedic Analysis
             </p>
             <p className="text-sm text-[#4A4060] leading-relaxed">{rationale}</p>
@@ -388,13 +384,13 @@ function CrystalCard({
 
         {/* Benefits */}
         <div className="mb-6">
-          <p className="text-[9px] font-bold tracking-widest uppercase text-[#B5A89E] mb-2.5" style={{ fontFamily: "'Sora', sans-serif" }}>Key Benefits</p>
+          <p className="text-[12px] font-bold tracking-widest uppercase text-[#B5A89E] mb-2.5" style={{ fontFamily: "var(--font-label)" }}>Key Benefits</p>
           <div className="flex flex-wrap gap-2">
             {crystal.benefits.slice(0, 4).map(b => (
               <span
                 key={b}
-                className="text-xs px-2.5 py-1 rounded-full text-[#53443C]"
-                style={{ background: '#F2E2D9', fontFamily: "'DM Sans', sans-serif" }}
+                className="text-xs px-2.5 py-1 rounded-full text-[#33245C]"
+                style={{ background: '#F4EADB', fontFamily: "var(--font-body)" }}
               >
                 {b}
               </span>
@@ -404,12 +400,12 @@ function CrystalCard({
 
         {/* Mantra + Wearing */}
         <div className="grid sm:grid-cols-2 gap-4 mb-6">
-          <div className="p-4 rounded-xl" style={{ background: '#FBFAF7', border: '1px solid #EDE8E2' }}>
-            <p className="text-[9px] font-bold tracking-widest uppercase text-[#B5A89E] mb-1.5" style={{ fontFamily: "'Sora', sans-serif" }}>Sacred Mantra</p>
-            <p className="text-sm font-semibold text-[#2F2A44]" style={{ fontFamily: "'Playfair Display', serif" }}>{crystal.mantra}</p>
+          <div className="p-4 rounded-xl" style={{ background: '#FAF6EF', border: '1px solid #EDE8E2' }}>
+            <p className="text-[12px] font-bold tracking-widest uppercase text-[#B5A89E] mb-1.5" style={{ fontFamily: "var(--font-label)" }}>Sacred Mantra</p>
+            <p className="text-sm font-semibold text-[#1B1233]" style={{ fontFamily: "var(--font-display)" }}>{crystal.mantra}</p>
           </div>
-          <div className="p-4 rounded-xl" style={{ background: '#FBFAF7', border: '1px solid #EDE8E2' }}>
-            <p className="text-[9px] font-bold tracking-widest uppercase text-[#B5A89E] mb-1.5" style={{ fontFamily: "'Sora', sans-serif" }}>How to Wear</p>
+          <div className="p-4 rounded-xl" style={{ background: '#FAF6EF', border: '1px solid #EDE8E2' }}>
+            <p className="text-[12px] font-bold tracking-widest uppercase text-[#B5A89E] mb-1.5" style={{ fontFamily: "var(--font-label)" }}>How to Wear</p>
             <p className="text-xs text-[#6B5E55] leading-relaxed">{crystal.wearing}</p>
           </div>
         </div>
@@ -417,13 +413,13 @@ function CrystalCard({
         {/* Price + CTA */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pt-4 border-t border-[#EDE8E2]">
           <div>
-            <p className="text-[9px] font-bold tracking-widest uppercase text-[#B5A89E] mb-0.5" style={{ fontFamily: "'Sora', sans-serif" }}>Price</p>
+            <p className="text-[12px] font-bold tracking-widest uppercase text-[#B5A89E] mb-0.5" style={{ fontFamily: "var(--font-label)" }}>Price</p>
             <div className="flex items-baseline gap-2">
-              <span className="text-xl font-bold text-[#2F2A44]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+              <span className="text-xl font-bold text-[#1B1233]" style={{ fontFamily: "var(--font-mono)" }}>
                 ₹{crystal.price.toLocaleString('en-IN')}
               </span>
               {crystal.originalPrice && crystal.originalPrice > crystal.price && (
-                <span className="text-sm text-[#B5A89E] line-through" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                <span className="text-sm text-[#B5A89E] line-through" style={{ fontFamily: "var(--font-mono)" }}>
                   ₹{crystal.originalPrice.toLocaleString('en-IN')}
                 </span>
               )}
@@ -433,18 +429,18 @@ function CrystalCard({
             <Link
               href={`/shop?slug=${crystal.slug}`}
               className="flex items-center gap-2 py-2.5 px-5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
-              style={{ background: crystal.color, fontFamily: "'Sora', sans-serif" }}
+              style={{ background: crystal.color, fontFamily: "var(--font-label)" }}
             >
-              <span className="material-symbols-outlined text-[15px]" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_bag</span>
+              <Icon name="shopping_bag" size={15} />
               Order Now
             </Link>
             <a
               href={`https://wa.me/919858784784?text=${encodeURIComponent(`Namaste! The Crystal Calculator recommended ${crystal.name} for me. I would like to order it. Please guide me.`)}`}
               target="_blank" rel="noopener noreferrer"
-              className="flex items-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all hover:bg-[#F2E2D9]"
-              style={{ background: '#FBFAF7', border: '1.5px solid #E0D4C8', color: '#53443C', fontFamily: "'Sora', sans-serif" }}
+              className="flex items-center gap-2 py-2.5 px-4 rounded-xl text-sm font-semibold transition-all hover:bg-[#F4EADB]"
+              style={{ background: '#FAF6EF', border: '1.5px solid #E8D9C2', color: '#33245C', fontFamily: "var(--font-label)" }}
             >
-              <span className="material-symbols-outlined text-[15px]" style={{ fontVariationSettings: "'FILL' 1" }}>chat</span>
+              <Icon name="chat" size={15} />
               WhatsApp
             </a>
           </div>
@@ -544,10 +540,10 @@ export default function CrystalCalculatorPage() {
   const today = new Date().toISOString().split('T')[0]
   const inputStyle = (hasError?: boolean): React.CSSProperties => ({
     background: '#ffffff',
-    border: `1.5px solid ${hasError ? '#DC2626' : '#E0D4C8'}`,
+    border: `1.5px solid ${hasError ? '#DC2626' : '#E8D9C2'}`,
     borderRadius: 12,
-    color: '#2F2A44',
-    fontFamily: "'DM Sans', sans-serif",
+    color: '#1B1233',
+    fontFamily: "var(--font-body)",
     fontSize: 14,
     padding: '14px 18px',
     width: '100%',
@@ -557,46 +553,46 @@ export default function CrystalCalculatorPage() {
   })
 
   return (
-    <div className="min-h-screen" style={{ background: '#FBFAF7' }}>
+    <div className="min-h-screen" style={{ background: '#FAF6EF' }}>
 
       {/* ── HERO ────────────────────────────────────────────────── */}
       <section
         className="relative overflow-hidden py-20 sm:py-28 px-4 sm:px-6"
-        style={{ background: 'linear-gradient(160deg, #FBFAF7 60%, #F2E2D9 100%)' }}
+        style={{ background: 'linear-gradient(160deg, #FAF6EF 60%, #F4EADB 100%)' }}
       >
         {/* Subtle geometric accent */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
           <svg className="absolute right-0 top-0 w-96 h-96 opacity-[0.04]" viewBox="0 0 400 400">
-            <polygon points="200,20 380,380 20,380" fill="none" stroke="#C67D53" strokeWidth="2"/>
-            <circle cx="200" cy="200" r="160" fill="none" stroke="#C67D53" strokeWidth="1"/>
-            <circle cx="200" cy="200" r="80"  fill="none" stroke="#C67D53" strokeWidth="1"/>
+            <polygon points="200,20 380,380 20,380" fill="none" stroke="#B4231F" strokeWidth="2"/>
+            <circle cx="200" cy="200" r="160" fill="none" stroke="#B4231F" strokeWidth="1"/>
+            <circle cx="200" cy="200" r="80"  fill="none" stroke="#B4231F" strokeWidth="1"/>
           </svg>
           <svg className="absolute left-0 bottom-0 w-64 h-64 opacity-[0.04]" viewBox="0 0 300 300">
-            <circle cx="150" cy="150" r="120" fill="none" stroke="#2F2A44" strokeWidth="1"/>
-            <polygon points="150,30 270,270 30,270" fill="none" stroke="#2F2A44" strokeWidth="1"/>
+            <circle cx="150" cy="150" r="120" fill="none" stroke="#1B1233" strokeWidth="1"/>
+            <polygon points="150,30 270,270 30,270" fill="none" stroke="#1B1233" strokeWidth="1"/>
           </svg>
         </div>
 
         <div className="relative z-10 max-w-3xl mx-auto text-center">
           {/* Eyebrow */}
           <div className="flex items-center justify-center gap-4 mb-6">
-            <div className="h-px w-12" style={{ background: '#C67D53', opacity: 0.4 }} />
-            <p className="text-xs font-bold tracking-[0.3em] uppercase text-[#C67D53]" style={{ fontFamily: "'Sora', sans-serif" }}>
+            <div className="h-px w-12" style={{ background: '#B4231F', opacity: 0.4 }} />
+            <p className="text-xs font-bold tracking-[0.3em] uppercase text-[#B4231F]" style={{ fontFamily: "var(--font-label)" }}>
               Vedic Crystal Science
             </p>
-            <div className="h-px w-12" style={{ background: '#C67D53', opacity: 0.4 }} />
+            <div className="h-px w-12" style={{ background: '#B4231F', opacity: 0.4 }} />
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#2F2A44] mb-5 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[#1B1233] mb-5 leading-tight" style={{ fontFamily: "var(--font-display)" }}>
             Crystal<br />
-            <span style={{ color: '#C67D53' }}>Calculator</span>
+            <span style={{ color: '#B4231F' }}>Calculator</span>
           </h1>
 
           <p className="text-[#6B5E55] text-base sm:text-lg max-w-xl mx-auto leading-relaxed mb-3">
-            Discover the healing crystals aligned to your birth vibration — calculated through classical Vedic numerology and AI-assisted planetary analysis.
+            Discover the healing crystals aligned to your birth vibration - calculated through classical Vedic numerology and planetary analysis.
           </p>
-          <p className="text-[#B5A89E] text-sm mb-10" style={{ fontFamily: "'Sora', sans-serif" }}>
-            Deterministic algorithm — identical inputs always produce the same sacred result.
+          <p className="text-[#B5A89E] text-sm mb-10" style={{ fontFamily: "var(--font-label)" }}>
+            Deterministic algorithm - identical inputs always produce the same sacred result.
           </p>
 
           {/* Method pills */}
@@ -605,15 +601,15 @@ export default function CrystalCalculatorPage() {
               { icon: 'calculate', label: 'Life Path Numerology' },
               { icon: 'language',  label: 'Navagraha Planets'   },
               { icon: 'schedule',  label: 'Vedic Hora (Birth Hour)' },
-              { icon: 'auto_awesome', label: 'Vedic AI Analysis' },
+              { icon: 'brightness_7', label: 'Vedic Numerology Analysis' },
             ].map(item => (
               <div
                 key={item.label}
                 className="flex items-center gap-2 px-4 py-2 rounded-full"
-                style={{ background: '#ffffff', border: '1.5px solid #E0D4C8' }}
+                style={{ background: '#ffffff', border: '1.5px solid #E8D9C2' }}
               >
-                <span className="material-symbols-outlined text-[14px] text-[#C67D53]" style={{ fontVariationSettings: "'FILL' 1" }}>{item.icon}</span>
-                <span className="text-[11px] font-semibold text-[#53443C]" style={{ fontFamily: "'Sora', sans-serif" }}>{item.label}</span>
+                <Icon name={item.icon} size={14} className="text-[#B4231F]" />
+                <span className="text-[13px] font-semibold text-[#33245C]" style={{ fontFamily: "var(--font-label)" }}>{item.label}</span>
               </div>
             ))}
           </div>
@@ -624,10 +620,10 @@ export default function CrystalCalculatorPage() {
       <section className="py-16 px-4 sm:px-6" id="calculator">
         <div className="max-w-xl mx-auto">
           <div className="mb-8">
-            <p className="text-xs font-bold tracking-[0.2em] uppercase text-[#C67D53] mb-2" style={{ fontFamily: "'Sora', sans-serif" }}>
-              Step 1 — Enter Your Details
+            <p className="text-xs font-bold tracking-[0.2em] uppercase text-[#B4231F] mb-2" style={{ fontFamily: "var(--font-label)" }}>
+              Step 1 - Enter Your Details
             </p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#2F2A44]" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#1B1233]" style={{ fontFamily: "var(--font-display)" }}>
               Your Birth Information
             </h2>
           </div>
@@ -639,38 +635,38 @@ export default function CrystalCalculatorPage() {
           >
             {/* Name */}
             <div>
-              <label className="block text-xs font-bold tracking-[0.18em] uppercase mb-2 text-[#8A7D75]" style={{ fontFamily: "'Sora', sans-serif" }}>
-                Full Name <span className="text-[#C67D53]">*</span>
+              <label className="block text-xs font-bold tracking-[0.18em] uppercase mb-2 text-[#8A7D75]" style={{ fontFamily: "var(--font-label)" }}>
+                Full Name <span className="text-[#B4231F]">*</span>
               </label>
               <input
                 id="crystal-name" type="text" value={form.name}
                 onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                 placeholder="As commonly used or per birth certificate"
                 style={inputStyle(!!errors.name)}
-                onFocus={e => e.target.style.borderColor = '#C67D53'}
-                onBlur={e => e.target.style.borderColor = errors.name ? '#DC2626' : '#E0D4C8'}
+                onFocus={e => e.target.style.borderColor = '#B4231F'}
+                onBlur={e => e.target.style.borderColor = errors.name ? '#DC2626' : '#E8D9C2'}
               />
               {errors.name && <p className="text-[#DC2626] text-xs mt-1.5">{errors.name}</p>}
             </div>
 
             {/* DOB */}
             <div>
-              <label className="block text-xs font-bold tracking-[0.18em] uppercase mb-2 text-[#8A7D75]" style={{ fontFamily: "'Sora', sans-serif" }}>
-                Date of Birth <span className="text-[#C67D53]">*</span>
+              <label className="block text-xs font-bold tracking-[0.18em] uppercase mb-2 text-[#8A7D75]" style={{ fontFamily: "var(--font-label)" }}>
+                Date of Birth <span className="text-[#B4231F]">*</span>
               </label>
               <input
                 id="crystal-dob" type="date" value={form.dob} max={today}
                 onChange={e => setForm(f => ({ ...f, dob: e.target.value }))}
                 style={inputStyle(!!errors.dob)}
-                onFocus={e => e.target.style.borderColor = '#C67D53'}
-                onBlur={e => e.target.style.borderColor = errors.dob ? '#DC2626' : '#E0D4C8'}
+                onFocus={e => e.target.style.borderColor = '#B4231F'}
+                onBlur={e => e.target.style.borderColor = errors.dob ? '#DC2626' : '#E8D9C2'}
               />
               {errors.dob && <p className="text-[#DC2626] text-xs mt-1.5">{errors.dob}</p>}
             </div>
 
             {/* Time of Birth */}
             <div>
-              <label className="block text-xs font-bold tracking-[0.18em] uppercase mb-2 text-[#8A7D75]" style={{ fontFamily: "'Sora', sans-serif" }}>
+              <label className="block text-xs font-bold tracking-[0.18em] uppercase mb-2 text-[#8A7D75]" style={{ fontFamily: "var(--font-label)" }}>
                 Time of Birth{' '}
                 <span className="normal-case tracking-normal font-normal text-[#B5A89E]">(optional)</span>
               </label>
@@ -678,8 +674,8 @@ export default function CrystalCalculatorPage() {
                 id="crystal-tob" type="time" value={form.timeOfBirth}
                 onChange={e => setForm(f => ({ ...f, timeOfBirth: e.target.value }))}
                 style={inputStyle()}
-                onFocus={e => e.target.style.borderColor = '#C67D53'}
-                onBlur={e => e.target.style.borderColor = '#E0D4C8'}
+                onFocus={e => e.target.style.borderColor = '#B4231F'}
+                onBlur={e => e.target.style.borderColor = '#E8D9C2'}
               />
               <p className="text-[#B5A89E] text-xs mt-1.5">
                 Enables Vedic Hora (planetary hour) calculation for greater precision.
@@ -688,7 +684,7 @@ export default function CrystalCalculatorPage() {
 
             {/* Gender */}
             <div>
-              <label className="block text-xs font-bold tracking-[0.18em] uppercase mb-3 text-[#8A7D75]" style={{ fontFamily: "'Sora', sans-serif" }}>
+              <label className="block text-xs font-bold tracking-[0.18em] uppercase mb-3 text-[#8A7D75]" style={{ fontFamily: "var(--font-label)" }}>
                 Gender
               </label>
               <div className="grid grid-cols-3 gap-3">
@@ -702,13 +698,13 @@ export default function CrystalCalculatorPage() {
                     onClick={() => setForm(f => ({ ...f, gender: opt.v }))}
                     className="py-3 px-3 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2"
                     style={{
-                      background: form.gender === opt.v ? '#C67D53' : '#FBFAF7',
-                      border: `1.5px solid ${form.gender === opt.v ? '#C67D53' : '#E0D4C8'}`,
+                      background: form.gender === opt.v ? '#B4231F' : '#FAF6EF',
+                      border: `1.5px solid ${form.gender === opt.v ? '#B4231F' : '#E8D9C2'}`,
                       color: form.gender === opt.v ? '#ffffff' : '#6B5E55',
-                      fontFamily: "'Sora', sans-serif",
+                      fontFamily: "var(--font-label)",
                     }}
                   >
-                    <span className="material-symbols-outlined text-[15px]" style={{ fontVariationSettings: "'FILL' 1" }}>{opt.icon}</span>
+                    <Icon name={opt.icon} size={15} />
                     {opt.l}
                   </button>
                 ))}
@@ -718,24 +714,24 @@ export default function CrystalCalculatorPage() {
             <button
               id="calculate-crystals-btn" type="submit" disabled={calculating}
               className="w-full py-4 rounded-xl font-bold text-sm text-white transition-all flex items-center justify-center gap-3 disabled:opacity-60"
-              style={{ background: calculating ? '#C67D53aa' : '#C67D53', fontFamily: "'Sora', sans-serif", letterSpacing: '0.08em' }}
+              style={{ background: calculating ? '#B4231Faa' : '#B4231F', fontFamily: "var(--font-label)", letterSpacing: '0.08em' }}
             >
               {calculating
                 ? <><span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />Calculating your cosmic blueprint...</>
-                : <><span className="material-symbols-outlined text-[17px]" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>Reveal My Sacred Crystals</>
+                : <><Icon name="diamond" size={17} />Reveal My Sacred Crystals</>
               }
             </button>
           </form>
         </div>
       </section>
 
-      {/* ── AI STATUS ───────────────────────────────────────────── */}
+      {/* ── ENGINE STATUS ───────────────────────────────────────────── */}
       {result && aiStatus === 'loading' && (
         <div className="px-4 sm:px-6 pb-4">
           <div className="max-w-2xl mx-auto flex items-center gap-3 px-5 py-3 rounded-xl" style={{ background: '#FEF3C7', border: '1px solid #FDE68A' }}>
             <span className="w-3.5 h-3.5 border-2 border-amber-400/50 border-t-amber-500 rounded-full animate-spin flex-shrink-0" />
-            <p className="text-amber-800 text-xs" style={{ fontFamily: "'Sora', sans-serif" }}>
-              Vedic AI is refining your recommendations...
+            <p className="text-amber-800 text-xs" style={{ fontFamily: "var(--font-label)" }}>
+              Refining your recommendations...
             </p>
           </div>
         </div>
@@ -743,9 +739,9 @@ export default function CrystalCalculatorPage() {
       {result && aiStatus === 'done' && (
         <div className="px-4 sm:px-6 pb-4">
           <div className="max-w-2xl mx-auto flex items-center gap-3 px-5 py-3 rounded-xl" style={{ background: '#D1FAE5', border: '1px solid #A7F3D0' }}>
-            <span className="material-symbols-outlined text-[15px] text-emerald-600" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-            <p className="text-emerald-800 text-xs" style={{ fontFamily: "'Sora', sans-serif" }}>
-              Analysis complete — recommendations refined by Vedic AI.
+            <Icon name="check_circle" size={15} className="text-emerald-600" />
+            <p className="text-emerald-800 text-xs" style={{ fontFamily: "var(--font-label)" }}>
+              Analysis complete - recommendations refined by our Vedic engine.
             </p>
           </div>
         </div>
@@ -757,14 +753,14 @@ export default function CrystalCalculatorPage() {
           <div className="max-w-3xl mx-auto">
 
             <div className="mb-8">
-              <p className="text-xs font-bold tracking-[0.2em] uppercase text-[#C67D53] mb-2" style={{ fontFamily: "'Sora', sans-serif" }}>
-                Step 2 — Your Sacred Crystals
+              <p className="text-xs font-bold tracking-[0.2em] uppercase text-[#B4231F] mb-2" style={{ fontFamily: "var(--font-label)" }}>
+                Step 2 - Your Sacred Crystals
               </p>
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#2F2A44]" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#1B1233]" style={{ fontFamily: "var(--font-display)" }}>
                 Crystal Blueprint for {form.name.trim().split(' ')[0]}
               </h2>
               <p className="text-[#9C8F85] text-sm mt-1">
-                {result.source === 'ai' ? 'Refined by Vedic AI analysis.' : 'Calculated by Vedic numerology engine.'} Same inputs always yield the same result.
+                {result.source === 'ai' ? 'Refined by deeper Vedic analysis.' : 'Calculated by Vedic numerology engine.'} Same inputs always yield the same result.
               </p>
             </div>
 
@@ -780,17 +776,17 @@ export default function CrystalCalculatorPage() {
                 { label: 'Day Lord', value: result.profile.dayLord, icon: 'calendar_today' },
               ] as { label: string; value: string | number; icon: string }[]).map(item => (
                 <div key={item.label} className="text-center">
-                  <span className="material-symbols-outlined text-[16px] text-[#C67D53] mb-1 block" style={{ fontVariationSettings: "'FILL' 1" }}>{item.icon}</span>
-                  <div className="text-xl font-bold text-[#2F2A44]" style={{ fontFamily: "'Playfair Display', serif" }}>{item.value}</div>
-                  <div className="text-[9px] font-bold uppercase tracking-widest text-[#B5A89E] mt-0.5" style={{ fontFamily: "'Sora', sans-serif" }}>{item.label}</div>
+                  <Icon name={item.icon} size={16} className="text-[#B4231F] mb-1 block" />
+                  <div className="text-xl font-bold text-[#1B1233]" style={{ fontFamily: "var(--font-display)" }}>{item.value}</div>
+                  <div className="text-[12px] font-bold uppercase tracking-widest text-[#B5A89E] mt-0.5" style={{ fontFamily: "var(--font-label)" }}>{item.label}</div>
                 </div>
               ))}
             </div>
 
             {/* Soul message */}
             <div className="rounded-2xl p-5 mb-8" style={{ background: '#ffffff', border: '1.5px solid #E9E3DC' }}>
-              <p className="text-[9px] font-bold uppercase tracking-widest text-[#C67D53] mb-2" style={{ fontFamily: "'Sora', sans-serif" }}>
-                Soul Blueprint — Life Path {result.profile.lifePathNumber} · {result.profile.rulingPlanet}
+              <p className="text-[12px] font-bold uppercase tracking-widest text-[#B4231F] mb-2" style={{ fontFamily: "var(--font-label)" }}>
+                Soul Blueprint - Life Path {result.profile.lifePathNumber} · {result.profile.rulingPlanet}
               </p>
               <p className="text-[#4A4060] leading-relaxed text-sm sm:text-[15px]">{result.soulMessage}</p>
             </div>
@@ -805,20 +801,20 @@ export default function CrystalCalculatorPage() {
             {/* Crystal care */}
             <div className="mt-8 rounded-2xl p-6 sm:p-8" style={{ background: '#ffffff', border: '1.5px solid #E9E3DC' }}>
               <div className="flex items-center gap-3 mb-5">
-                <span className="material-symbols-outlined text-[20px] text-[#C67D53]" style={{ fontVariationSettings: "'FILL' 1" }}>nights_stay</span>
-                <h3 className="text-lg font-bold text-[#2F2A44]" style={{ fontFamily: "'Playfair Display', serif" }}>Crystal Care Protocol</h3>
+                <Icon name="nights_stay" size={20} className="text-[#B4231F]" />
+                <h3 className="text-lg font-bold text-[#1B1233]" style={{ fontFamily: "var(--font-display)" }}>Crystal Care Protocol</h3>
               </div>
               <div className="grid sm:grid-cols-2 gap-4">
                 {([
                   { n:'01', t:'Initial Cleansing', d:'Place under full moonlight overnight, or rinse under running water for 30 seconds while setting a clear intention.' },
                   { n:'02', t:'Programming',       d:'Hold in both hands, breathe deeply, and mentally state your intention three times with complete sincerity.' },
-                  { n:'03', t:'Daily Practice',    d:'Follow the wearing instructions — the correct finger, hand, and auspicious weekday matter deeply in Vedic practice.' },
+                  { n:'03', t:'Daily Practice',    d:'Follow the wearing instructions - the correct finger, hand, and auspicious weekday matter deeply in Vedic practice.' },
                   { n:'04', t:'Periodic Cleansing',d:'Cleanse every two weeks on a selenite plate overnight, or briefly buried in natural sea salt.' },
                 ]).map(item => (
-                  <div key={item.n} className="flex gap-4 p-4 rounded-xl" style={{ background: '#FBFAF7', border: '1px solid #EDE8E2' }}>
-                    <div className="text-sm font-bold text-[#C67D53] font-mono flex-shrink-0 mt-0.5">{item.n}</div>
+                  <div key={item.n} className="flex gap-4 p-4 rounded-xl" style={{ background: '#FAF6EF', border: '1px solid #EDE8E2' }}>
+                    <div className="text-sm font-bold text-[#B4231F] font-mono flex-shrink-0 mt-0.5">{item.n}</div>
                     <div>
-                      <p className="text-[#2F2A44] text-sm font-semibold mb-1">{item.t}</p>
+                      <p className="text-[#1B1233] text-sm font-semibold mb-1">{item.t}</p>
                       <p className="text-[#6B5E55] text-xs leading-relaxed">{item.d}</p>
                     </div>
                   </div>
@@ -831,17 +827,17 @@ export default function CrystalCalculatorPage() {
               <button
                 onClick={handleReset}
                 className="flex items-center justify-center gap-2 py-3 px-5 rounded-xl text-sm font-bold transition-all"
-                style={{ background: '#FBFAF7', border: '1.5px solid #E0D4C8', color: '#6B5E55', fontFamily: "'Sora', sans-serif" }}
+                style={{ background: '#FAF6EF', border: '1.5px solid #E8D9C2', color: '#6B5E55', fontFamily: "var(--font-label)" }}
               >
-                <span className="material-symbols-outlined text-[15px]">refresh</span>
+                <Icon name="refresh" size={15} />
                 Calculate for Another Person
               </button>
               <Link
                 href="/shop"
                 className="flex items-center justify-center gap-2 py-3 px-5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90"
-                style={{ background: '#C67D53', fontFamily: "'Sora', sans-serif" }}
+                style={{ background: '#B4231F', fontFamily: "var(--font-label)" }}
               >
-                <span className="material-symbols-outlined text-[15px]" style={{ fontVariationSettings: "'FILL' 1" }}>storefront</span>
+                <Icon name="storefront" size={15} />
                 Browse All Crystals
               </Link>
             </div>
@@ -857,8 +853,8 @@ export default function CrystalCalculatorPage() {
             {/* Collection grid */}
             <div className="mb-12">
               <div className="mb-6">
-                <p className="text-xs font-bold tracking-[0.2em] uppercase text-[#C67D53] mb-1" style={{ fontFamily: "'Sora', sans-serif" }}>Our Collection</p>
-                <h2 className="text-2xl font-bold text-[#2F2A44]" style={{ fontFamily: "'Playfair Display', serif" }}>12 Sacred Vedic Crystals</h2>
+                <p className="text-xs font-bold tracking-[0.2em] uppercase text-[#B4231F] mb-1" style={{ fontFamily: "var(--font-label)" }}>Our Collection</p>
+                <h2 className="text-2xl font-bold text-[#1B1233]" style={{ fontFamily: "var(--font-display)" }}>12 Sacred Vedic Crystals</h2>
                 <p className="text-[#9C8F85] text-sm mt-1">Prices managed live from admin panel.</p>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -872,8 +868,8 @@ export default function CrystalCalculatorPage() {
                     <div className="flex items-center gap-3 mb-2">
                       <CrystalIcon color={crystal.color} symbol={crystal.symbol} size={36} />
                       <div className="min-w-0">
-                        <p className="text-xs font-bold text-[#2F2A44] leading-tight truncate" style={{ fontFamily: "'Sora', sans-serif" }}>{crystal.name}</p>
-                        <p className="text-[10px] text-[#B5A89E]">{crystal.planet}</p>
+                        <p className="text-xs font-bold text-[#1B1233] leading-tight truncate" style={{ fontFamily: "var(--font-label)" }}>{crystal.name}</p>
+                        <p className="text-[12px] text-[#B5A89E]">{crystal.planet}</p>
                       </div>
                     </div>
                     <p className="text-xs font-semibold font-mono" style={{ color: crystal.color }}>
@@ -886,21 +882,21 @@ export default function CrystalCalculatorPage() {
 
             {/* Methodology */}
             <div className="mb-2">
-              <p className="text-xs font-bold tracking-[0.2em] uppercase text-[#C67D53] mb-1" style={{ fontFamily: "'Sora', sans-serif" }}>Methodology</p>
-              <h2 className="text-2xl font-bold text-[#2F2A44] mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>How the Algorithm Works</h2>
+              <p className="text-xs font-bold tracking-[0.2em] uppercase text-[#B4231F] mb-1" style={{ fontFamily: "var(--font-label)" }}>Methodology</p>
+              <h2 className="text-2xl font-bold text-[#1B1233] mb-6" style={{ fontFamily: "var(--font-display)" }}>How the Algorithm Works</h2>
             </div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {([
-                { icon:'route',         t:'Life Path Number',       d:'Pythagorean digit reduction of your full DOB — the primary soul vibration, weighted highest in the algorithm.' },
+                { icon:'route',         t:'Life Path Number',       d:'Pythagorean digit reduction of your full DOB - the primary soul vibration, weighted highest in the algorithm.' },
                 { icon:'text_fields',   t:'Chaldean Name Number',   d:'Each letter mapped to ancient Chaldean numeric values, reduced to reveal your destiny expression.' },
                 { icon:'schedule',      t:'Vedic Hora (Birth Hour)',d:'The 7-planet Hora wheel determines which Navagraha governed your exact birth hour.' },
                 { icon:'public',        t:'Navagraha Resonance',    d:'Each crystal is mapped to Vedic planets. Your ruling planet alignment carries major weight.' },
                 { icon:'calendar_today',t:'Day Lord Alignment',     d:'The weekday planet of your birth day cross-referenced against each crystal\'s planetary ruler.' },
-                { icon: 'auto_awesome', t:'Vedic AI Refinement',    d:'Vedic AI reasons over your full numerological profile to apply deeper crystal correspondences and planetary wisdom.' },
+                { icon: 'brightness_7', t:'Deeper Vedic Refinement', d:'Our engine reasons over your full numerological profile to apply deeper crystal correspondences and planetary wisdom.' },
               ]).map(item => (
                 <div key={item.t} className="p-5 rounded-xl" style={{ background: '#ffffff', border: '1.5px solid #E9E3DC' }}>
-                  <span className="material-symbols-outlined text-[20px] text-[#C67D53] mb-3 block" style={{ fontVariationSettings: "'FILL' 1" }}>{item.icon}</span>
-                  <h3 className="text-sm font-bold text-[#2F2A44] mb-1.5" style={{ fontFamily: "'Playfair Display', serif" }}>{item.t}</h3>
+                  <Icon name={item.icon} size={20} className="text-[#B4231F] mb-3 block" />
+                  <h3 className="text-sm font-bold text-[#1B1233] mb-1.5" style={{ fontFamily: "var(--font-display)" }}>{item.t}</h3>
                   <p className="text-xs text-[#6B5E55] leading-relaxed">{item.d}</p>
                 </div>
               ))}

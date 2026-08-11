@@ -17,7 +17,7 @@ export async function DELETE() {
   // Nullify user_id on orders before deleting (orders don't cascade)
   await admin.from('orders').update({ user_id: null }).eq('user_id', user.id)
 
-  // Delete the auth user — cascades to profiles → families → family_members, reports, etc.
+  // Delete the auth user - cascades to profiles → families → family_members, reports, etc.
   const { error } = await admin.auth.admin.deleteUser(user.id)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 

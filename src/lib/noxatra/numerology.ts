@@ -1,4 +1,4 @@
-// Numerology Engine — Pythagorean + Chaldean
+// Numerology Engine - Pythagorean + Chaldean
 // Algorithms per services.md: component reduction method, master numbers 11/22/33
 
 const CHALDEAN: Record<string, number> = {
@@ -27,7 +27,7 @@ function nameValue(name: string, map: Record<string, number>): number {
     .reduce((sum, ch) => sum + (map[ch] || 0), 0)
 }
 
-// Component method per services.md — correctly preserves master numbers
+// Component method per services.md - correctly preserves master numbers
 function calculateLifePath(dob: string): number {
   const [year, month, day] = dob.split('-').map(Number)
   const dayReduced   = reduce(day, true)
@@ -128,23 +128,23 @@ function getKarmaNumbers(fullName: string): number[] {
 
 function interpretPersonalYear(n: number): string {
   const map: Record<number, string> = {
-    1: 'This is your new beginning year — a powerful time to initiate projects, rebrand yourself, and plant seeds for the next 9-year cycle. Leadership opportunities emerge. Act boldly on what you want to create.',
-    2: 'A year of patience, partnership, and inner development. Relationships deepen and collaborations flourish. This is not a year to force outcomes — trust the divine timing and nurture existing connections.',
-    3: 'Joy, creativity, and social expansion define this year. Express yourself freely — through art, writing, speaking, or celebration. Travel, romance, and new friendships enrich your world.',
+    1: 'This is your new beginning year - a powerful time to initiate projects, rebrand yourself, and plant seeds for the next 9-year cycle. Leadership opportunities emerge. Act boldly on what you want to create.',
+    2: 'A year of patience, partnership, and inner development. Relationships deepen and collaborations flourish. This is not a year to force outcomes - trust the divine timing and nurture existing connections.',
+    3: 'Joy, creativity, and social expansion define this year. Express yourself freely - through art, writing, speaking, or celebration. Travel, romance, and new friendships enrich your world.',
     4: 'A foundation-building year requiring discipline and focus. The work you put in now creates structures that last for decades. Health, routines, and practical plans need your attention. Avoid shortcuts.',
-    5: 'A year of change, freedom, and unexpected opportunities. Be flexible and embrace disruption — what leaves your life was meant to go. Travel, new skills, and bold moves are favored.',
+    5: 'A year of change, freedom, and unexpected opportunities. Be flexible and embrace disruption - what leaves your life was meant to go. Travel, new skills, and bold moves are favored.',
     6: 'Home, family, and service call you this year. A 6 Personal Year asks you to be responsible and nurturing. Marriages, births, and property matters are highlighted. Beauty and harmony grow when you invest in them.',
     7: 'A deeply introspective year for inner work, spiritual practice, and self-discovery. Step back from the noise of the world. Study, meditation, and time alone will reveal profound insights.',
     8: 'Power, ambition, and material success are activated this year. Business ventures, financial decisions, and career moves pay off when approached strategically. This is a harvest year for past efforts.',
     9: 'A year of endings, completions, and release. Let go of what no longer serves. Forgiveness, charitable giving, and spiritual reflection prepare the ground for the new cycle beginning next year.',
-    11: 'A master intuition year — your sixth sense is heightened. Spiritual downloads, synchronicities, and inspired insights guide your path. Share your visions with the world.',
-    22: 'A master builder year — large-scale projects, institutional work, and world-impacting creations are supported. Ground your vision with disciplined action.',
+    11: 'A master intuition year - your sixth sense is heightened. Spiritual downloads, synchronicities, and inspired insights guide your path. Share your visions with the world.',
+    22: 'A master builder year - large-scale projects, institutional work, and world-impacting creations are supported. Ground your vision with disciplined action.',
   }
   return map[n] || 'A significant year of personal evolution and growth across all life areas.'
 }
 
 function interpretKarmaLesson(missingNumbers: number[]): string {
-  if (missingNumbers.length === 0) return 'No major karmic lessons indicated — your name carries a balanced vibration across all nine numbers.'
+  if (missingNumbers.length === 0) return 'No major karmic lessons indicated - your name carries a balanced vibration across all nine numbers.'
   const LESSONS: Record<number, string> = {
     1: 'independence and self-reliance',
     2: 'cooperation and sensitivity to others',
@@ -253,7 +253,7 @@ function interpretLifePath(n: number): string {
     1:  'You are born to lead. Your life path is one of independence, innovation, and courage. You thrive when pioneering new ideas and must resist the tendency to dominate others. Leadership in business or public life is your calling.',
     2:  'Your soul seeks harmony and connection. You are a natural peacemaker, diplomat, and collaborator. Your greatest power lies in bringing people together and in your extraordinary sensitivity to others\' emotions.',
     3:  'Creativity and self-expression define your journey. You are here to inspire, entertain, and uplift others through art, communication, or performance. Joy and optimism are your gifts to the world.',
-    4:  'You are the builder of foundations. Discipline, order, and hard work are your tools. You create lasting structures — in business, family, or society — that stand the test of time.',
+    4:  'You are the builder of foundations. Discipline, order, and hard work are your tools. You create lasting structures - in business, family, or society - that stand the test of time.',
     5:  'Freedom and adventure are your soul\'s call. You are here to experience the full spectrum of life through travel, change, and exploration. You thrive in dynamic environments.',
     6:  'Love, family, and responsibility are your calling. You are a natural caretaker, healer, and harmonizer. Your greatest fulfillment comes from serving those you love.',
     7:  'You walk the path of the seeker. Philosophy, spirituality, and inner wisdom are your gifts. Solitude and deep contemplation reveal your true nature.',
@@ -272,14 +272,14 @@ function interpretDestiny(n: number): string {
     2:  'Your destiny is to bring people together and create harmony in all relationships. Cooperation is your highest calling.',
     3:  'Your destiny is to express yourself creatively and inspire others with your words, art, and optimistic spirit.',
     4:  'Your destiny is to build, organize, and create lasting systems. Reliability and hard work define your legacy.',
-    5:  'Your destiny is to embrace freedom, adventure, and change — and to help others break free from limitations.',
+    5:  'Your destiny is to embrace freedom, adventure, and change - and to help others break free from limitations.',
     6:  'Your destiny is to serve, nurture, and heal. Family, community, and beauty are central to your purpose.',
     7:  'Your destiny is to seek truth and spiritual wisdom. Research, introspection, and spiritual practice define your path.',
     8:  'Your destiny is to achieve material success and use it to empower others. Abundance and authority are your birthright.',
     9:  'Your destiny is to serve humanity and leave the world better than you found it. Compassion is your greatest power.',
     11: 'Your destiny is to inspire and uplift others through your heightened intuition and spiritual insight.',
-    22: 'Your destiny is to build something that impacts the world at scale — an institution, movement, or lasting creation.',
-    33: 'Your destiny is to be a master of compassion and healing — a living embodiment of service and inspired creativity.',
+    22: 'Your destiny is to build something that impacts the world at scale - an institution, movement, or lasting creation.',
+    33: 'Your destiny is to be a master of compassion and healing - a living embodiment of service and inspired creativity.',
   }
   return map[n] || 'Your destiny holds a unique spiritual mission that will reveal itself through service.'
 }
@@ -328,7 +328,7 @@ export function calculateMobileNumber(mobileNumber: string, lifePathNumber: numb
     sumOfDigits: sum,
     analysis: getMobileAnalysis(mobileVibration, lifePathNumber, compatibility),
     recommendation: compatibility === 'Low'
-      ? `Consider changing to a number that reduces to ${lifePathNumber} — your Life Path vibration.`
+      ? `Consider changing to a number that reduces to ${lifePathNumber} - your Life Path vibration.`
       : 'Your mobile number vibration supports your life path energy.',
   }
 }

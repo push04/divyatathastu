@@ -1,5 +1,5 @@
 /**
- * Safe server-side PDF rendering — RECONCILER-FREE approach.
+ * Safe server-side PDF rendering - RECONCILER-FREE approach.
  *
  * ROOT CAUSE (FINAL, DEFINITIVE):
  * The @react-pdf/renderer reconciler's appendChildToContainer is NEVER called
@@ -29,11 +29,11 @@ async function ensureFontsRegistered() {
 
   const { Font } = await import('@react-pdf/renderer')
 
-  // All fonts are built-in Helvetica variants — zero load/parse/embed cost.
+  // All fonts are built-in Helvetica variants - zero load/parse/embed cost.
   // Only disable hyphenation to prevent slow word-break lookups.
   Font.registerHyphenationCallback((word: string) => [word])
 
-  console.log('[PDF] Hyphenation disabled — using built-in Helvetica fonts')
+  console.log('[PDF] Hyphenation disabled - using built-in Helvetica fonts')
 }
 
 // ─── React-pdf node types (matches createInstance / createTextInstance output) ─
@@ -147,13 +147,13 @@ export async function renderToBufferSafe(element: React.ReactElement): Promise<B
   const nodes = buildNodes(element)
   console.log(`[PDF] buildNodes done in ${Date.now() - t1}ms`)
   if (nodes.length === 0) {
-    throw new Error('[PDF] buildNodes returned empty — no renderable elements')
+    throw new Error('[PDF] buildNodes returned empty - no renderable elements')
   }
 
   const root = nodes[0] as ReactPdfNode
   console.log('[PDF] root type:', root.type, '| children:', root.children.length)
 
-  // Step 3: Set container.document directly — bypasses the reconciler entirely
+  // Step 3: Set container.document directly - bypasses the reconciler entirely
   const { pdf } = await import('@react-pdf/renderer')
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const instance = (pdf as any)()

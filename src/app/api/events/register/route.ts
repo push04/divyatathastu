@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { sendEventRegistrationEmail } from '@/lib/email'
+import { sendEventRegistrationEmail, notifyAdmin } from '@/lib/email'
 
 export async function POST(req: NextRequest) {
   const { eventId, name, email, phone, eventTitle, eventDate } = await req.json()
@@ -34,6 +34,20 @@ export async function POST(req: NextRequest) {
   } catch (e: any) {
     console.warn('[events/register] Email failed:', e.message)
   }
+
+  notifyAdmin({
+    event: 'Event Registration (free)',
+    summary: `${eventTitle || 'Event'} - ${name}`,
+    details: {
+      'Event': eventTitle || eventId,
+      'Event Date': eventDate || '',
+      'Attendee': name,
+      'Email': email,
+      'Phone': phone || '',
+    },
+    adminPath: '/admin/events',
+    accent: '#7C3AED',
+  })
 
   return NextResponse.json({ success: true })
 }

@@ -158,7 +158,7 @@ export function calculateKundli(birth: BirthData): KundliData {
         nakshatra: NAKSHATRAS[nakshatraNum],
         nakshatraNum,
         pada,
-        retrograde: false, // simplified — retrograde calc needs multi-day comparison
+        retrograde: false, // simplified - retrograde calc needs multi-day comparison
         house: 0, // set after ascendant calc
       })
     } catch {
@@ -188,7 +188,7 @@ export function calculateKundli(birth: BirthData): KundliData {
     p.house = ((p.rashiNum - ascRashiNum + 12) % 12) + 1
   })
 
-  // Rahu/Ketu — mean lunar nodes (IAU formula). NOT Moon±180°, which is wrong.
+  // Rahu/Ketu - mean lunar nodes (IAU formula). NOT Moon±180°, which is wrong.
   const { rahuLon, ketuLon } = getMeanLunarNodes(jd, ayanamsa)
   {
     const rahuRashi = Math.floor(rahuLon / 30)
@@ -333,9 +333,9 @@ export function getPanchangForDate(date: string, lat: number, lng: number) {
     sunset,
     moonSign: RASHIS[Math.floor(moonLon / 30)],
     sunSign: RASHIS[Math.floor(sunLon / 30)],
-    rahuKaal:       `${fmtHours(rahuStart)} – ${fmtHours(rahuStart + seg)}`,
-    abhijitMuhurat: `${fmtHours(noon - mDur)} – ${fmtHours(noon + mDur)}`,
-    brahmaHour:     `${fmtHours(srH - 1.6)} – ${fmtHours(srH - 0.8)}`,
+    rahuKaal:       `${fmtHours(rahuStart)} - ${fmtHours(rahuStart + seg)}`,
+    abhijitMuhurat: `${fmtHours(noon - mDur)} - ${fmtHours(noon + mDur)}`,
+    brahmaHour:     `${fmtHours(srH - 1.6)} - ${fmtHours(srH - 0.8)}`,
   }
 }
 

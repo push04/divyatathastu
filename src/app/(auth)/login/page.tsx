@@ -18,7 +18,7 @@ const AWAITING = [
 ]
 
 const INPUT_BASE: React.CSSProperties = {
-  fontFamily: "'DM Sans', sans-serif",
+  fontFamily: "var(--font-body)",
   fontSize: '14px',
   color: 'var(--indigo-deep)',
   background: 'white',
@@ -39,7 +39,7 @@ function Field({
   const [focused, setFocused] = useState(false)
   return (
     <div>
-      <label style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '13px', fontWeight: 500, color: 'rgba(28,30,74,0.7)', display: 'block', marginBottom: '6px' }}>
+      <label style={{ fontFamily: "var(--font-body)", fontSize: '13px', fontWeight: 500, color: 'rgba(28,30,74,0.7)', display: 'block', marginBottom: '6px' }}>
         {label}
       </label>
       <input
@@ -109,8 +109,8 @@ export default function LoginPage() {
         {/* Mobile: compact header */}
         <div className="lg:hidden flex items-center gap-3 p-6" style={{ minHeight: '80px' }}>
           <div className="w-8 h-8 flex-shrink-0"><SudarshanLoader px={32} /></div>
-          <span style={{ fontFamily: "'Playfair Display', serif", color: 'white', fontWeight: 700, fontSize: '16px' }}>MahaTathastu</span>
-          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '12px', color: 'rgba(255,255,255,0.45)', marginLeft: 'auto' }}>India's holistic platform</span>
+          <span style={{ fontFamily: "var(--font-display)", color: 'white', fontWeight: 700, fontSize: '16px' }}>MahaTathastu</span>
+          <span style={{ fontFamily: "var(--font-body)", fontSize: '12px', color: 'var(--text-on-dark-muted)', marginLeft: 'auto' }}>India's holistic platform</span>
         </div>
 
         {/* Desktop: full panel */}
@@ -118,17 +118,17 @@ export default function LoginPage() {
           {/* Wordmark */}
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 flex-shrink-0"><SudarshanLoader px={36} /></div>
-            <span style={{ fontFamily: "'Playfair Display', serif", color: 'white', fontWeight: 700, fontSize: '18px' }}>MahaTathastu</span>
+            <span style={{ fontFamily: "var(--font-display)", color: 'white', fontWeight: 700, fontSize: '18px' }}>MahaTathastu</span>
           </div>
 
           {/* Center content */}
           <div className="flex-1 flex flex-col justify-center py-8">
             <div className="mb-7"><SudarshanLoader px={72} spin={false} className="opacity-15" /></div>
 
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, fontSize: '26px', color: 'white', lineHeight: 1.25, marginBottom: '8px' }}>
+            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: '26px', color: 'white', lineHeight: 1.25, marginBottom: '8px' }}>
               Welcome back.
             </h2>
-            <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: '15px', color: 'rgba(255,255,255,0.5)', maxWidth: '290px', lineHeight: 1.65, marginBottom: '28px' }}>
+            <p style={{ fontFamily: "var(--font-display)", fontStyle: 'italic', fontSize: '15px', color: 'var(--text-on-dark-secondary)', maxWidth: '290px', lineHeight: 1.65, marginBottom: '28px' }}>
               Your karmic journey is preserved. Your family, reports, and sacred path - all waiting for you.
             </p>
 
@@ -138,7 +138,7 @@ export default function LoginPage() {
               {AWAITING.map(({ Icon, text }) => (
                 <div key={text} className="flex items-center gap-3 py-2">
                   <Icon size={15} color="var(--saffron)" className="flex-shrink-0" />
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '13px', color: 'rgba(255,255,255,0.6)' }}>{text}</span>
+                  <span style={{ fontFamily: "var(--font-body)", fontSize: '13px', color: 'var(--text-on-dark-secondary)' }}>{text}</span>
                 </div>
               ))}
             </div>
@@ -146,11 +146,11 @@ export default function LoginPage() {
 
           {/* Bottom quote */}
           <div>
-            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: '36px', color: 'rgba(212,160,67,0.18)', lineHeight: 1 }}>&ldquo;</div>
-            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '12px', color: 'rgba(255,255,255,0.45)', fontStyle: 'italic', maxWidth: '260px', marginTop: '4px' }}>
+            <div style={{ fontFamily: "var(--font-display)", fontSize: '36px', color: 'rgba(212,160,67,0.18)', lineHeight: 1 }}>&ldquo;</div>
+            <p style={{ fontFamily: "var(--font-body)", fontSize: '12px', color: 'var(--text-on-dark-muted)', fontStyle: 'italic', maxWidth: '260px', marginTop: '4px' }}>
               I check my family's panchang every morning before leaving home. It has become a ritual.
             </p>
-            <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '10px', color: 'rgba(255,255,255,0.28)', marginTop: '8px' }}>
+            <p style={{ fontFamily: "var(--font-label)", fontSize: '10px', color: 'var(--text-on-dark-muted)', marginTop: '8px' }}>
               - Ramesh T., Ahmedabad
             </p>
           </div>
@@ -162,11 +162,11 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <h1
             className="mb-1"
-            style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, fontSize: '32px', color: 'var(--indigo-deep)' }}
+            style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: '32px', color: 'var(--indigo-deep)' }}
           >
             Sign in
           </h1>
-          <p className="mb-8" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '14px', color: 'rgba(28,30,74,0.5)' }}>
+          <p className="mb-8" style={{ fontFamily: "var(--font-body)", fontSize: '14px', color: 'rgba(28,30,74,0.5)' }}>
             Continue your journey on MahaTathastu.
           </p>
 
@@ -175,7 +175,7 @@ export default function LoginPage() {
             onClick={handleGoogleLogin}
             className="w-full flex items-center justify-center gap-3 font-semibold transition-colors mb-6"
             style={{
-              fontFamily: "'DM Sans', sans-serif",
+              fontFamily: "var(--font-body)",
               fontSize: '14px',
               color: 'var(--indigo-deep)',
               background: 'white',
@@ -204,7 +204,7 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="flex items-center gap-3 mb-6">
             <div className="flex-1 h-px" style={{ background: 'rgba(28,30,74,0.1)' }} />
-            <span style={{ fontFamily: "'Sora', sans-serif", fontSize: '11px', color: 'rgba(28,30,74,0.3)' }}>or</span>
+            <span style={{ fontFamily: "var(--font-label)", fontSize: '11px', color: 'rgba(28,30,74,0.3)' }}>or</span>
             <div className="flex-1 h-px" style={{ background: 'rgba(28,30,74,0.1)' }} />
           </div>
 
@@ -213,7 +213,7 @@ export default function LoginPage() {
             <Field label="Password" type="password" placeholder="Your password" value={password} onChange={setPassword} />
 
             <div style={{ textAlign: 'right' }}>
-              <Link href="/forgot-password" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '12px', color: 'var(--terracotta)', fontWeight: 500 }}>
+              <Link href="/forgot-password" style={{ fontFamily: "var(--font-body)", fontSize: '12px', color: 'var(--terracotta)', fontWeight: 500 }}>
                 Forgot password?
               </Link>
             </div>
@@ -223,7 +223,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full font-semibold transition-opacity"
               style={{
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "var(--font-body)",
                 fontSize: '15px',
                 background: 'var(--terracotta)',
                 color: 'white',
@@ -233,16 +233,16 @@ export default function LoginPage() {
                 marginTop: '4px',
               }}
             >
-              {loading ? 'Signing in…' : 'Sign In'}
+              {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
-          <p className="text-center mt-5" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '13px', color: 'rgba(28,30,74,0.5)' }}>
+          <p className="text-center mt-5" style={{ fontFamily: "var(--font-body)", fontSize: '13px', color: 'rgba(28,30,74,0.5)' }}>
             No account?{' '}
             <Link href="/register" style={{ color: 'var(--terracotta)', fontWeight: 500 }}>Register free →</Link>
           </p>
 
-          <p className="text-center mt-6" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '11px', color: 'rgba(28,30,74,0.3)' }}>
+          <p className="text-center mt-6" style={{ fontFamily: "var(--font-body)", fontSize: '11px', color: 'rgba(28,30,74,0.3)' }}>
             Protected by Supabase Auth · Your data is never sold.
           </p>
         </div>

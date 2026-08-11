@@ -41,7 +41,7 @@ export async function POST(
     let canvases: Record<string, string> = {}
     try { const b = await req.json(); canvases = b.canvases ?? {} } catch { /* ok */ }
 
-    // Ownership guard — users can only download PDFs for their own family's reports
+    // Ownership guard - users can only download PDFs for their own family's reports
     const { data: family } = await supabase.from('families').select('id').eq('owner_id', user.id).single()
     if (!family) return new Response('Report not found', { status: 404 })
 
@@ -72,8 +72,8 @@ export async function POST(
     //
     // By calling ReportPDF() directly here, we get a pre-resolved element tree
     // rooted at Document (a host element / string type 'DOCUMENT'). The reconciler
-    // only needs to mount host elements — no async function-component resolution
-    // needed — and appendChildToContainer is reliably called.
+    // only needs to mount host elements - no async function-component resolution
+    // needed - and appendChildToContainer is reliably called.
     //
     // This is the same pattern used in commit b50ca65 which was previously confirmed
     // to work for this exact scenario.
@@ -82,7 +82,7 @@ export async function POST(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const doc = (ReportPDF as any)({ report: report as ReportPDFProps['report'], canvases })
     if (!doc) {
-      return new Response('ReportPDF() returned null — no content to render', { status: 500 })
+      return new Response('ReportPDF() returned null - no content to render', { status: 500 })
     }
     console.log('[PDF] doc element type:', doc?.type, 'props keys:', Object.keys(doc?.props || {}).join(','))
 

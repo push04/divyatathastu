@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
+import Icon from '@/components/ui/Icon'
 interface User {
   id: string
   full_name: string
@@ -30,7 +31,7 @@ interface UserDetail {
 const ROLE_COLORS: Record<string, string> = {
   admin: 'bg-red-100 text-red-700',
   expert: 'bg-violet-100 text-violet-700',
-  user: 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60',
+  user: 'bg-[var(--warm-sand)] text-[var(--text-secondary)]',
 }
 
 const EMPTY_CREATE = { email: '', password: '', full_name: '', phone: '', role: 'user' }
@@ -174,12 +175,12 @@ export default function AdminUsersPage() {
     <div className="p-6 space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <h1 className="text-xl font-bold text-[var(--indigo-deep)] flex items-center gap-2">
-          <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>group</span>
-          Users <span className="text-[var(--warm-charcoal)]/40 font-normal">({users.length})</span>
+          <Icon name="group" size={20} />
+          Users <span className="text-[var(--text-muted)] font-normal">({users.length})</span>
         </h1>
         <div className="flex gap-2">
           <div className="relative w-full sm:w-56">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[16px] text-[var(--warm-charcoal)]/40">search</span>
+            <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
             <input
               type="text"
               value={search}
@@ -189,7 +190,7 @@ export default function AdminUsersPage() {
             />
           </div>
           <button onClick={() => setShowCreate(true)} className="btn-divine px-4 py-2 text-sm inline-flex items-center gap-1 whitespace-nowrap">
-            <span className="material-symbols-outlined text-[16px]">person_add</span>
+            <Icon name="person_add" size={16} />
             Create User
           </button>
         </div>
@@ -202,11 +203,11 @@ export default function AdminUsersPage() {
             <table className="w-full text-sm min-w-[560px]">
               <thead className="bg-[var(--warm-sand)]/40 border-b border-[var(--warm-sand)]">
                 <tr>
-                  <th className="text-left px-4 py-3 font-semibold text-[var(--warm-charcoal)]/60 text-xs uppercase tracking-wide">User</th>
-                  <th className="text-left px-4 py-3 font-semibold text-[var(--warm-charcoal)]/60 text-xs uppercase tracking-wide">Status</th>
-                  <th className="text-left px-4 py-3 font-semibold text-[var(--warm-charcoal)]/60 text-xs uppercase tracking-wide">Role</th>
-                  <th className="text-left px-4 py-3 font-semibold text-[var(--warm-charcoal)]/60 text-xs uppercase tracking-wide">Joined</th>
-                  <th className="text-left px-4 py-3 font-semibold text-[var(--warm-charcoal)]/60 text-xs uppercase tracking-wide">Actions</th>
+                  <th className="text-left px-4 py-3 font-semibold text-[var(--text-secondary)] text-xs uppercase tracking-wide">User</th>
+                  <th className="text-left px-4 py-3 font-semibold text-[var(--text-secondary)] text-xs uppercase tracking-wide">Status</th>
+                  <th className="text-left px-4 py-3 font-semibold text-[var(--text-secondary)] text-xs uppercase tracking-wide">Role</th>
+                  <th className="text-left px-4 py-3 font-semibold text-[var(--text-secondary)] text-xs uppercase tracking-wide">Joined</th>
+                  <th className="text-left px-4 py-3 font-semibold text-[var(--text-secondary)] text-xs uppercase tracking-wide">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[var(--warm-sand)]/60">
@@ -218,20 +219,20 @@ export default function AdminUsersPage() {
                   >
                     <td className="px-4 py-3">
                       <p className="font-medium text-[var(--indigo-deep)]">{u.full_name}</p>
-                      <p className="text-[var(--warm-charcoal)]/40 text-xs">{u.phone || '-'}</p>
+                      <p className="text-[var(--text-muted)] text-xs">{u.phone || '-'}</p>
                     </td>
                     <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
                       <button onClick={() => toggleActive(u.id, u.is_active)}
-                        className={`text-xs px-2 py-0.5 rounded-full font-medium transition-colors ${u.is_active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 hover:bg-red-100 hover:text-red-600'}`}>
+                        className={`text-xs px-2 py-0.5 rounded-full font-medium transition-colors ${u.is_active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-[var(--warm-sand)] text-[var(--text-secondary)] hover:bg-red-100 hover:text-red-600'}`}>
                         {u.is_active ? 'Active' : 'Inactive'}
                       </button>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${ROLE_COLORS[u.role] || 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${ROLE_COLORS[u.role] || 'bg-[var(--warm-sand)] text-[var(--text-secondary)]'}`}>
                         {u.role}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-[var(--warm-charcoal)]/40 text-xs">{new Date(u.created_at).toLocaleDateString('en-IN')}</td>
+                    <td className="px-4 py-3 text-[var(--text-muted)] text-xs">{new Date(u.created_at).toLocaleDateString('en-IN')}</td>
                     <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
                       <div className="flex items-center gap-2">
                         <select
@@ -248,7 +249,7 @@ export default function AdminUsersPage() {
                           className="text-red-400 hover:text-red-600 transition-colors"
                           title="Permanently delete user"
                         >
-                          <span className="material-symbols-outlined text-[16px]">delete_forever</span>
+                          <Icon name="delete_forever" size={16} />
                         </button>
                       </div>
                     </td>
@@ -258,8 +259,8 @@ export default function AdminUsersPage() {
             </table>
             {filtered.length === 0 && (
               <div className="text-center py-12">
-                <span className="material-symbols-outlined text-[40px] text-[var(--warm-charcoal)]/20 block mb-2" style={{ fontVariationSettings: "'FILL' 1" }}>group</span>
-                <p className="text-[var(--warm-charcoal)]/40 text-sm">No users found</p>
+                <Icon name="group" size={40} className="text-[var(--warm-charcoal)]/20 block mb-2" />
+                <p className="text-[var(--text-muted)] text-sm">No users found</p>
               </div>
             )}
           </div>
@@ -271,8 +272,8 @@ export default function AdminUsersPage() {
             <div className="card-divine p-4 sticky top-4">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="font-bold text-[var(--indigo-deep)] text-sm">User Details</h3>
-                <button onClick={() => setDetailUser(null)} className="text-[var(--warm-charcoal)]/40 hover:text-[var(--warm-charcoal)]">
-                  <span className="material-symbols-outlined text-[16px]">close</span>
+                <button onClick={() => setDetailUser(null)} className="text-[var(--text-muted)] hover:text-[var(--warm-charcoal)]">
+                  <Icon name="close" size={16} />
                 </button>
               </div>
 
@@ -286,48 +287,48 @@ export default function AdminUsersPage() {
                     </div>
                     <div>
                       <p className="font-semibold text-[var(--indigo-deep)] text-sm">{detailUser.full_name}</p>
-                      <p className="text-xs text-[var(--warm-charcoal)]/50">{detailUser.phone || 'No phone'}</p>
+                      <p className="text-xs text-[var(--text-muted)]">{detailUser.phone || 'No phone'}</p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-3 gap-2 text-center">
                     <div className="rounded-lg bg-[var(--warm-sand)]/50 p-2">
                       <p className="text-lg font-bold text-[var(--indigo-deep)]">{detailUser.orders_count}</p>
-                      <p className="text-xs text-[var(--warm-charcoal)]/50">Orders</p>
+                      <p className="text-xs text-[var(--text-muted)]">Orders</p>
                     </div>
                     <div className="rounded-lg bg-[var(--warm-sand)]/50 p-2">
                       <p className="text-lg font-bold text-[var(--indigo-deep)]">{detailUser.reports_count}</p>
-                      <p className="text-xs text-[var(--warm-charcoal)]/50">Reports</p>
+                      <p className="text-xs text-[var(--text-muted)]">Reports</p>
                     </div>
                     <div className="rounded-lg bg-[var(--warm-sand)]/50 p-2">
                       <p className="text-lg font-bold text-[var(--indigo-deep)]">{detailUser.family_members.length}</p>
-                      <p className="text-xs text-[var(--warm-charcoal)]/50">Members</p>
+                      <p className="text-xs text-[var(--text-muted)]">Members</p>
                     </div>
                   </div>
 
                   <div className="space-y-1.5 text-xs">
                     <div className="flex justify-between">
-                      <span className="text-[var(--warm-charcoal)]/50">Role</span>
-                      <span className={`px-2 py-0.5 rounded-full font-medium capitalize ${ROLE_COLORS[detailUser.role] || 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>{detailUser.role}</span>
+                      <span className="text-[var(--text-muted)]">Role</span>
+                      <span className={`px-2 py-0.5 rounded-full font-medium capitalize ${ROLE_COLORS[detailUser.role] || 'bg-[var(--warm-sand)] text-[var(--text-secondary)]'}`}>{detailUser.role}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[var(--warm-charcoal)]/50">Status</span>
+                      <span className="text-[var(--text-muted)]">Status</span>
                       <span className={`px-2 py-0.5 rounded-full font-medium ${detailUser.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-600'}`}>{detailUser.is_active ? 'Active' : 'Inactive'}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[var(--warm-charcoal)]/50">Joined</span>
+                      <span className="text-[var(--text-muted)]">Joined</span>
                       <span className="text-[var(--warm-charcoal)]">{new Date(detailUser.created_at).toLocaleDateString('en-IN')}</span>
                     </div>
                   </div>
 
                   {detailUser.family_members.length > 0 && (
                     <div>
-                      <p className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-wide mb-1.5">Family Members</p>
+                      <p className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-1.5">Family Members</p>
                       <div className="space-y-1">
                         {detailUser.family_members.map((m, i) => (
                           <div key={i} className="flex justify-between text-xs">
                             <span className="text-[var(--warm-charcoal)]">{m.full_name}</span>
-                            <span className="text-[var(--warm-charcoal)]/50 capitalize">{m.relation}</span>
+                            <span className="text-[var(--text-muted)] capitalize">{m.relation}</span>
                           </div>
                         ))}
                       </div>
@@ -361,32 +362,32 @@ export default function AdminUsersPage() {
           <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl">
             <div className="flex items-center justify-between p-5 border-b border-[var(--warm-sand)]">
               <h2 className="font-bold text-[var(--indigo-deep)] text-lg flex items-center gap-2">
-                <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>person_add</span>
+                <Icon name="person_add" size={20} />
                 Create New User
               </h2>
-              <button onClick={() => { setShowCreate(false); setCreateForm(EMPTY_CREATE) }} className="text-[var(--warm-charcoal)]/40 hover:text-[var(--warm-charcoal)] p-1">
-                <span className="material-symbols-outlined">close</span>
+              <button onClick={() => { setShowCreate(false); setCreateForm(EMPTY_CREATE) }} className="text-[var(--text-muted)] hover:text-[var(--warm-charcoal)] p-1">
+                <Icon name="close" />
               </button>
             </div>
             <form onSubmit={handleCreate} className="p-5 space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Full Name *</label>
+                <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Full Name *</label>
                 <input type="text" value={createForm.full_name} onChange={e => setCreateForm(f => ({ ...f, full_name: e.target.value }))} className={inputCls} placeholder="Ramesh Sharma" required />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Email Address *</label>
+                <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Email Address *</label>
                 <input type="email" value={createForm.email} onChange={e => setCreateForm(f => ({ ...f, email: e.target.value }))} className={inputCls} placeholder="user@example.com" required />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Password *</label>
+                <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Password *</label>
                 <input type="password" value={createForm.password} onChange={e => setCreateForm(f => ({ ...f, password: e.target.value }))} className={inputCls} placeholder="Min 6 characters" required minLength={6} />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Phone</label>
+                <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Phone</label>
                 <input type="tel" value={createForm.phone} onChange={e => setCreateForm(f => ({ ...f, phone: e.target.value }))} className={inputCls} placeholder="+91 98765 43210" />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Role</label>
+                <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Role</label>
                 <select value={createForm.role} onChange={e => setCreateForm(f => ({ ...f, role: e.target.value }))} className={inputCls}>
                   <option value="user">User (regular member)</option>
                   <option value="expert">Expert (astrologer / consultant)</option>
@@ -394,9 +395,9 @@ export default function AdminUsersPage() {
                 </select>
               </div>
               <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => { setShowCreate(false); setCreateForm(EMPTY_CREATE) }} className="flex-1 px-4 py-2 rounded-xl border border-[var(--warm-sand)] text-sm font-medium text-[var(--warm-charcoal)]/60 hover:bg-[var(--warm-sand)]/40 transition-colors">Cancel</button>
+                <button type="button" onClick={() => { setShowCreate(false); setCreateForm(EMPTY_CREATE) }} className="flex-1 px-4 py-2 rounded-xl border border-[var(--warm-sand)] text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--warm-sand)]/40 transition-colors">Cancel</button>
                 <button type="submit" disabled={creating} className="flex-1 btn-divine px-4 py-2 text-sm disabled:opacity-50 inline-flex items-center justify-center gap-2">
-                  <span className="material-symbols-outlined text-[16px]">{creating ? 'hourglass_empty' : 'person_add'}</span>
+                  <Icon name={creating ? 'hourglass_empty' : 'person_add'} size={16} />
                   {creating ? 'Creating...' : 'Create User'}
                 </button>
               </div>

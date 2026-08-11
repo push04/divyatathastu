@@ -66,21 +66,21 @@ export default function MandirTeaser() {
             {/* Chapter marker */}
             <div className="flex items-center gap-3 mb-6">
               <span className="inline-block w-8 border-t-2 border-[var(--terracotta)]" />
-              <span className="text-[10px] uppercase tracking-widest" style={{ fontFamily: "'Sora', sans-serif", color: 'var(--saffron)' }}>
+              <span className="text-[12px] uppercase tracking-widest" style={{ fontFamily: "var(--font-label)", color: 'var(--saffron)' }}>
                 Mandir Finder
               </span>
             </div>
 
             <h2
               className="text-white mb-6 leading-tight"
-              style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, fontSize: 'clamp(32px, 4vw, 44px)' }}
+              style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 'clamp(32px, 4vw, 44px)' }}
             >
               Find Mandirs Near You.<br />
               <span style={{ color: 'rgba(212,160,67,0.9)' }}>Plan Sacred Pilgrimages.</span>
             </h2>
 
-            <p className="mb-8 leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '15px', color: 'rgba(255,255,255,0.55)' }}>
-              Discover temples across India, get timings, history, and special puja information. Our AI pilgrimage planner creates perfect day-by-day itineraries with auspicious Panchang timings.
+            <p className="mb-8 leading-relaxed" style={{ fontFamily: "var(--font-body)", fontSize: '15px', color: 'var(--text-on-dark-secondary)' }}>
+              Discover temples across India, get timings, history, and special puja information. Our pilgrimage planner creates perfect day-by-day itineraries with auspicious Panchang timings.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 mb-5">
@@ -88,7 +88,7 @@ export default function MandirTeaser() {
                 href="/mandir-finder"
                 className="inline-flex items-center gap-2 font-semibold transition-opacity hover:opacity-90"
                 style={{
-                  fontFamily: "'DM Sans', sans-serif",
+                  fontFamily: "var(--font-body)",
                   fontSize: '13px',
                   background: 'var(--terracotta)',
                   color: 'white',
@@ -103,9 +103,9 @@ export default function MandirTeaser() {
                 href="/pilgrimage"
                 className="inline-flex items-center gap-2 transition-colors hover:bg-white/8"
                 style={{
-                  fontFamily: "'DM Sans', sans-serif",
+                  fontFamily: "var(--font-body)",
                   fontSize: '13px',
-                  color: 'rgba(255,255,255,0.7)',
+                  color: 'var(--text-on-dark-secondary)',
                   border: '1px solid rgba(255,255,255,0.25)',
                   borderRadius: '8px',
                   padding: '12px 24px',
@@ -116,7 +116,7 @@ export default function MandirTeaser() {
               </Link>
             </div>
 
-            <p className="text-[11px]" style={{ fontFamily: "'Sora', sans-serif", color: 'rgba(255,255,255,0.35)' }}>
+            <p className="text-[13px]" style={{ fontFamily: "var(--font-label)", color: 'var(--text-on-dark-muted)' }}>
               Updated daily · 5,000+ temples indexed
             </p>
           </motion.div>
@@ -148,20 +148,20 @@ export default function MandirTeaser() {
               >
                 <div className="flex items-center justify-between mb-3">
                   <Icon size={20} color="var(--saffron)" />
-                  <span className="text-[10px] uppercase tracking-widest" style={{ fontFamily: "'Sora', sans-serif", color: 'rgba(212,160,67,0.7)' }}>
+                  <span className="text-[12px] uppercase tracking-widest" style={{ fontFamily: "var(--font-label)", color: 'rgba(212,160,67,0.7)' }}>
                     {deity}
                   </span>
                 </div>
-                <p className="font-semibold text-white mb-1" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '15px' }}>{name}</p>
-                <p className="text-[11px] mb-3" style={{ fontFamily: "'Sora', sans-serif", color: 'rgba(255,255,255,0.45)' }}>{city}</p>
+                <p className="font-semibold text-white mb-1" style={{ fontFamily: "var(--font-body)", fontSize: '15px' }}>{name}</p>
+                <p className="text-[13px] mb-3" style={{ fontFamily: "var(--font-label)", color: 'var(--text-on-dark-muted)' }}>{city}</p>
                 <div
                   className="flex justify-end pt-3"
                   style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}
                 >
                   <Link
                     href="/mandir-finder"
-                    className="text-[10px] uppercase tracking-widest transition-opacity hover:opacity-100"
-                    style={{ fontFamily: "'Sora', sans-serif", color: 'rgba(198,125,83,0.6)' }}
+                    className="text-[12px] uppercase tracking-widest transition-opacity hover:opacity-100"
+                    style={{ fontFamily: "var(--font-label)", color: 'rgba(198,125,83,0.6)' }}
                   >
                     View Details →
                   </Link>

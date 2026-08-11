@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { toast } from 'sonner'
 import SudarshanLoader from '@/components/SudarshanLoader'
 
+import Icon from '@/components/ui/Icon'
 interface Message {
   role: 'user' | 'assistant'
   content: string
@@ -81,7 +82,7 @@ export default function AIGuidePage() {
   const [lang, setLang] = useState<'en' | 'hi'>('en')
   const [messages, setMessages] = useState<Message[]>([{
     role: 'assistant',
-    content: 'Namaste! I am your AI Spiritual Guide, powered by Vedic wisdom and modern AI. Ask me anything about astrology, numerology, mantras, rituals, chakras, Ayurveda, or any spiritual topic. How can I illuminate your path today?',
+    content: 'Namaste! I am your Spiritual Guide, rooted in classical Vedic wisdom. Ask me anything about astrology, numerology, mantras, rituals, chakras, Ayurveda, or any spiritual topic. How can I illuminate your path today?',
     timestamp: new Date(),
   }])
   const [input, setInput] = useState('')
@@ -99,8 +100,8 @@ export default function AIGuidePage() {
   function switchLang(newLang: 'en' | 'hi') {
     setLang(newLang)
     const greeting = newLang === 'hi'
-      ? 'नमस्ते! मैं आपका AI आध्यात्मिक मार्गदर्शक हूँ, वैदिक ज्ञान और आधुनिक AI से संचालित। ज्योतिष, अंकशास्त्र, मंत्र, अनुष्ठान, चक्र, आयुर्वेद या किसी भी आध्यात्मिक विषय के बारे में पूछें। आज मैं आपका मार्ग कैसे प्रकाशित करूं?'
-      : 'Namaste! I am your AI Spiritual Guide, powered by Vedic wisdom and modern AI. Ask me anything about astrology, numerology, mantras, rituals, chakras, Ayurveda, or any spiritual topic. How can I illuminate your path today?'
+      ? 'नमस्ते! मैं आपका आध्यात्मिक मार्गदर्शक हूँ, शास्त्रीय वैदिक ज्ञान पर आधारित। ज्योतिष, अंकशास्त्र, मंत्र, अनुष्ठान, चक्र, आयुर्वेद या किसी भी आध्यात्मिक विषय के बारे में पूछें। आज मैं आपका मार्ग कैसे प्रकाशित करूं?'
+      : 'Namaste! I am your Spiritual Guide, rooted in classical Vedic wisdom. Ask me anything about astrology, numerology, mantras, rituals, chakras, Ayurveda, or any spiritual topic. How can I illuminate your path today?'
     setMessages([{ role: 'assistant', content: greeting, timestamp: new Date() }])
     setInput('')
   }
@@ -173,28 +174,28 @@ export default function AIGuidePage() {
       <div className="px-6 py-4 bg-[var(--indigo-deep)] text-white flex items-center gap-3 flex-shrink-0">
         <div className="w-10 h-10 flex-shrink-0"><SudarshanLoader px={40} /></div>
         <div>
-          <h1 className="font-bold">{isHindi ? 'AI आध्यात्मिक मार्गदर्शक' : 'AI Spiritual Guide'}</h1>
-          <p className="text-xs text-white/60">{isHindi ? 'वैदिक ज्ञान · AI द्वारा संचालित' : 'Vedic Wisdom · Powered by AI'}</p>
+          <h1 className="font-bold">{isHindi ? 'आध्यात्मिक मार्गदर्शक' : 'Spiritual Guide'}</h1>
+          <p className="text-xs text-[var(--text-on-dark-secondary)]">{isHindi ? 'वैदिक ज्ञान · शास्त्र आधारित' : 'Vedic Wisdom · Rooted in Shastra'}</p>
         </div>
         <div className="ml-auto flex items-center gap-3">
           {/* Language Toggle */}
           <div className="flex items-center bg-white/10 rounded-lg p-0.5 gap-0.5">
             <button
               onClick={() => switchLang('en')}
-              className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all ${lang === 'en' ? 'bg-white text-[var(--indigo-deep)]' : 'text-white/70 hover:text-white'}`}
+              className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all ${lang === 'en' ? 'bg-white text-[var(--indigo-deep)]' : 'text-[var(--text-on-dark-secondary)] hover:text-white'}`}
             >
               EN
             </button>
             <button
               onClick={() => switchLang('hi')}
-              className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all ${lang === 'hi' ? 'bg-white text-[var(--indigo-deep)]' : 'text-white/70 hover:text-white'}`}
+              className={`px-2.5 py-1 rounded-md text-xs font-bold transition-all ${lang === 'hi' ? 'bg-white text-[var(--indigo-deep)]' : 'text-[var(--text-on-dark-secondary)] hover:text-white'}`}
             >
               हिं
             </button>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-white/60">{isHindi ? 'ऑनलाइन' : 'Online'}</span>
+            <span className="text-xs text-[var(--text-on-dark-secondary)]">{isHindi ? 'ऑनलाइन' : 'Online'}</span>
           </div>
         </div>
       </div>
@@ -228,7 +229,7 @@ export default function AIGuidePage() {
         {/* Suggestions (only on first message) */}
         {messages.length === 1 && (
           <div className="space-y-2">
-            <p className="text-xs text-[var(--warm-charcoal)]/50 px-11">
+            <p className="text-xs text-[var(--text-muted)] px-11">
               {isHindi ? 'सुझाए गए प्रश्न:' : 'Suggested questions:'}
             </p>
             <div className="flex flex-wrap gap-2 pl-11">
@@ -263,13 +264,13 @@ export default function AIGuidePage() {
             className="w-10 h-10 rounded-xl bg-[var(--indigo-deep)] text-white flex items-center justify-center hover:bg-[var(--indigo-deep)]/90 disabled:opacity-40 transition-all flex-shrink-0"
           >
             {streaming
-              ? <span className="material-symbols-outlined text-[18px] animate-spin" style={{ fontVariationSettings: "'FILL' 0" }}>progress_activity</span>
-              : <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>send</span>
+              ? <Icon name="progress_activity" size={18} className="animate-spin" />
+              : <Icon name="send" size={18} />
             }
           </button>
         </div>
-        <p className="text-center text-xs text-[var(--warm-charcoal)]/30 mt-2">
-          {isHindi ? 'AI उत्तर केवल आध्यात्मिक मार्गदर्शन के लिए हैं, चिकित्सा/कानूनी सलाह नहीं' : 'AI responses are for spiritual guidance only, not medical/legal advice'}
+        <p className="text-center text-xs text-[var(--text-muted)] mt-2">
+          {isHindi ? 'उत्तर केवल आध्यात्मिक मार्गदर्शन के लिए हैं, चिकित्सा/कानूनी सलाह नहीं' : 'Responses are for spiritual guidance only, not medical/legal advice'}
         </p>
       </div>
     </div>

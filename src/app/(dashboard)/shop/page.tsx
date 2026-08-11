@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
+import Icon from '@/components/ui/Icon'
 interface Product {
   id: string
   name: string
@@ -29,7 +30,7 @@ const CATEGORIES = [
   { label: 'Gemstones', value: 'gemstone', icon: 'diamond' },
   { label: 'Puja Items', value: 'physical', icon: 'temple_hindu' },
   { label: 'Herbal', value: 'herbal', icon: 'eco' },
-  { label: 'Bundles', value: 'bundle', icon: 'auto_awesome' },
+  { label: 'Bundles', value: 'bundle', icon: 'inventory_2' },
   { label: 'Crystals', value: 'crystal', icon: 'diamond' },
   { label: 'Ardra Jalam', value: 'ardra_jalam', icon: 'water_drop' },
 ]
@@ -37,19 +38,19 @@ const CATEGORIES = [
 const TYPE_ICON: Record<string, string> = {
   report: 'description', ebook: 'menu_book', consultation: 'support_agent',
   yantra: 'hexagon', gemstone: 'diamond', physical: 'temple_hindu',
-  course: 'school', bundle: 'auto_awesome', herbal: 'eco', crystal: 'diamond',
+  course: 'school', bundle: 'inventory_2', herbal: 'eco', crystal: 'diamond',
 }
 
 const TYPE_GRADIENT: Record<string, string> = {
-  report: 'from-[#2F2A44] to-[#460B2F]',
-  ebook: 'from-[#B9986B] to-[#C67D53]',
+  report: 'from-[#1B1233] to-[#2E0C28]',
+  ebook: 'from-[#C9992E] to-[#B4231F]',
   consultation: 'from-emerald-600 to-teal-700',
   yantra: 'from-amber-500 to-orange-600',
   gemstone: 'from-blue-500 to-purple-700',
   crystal: 'from-violet-600 to-indigo-700',
-  physical: 'from-[#C67D53] to-rose-700',
+  physical: 'from-[#B4231F] to-rose-700',
   course: 'from-violet-600 to-purple-800',
-  bundle: 'from-[#2F2A44] to-[#B9986B]',
+  bundle: 'from-[#1B1233] to-[#C9992E]',
   herbal: 'from-green-600 to-emerald-800',
 }
 
@@ -194,7 +195,7 @@ export default function ShopPage() {
   if (loading) return (
     <div className="min-h-screen" style={{ background: 'var(--kutch-white)' }}>
       {/* Hero skeleton */}
-      <div className="h-40" style={{ background: 'linear-gradient(135deg, var(--indigo-deep) 0%, #460B2F 100%)' }} />
+      <div className="h-40" style={{ background: 'linear-gradient(135deg, var(--indigo-deep) 0%, #2E0C28 100%)' }} />
       <div className="max-w-7xl mx-auto px-4 py-6">
         {/* Category chips skeleton */}
         <div className="flex gap-2 mb-5 overflow-hidden">
@@ -225,17 +226,17 @@ export default function ShopPage() {
       <div className="min-h-screen" style={{ background: 'var(--kutch-white)' }}>
 
         {/* ── Hero Banner ── */}
-        <div className="relative overflow-hidden px-6 py-10" style={{ background: 'linear-gradient(135deg, var(--indigo-deep) 0%, #460B2F 100%)' }}>
+        <div className="relative overflow-hidden px-6 py-10" style={{ background: 'linear-gradient(135deg, var(--indigo-deep) 0%, #2E0C28 100%)' }}>
           <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0L40 20L20 40L0 20Z' fill='none' stroke='white' stroke-width='0.6'/%3E%3C/svg%3E")` }} />
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 text-white/5 text-[160px] font-bold select-none" style={{ fontFamily: "'Playfair Display', serif", lineHeight: 1 }}>ॐ</div>
+          <div className="absolute top-4 left-1/2 -translate-x-1/2 text-white/5 text-[160px] font-bold select-none" style={{ fontFamily: "var(--font-display)", lineHeight: 1 }}>ॐ</div>
 
           <div className="relative max-w-5xl mx-auto">
-            <p className="text-xs tracking-widest uppercase font-semibold mb-2" style={{ color: 'var(--saffron)', fontFamily: "'Sora', sans-serif" }}>Sacred Store</p>
-            <h1 className="text-3xl font-bold text-white mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>MahaTathastu Shop</h1>
-            <p className="text-sm mb-6" style={{ color: 'rgba(255,255,255,0.45)' }}>Authentic puja items · Yantras · Gemstones · Spiritual reports</p>
+            <p className="text-xs tracking-widest uppercase font-semibold mb-2" style={{ color: 'var(--saffron)', fontFamily: "var(--font-label)" }}>Sacred Store</p>
+            <h1 className="text-3xl font-bold text-white mb-1" style={{ fontFamily: "var(--font-display)" }}>MahaTathastu Shop</h1>
+            <p className="text-sm mb-6" style={{ color: 'var(--text-on-dark-muted)' }}>Authentic puja items · Yantras · Gemstones · Spiritual reports</p>
 
             <div className="relative max-w-md">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[20px]" style={{ color: 'rgba(255,255,255,0.35)' }}>search</span>
+              <Icon name="search" size={20} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: 'var(--text-on-dark-muted)'  }} />
               <input
                 value={search} onChange={e => setSearch(e.target.value)}
                 placeholder="Search products, yantras, gemstones..."
@@ -245,8 +246,8 @@ export default function ShopPage() {
                 onBlur={e => { e.target.style.background = 'rgba(255,255,255,0.1)'; e.target.style.borderColor = 'rgba(255,255,255,0.15)' }}
               />
               {search && (
-                <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/80 transition-colors">
-                  <span className="material-symbols-outlined text-[18px]">close</span>
+                <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-on-dark-muted)] hover:text-[var(--text-on-dark)] transition-colors">
+                  <Icon name="close" size={18} />
                 </button>
               )}
             </div>
@@ -256,7 +257,7 @@ export default function ShopPage() {
           <button onClick={() => setCartOpen(true)} className="absolute top-5 right-5 relative p-2.5 rounded-xl transition-all" style={{ background: 'rgba(255,255,255,0.1)' }}
             onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.2)')}
             onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.1)')}>
-            <span className="material-symbols-outlined text-white text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span>
+            <Icon name="shopping_cart" size={24} className="text-white" />
             {cartCount > 0 && (
               <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ background: 'var(--terracotta)' }}>{cartCount}</span>
             )}
@@ -274,7 +275,7 @@ export default function ShopPage() {
                   style={category === c.value
                     ? { background: 'var(--indigo-deep)', color: 'white', boxShadow: '0 2px 8px rgba(47,42,68,0.25)' }
                     : { background: 'white', color: 'rgba(61,52,80,0.6)', border: '1px solid var(--warm-sand)' }}>
-                  <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>{c.icon}</span>
+                  <Icon name={c.icon} size={14} />
                   {c.label}
                 </button>
               ))}
@@ -286,7 +287,7 @@ export default function ShopPage() {
             </select>
           </div>
 
-          <p className="text-xs mb-4" style={{ color: 'rgba(61,52,80,0.4)', fontFamily: "'Sora', sans-serif" }}>
+          <p className="text-xs mb-4" style={{ color: 'rgba(61,52,80,0.4)', fontFamily: "var(--font-label)" }}>
             {displayed.length} product{displayed.length !== 1 ? 's' : ''}{category !== 'all' ? ` in ${CATEGORIES.find(c => c.value === category)?.label}` : ''}{search ? ` for "${search}"` : ''}
           </p>
 
@@ -296,28 +297,28 @@ export default function ShopPage() {
               <div className="rounded-3xl overflow-hidden" style={{ background: 'linear-gradient(160deg, #ecfdf5 0%, #d1fae5 50%, #a7f3d0 100%)', border: '2px solid rgba(16,185,129,0.3)' }}>
                 <div className="p-8 text-center">
                   <div className="w-20 h-20 rounded-full mx-auto mb-5 flex items-center justify-center shadow-xl" style={{ background: 'linear-gradient(135deg, #065f46, #047857)' }}>
-                    <span className="material-symbols-outlined text-white text-[36px]" style={{ fontVariationSettings: "'FILL' 1" }}>water_drop</span>
+                    <Icon name="water_drop" size={36} className="text-white" />
                   </div>
-                  <div className="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-widest" style={{ background: 'rgba(16,185,129,0.15)', color: '#065f46' }}>
-                    <span className="material-symbols-outlined text-[11px]" style={{ fontVariationSettings: "'FILL' 1" }}>stars</span>
+                  <div className="inline-flex items-center gap-1.5 text-[13px] font-bold px-3 py-1 rounded-full mb-4 uppercase tracking-widest" style={{ background: 'rgba(16,185,129,0.15)', color: '#065f46' }}>
+                    <Icon name="stars" size={13} />
                     Sacred · Limited Batches
                   </div>
-                  <h2 className="text-3xl font-black text-[#065f46] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>Ardra Jalam</h2>
-                  <p className="text-base text-[#065f46]/70 mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>Sacred Healing Water</p>
+                  <h2 className="text-3xl font-black text-[#065f46] mb-2" style={{ fontFamily: "var(--font-display)" }}>Ardra Jalam</h2>
+                  <p className="text-base text-[#065f46]/70 mb-1" style={{ fontFamily: "var(--font-display)" }}>Sacred Healing Water</p>
                   <p className="text-sm text-[#065f46]/60 mb-6 max-w-md mx-auto leading-relaxed">
-                    Charged under Ardra Nakshatra frequencies — ruled by Lord Rudra. Each batch prepared through Vedic rituals, mantras, and cosmic alignment. Available only once every 27 days.
+                    Charged under Ardra Nakshatra frequencies - ruled by Lord Rudra. Each batch prepared through Vedic rituals, mantras, and cosmic alignment. Available only once every 27 days.
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <Link href="/ardra-jalam"
                       className="inline-flex items-center gap-2 px-8 py-3 rounded-xl font-semibold text-white transition-all"
                       style={{ background: 'linear-gradient(135deg, #065f46, #047857)', fontSize: '15px' }}>
-                      <span className="material-symbols-outlined text-[18px]">water_drop</span>
+                      <Icon name="water_drop" size={18} />
                       Order Ardra Jalam
                     </Link>
-                    <Link href="/ardra-jalam#about"
+                    <Link href="/ardra-jalam/nakshatra-jal"
                       className="inline-flex items-center gap-2 px-8 py-3 rounded-xl font-semibold transition-all"
                       style={{ background: 'rgba(6,95,70,0.1)', color: '#065f46', fontSize: '15px' }}>
-                      <span className="material-symbols-outlined text-[18px]">info</span>
+                      <Icon name="info" size={18} />
                       Learn More
                     </Link>
                   </div>
@@ -326,7 +327,7 @@ export default function ShopPage() {
             </div>
           ) : displayed.length === 0 ? (
             <div className="text-center py-20">
-              <span className="material-symbols-outlined text-[64px] block mb-4" style={{ color: 'var(--warm-sand)', fontVariationSettings: "'FILL' 1" }}>storefront</span>
+              <Icon name="storefront" size={64} className="block mb-4" style={{ color: 'var(--warm-sand)' }} />
               <p style={{ color: 'rgba(61,52,80,0.4)' }}>No products found{search ? ` for "${search}"` : ''}</p>
               {search && <button onClick={() => setSearch('')} className="mt-3 text-sm font-medium" style={{ color: 'var(--terracotta)' }}>Clear search</button>}
             </div>
@@ -353,7 +354,7 @@ export default function ShopPage() {
                         <img src={imgUrl} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       ) : (
                         <div className={`w-full h-full bg-gradient-to-br ${TYPE_GRADIENT[typeKey] || TYPE_GRADIENT.report} flex items-center justify-center group-hover:scale-105 transition-transform duration-500`}>
-                          <span className="material-symbols-outlined text-white/80 text-[52px]" style={{ fontVariationSettings: "'FILL' 1" }}>{TYPE_ICON[typeKey] || 'storefront'}</span>
+                          <Icon name={TYPE_ICON[typeKey] || 'storefront'} size={52} className="text-[var(--text-on-dark)]" />
                         </div>
                       )}
 
@@ -370,11 +371,11 @@ export default function ShopPage() {
                       )}
 
                       <div className="absolute bottom-2 left-2">
-                        <span className="text-xs backdrop-blur-sm px-2 py-0.5 rounded-full capitalize" style={{ background: 'rgba(0,0,0,0.35)', color: 'rgba(255,255,255,0.85)' }}>{typeKey.replace('_', ' ')}</span>
+                        <span className="text-xs backdrop-blur-sm px-2 py-0.5 rounded-full capitalize" style={{ background: 'rgba(0,0,0,0.35)', color: 'var(--text-on-dark)' }}>{typeKey.replace('_', ' ')}</span>
                       </div>
                       <div className="absolute top-2.5 right-2.5 opacity-0 group-hover:opacity-100 transition-all duration-200">
                         <div className="w-7 h-7 bg-white/90 rounded-full flex items-center justify-center shadow-md">
-                          <span className="material-symbols-outlined text-[15px]" style={{ color: 'var(--terracotta)' }}>zoom_in</span>
+                          <Icon name="zoom_in" size={15} style={{ color: 'var(--terracotta)'  }} />
                         </div>
                       </div>
                     </div>
@@ -382,7 +383,7 @@ export default function ShopPage() {
                     {/* Content */}
                     <div className="p-4 flex flex-col flex-1">
                       <h3 className="font-bold text-base leading-snug mb-1 line-clamp-2 cursor-pointer transition-colors"
-                        style={{ color: 'var(--indigo-deep)', fontFamily: "'Playfair Display', serif" }}
+                        style={{ color: 'var(--indigo-deep)', fontFamily: "var(--font-display)" }}
                         onClick={() => setSelected(p)}
                         onMouseEnter={e => (e.currentTarget.style.color = 'var(--terracotta)')}
                         onMouseLeave={e => (e.currentTarget.style.color = 'var(--indigo-deep)')}>
@@ -415,14 +416,14 @@ export default function ShopPage() {
                             style={{ color: 'var(--indigo-deep)' }}
                             onMouseEnter={e => { e.currentTarget.style.background = 'var(--terracotta)'; e.currentTarget.style.color = 'white' }}
                             onMouseLeave={e => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = 'var(--indigo-deep)' }}>
-                            <span className="material-symbols-outlined text-[18px]">remove</span>
+                            <Icon name="remove" size={18} />
                           </button>
                           <span className="font-bold text-sm" style={{ color: 'var(--indigo-deep)' }}>{qty}</span>
                           <button onClick={() => addToCart(p)} className="w-8 h-8 rounded-lg bg-white flex items-center justify-center transition-all"
                             style={{ color: 'var(--indigo-deep)' }}
                             onMouseEnter={e => { e.currentTarget.style.background = 'var(--terracotta)'; e.currentTarget.style.color = 'white' }}
                             onMouseLeave={e => { e.currentTarget.style.background = 'white'; e.currentTarget.style.color = 'var(--indigo-deep)' }}>
-                            <span className="material-symbols-outlined text-[18px]">add</span>
+                            <Icon name="add" size={18} />
                           </button>
                         </div>
                       )}
@@ -441,23 +442,23 @@ export default function ShopPage() {
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setCartOpen(false)} />
           <div className="relative w-full max-w-md bg-white h-full flex flex-col shadow-2xl">
             <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid var(--warm-sand)' }}>
-              <h2 className="font-bold flex items-center gap-2 text-lg" style={{ color: 'var(--indigo-deep)', fontFamily: "'Playfair Display', serif" }}>
-                <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1", color: 'var(--terracotta)' }}>shopping_cart</span>
+              <h2 className="font-bold flex items-center gap-2 text-lg" style={{ color: 'var(--indigo-deep)', fontFamily: "var(--font-display)" }}>
+                <Icon name="shopping_cart" size={22} style={{ color: 'var(--terracotta)'  }} />
                 Your Cart
                 {cartCount > 0 && <span className="text-sm font-normal ml-1" style={{ color: 'rgba(61,52,80,0.4)' }}>({cartCount} item{cartCount !== 1 ? 's' : ''})</span>}
               </h2>
               <button onClick={() => setCartOpen(false)} className="p-1.5 rounded-lg transition-colors" style={{ color: 'rgba(61,52,80,0.5)' }}
                 onMouseEnter={e => (e.currentTarget.style.background = 'var(--warm-sand)')}
                 onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}>
-                <span className="material-symbols-outlined text-[20px]">close</span>
+                <Icon name="close" size={20} />
               </button>
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
               {cartItems.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center gap-3">
-                  <span className="material-symbols-outlined text-[64px]" style={{ color: 'var(--warm-sand)', fontVariationSettings: "'FILL' 1" }}>shopping_cart</span>
-                  <p style={{ color: 'rgba(61,52,80,0.4)', fontFamily: "'DM Sans', sans-serif" }}>Your cart is empty</p>
+                  <Icon name="shopping_cart" size={64} style={{ color: 'var(--warm-sand)' }} />
+                  <p style={{ color: 'rgba(61,52,80,0.4)', fontFamily: "var(--font-body)" }}>Your cart is empty</p>
                   <button onClick={() => setCartOpen(false)} className="text-sm font-semibold" style={{ color: 'var(--terracotta)' }}>Continue Shopping</button>
                 </div>
               ) : cartItems.map(({ product: p, qty }) => {
@@ -469,7 +470,7 @@ export default function ShopPage() {
                       <img src={imgUrl} alt={p.name} className="w-14 h-14 rounded-lg object-cover flex-shrink-0" />
                     ) : (
                       <div className={`w-14 h-14 rounded-lg bg-gradient-to-br ${TYPE_GRADIENT[typeKey] || TYPE_GRADIENT.report} flex items-center justify-center flex-shrink-0`}>
-                        <span className="material-symbols-outlined text-[22px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{TYPE_ICON[typeKey]}</span>
+                        <Icon name={TYPE_ICON[typeKey]} size={22} className="text-white" />
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
@@ -481,21 +482,21 @@ export default function ShopPage() {
                       <button onClick={() => clearItem(p.id)} style={{ color: 'rgba(61,52,80,0.3)' }}
                         onMouseEnter={e => (e.currentTarget.style.color = '#ef4444')}
                         onMouseLeave={e => (e.currentTarget.style.color = 'rgba(61,52,80,0.3)')}>
-                        <span className="material-symbols-outlined text-[16px]">delete</span>
+                        <Icon name="delete" size={16} />
                       </button>
                       <div className="flex items-center gap-1.5">
                         <button onClick={() => removeOne(p.id)} className="w-6 h-6 rounded-md flex items-center justify-center transition-all text-[14px]"
                           style={{ background: 'var(--warm-sand)', color: 'var(--indigo-deep)' }}
                           onMouseEnter={e => { e.currentTarget.style.background = 'var(--terracotta)'; e.currentTarget.style.color = 'white' }}
                           onMouseLeave={e => { e.currentTarget.style.background = 'var(--warm-sand)'; e.currentTarget.style.color = 'var(--indigo-deep)' }}>
-                          <span className="material-symbols-outlined text-[14px]">remove</span>
+                          <Icon name="remove" size={14} />
                         </button>
                         <span className="w-5 text-center text-sm font-bold" style={{ color: 'var(--indigo-deep)' }}>{qty}</span>
                         <button onClick={() => addToCart(p)} className="w-6 h-6 rounded-md flex items-center justify-center transition-all"
                           style={{ background: 'var(--warm-sand)', color: 'var(--indigo-deep)' }}
                           onMouseEnter={e => { e.currentTarget.style.background = 'var(--terracotta)'; e.currentTarget.style.color = 'white' }}
                           onMouseLeave={e => { e.currentTarget.style.background = 'var(--warm-sand)'; e.currentTarget.style.color = 'var(--indigo-deep)' }}>
-                          <span className="material-symbols-outlined text-[14px]">add</span>
+                          <Icon name="add" size={14} />
                         </button>
                       </div>
                     </div>
@@ -508,14 +509,14 @@ export default function ShopPage() {
               <div className="p-4 space-y-3" style={{ borderTop: '1px solid var(--warm-sand)' }}>
                 <div className="flex items-center justify-between">
                   <span className="font-semibold" style={{ color: 'var(--warm-charcoal)' }}>Subtotal</span>
-                  <span className="text-xl font-bold" style={{ color: 'var(--indigo-deep)', fontFamily: "'Playfair Display', serif" }}>₹{cartTotal.toLocaleString('en-IN')}</span>
+                  <span className="text-xl font-bold" style={{ color: 'var(--indigo-deep)', fontFamily: "var(--font-display)" }}>₹{cartTotal.toLocaleString('en-IN')}</span>
                 </div>
                 <p className="text-xs" style={{ color: 'rgba(61,52,80,0.4)' }}>Taxes & shipping calculated at checkout</p>
                 <Link href="/shop/checkout" onClick={() => setCartOpen(false)}
                   className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl font-bold text-sm text-white transition-all active:scale-98"
-                  style={{ background: 'linear-gradient(135deg, var(--indigo-deep), #460B2F)' }}>
+                  style={{ background: 'linear-gradient(135deg, var(--indigo-deep), #2E0C28)' }}>
                   Proceed to Checkout
-                  <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                  <Icon name="arrow_forward" size={18} />
                 </Link>
               </div>
             )}
@@ -534,11 +535,11 @@ export default function ShopPage() {
                 <img src={getImageUrl(selected.images)!} alt={selected.name} className="w-full h-full object-cover" />
               ) : (
                 <div className={`w-full h-full bg-gradient-to-br ${TYPE_GRADIENT[selected.product_type || 'report'] || TYPE_GRADIENT.report} flex items-center justify-center`}>
-                  <span className="material-symbols-outlined text-white/80 text-[72px]" style={{ fontVariationSettings: "'FILL' 1" }}>{TYPE_ICON[selected.product_type || 'report']}</span>
+                  <Icon name={TYPE_ICON[selected.product_type || 'report']} size={72} className="text-[var(--text-on-dark)]" />
                 </div>
               )}
               <button onClick={() => setSelected(null)} className="absolute top-3 right-3 w-9 h-9 bg-black/40 rounded-full flex items-center justify-center text-white transition-all hover:bg-black/60">
-                <span className="material-symbols-outlined text-[20px]">close</span>
+                <Icon name="close" size={20} />
               </button>
               {selected.sale_price && (
                 <div className="absolute top-3 left-3 text-sm font-bold px-2.5 py-1 rounded-full text-white" style={{ background: 'var(--terracotta)' }}>
@@ -553,10 +554,10 @@ export default function ShopPage() {
                   <span className="text-xs px-2 py-0.5 rounded-full capitalize inline-block mb-2" style={{ background: 'var(--warm-sand)', color: 'rgba(61,52,80,0.6)' }}>
                     {selected.product_type?.replace(/_/g, ' ')}
                   </span>
-                  <h2 className="text-xl font-bold leading-snug" style={{ color: 'var(--indigo-deep)', fontFamily: "'Playfair Display', serif" }}>{selected.name}</h2>
+                  <h2 className="text-xl font-bold leading-snug" style={{ color: 'var(--indigo-deep)', fontFamily: "var(--font-display)" }}>{selected.name}</h2>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="text-2xl font-bold" style={{ color: 'var(--indigo-deep)', fontFamily: "'Playfair Display', serif" }}>
+                  <p className="text-2xl font-bold" style={{ color: 'var(--indigo-deep)', fontFamily: "var(--font-display)" }}>
                     ₹{(selected.sale_price ?? selected.price).toLocaleString('en-IN')}
                   </p>
                   {selected.sale_price && (
@@ -569,7 +570,7 @@ export default function ShopPage() {
 
               {selected.stock_count !== -1 && selected.stock_count > 0 && selected.stock_count <= 5 && (
                 <p className="text-xs font-semibold mt-4 flex items-center gap-1.5" style={{ color: '#d97706' }}>
-                  <span className="material-symbols-outlined text-[14px]">warning</span>
+                  <Icon name="warning" size={14} />
                   Only {selected.stock_count} left in stock - order soon!
                 </p>
               )}
@@ -581,8 +582,8 @@ export default function ShopPage() {
               ) : (
                 <button onClick={() => { addToCart(selected); setSelected(null) }}
                   className="w-full py-3.5 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-98"
-                  style={{ background: 'linear-gradient(135deg, var(--terracotta), #C67D53)' }}>
-                  <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>add_shopping_cart</span>
+                  style={{ background: 'linear-gradient(135deg, var(--terracotta), #B4231F)' }}>
+                  <Icon name="add_shopping_cart" size={18} />
                   Add to Cart - ₹{(selected.sale_price ?? selected.price).toLocaleString('en-IN')}
                 </button>
               )}
@@ -596,10 +597,10 @@ export default function ShopPage() {
       {authModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
           <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden">
-            <div className="p-6 text-center" style={{ background: 'linear-gradient(135deg, var(--indigo-deep) 0%, #460B2F 100%)' }}>
-              <div className="text-5xl mb-2" style={{ color: 'rgba(212,160,67,0.3)', fontFamily: "'Playfair Display', serif" }}>ॐ</div>
-              <h2 className="text-xl font-bold text-white" style={{ fontFamily: "'Playfair Display', serif" }}>Sign in to continue</h2>
-              <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.5)' }}>
+            <div className="p-6 text-center" style={{ background: 'linear-gradient(135deg, var(--indigo-deep) 0%, #2E0C28 100%)' }}>
+              <div className="text-5xl mb-2" style={{ color: 'rgba(212,160,67,0.3)', fontFamily: "var(--font-display)" }}>ॐ</div>
+              <h2 className="text-xl font-bold text-white" style={{ fontFamily: "var(--font-display)" }}>Sign in to continue</h2>
+              <p className="text-sm mt-1" style={{ color: 'var(--text-on-dark-secondary)' }}>
                 {pendingProduct ? `Add "${pendingProduct.name}" to your cart` : 'Please sign in to shop'}
               </p>
             </div>
@@ -636,15 +637,15 @@ export default function ShopPage() {
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 px-4 w-full max-w-sm">
           <button onClick={() => setCartOpen(true)}
             className="flex items-center gap-3 w-full px-5 py-3.5 rounded-2xl text-white font-semibold shadow-2xl transition-all hover:scale-[1.02] active:scale-[0.98]"
-            style={{ background: 'linear-gradient(135deg, var(--indigo-deep), #460B2F)' }}>
+            style={{ background: 'linear-gradient(135deg, var(--indigo-deep), #2E0C28)' }}>
             <span className="relative flex-shrink-0">
-              <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span>
-              <span className="absolute -top-2 -right-2 w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold" style={{ background: 'var(--terracotta)' }}>{cartCount}</span>
+              <Icon name="shopping_cart" size={22} />
+              <span className="absolute -top-2 -right-2 w-4 h-4 rounded-full flex items-center justify-center text-[12px] font-bold" style={{ background: 'var(--terracotta)' }}>{cartCount}</span>
             </span>
             <span className="flex-1 text-left text-sm">{cartCount} item{cartCount !== 1 ? 's' : ''} · ₹{cartTotal.toLocaleString('en-IN')}</span>
             <span className="text-sm flex items-center gap-1 opacity-80">
               View Cart
-              <span className="material-symbols-outlined text-[16px]">chevron_right</span>
+              <Icon name="chevron_right" size={16} />
             </span>
           </button>
         </div>

@@ -72,7 +72,7 @@ export default function NumerologyGrid({ numerology, member }: {
     <div className="space-y-4">
       {/* Lo Shu Grid */}
       <div className="flex flex-col items-center gap-3">
-        <p className="text-xs text-[var(--warm-charcoal)]/50 font-medium tracking-wider uppercase">Lo Shu Numerology Grid</p>
+        <p className="text-xs text-[var(--text-muted)] font-medium tracking-wider uppercase">Lo Shu Numerology Grid</p>
         <div className="grid grid-cols-3 gap-2">
           {LO_SHU_POSITIONS.map((row, ri) =>
             row.map((num, ci) => {
@@ -96,7 +96,7 @@ export default function NumerologyGrid({ numerology, member }: {
                     isKeyNum ? 'text-[var(--terracotta)]'
                     : isEmpty ? 'text-[var(--warm-charcoal)]/20'
                     : 'text-[var(--indigo-deep)]'
-                  }`} style={{ fontFamily: "'Playfair Display', serif" }}>
+                  }`} style={{ fontFamily: "var(--font-display)" }}>
                     {num}
                   </span>
                   {/* Dots representing count */}
@@ -110,7 +110,7 @@ export default function NumerologyGrid({ numerology, member }: {
                     </div>
                   )}
                   {/* Meaning */}
-                  <span className="text-[8px] text-[var(--warm-charcoal)]/40 text-center px-1 leading-tight">
+                  <span className="text-[12px] text-[var(--text-muted)] text-center px-1 leading-tight">
                     {NUMBER_MEANINGS[num]}
                   </span>
                 </div>
@@ -118,7 +118,7 @@ export default function NumerologyGrid({ numerology, member }: {
             })
           )}
         </div>
-        <p className="text-[10px] text-[var(--warm-charcoal)]/40 text-center max-w-xs">
+        <p className="text-[12px] text-[var(--text-muted)] text-center max-w-xs">
           Dots = frequency · Highlighted = your core numbers
         </p>
       </div>
@@ -132,9 +132,9 @@ export default function NumerologyGrid({ numerology, member }: {
           { label: 'Personality', value: numerology.personalityNumber, desc: 'Outer self' },
         ].filter(n => n.value).map(n => (
           <div key={n.label} className="bg-gradient-to-br from-[var(--warm-sand)] to-amber-50 rounded-xl p-3 text-center border border-[var(--saffron)]/20">
-            <p className="text-[10px] text-[var(--warm-charcoal)]/50 uppercase tracking-wider mb-1">{n.label}</p>
-            <p className="text-3xl font-bold text-[var(--terracotta)]" style={{ fontFamily: "'Playfair Display', serif" }}>{n.value}</p>
-            <p className="text-[10px] text-[var(--warm-charcoal)]/50 mt-1">{n.desc}</p>
+            <p className="text-[12px] text-[var(--text-muted)] uppercase tracking-wider mb-1">{n.label}</p>
+            <p className="text-3xl font-bold text-[var(--terracotta)]" style={{ fontFamily: "var(--font-display)" }}>{n.value}</p>
+            <p className="text-[12px] text-[var(--text-muted)] mt-1">{n.desc}</p>
           </div>
         ))}
       </div>

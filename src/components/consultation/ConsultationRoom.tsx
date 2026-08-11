@@ -12,6 +12,7 @@ import {
 import { Track } from 'livekit-client'
 import { useState, useCallback, useEffect } from 'react'
 
+import Icon from '@/components/ui/Icon'
 interface ConsultationRoomProps {
   bookingId: string
   userName: string
@@ -48,8 +49,10 @@ export function TathastuConsultRoom({ userName, onLeave, isExpert }: { userName:
   )
 
   const isWaiting = !everHadRemote && remoteParticipants.length === 0
+  // Same component serves 1-on-1 consultations and group webinars, so the
+  // host-side copy stays neutral about how many people are expected.
   const waitingMessage = isExpert
-    ? 'Waiting for client to join…'
+    ? 'Waiting for participants to join. Your room is open and they can enter now.'
     : 'Waiting for your Vedic expert to join. Please stay connected.'
   const totalCount = remoteParticipants.length + 1
 
@@ -77,8 +80,8 @@ export function TathastuConsultRoom({ userName, onLeave, isExpert }: { userName:
             width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
             background: 'var(--indigo-deep, #2d1b69)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}><span className="material-symbols-outlined text-white text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>brightness_7</span></div>
-          <span style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.7)', letterSpacing: '0.06em' }}>
+          }}><Icon name="brightness_7" size={16} className="text-white" /></div>
+          <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-on-dark-secondary)', letterSpacing: '0.06em' }}>
             MahaTathastu
           </span>
         </div>
@@ -99,8 +102,8 @@ export function TathastuConsultRoom({ userName, onLeave, isExpert }: { userName:
             </span>
           </div>
           <span style={{
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: 11, color: 'rgba(255,255,255,0.5)', fontWeight: 600,
+            fontFamily: "var(--font-mono)",
+            fontSize: 11, color: 'var(--text-on-dark-secondary)', fontWeight: 600,
             padding: '4px 10px', borderRadius: 20,
             background: 'rgba(255,255,255,0.05)',
             border: '1px solid rgba(255,255,255,0.1)',
@@ -117,7 +120,7 @@ export function TathastuConsultRoom({ userName, onLeave, isExpert }: { userName:
               whiteSpace: 'nowrap',
             }}
           >
-            <span className="material-symbols-outlined" style={{ fontSize: 14, fontVariationSettings: "'FILL' 1" }}>call_end</span>
+            <Icon name="call_end" size={14} />
             <span className="hidden sm:inline">End</span>
           </button>
         </div>
@@ -145,12 +148,12 @@ export function TathastuConsultRoom({ userName, onLeave, isExpert }: { userName:
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               marginBottom: 16,
             }}>
-              <span className="material-symbols-outlined animate-pulse" style={{ fontSize: 28, color: 'rgba(255,255,255,0.4)', fontVariationSettings: "'FILL' 1" }}>person</span>
+              <Icon name="person" size={28} className="animate-pulse" style={{ color: 'var(--text-on-dark-muted)' }} />
             </div>
-            <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: 15, fontWeight: 600, marginBottom: 6 }}>
+            <p style={{ color: 'var(--text-on-dark)', fontSize: 15, fontWeight: 600, marginBottom: 6 }}>
               Your room is ready
             </p>
-            <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12, textAlign: 'center', maxWidth: 240, lineHeight: 1.6 }}>
+            <p style={{ color: 'var(--text-on-dark-muted)', fontSize: 12, textAlign: 'center', maxWidth: 240, lineHeight: 1.6 }}>
               {waitingMessage}
             </p>
             <div style={{ display: 'flex', gap: 6, marginTop: 18 }}>
@@ -196,10 +199,10 @@ export function TathastuConsultRoom({ userName, onLeave, isExpert }: { userName:
                     background: isLocal ? 'rgba(255,255,255,0.06)' : 'var(--indigo-deep, #2d1b69)',
                     border: '1.5px solid rgba(255,255,255,0.12)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 22, fontWeight: 700, color: 'rgba(255,255,255,0.7)',
+                    fontSize: 22, fontWeight: 700, color: 'var(--text-on-dark-secondary)',
                     marginBottom: 8,
                   }}>{name.charAt(0).toUpperCase()}</div>
-                  <p style={{ color: 'rgba(255,255,255,0.25)', fontSize: 11 }}>Camera off</p>
+                  <p style={{ color: 'var(--text-on-dark-muted)', fontSize: 11 }}>Camera off</p>
                 </div>
               ) : (
                 <VideoTrack trackRef={track as any} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -212,11 +215,13 @@ export function TathastuConsultRoom({ userName, onLeave, isExpert }: { userName:
                 padding: '3px 9px', borderRadius: 20,
                 display: 'flex', alignItems: 'center', gap: 4,
               }}>
-                <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.75)', fontWeight: 600 }}>
+                <span style={{ fontSize: 10, color: 'var(--text-on-dark)', fontWeight: 600 }}>
                   {isLocal ? `${name} (You)` : name}
                 </span>
               </div>
 
+              {/* When the local participant IS the expert/host, the other
+                  tiles are attendees - labelling them "Expert" was backwards. */}
               {!isLocal && (
                 <div style={{
                   position: 'absolute', top: 8, right: 8,
@@ -224,8 +229,8 @@ export function TathastuConsultRoom({ userName, onLeave, isExpert }: { userName:
                   background: 'rgba(255,255,255,0.08)',
                   border: '1px solid rgba(255,255,255,0.15)',
                   fontSize: 9, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.5)',
-                }}>Expert</div>
+                  color: 'var(--text-on-dark-secondary)',
+                }}>{isExpert ? 'Attendee' : 'Expert'}</div>
               )}
             </div>
           )
@@ -266,7 +271,7 @@ export function TathastuConsultRoom({ userName, onLeave, isExpert }: { userName:
             boxShadow: '0 3px 12px rgba(220,38,38,0.4)',
           }}
         >
-          <span className="material-symbols-outlined" style={{ fontSize: 16, fontVariationSettings: "'FILL' 1" }}>call_end</span>
+          <Icon name="call_end" size={16} />
           End Session
         </button>
       </div>
@@ -294,9 +299,9 @@ function ControlBtn({ active, icon, label, onClick, danger }: {
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         color: danger ? '#fca5a5' : 'rgba(255,255,255,0.6)',
       }}>
-        <span className="material-symbols-outlined" style={{ fontSize: 19, fontVariationSettings: "'FILL' 1" }}>{icon}</span>
+        <Icon name={icon} size={19} />
       </div>
-      <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.25)', whiteSpace: 'nowrap' }}>{label}</span>
+      <span style={{ fontSize: 9, color: 'var(--text-on-dark-muted)', whiteSpace: 'nowrap' }}>{label}</span>
     </button>
   )
 }
@@ -344,7 +349,7 @@ export default function ConsultationRoom({ bookingId, userName, onLeave, slotDat
       <>
         {tokenMode === 'sandbox' && (
           <div className="mb-2 px-4 py-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 text-xs flex items-center gap-2">
-            <span className="material-symbols-outlined text-[15px]">warning</span>
+            <Icon name="warning" size={15} />
             Sandbox mode - for testing only. Switch to Production in Admin panel.
           </div>
         )}
@@ -367,13 +372,13 @@ export default function ConsultationRoom({ bookingId, userName, onLeave, slotDat
       {/* Header */}
       <div className="px-5 py-4 border-b border-[var(--outline-variant)]/30 flex items-center gap-3">
         <div className="w-8 h-8 rounded-full bg-[var(--indigo-deep)] flex items-center justify-center flex-shrink-0">
-          <span className="material-symbols-outlined text-white text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>brightness_7</span>
+          <Icon name="brightness_7" size={16} className="text-white" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-semibold text-[var(--indigo-deep)] tracking-[0.12em] uppercase" style={{ fontFamily: "'Sora', sans-serif" }}>MahaTathastu</p>
-          <p className="text-[10px] text-[var(--warm-charcoal)]/40 tracking-widest uppercase">Vedic Consultation</p>
+          <p className="text-xs font-semibold text-[var(--indigo-deep)] tracking-[0.12em] uppercase" style={{ fontFamily: "var(--font-label)" }}>MahaTathastu</p>
+          <p className="text-[12px] text-[var(--text-muted)] tracking-widest uppercase">Vedic Consultation</p>
         </div>
-        <span className="inline-flex items-center gap-1.5 text-[10px] text-emerald-600 bg-emerald-50 border border-emerald-200/60 px-2.5 py-1 rounded-full font-semibold flex-shrink-0">
+        <span className="inline-flex items-center gap-1.5 text-[12px] text-emerald-600 bg-emerald-50 border border-emerald-200/60 px-2.5 py-1 rounded-full font-semibold flex-shrink-0">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block" />
           Room Ready
         </span>
@@ -385,7 +390,7 @@ export default function ConsultationRoom({ bookingId, userName, onLeave, slotDat
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
           {/* Participant card */}
           <div className="bg-[var(--warm-sand)] rounded-xl p-4">
-            <p className="text-[9px] uppercase tracking-widest text-[var(--warm-charcoal)]/40 mb-3 font-semibold" style={{ fontFamily: "'Sora', sans-serif" }}>Joining as</p>
+            <p className="text-[12px] uppercase tracking-widest text-[var(--text-muted)] mb-3 font-semibold" style={{ fontFamily: "var(--font-label)" }}>Joining as</p>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-[var(--indigo-deep)] flex items-center justify-center text-white font-bold text-base flex-shrink-0">
                 {userName.charAt(0).toUpperCase()}
@@ -396,12 +401,12 @@ export default function ConsultationRoom({ bookingId, userName, onLeave, slotDat
 
           {/* Session card */}
           <div className="bg-[var(--warm-sand)] rounded-xl p-4">
-            <p className="text-[9px] uppercase tracking-widest text-[var(--warm-charcoal)]/40 mb-3 font-semibold" style={{ fontFamily: "'Sora', sans-serif" }}>
+            <p className="text-[12px] uppercase tracking-widest text-[var(--text-muted)] mb-3 font-semibold" style={{ fontFamily: "var(--font-label)" }}>
               {slotDate ? 'Your session' : 'This session'}
             </p>
             {slotDate && (
               <div className="flex items-center gap-2 mb-2">
-                <span className="material-symbols-outlined text-[14px] text-[var(--terracotta)]">calendar_today</span>
+                <Icon name="calendar_today" size={14} className="text-[var(--terracotta)]" />
                 <span className="text-xs font-semibold text-[var(--indigo-deep)]">
                   {new Date(slotDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
                   {slotTime && ` · ${slotTime}`}
@@ -415,8 +420,8 @@ export default function ConsultationRoom({ bookingId, userName, onLeave, slotDat
                 { icon: 'group', label: 'Private 1-on-1 room' },
               ].map(f => (
                 <div key={f.icon} className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[13px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>{f.icon}</span>
-                  <span className="text-[11px] text-[var(--warm-charcoal)]/60">{f.label}</span>
+                  <Icon name={f.icon} size={14} className="text-[var(--terracotta)]" />
+                  <span className="text-[13px] text-[var(--text-secondary)]">{f.label}</span>
                 </div>
               ))}
             </div>
@@ -425,7 +430,7 @@ export default function ConsultationRoom({ bookingId, userName, onLeave, slotDat
 
         {error && (
           <div className="mb-4 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600 flex items-start gap-2">
-            <span className="material-symbols-outlined text-[16px] flex-shrink-0 mt-0.5">error</span>
+            <Icon name="error" size={16} className="flex-shrink-0 mt-0.5" />
             <span>{error}</span>
           </div>
         )}
@@ -438,17 +443,17 @@ export default function ConsultationRoom({ bookingId, userName, onLeave, slotDat
           {connecting ? (
             <>
               <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin flex-shrink-0" />
-              Connecting…
+              Connecting...
             </>
           ) : (
             <>
-              <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>videocam</span>
+              <Icon name="videocam" size={18} />
               Join Consultation
             </>
           )}
         </button>
 
-        <p className="text-center text-[10px] text-[var(--warm-charcoal)]/35 mt-3 leading-relaxed">
+        <p className="text-center text-[12px] text-[var(--text-muted)] mt-3 leading-relaxed">
           Camera &amp; microphone access required · Session is private and confidential
         </p>
       </div>

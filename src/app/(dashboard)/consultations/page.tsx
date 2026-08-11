@@ -9,7 +9,16 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import { usePaymentNotice } from '@/lib/hooks/usePaymentNotice'
 import { nowInIST } from '@/lib/utils/date'
+import {
+  PREDEFINED_SLOTS,
+  SPECIALIZATIONS,
+  DEFAULT_SPECIALIZATION,
+  DEFAULT_CONSULTATION_PRICING,
+  resolveSlotPrice,
+  type ConsultationPricing,
+} from '@/lib/constants/consultation'
 
+import Icon from '@/components/ui/Icon'
 declare global {
   interface Window { Razorpay: any }
 }
@@ -46,7 +55,7 @@ interface Booking {
   consultation_slots: { expert_id: string; date: string; start_time: string; end_time: string } | null
 }
 
-const SPECIALIZATIONS = ['All', 'Astrology', 'Numerology', 'Vastu', 'Ayurveda', 'Tarot', 'Meditation']
+const SPECIALIZATION_CHIPS = ['All', ...SPECIALIZATIONS]
 
 export default function ConsultationsPage() {
   const supabase = createClient()
@@ -62,16 +71,9 @@ export default function ConsultationsPage() {
   const [profile, setProfile] = useState<{ full_name: string } | null>(null)
   const { confirmPayment, NoticeModal } = usePaymentNotice()
 
-  const PREDEFINED_SLOTS = [
-    { start: '17:00', end: '17:45' },
-    { start: '17:45', end: '18:30' },
-    { start: '18:30', end: '19:15' },
-    { start: '19:15', end: '20:00' },
-    { start: '20:00', end: '20:45' },
-    { start: '20:45', end: '21:30' },
-    { start: '21:30', end: '22:15' },
-    { start: '22:15', end: '23:00' },
-  ]
+  // Admin-configured price per specialization. Drives every price the seeker
+  // sees, and matches what the booking API will charge.
+  const [pricing, setPricing] = useState<ConsultationPricing>({ ...DEFAULT_CONSULTATION_PRICING })
 
   // DB slot state fetched via API for selected date
   const [dbSlots, setDbSlots] = useState<Record<string, { is_booked: boolean; is_blocked: boolean; price: number }>>({})
@@ -80,6 +82,14 @@ export default function ConsultationsPage() {
     createClient().auth.getUser().then(({ data: { user } }) => {
       if (user) createClient().from('profiles').select('full_name').eq('id', user.id).single().then(({ data }) => { if (data) setProfile(data as any) })
     })
+  }, [])
+
+  // Load the authoritative price map once.
+  useEffect(() => {
+    fetch('/api/consultation-pricing')
+      .then(r => r.json())
+      .then(d => { if (d?.pricing) setPricing(d.pricing) })
+      .catch(() => {})
   }, [])
 
   // Generate 7-day date slider in IST
@@ -126,14 +136,25 @@ export default function ConsultationsPage() {
     load()
   }, [dates]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Build dbSlots map for selected date (for quick lookup in render)
+  // The specialization whose price applies to slots with no DB row yet.
+  const activeSpec = filter === 'All' ? DEFAULT_SPECIALIZATION : filter
+
+  // Build dbSlots map for selected date (for quick lookup in render).
+  // Every predefined slot gets an entry, so a slot with no DB row shows the
+  // configured price rather than falling through to ₹0 / "Complimentary".
   useEffect(() => {
     const map: Record<string, { is_booked: boolean; is_blocked: boolean; price: number }> = {}
-    slots.filter(s => s.date === selectedDate).forEach(s => {
-      map[s.start_time.substring(0, 5)] = { is_booked: s.is_booked, is_blocked: s.is_blocked, price: (s as any).price || 0 }
+    const daySlots = slots.filter(s => s.date === selectedDate)
+    PREDEFINED_SLOTS.forEach(ps => {
+      const s = daySlots.find(x => x.start_time?.substring(0, 5) === ps.start)
+      map[ps.start] = {
+        is_booked: s?.is_booked ?? false,
+        is_blocked: s?.is_blocked ?? false,
+        price: resolveSlotPrice((s as any)?.price, s?.specialization || activeSpec, pricing),
+      }
     })
     setDbSlots(map)
-  }, [slots, selectedDate])
+  }, [slots, selectedDate, pricing, activeSpec])
 
   const isPast = (date: string, startTime: string) => {
     const [sh, sm] = startTime.split(':').map(Number)
@@ -174,7 +195,7 @@ export default function ConsultationsPage() {
     setTab('my')
   }
 
-  async function bookSlot(date: string, startTime: string, endTime: string) {
+  async function bookSlot(date: string, startTime: string, endTime: string, expectedPrice: number) {
     const bookingKey = `${date}_${startTime}`
     setBooking(bookingKey)
     try {
@@ -185,11 +206,20 @@ export default function ConsultationsPage() {
           date,
           start_time: startTime,
           end_time: endTime,
-          specialization: filter === 'All' ? 'Astrology' : filter,
+          specialization: activeSpec,
+          // The server rejects the booking if this does not match what it is
+          // about to charge, so the seeker can never be billed a different
+          // amount from the one on the button they pressed.
+          expected_price: expectedPrice,
         }),
       })
       const data = await res.json()
       if (!res.ok) {
+        if (data.price_changed) {
+          toast.error('This slot\'s price was just updated. Refreshing prices...')
+          setDbSlots(prev => ({ ...prev, [startTime]: { ...prev[startTime], price: data.price } }))
+          return
+        }
         toast.error(data.error || 'Booking failed. Please try again.')
         return
       }
@@ -201,9 +231,14 @@ export default function ConsultationsPage() {
       }
 
       await loadRazorpayScript()
+      const rzpKey = data.key || process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID
+      if (!rzpKey) {
+        toast.error('Payment gateway is not configured. Please contact support.')
+        return
+      }
       await new Promise<void>((resolve, reject) => {
         const rzp = new window.Razorpay({
-          key: data.key,
+          key: rzpKey,
           amount: data.amount,
           currency: 'INR',
           order_id: data.order_id,
@@ -273,19 +308,19 @@ export default function ConsultationsPage() {
     <div className="p-6 max-w-4xl mx-auto space-y-6">
       {NoticeModal}
       <div>
-        <h1 className="text-2xl font-bold text-[var(--indigo-deep)] inline-flex items-center gap-2"><span className="material-symbols-outlined text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>handshake</span> Consultations</h1>
-        <p className="text-sm text-[var(--warm-charcoal)]/60 mt-0.5">Book 1-on-1 sessions with Vedic experts · <span className="text-[var(--saffron)] font-semibold">5 PM – 11 PM IST · 45 min slots</span></p>
+        <h1 className="text-2xl font-bold text-[var(--indigo-deep)] inline-flex items-center gap-2"><Icon name="handshake" size={24} /> Consultations</h1>
+        <p className="text-sm text-[var(--text-secondary)] mt-0.5">Book 1-on-1 sessions with Vedic experts · <span className="text-[var(--saffron)] font-semibold">5 PM - 11 PM IST · 45 min slots</span></p>
       </div>
 
       {/* Tabs */}
       <div className="flex gap-2">
         {(['book', 'my'] as const).map(t => (
           <button key={t} onClick={() => setTab(t)}
-            className={`px-5 py-2 rounded-full text-sm font-medium capitalize transition-all ${tab === t ? 'bg-[var(--indigo-deep)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 hover:border-[var(--indigo-deep)]'}`}>
+            className={`px-5 py-2 rounded-full text-sm font-medium capitalize transition-all ${tab === t ? 'bg-[var(--indigo-deep)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--text-secondary)] hover:border-[var(--indigo-deep)]'}`}>
             {t === 'book' ? (
-              <span className="inline-flex items-center gap-1.5"><span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>calendar_today</span> Book Session</span>
+              <span className="inline-flex items-center gap-1.5"><Icon name="calendar_today" size={16} /> Book Session</span>
             ) : (
-              <span className="inline-flex items-center gap-1.5"><span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>description</span> My Bookings ({bookings.length})</span>
+              <span className="inline-flex items-center gap-1.5"><Icon name="description" size={16} /> My Bookings ({bookings.length})</span>
             )}
           </button>
         ))}
@@ -295,10 +330,13 @@ export default function ConsultationsPage() {
         <>
           {/* Specialization Filter */}
           <div className="flex gap-2 overflow-x-auto pb-1">
-            {SPECIALIZATIONS.map(s => (
+            {SPECIALIZATION_CHIPS.map(s => (
               <button key={s} onClick={() => setFilter(s)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex-shrink-0 ${filter === s ? 'bg-[var(--indigo-deep)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>
+                className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all flex-shrink-0 ${filter === s ? 'bg-[var(--indigo-deep)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--text-secondary)]'}`}>
                 {s}
+                {s !== 'All' && pricing[s] !== undefined && (
+                  <span className="ml-1.5 opacity-70">₹{pricing[s].toLocaleString('en-IN')}</span>
+                )}
               </button>
             ))}
           </div>
@@ -327,10 +365,10 @@ export default function ConsultationsPage() {
                       : 'bg-white border-[var(--warm-sand)] text-[var(--warm-charcoal)] hover:border-[var(--indigo-deep)]'
                   }`}
                 >
-                  <span className="text-[10px] uppercase font-bold tracking-wider opacity-60">{weekday}</span>
+                  <span className="text-[12px] uppercase font-bold tracking-wider opacity-60">{weekday}</span>
                   <span className="text-xl font-extrabold my-1">{day}</span>
-                  <span className="text-[10px] font-semibold">{month}</span>
-                  {isFull && <span className="text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full font-bold mt-1 scale-90">FULL</span>}
+                  <span className="text-[12px] font-semibold">{month}</span>
+                  {isFull && <span className="text-[12px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full font-bold mt-1 scale-90">FULL</span>}
                 </button>
               )
             })}
@@ -340,10 +378,10 @@ export default function ConsultationsPage() {
           {isDayFull ? (
             <div className="card-divine p-12 text-center">
               <div className="flex justify-center mb-3">
-                <span className="material-symbols-outlined text-[40px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>event_busy</span>
+                <Icon name="event_busy" size={40} className="text-[var(--saffron)]" />
               </div>
               <p className="font-bold text-lg text-[var(--indigo-deep)] mb-2">Slots Fully Booked for This Date</p>
-              <p className="text-sm text-[var(--warm-charcoal)]/75 max-w-md mx-auto leading-relaxed mb-3">
+              <p className="text-sm text-[var(--text-secondary)] max-w-md mx-auto leading-relaxed mb-3">
                 To ensure deep, high-quality focus for every session, our Vedic experts limit their availability to exactly 5 consultations per day.
               </p>
               <p className="text-sm text-[var(--indigo-deep)] font-medium max-w-md mx-auto">
@@ -351,8 +389,8 @@ export default function ConsultationsPage() {
               </p>
             </div>
           ) : visiblePredefined.length === 0 ? (
-            <div className="card-divine p-8 text-center text-sm text-[var(--warm-charcoal)]/60">
-              <span className="material-symbols-outlined text-[32px] text-[var(--warm-charcoal)]/40 block mb-2">bedtime</span>
+            <div className="card-divine p-8 text-center text-sm text-[var(--text-secondary)]">
+              <Icon name="bedtime" size={32} className="text-[var(--text-muted)] block mb-2" />
               Sessions for this date are fully booked or have already concluded. Please select another date above.
             </div>
           ) : (
@@ -368,10 +406,10 @@ export default function ConsultationsPage() {
                   <div key={ps.start} className={`card-divine p-5 transition-all ${!isAvailable ? 'opacity-60 bg-gray-50' : 'hover:shadow-md'}`}>
                     <div className="flex items-center justify-between gap-3 mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="material-symbols-outlined text-[20px] text-[var(--indigo-deep)]" style={{ fontVariationSettings: "'FILL' 1" }}>schedule</span>
+                        <Icon name="schedule" size={20} className="text-[var(--indigo-deep)]" />
                         <span className="font-bold text-[var(--indigo-deep)]">{fmtTime(ps.start)}</span>
                       </div>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                      <span className={`text-[12px] font-bold px-2 py-0.5 rounded-full border ${
                         isBooked
                           ? 'bg-red-50 text-red-700 border-red-200'
                           : isBlocked
@@ -381,7 +419,7 @@ export default function ConsultationsPage() {
                         {isBooked ? 'Booked' : isBlocked ? 'Blocked' : 'Available'}
                       </span>
                     </div>
-                    <p className="text-xs text-[var(--warm-charcoal)]/50">45 min session with a Vedic expert</p>
+                    <p className="text-xs text-[var(--text-muted)]">45 min {activeSpec} session with a Vedic expert</p>
                     {slotPrice > 0
                       ? <p className="text-sm font-bold text-[var(--saffron)] mt-1">₹{slotPrice.toLocaleString('en-IN')}</p>
                       : <p className="text-xs text-emerald-600 font-semibold mt-1">Complimentary</p>
@@ -390,12 +428,12 @@ export default function ConsultationsPage() {
                     {isAvailable && (
                       <button
                         onClick={() => slotPrice > 0
-                          ? confirmPayment('Vedic Expert Consultation', slotPrice, () => bookSlot(selectedDate, ps.start, ps.end))
-                          : bookSlot(selectedDate, ps.start, ps.end)}
+                          ? confirmPayment('Vedic Expert Consultation', slotPrice, () => bookSlot(selectedDate, ps.start, ps.end, slotPrice))
+                          : bookSlot(selectedDate, ps.start, ps.end, slotPrice)}
                         disabled={booking === `${selectedDate}_${ps.start}`}
                         className="btn-divine w-full py-2.5 text-sm mt-3 disabled:opacity-50"
                       >
-                        {booking === `${selectedDate}_${ps.start}` ? 'Booking...' : slotPrice > 0 ? `Book — ₹${slotPrice.toLocaleString('en-IN')}` : 'Book Now'}
+                        {booking === `${selectedDate}_${ps.start}` ? 'Booking...' : slotPrice > 0 ? `Book - ₹${slotPrice.toLocaleString('en-IN')}` : 'Book Now'}
                       </button>
                     )}
                   </div>
@@ -408,7 +446,7 @@ export default function ConsultationsPage() {
         <div className="space-y-3">
           {bookings.length === 0 ? (
             <div className="card-divine p-12 text-center">
-              <div className="flex justify-center mb-3"><span className="material-symbols-outlined text-[40px] text-[var(--indigo-deep)]" style={{ fontVariationSettings: "'FILL' 1" }}>handshake</span></div>
+              <div className="flex justify-center mb-3"><Icon name="handshake" size={40} className="text-[var(--indigo-deep)]" /></div>
               <p className="font-bold text-[var(--indigo-deep)] mb-1">No bookings yet</p>
               <button onClick={() => setTab('book')} className="btn-divine px-6 py-2.5 mt-3 text-sm">Book a Session</button>
             </div>
@@ -420,11 +458,11 @@ export default function ConsultationsPage() {
                 <div key={b.id} className="card-divine overflow-hidden">
                   <div className="p-4 flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full bg-[var(--indigo-deep)] flex items-center justify-center text-white font-bold flex-shrink-0">
-                      <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>person</span>
+                      <Icon name="person" size={22} />
                     </div>
                     <div className="flex-1">
                       <p className="font-bold text-[var(--indigo-deep)]">Expert Consultation</p>
-                      <p className="text-sm text-[var(--warm-charcoal)]/60">{slot ? `${(() => { const [y,m,d] = slot.date.split('-'); return new Date(+y,+m-1,+d).toLocaleDateString('en-IN') })()}  at ${slot.start_time}` : new Date(b.booked_at).toLocaleDateString('en-IN')}</p>
+                      <p className="text-sm text-[var(--text-secondary)]">{slot ? `${(() => { const [y,m,d] = slot.date.split('-'); return new Date(+y,+m-1,+d).toLocaleDateString('en-IN') })()}  at ${slot.start_time}` : new Date(b.booked_at).toLocaleDateString('en-IN')}</p>
                     </div>
                     <div className="flex items-center gap-2 flex-wrap justify-end">
                       <span className={`text-xs px-3 py-1 rounded-full font-medium ${b.status === 'confirmed' ? 'bg-emerald-100 text-emerald-700' : 'bg-emerald-50 text-emerald-700'}`}>{b.status}</span>
@@ -435,7 +473,7 @@ export default function ConsultationsPage() {
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-all"
                         >
-                          <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>meeting_room</span>
+                          <Icon name="meeting_room" size={14} />
                           Join via Google Meet
                         </a>
                       )}
@@ -444,9 +482,7 @@ export default function ConsultationsPage() {
                           onClick={() => setActiveCallBookingId(isActive ? null : b.id)}
                           className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full font-semibold transition-all ${isActive ? 'bg-red-100 text-red-700' : 'bg-[var(--indigo-deep)] text-white hover:opacity-90'}`}
                         >
-                          <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                            {isActive ? 'call_end' : 'videocam'}
-                          </span>
+                          <Icon name={isActive ? 'call_end' : 'videocam'} size={14} />
                           {isActive ? 'Leave Call' : 'Join Call'}
                         </button>
                       )}
@@ -455,7 +491,7 @@ export default function ConsultationsPage() {
                   {b.meeting_link && b.status === 'confirmed' && (
                     <div className="px-4 pb-3 pt-0">
                       <div className="flex items-center gap-2 bg-blue-50 rounded-xl px-3 py-2 border border-blue-100">
-                        <span className="material-symbols-outlined text-blue-400 text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>info</span>
+                        <Icon name="info" size={14} className="text-blue-400" />
                         <p className="text-xs text-blue-600">Your expert has set up a Google Meet for this session. Click <strong>Join via Google Meet</strong> above to join.</p>
                       </div>
                     </div>

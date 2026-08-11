@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 
+import Icon from '@/components/ui/Icon'
 export const revalidate = 3600
 
 export const metadata: Metadata = {
@@ -34,14 +35,14 @@ const DEFAULT_PRICES: Record<string, number> = {
 }
 
 const SERVICES = [
-  { id: 'full_tathastu', icon: 'auto_awesome', label: 'Full Tathastu', badge: 'BEST VALUE', desc: 'The complete spiritual blueprint - all 14 reports in one comprehensive analysis for your entire family.', features: ['Kundli & Birth Chart', 'Numerology', 'Chakra Analysis', 'Prakriti (Ayurveda)', '10+ more reports', 'Lifetime access', 'All family members'] },
+  { id: 'full_tathastu', icon: 'all_inclusive', label: 'Full Tathastu', badge: 'BEST VALUE', desc: 'The complete spiritual blueprint - all 14 reports in one comprehensive analysis for your entire family.', features: ['Kundli & Birth Chart', 'Numerology', 'Chakra Analysis', 'Prakriti (Ayurveda)', '10+ more reports', 'Lifetime access', 'All family members'] },
   { id: 'kundli', icon: 'brightness_7', label: 'Kundli / Horoscope', desc: 'Vedic birth chart with planetary positions, 12 houses, dashas, current transits, and predictions.', features: ['Lagna & Rashi', 'Planetary positions', 'Vimshottari Dasha', 'Mahadasha periods', 'Current transits'] },
   { id: 'numerology', icon: 'tag', label: 'Numerology', desc: 'Chaldean & Pythagorean numerology - life path, destiny, mobile number compatibility, lucky numbers.', features: ['Life Path Number', 'Destiny Number', 'Soul Urge Number', 'Mobile compatibility', 'Lucky numbers & colors'] },
   { id: 'chakra', icon: 'spa', label: 'Chakra Analysis', desc: 'All 7 chakras analyzed from your birth chart - balance levels, mantras, crystals, yoga, and foods.', features: ['7 chakra levels', 'Blocked/balanced status', 'Healing mantras', 'Crystals & gemstones', 'Dietary guidance'] },
   { id: 'prakriti', icon: 'eco', label: 'Prakriti (Ayurveda)', desc: 'Your Vata-Pitta-Kapha constitution derived from nakshatra - personalized diet, herbs, yoga & daily routine.', features: ['Dosha percentages', 'Dominant dosha', 'Personalized diet', 'Ayurvedic herbs', 'Daily routine'] },
   { id: 'yantra_colour', icon: 'palette', label: 'Yantra & Colour', desc: 'Personal yantra, power colors for success, gemstone recommendation with wearing protocol.', features: ['Personal yantra', 'Deity & mantra', 'Power colors', 'Wealth colors', 'Gemstone guidance'] },
   { id: 'mantra', icon: 'self_improvement', label: 'Mantra Science', desc: 'Your personal beej mantra, deity mantra, likhit japa (written mantra) guidance with full protocol.', features: ['Beej mantra', 'Deity mantra', 'Daily count', 'Likhit japa guide', 'Best timing'] },
-  { id: 'mantra_writing', icon: 'edit_note', label: 'Likhit Japa (Mantra Lekhnan)', badge: 'NEW', desc: 'Nakshatra-specific written mantra practice with precise 4-step protocol — personalized Vishnu Sahasranama shloka for your pada.', features: ['Universal Ganpati mantra', 'Gayatri mantra', 'Nakshatra Ganpati', 'Vishnu Sahasranama shloka', 'Pada-specific guidance'] },
+  { id: 'mantra_writing', icon: 'edit_note', label: 'Likhit Japa (Mantra Lekhnan)', badge: 'NEW', desc: 'Nakshatra-specific written mantra practice with precise 4-step protocol - personalized Vishnu Sahasranama shloka for your pada.', features: ['Universal Ganpati mantra', 'Gayatri mantra', 'Nakshatra Ganpati', 'Vishnu Sahasranama shloka', 'Pada-specific guidance'] },
   { id: 'vastu', icon: 'house', label: 'Vastu Report', desc: 'Home and office Vastu analysis with direction-based remedies, color suggestions, and zone healing.', features: ['Direction analysis', 'Vastu score', 'Defect identification', 'Easy remedies', 'Zone mapping'] },
   { id: 'child_development', icon: 'child_care', label: 'Child Development', desc: 'Learning style, natural talents, ideal career paths, and parenting approach based on nakshatra.', features: ['Learning style', 'Natural talents', 'Career aptitude', 'Parenting tips', 'Education path'] },
   { id: 'dmit', icon: 'psychology', label: 'DMIT Report', desc: 'Dermatoglyphics Multiple Intelligence Test mapping based on Howard Gardner\'s 8 intelligences.', features: ['8 intelligences', 'Dominant intelligence', 'Career fit', 'Study methods', 'Leadership style'] },
@@ -59,7 +60,7 @@ function getPrice(serviceId: string, livePrices: Record<string, number>): number
 export default async function ServicesPage() {
   const supabase = await createClient()
 
-  // Fetch live prices and the bundle product in parallel — both are independent reads
+  // Fetch live prices and the bundle product in parallel - both are independent reads
   const [{ data: pricingRow }, { data: bundle }] = await Promise.all([
     (supabase as any).from('settings').select('value').eq('key', 'report_pricing').single(),
     supabase.from('products').select('price,sale_price').eq('slug', 'full-tathastu-bundle').single(),
@@ -74,66 +75,84 @@ export default async function ServicesPage() {
       {/* Hero */}
       <section className="page-banner">
         <div className="page-banner-inner max-w-3xl mx-auto">
-          <p className="text-[var(--saffron)] text-xs font-bold tracking-[0.2em] uppercase mb-4" style={{ fontFamily: "'Sora', sans-serif" }}>The Nakshatra Engine</p>
-          <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4 leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>Nakshatra Report System</h1>
+          <p className="t-eyebrow t-eyebrow-dark mb-4 inline-block">The Nakshatra Engine</p>
+          <h1 className="t-display-2 text-[var(--text-on-dark)] mb-4">Nakshatra Report System</h1>
           <div className="ornate-divider">
-            <span className="material-symbols-outlined text-[14px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
+            <Icon name="yantra" size={16} className="text-[var(--gold-300)]" />
           </div>
-          <p className="text-white/65 text-lg max-w-2xl mx-auto leading-relaxed">14 AI-powered Vedic reports covering every dimension of life - generated in 60 seconds</p>
+          <p className="text-[var(--text-on-dark-secondary)] text-lg max-w-2xl mx-auto leading-relaxed">14 Vedic reports covering every dimension of life, prepared in 60 seconds</p>
         </div>
       </section>
 
       {/* Services grid */}
       <section className="py-12 px-6 bg-[var(--kutch-white)]">
         <div className="max-w-6xl mx-auto">
-          {/* Featured */}
-          <div className="card-divine p-6 mb-6 border-2 border-[var(--terracotta)]">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="icon-divine w-16 h-16 rounded-2xl flex-shrink-0 shadow-lg shadow-[var(--terracotta)]/30">
-                <span className="material-symbols-outlined text-[32px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{SERVICES[0].icon}</span>
-              </div>
+          {/* ── Signature tier. Same rule as the homepage grid: a card is dark
+               because it is the bundle, and it says so on the badge. ── */}
+          <div className="card-premium p-7 mb-6">
+            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-6">
+              <span className="icon-frame icon-frame-dark w-16 h-16 rounded-2xl">
+                <Icon name={SERVICES[0].icon} size={30} />
+              </span>
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <h2 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>{SERVICES[0].label}</h2>
-                  {SERVICES[0].badge && <span className="text-xs bg-[var(--terracotta)] text-white px-2 py-0.5 rounded-full font-bold">{SERVICES[0].badge}</span>}
-                </div>
-                <p className="text-[var(--warm-charcoal)]/70 mb-3">{SERVICES[0].desc}</p>
+                <span className="badge-signature mb-3">
+                  <Icon name="yantra" size={13} />
+                  {SERVICES[0].badge || 'Signature'}
+                </span>
+                <h2 className="t-h2 text-[var(--text-on-dark)] mt-3 mb-2">{SERVICES[0].label}</h2>
+                <p className="t-body-sm text-[var(--text-on-dark-secondary)] mb-4">{SERVICES[0].desc}</p>
                 <div className="flex flex-wrap gap-2">
-                  {SERVICES[0].features.map(f => <span key={f} className="text-xs bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/70 px-2.5 py-1 rounded-full flex items-center gap-1"><span className="material-symbols-outlined text-[12px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>{f}</span>)}
+                  {SERVICES[0].features.map(f => (
+                    <span key={f} className="t-meta flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[var(--text-on-dark-secondary)]"
+                      style={{ background: 'rgba(245,239,227,0.07)', border: '1px solid var(--border-dark-subtle)' }}>
+                      <Icon name="check_circle" size={13} style={{ color: 'var(--gold-300)' }} />{f}
+                    </span>
+                  ))}
                 </div>
               </div>
               <div className="text-right flex-shrink-0">
-                <div className="text-3xl font-bold text-[var(--indigo-deep)]">₹{bundlePrice.toLocaleString('en-IN')}</div>
+                <div className="t-h1 text-[var(--gold-300)]">₹{bundlePrice.toLocaleString('en-IN')}</div>
                 {bundleOriginal != null && (
-                  <div className="text-sm text-[var(--warm-charcoal)]/40 line-through">₹{bundleOriginal.toLocaleString('en-IN')}</div>
+                  <div className="t-body-sm text-[var(--text-on-dark-muted)] line-through">₹{bundleOriginal.toLocaleString('en-IN')}</div>
                 )}
-                <Link href="/reports/generate" className="btn-divine mt-3 px-6 py-2.5 text-sm block text-center">Get Full Report</Link>
+                <Link href="/reports/generate" className="btn-gold mt-3 w-full">Get Full Report</Link>
               </div>
             </div>
           </div>
 
+          {/* ── The remaining reports use the same editorial treatment as the
+               homepage grid: index numeral, icon frame, no resting shadow. ── */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {SERVICES.slice(1).map(s => {
+            {SERVICES.slice(1).map((s, i) => {
               const price = getPrice(s.id, livePrices)
               return (
-                <div key={s.id} className="card-divine p-5 flex flex-col">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="icon-divine w-10 h-10 rounded-xl flex-shrink-0">
-                      <span className="material-symbols-outlined text-[20px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{s.icon}</span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <h3 className="font-bold text-[var(--indigo-deep)] text-base leading-tight" style={{ fontFamily: "'Playfair Display', serif" }}>{s.label}</h3>
-                        {'badge' in s && s.badge && <span className="text-[10px] bg-[var(--terracotta)] text-white px-1.5 py-0.5 rounded-full font-bold flex-shrink-0">{s.badge}</span>}
-                      </div>
-                      <span className="text-sm font-bold text-[var(--terracotta)]">₹{price.toLocaleString('en-IN')}</span>
-                    </div>
+                <div key={s.id} className="card-editorial group">
+                  <div className="flex items-start justify-between mb-4">
+                    <span className="icon-frame">
+                      <Icon name={s.icon} size={22} />
+                    </span>
+                    <span className="card-editorial-index">{String(i + 1).padStart(2, '0')}</span>
                   </div>
-                  <p className="text-sm text-[var(--warm-charcoal)]/70 mb-3 flex-1">{s.desc}</p>
-                  <div className="space-y-1 mb-4">
-                    {s.features.slice(0, 3).map(f => <p key={f} className="text-xs text-[var(--warm-charcoal)]/60 flex gap-1.5 items-center"><span className="material-symbols-outlined text-[12px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>{f}</p>)}
+
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <h3 className="t-h4 text-[var(--text-primary)] leading-tight">{s.label}</h3>
+                    {'badge' in s && s.badge && (
+                      <span className="badge-signature badge-signature-light">{s.badge}</span>
+                    )}
                   </div>
-                  <Link href="/reports/generate" className="text-center py-2 rounded-lg border border-[var(--indigo-deep)] text-[var(--indigo-deep)] text-sm font-medium hover:bg-[var(--indigo-deep)] hover:text-white transition-all">Generate Report</Link>
+                  <span className="t-data text-[var(--primary-strong)] block mb-3">₹{price.toLocaleString('en-IN')}</span>
+
+                  <p className="t-body-sm text-[var(--text-muted)] mb-4 flex-1">{s.desc}</p>
+
+                  <ul className="space-y-1 mb-5">
+                    {s.features.slice(0, 3).map(f => (
+                      <li key={f} className="t-meta text-[var(--text-secondary)] flex gap-2 items-center">
+                        <Icon name="check_circle" size={14} className="text-[var(--primary)]" />{f}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Link href="/reports/generate" className="btn-outline-divine w-full mt-auto">Generate Report</Link>
                 </div>
               )
             })}

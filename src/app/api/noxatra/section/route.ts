@@ -7,6 +7,7 @@ import {
   generateRemediesSummary,
 } from '@/lib/noxatra/engine'
 import type { ReportType } from '@/types/database.types'
+import { sendReportReadyEmail, notifyAdmin, reportLabel } from '@/lib/email'
 
 export const maxDuration = 60
 
@@ -109,7 +110,7 @@ export async function POST(req: NextRequest) {
       const numerology = existingContent.numerology as any
 
       if (!kundli) {
-        return NextResponse.json({ error: 'Kundli not yet generated — run astrology section first' }, { status: 400 })
+        return NextResponse.json({ error: 'Kundli not yet generated - run astrology section first' }, { status: 400 })
       }
 
       newData = {
@@ -158,8 +159,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `DB update failed: ${updateErr.message}` }, { status: 500 })
     }
 
-    // Fire notification when fully done
-    if (isFinal) {
+    // Fire notification when fully done. `report.status` was read before this
+    // request marked it generated, so a re-run of the final section cannot send
+    // the seeker a second copy of the same report.
+    if (isFinal && report.status !== 'generated') {
       void Promise.resolve(
         supabase.from('notifications').insert({
           user_id: user.id,
@@ -169,6 +172,33 @@ export async function POST(req: NextRequest) {
           data: { report_id: reportId, report_type: report.report_type } as any,
         })
       ).catch(() => {})
+
+      // Email the seeker their finished report, and alert the admin inbox.
+      // Both are fire-and-forget: a mail failure must never fail a paid report.
+      if (user.email) {
+        const seekerName =
+          (user.user_metadata?.full_name as string) || user.email.split('@')[0] || 'Seeker'
+        void sendReportReadyEmail(
+          user.email,
+          seekerName,
+          member.full_name,
+          report.report_type,
+          reportId,
+        ).catch((e: any) => console.warn('[Report] ready email failed:', e?.message))
+      }
+
+      notifyAdmin({
+        event: 'Report Generated',
+        summary: `${reportLabel(report.report_type)} for ${member.full_name}`,
+        details: {
+          'Report Type': reportLabel(report.report_type),
+          'Prepared For': member.full_name,
+          'Account': user.email || user.id,
+          'Report ID': reportId,
+        },
+        adminPath: '/admin/reports',
+        accent: '#C9992E',
+      })
     }
 
     return NextResponse.json({ success: true, section: sectionType, isFinal: !!isFinal })

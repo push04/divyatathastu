@@ -8,6 +8,7 @@ import { useBundlePrice } from '@/lib/hooks/useBundlePrice'
 import SudarshanLoader from '@/components/SudarshanLoader'
 import NewsletterStrip from '@/components/layout/NewsletterStrip'
 
+import Icon from '@/components/ui/Icon'
 interface Profile { id: string; full_name: string; email: string }
 interface FamilyMember { id: string; full_name: string; relation: string; date_of_birth?: string }
 interface Report { id: string; report_type: string; status: string; created_at: string; family_members: { full_name: string } | null }
@@ -15,21 +16,21 @@ interface Notification { id: string; title: string; body: string; type: string; 
 interface PanchangSnap { tithi: string; nakshatra: string; yoga: string; rahuKaal: string }
 
 const REPORT_ICONS: Record<string, string> = {
-  full_tathastu: 'auto_awesome', kundli: 'brightness_7', numerology: 'tag', chakra: 'spa', prakriti: 'eco',
+  full_tathastu: 'all_inclusive', kundli: 'brightness_7', numerology: 'tag', chakra: 'spa', prakriti: 'eco',
   vastu: 'home', dmit: 'fingerprint', psychology: 'psychology', child_development: 'child_care',
   yantra_colour: 'palette', mantra: 'mic', colour_therapy: 'colorize', remedies: 'healing', annual_prediction: 'event',
 }
 
 const QUICK = [
-  { href: '/reports/generate', label: 'Generate Report', icon: 'auto_awesome', color: 'bg-[var(--terracotta)]' },
+  { href: '/reports/generate', label: 'Generate Report', icon: 'brightness_7', color: 'bg-[var(--terracotta)]' },
   { href: '/family/add', label: 'Add Member', icon: 'person_add', color: 'bg-[var(--indigo-deep)]' },
   { href: '/panchang', label: 'Panchang', icon: 'calendar_today', color: 'bg-emerald-600' },
-  { href: '/ai-guide', label: 'AI Guide', icon: 'psychology', color: 'bg-violet-600' },
+  { href: '/ai-guide', label: 'Spiritual Guide', icon: 'psychology', color: 'bg-violet-600' },
   { href: '/mandir-finder', label: 'Find Mandir', icon: 'temple_hindu', color: 'bg-amber-600' },
   { href: '/consultations', label: 'Book Consult', icon: 'event', color: 'bg-rose-600' },
 ]
 
-// Section bubbles — horizontally scrollable quick-nav chips
+// Section bubbles - horizontally scrollable quick-nav chips
 const SECTION_BUBBLES = [
   { href: '/ardra-jalam',  label: 'Ardra Jalam',    icon: 'water_drop',         bg: '#16a34a', color: '#ffffff', border: '#15803d', solid: true },
   { href: '/panchang',     label: 'Panchang',        icon: 'calendar_today',     bg: '#fff7ed', color: '#9a3412', border: '#ea580c', solid: false },
@@ -40,7 +41,7 @@ const SECTION_BUBBLES = [
   { href: '/ayurveda',     label: 'Ayurveda',        icon: 'spa',                bg: '#f0fdf4', color: '#166534', border: '#22c55e', solid: false },
   { href: '/courses',      label: 'Courses',         icon: 'menu_book',          bg: '#eff6ff', color: '#1e3a8a', border: '#3b82f6', solid: false },
   { href: '/consultations',label: 'Consultations',   icon: 'event',              bg: '#fff1f2', color: '#881337', border: '#f43f5e', solid: false },
-  { href: '/divine-services', label: 'All Services', icon: 'auto_awesome',       bg: '#fffbeb', color: '#78350f', border: '#D4A017', solid: false },
+  { href: '/divine-services', label: 'All Services', icon: 'brightness_7',       bg: '#fffbeb', color: '#78350f', border: '#C9992E', solid: false },
 ]
 
 const DIVINE_SERVICES = [
@@ -185,7 +186,7 @@ export default function DashboardPage() {
       <div className="flex items-center justify-center min-h-[60vh] bg-[var(--kutch-white)]">
         <div className="text-center">
           <SudarshanLoader size="lg" />
-          <p className="text-[var(--indigo-deep)]/50 text-sm mt-4" style={{ fontFamily: "'Sora', sans-serif" }}>Loading your sanctuary...</p>
+          <p className="text-[var(--text-muted)] text-sm mt-4" style={{ fontFamily: "var(--font-label)" }}>Loading your sanctuary...</p>
         </div>
       </div>
     )
@@ -199,23 +200,23 @@ export default function DashboardPage() {
         <div>
           <h1
             className="text-3xl text-[var(--indigo-deep)] leading-tight mb-1"
-            style={{ fontFamily: "'Playfair Display', serif", fontWeight: 600 }}
+            style={{ fontFamily: "var(--font-display)", fontWeight: 600 }}
           >
             Family Sanctuary
           </h1>
-          <p className="text-[var(--indigo-deep)]/50 text-sm">
+          <p className="text-[var(--text-muted)] text-sm">
             Namaste, <span className="font-medium text-[var(--terracotta)]">{firstName}</span> · {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
           </p>
         </div>
         <div className="flex items-center gap-3">
           {unreadCount > 0 && (
-            <span className="bg-[var(--terracotta)] text-white text-xs font-bold px-3 py-1 rounded-full" style={{ fontFamily: "'Sora', sans-serif" }}>
+            <span className="bg-[var(--terracotta)] text-white text-xs font-bold px-3 py-1 rounded-full" style={{ fontFamily: "var(--font-label)" }}>
               {unreadCount} new
             </span>
           )}
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--warm-sand)] border border-[var(--outline-variant)]/40">
-            <span className="material-symbols-outlined text-[14px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>verified_user</span>
-            <span className="text-[10px] font-semibold tracking-widest uppercase text-[var(--saffron)]" style={{ fontFamily: "'Sora', sans-serif" }}>Secure Session</span>
+            <Icon name="verified_user" size={14} className="text-[var(--saffron)]" />
+            <span className="text-[12px] font-semibold tracking-widest uppercase text-[var(--saffron)]" style={{ fontFamily: "var(--font-label)" }}>Secure Session</span>
           </div>
           <Link href="/settings" className="w-9 h-9 rounded-full bg-[var(--indigo-deep)] flex items-center justify-center text-white font-bold text-sm shadow-sm">
             {firstName.charAt(0)}
@@ -232,25 +233,20 @@ export default function DashboardPage() {
           <Link
             key={b.href}
             href={b.href}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-full text-[12px] font-semibold whitespace-nowrap shrink-0 transition-all duration-200 hover:opacity-85 hover:scale-105"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold whitespace-nowrap shrink-0 transition-all duration-200 hover:opacity-85 hover:scale-105"
             style={{
               background: b.bg,
               color: b.color,
               border: `1.5px solid ${b.border}`,
               boxShadow: b.solid ? '0 2px 10px rgba(22,163,74,0.30)' : '0 1px 4px rgba(0,0,0,0.06)',
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: "var(--font-label)",
             }}
           >
-            <span
-              className="material-symbols-outlined"
-              style={{ fontSize: 14, fontVariationSettings: "'FILL' 1" }}
-            >
-              {b.icon}
-            </span>
+            <Icon name={b.icon} />
             {b.label}
             {b.solid && (
               <span
-                className="text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full"
+                className="text-[12px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-full"
                 style={{ background: 'rgba(255,255,255,0.25)', color: '#ffffff' }}
               >
                 New
@@ -270,32 +266,32 @@ export default function DashboardPage() {
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--saffron)] to-[var(--terracotta)] flex items-center justify-center text-white text-2xl font-bold mb-3 shadow-md">
               {firstName.charAt(0)}
             </div>
-            <h2 className="font-semibold text-[var(--indigo-deep)] text-base text-center" style={{ fontFamily: "'Sora', sans-serif" }}>
+            <h2 className="font-semibold text-[var(--indigo-deep)] text-base text-center" style={{ fontFamily: "var(--font-label)" }}>
               {profile?.full_name || 'Your Profile'}
             </h2>
-            <span className="text-[10px] uppercase tracking-widest text-[var(--terracotta)] mt-1 font-semibold" style={{ fontFamily: "'Sora', sans-serif" }}>Primary Anchor</span>
+            <span className="text-[12px] uppercase tracking-widest text-[var(--terracotta)] mt-1 font-semibold" style={{ fontFamily: "var(--font-label)" }}>Primary Anchor</span>
           </div>
           <div className="w-full md:w-2/3 flex flex-col justify-center relative z-10">
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
-                <span className="text-[10px] uppercase tracking-widest text-[var(--indigo-deep)]/40 block mb-1" style={{ fontFamily: "'Sora', sans-serif" }}>Current Plan</span>
-                <span className="text-sm font-bold text-[var(--terracotta)] capitalize" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                <span className="text-[12px] uppercase tracking-widest text-[var(--text-muted)] block mb-1" style={{ fontFamily: "var(--font-label)" }}>Current Plan</span>
+                <span className="text-sm font-bold text-[var(--terracotta)] capitalize" style={{ fontFamily: "var(--font-mono)" }}>
                   {planType}
                 </span>
               </div>
               <div>
-                <span className="text-[10px] uppercase tracking-widest text-[var(--indigo-deep)]/40 block mb-1" style={{ fontFamily: "'Sora', sans-serif" }}>Reports Generated</span>
-                <span className="text-sm font-bold text-[var(--tertiary, #469da3)]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{reports.length} total</span>
+                <span className="text-[12px] uppercase tracking-widest text-[var(--text-muted)] block mb-1" style={{ fontFamily: "var(--font-label)" }}>Reports Generated</span>
+                <span className="text-sm font-bold text-[var(--tertiary, #469da3)]" style={{ fontFamily: "var(--font-mono)" }}>{reports.length} total</span>
               </div>
             </div>
-            <p className="text-sm text-[var(--indigo-deep)]/55 mb-4 leading-relaxed">
-              Your spiritual sanctuary is active. Generate reports for any family member using the Nakshatra AI engine.
+            <p className="text-sm text-[var(--text-muted)] mb-4 leading-relaxed">
+              Your spiritual sanctuary is active. Generate reports for any family member using the Nakshatra engine.
             </p>
             <div className="flex gap-2 flex-wrap">
-              <Link href="/reports/generate" className="btn-divine text-[10px] px-4 py-2">
+              <Link href="/reports/generate" className="btn-divine text-[12px] px-4 py-2">
                 Generate Report
               </Link>
-              <Link href="/settings" className="btn-outline-divine text-[10px] px-4 py-2">
+              <Link href="/settings" className="btn-outline-divine text-[12px] px-4 py-2">
                 View Profile
               </Link>
             </div>
@@ -306,9 +302,9 @@ export default function DashboardPage() {
         <div className="bento-card md:col-span-4 p-5">
           <h3
             className="text-[var(--indigo-deep)] mb-4 flex items-center gap-2 text-sm font-semibold"
-            style={{ fontFamily: "'Sora', sans-serif" }}
+            style={{ fontFamily: "var(--font-label)" }}
           >
-            <span className="material-symbols-outlined text-[var(--saffron)] text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>wb_sunny</span>
+            <Icon name="wb_sunny" size={18} className="text-[var(--saffron)]" />
             Daily Panchang
           </h3>
           {panchang ? (
@@ -321,8 +317,8 @@ export default function DashboardPage() {
                 { label: 'Rahu Kaal', value: panchang.rahuKaal, alert: true },
               ].map(({ label, value, alert }) => (
                 <div key={label} className="flex justify-between items-center border-b border-[var(--outline-variant)]/20 pb-2 last:border-0 last:pb-0">
-                  <span className="text-xs text-[var(--indigo-deep)]/50">{label}</span>
-                  <span className={`text-xs font-medium ${alert ? 'text-red-500' : 'text-[var(--indigo-deep)]'}`} style={{ fontFamily: "'JetBrains Mono', monospace" }}>{value}</span>
+                  <span className="text-xs text-[var(--text-muted)]">{label}</span>
+                  <span className={`text-xs font-medium ${alert ? 'text-red-500' : 'text-[var(--indigo-deep)]'}`} style={{ fontFamily: "var(--font-mono)" }}>{value}</span>
                 </div>
               ))}
             </div>
@@ -333,14 +329,14 @@ export default function DashboardPage() {
               ))}
             </div>
           )}
-          <Link href="/panchang" className="block mt-4 text-center text-xs text-[var(--terracotta)] hover:underline font-semibold" style={{ fontFamily: "'Sora', sans-serif" }}>
-            Full Panchang <span className="material-symbols-outlined text-[12px]" style={{ verticalAlign: 'middle' }}>arrow_forward</span>
+          <Link href="/panchang" className="block mt-4 text-center text-xs text-[var(--terracotta)] hover:underline font-semibold" style={{ fontFamily: "var(--font-label)" }}>
+            Full Panchang <Icon name="arrow_forward" size={13} style={{ verticalAlign: 'middle'  }} />
           </Link>
         </div>
 
         {/* Quick Actions - 12 cols */}
         <div className="md:col-span-12">
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--indigo-deep)]/50 mb-3" style={{ fontFamily: "'Sora', sans-serif" }}>
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)] mb-3" style={{ fontFamily: "var(--font-label)" }}>
             Quick Actions
           </h2>
           <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
@@ -351,9 +347,9 @@ export default function DashboardPage() {
                 className="bento-card p-4 text-center hover:shadow-md group"
               >
                 <div className={`w-10 h-10 ${a.color} rounded-xl flex items-center justify-center mx-auto mb-2.5 group-hover:scale-110 transition-transform shadow-sm`}>
-                  <span className="material-symbols-outlined text-white text-[18px]">{a.icon}</span>
+                  <Icon name={a.icon} size={18} className="text-white" />
                 </div>
-                <p className="text-[11px] font-semibold text-[var(--indigo-deep)]" style={{ fontFamily: "'Sora', sans-serif" }}>{a.label}</p>
+                <p className="text-[13px] font-semibold text-[var(--indigo-deep)]" style={{ fontFamily: "var(--font-label)" }}>{a.label}</p>
               </Link>
             ))}
           </div>
@@ -364,32 +360,32 @@ export default function DashboardPage() {
           {/* Golden-framed section container */}
           <div className="rounded-2xl p-5" style={{
             background: 'linear-gradient(135deg, #fffbeb 0%, #fef9f0 50%, #fffbeb 100%)',
-            border: '2px solid #D4A017',
+            border: '2px solid #C9992E',
             boxShadow: '0 0 0 1px rgba(212,160,23,0.15), 0 4px 24px rgba(212,160,23,0.12)',
           }}>
             {/* Section header */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-[22px]" style={{ color: '#D4A017', fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
+                <Icon name="brightness_7" size={22} style={{ color: '#C9992E' }} />
                 <div>
-                  <h2 className="font-black text-lg leading-tight" style={{ fontFamily: "'Playfair Display', serif", color: '#78350f', letterSpacing: '0.02em' }}>
+                  <h2 className="font-black text-lg leading-tight" style={{ fontFamily: "var(--font-display)", color: '#78350f', letterSpacing: '0.02em' }}>
                     Divine Services
                   </h2>
-                  <p className="text-[10px] font-semibold tracking-widest uppercase" style={{ color: '#D4A017', fontFamily: "'Sora', sans-serif" }}>
+                  <p className="text-[12px] font-semibold tracking-widest uppercase" style={{ color: '#C9992E', fontFamily: "var(--font-label)" }}>
                     Anushthaan India · Gyanampeetham
                   </p>
                 </div>
               </div>
               <Link href="/divine-services"
-                className="inline-flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full transition-all hover:opacity-80"
-                style={{ background: '#D4A017', color: 'white', fontFamily: "'Sora', sans-serif" }}>
+                className="inline-flex items-center gap-1.5 text-[13px] font-bold px-3 py-1.5 rounded-full transition-all hover:opacity-80"
+                style={{ background: '#C9992E', color: 'white', fontFamily: "var(--font-label)" }}>
                 View All
-                <span className="material-symbols-outlined text-[12px]">arrow_forward</span>
+                <Icon name="arrow_forward" size={13} />
               </Link>
             </div>
 
             {/* Golden divider */}
-            <div className="h-px mb-4" style={{ background: 'linear-gradient(to right, transparent, #D4A017, transparent)' }} />
+            <div className="h-px mb-4" style={{ background: 'linear-gradient(to right, transparent, #C9992E, transparent)' }} />
 
             {/* Service cards grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -412,19 +408,19 @@ export default function DashboardPage() {
                     className="w-12 h-12 rounded-2xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform shadow-sm"
                     style={{ background: s.bg }}
                   >
-                    <span className="material-symbols-outlined text-[22px]" style={{ color: s.color, fontVariationSettings: "'FILL' 1" }}>{s.icon}</span>
+                    <Icon name={s.icon} size={22} style={{ color: s.color }} />
                   </div>
-                  <p className="text-[13px] font-bold text-[var(--indigo-deep)] mb-1 leading-tight" style={{ fontFamily: "'Sora', sans-serif" }}>
+                  <p className="text-[14px] font-bold text-[var(--indigo-deep)] mb-1 leading-tight" style={{ fontFamily: "var(--font-label)" }}>
                     {s.label}
                   </p>
-                  <p className="text-[10px] text-[var(--indigo-deep)]/45 leading-tight mb-2">{s.desc}</p>
+                  <p className="text-[12px] text-[var(--text-muted)] leading-tight mb-2">{s.desc}</p>
                   {s.badge && (
-                    <span className="text-[9px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wide"
+                    <span className="text-[12px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wide"
                       style={{ background: `${s.color}18`, color: s.color, border: `1px solid ${s.color}30` }}>
                       {s.badge}
                     </span>
                   )}
-                  <span className="material-symbols-outlined text-[14px] absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: '#D4A017' }}>arrow_forward</span>
+                  <Icon name="arrow_forward" size={14} className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: '#C9992E'  }} />
                 </Link>
               ))}
             </div>
@@ -434,8 +430,8 @@ export default function DashboardPage() {
         {/* Family Members - 6 cols */}
         <div className="md:col-span-6">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--indigo-deep)]/50" style={{ fontFamily: "'Sora', sans-serif" }}>Connected Energy Vectors</h2>
-            <Link href="/family" className="text-xs text-[var(--terracotta)] hover:underline font-semibold" style={{ fontFamily: "'Sora', sans-serif" }}>Manage <span className="material-symbols-outlined text-[12px]" style={{ verticalAlign: 'middle' }}>arrow_forward</span></Link>
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]" style={{ fontFamily: "var(--font-label)" }}>Connected Energy Vectors</h2>
+            <Link href="/family" className="text-xs text-[var(--terracotta)] hover:underline font-semibold" style={{ fontFamily: "var(--font-label)" }}>Manage <Icon name="arrow_forward" size={13} style={{ verticalAlign: 'middle'  }} /></Link>
           </div>
           <div className="space-y-2.5">
             {members.length > 0 ? members.map(m => (
@@ -445,14 +441,14 @@ export default function DashboardPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-sm text-[var(--indigo-deep)] truncate">{m.full_name}</p>
-                  <p className="text-[10px] uppercase tracking-widest text-[var(--tertiary, #469da3)] font-semibold" style={{ fontFamily: "'Sora', sans-serif" }}>{m.relation} · Synchronized</p>
+                  <p className="text-[12px] uppercase tracking-widest text-[var(--tertiary, #469da3)] font-semibold" style={{ fontFamily: "var(--font-label)" }}>{m.relation} · Synchronized</p>
                 </div>
-                <span className="material-symbols-outlined text-[var(--outline-variant)] text-[16px]">chevron_right</span>
+                <Icon name="chevron_right" size={16} className="text-[var(--outline-variant)]" />
               </Link>
             )) : (
               <div className="bento-card p-6 text-center">
-                <span className="material-symbols-outlined text-[var(--outline-variant)] text-[40px] mb-2 block">family_restroom</span>
-                <p className="text-sm text-[var(--indigo-deep)]/50 mb-3">No family members yet</p>
+                <Icon name="family_restroom" size={40} className="text-[var(--outline-variant)] mb-2 block" />
+                <p className="text-sm text-[var(--text-muted)] mb-3">No family members yet</p>
                 <Link href="/family/add" className="btn-divine text-xs">Add First Member</Link>
               </div>
             )}
@@ -462,33 +458,31 @@ export default function DashboardPage() {
         {/* Recent Reports - 6 cols */}
         <div className="md:col-span-6">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--indigo-deep)]/50" style={{ fontFamily: "'Sora', sans-serif" }}>Recent Illuminations</h2>
-            <Link href="/reports" className="text-xs text-[var(--terracotta)] hover:underline font-semibold" style={{ fontFamily: "'Sora', sans-serif" }}>All Reports <span className="material-symbols-outlined text-[12px]" style={{ verticalAlign: 'middle' }}>arrow_forward</span></Link>
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]" style={{ fontFamily: "var(--font-label)" }}>Recent Illuminations</h2>
+            <Link href="/reports" className="text-xs text-[var(--terracotta)] hover:underline font-semibold" style={{ fontFamily: "var(--font-label)" }}>All Reports <Icon name="arrow_forward" size={13} style={{ verticalAlign: 'middle'  }} /></Link>
           </div>
           <div className="space-y-2.5">
             {reports.length > 0 ? reports.map(r => (
               <Link key={r.id} href={`/reports/${r.id}`} className="bento-card p-4 flex items-center gap-4 hover:border-[var(--terracotta)] block">
                 <div className="icon-divine w-10 h-10 rounded-xl shrink-0">
-                  <span className="material-symbols-outlined text-white text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                    {REPORT_ICONS[r.report_type] || 'description'}
-                  </span>
+                  <Icon name={REPORT_ICONS[r.report_type] || 'description'} size={18} className="text-white" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold text-sm text-[var(--indigo-deep)] truncate capitalize">{r.report_type.replace(/_/g, ' ')}</p>
-                  <p className="text-[10px] text-[var(--indigo-deep)]/40" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                  <p className="text-[12px] text-[var(--text-muted)]" style={{ fontFamily: "var(--font-mono)" }}>
                     {new Date(r.created_at).toLocaleDateString('en-IN')}
                   </p>
                 </div>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                <span className={`text-[12px] px-2 py-0.5 rounded-full font-semibold ${
                   r.status === 'completed' ? 'bg-emerald-50 text-emerald-600' :
                   r.status === 'processing' ? 'bg-violet-50 text-violet-600' :
                   'bg-amber-50 text-amber-600'
-                }`} style={{ fontFamily: "'Sora', sans-serif" }}>{r.status}</span>
+                }`} style={{ fontFamily: "var(--font-label)" }}>{r.status}</span>
               </Link>
             )) : (
               <div className="bento-card p-6 text-center">
-                <span className="material-symbols-outlined text-[var(--outline-variant)] text-[40px] mb-2 block">description</span>
-                <p className="text-sm text-[var(--indigo-deep)]/50 mb-3">No reports generated yet</p>
+                <Icon name="description" size={40} className="text-[var(--outline-variant)] mb-2 block" />
+                <p className="text-sm text-[var(--text-muted)] mb-3">No reports generated yet</p>
                 <Link href="/reports/generate" className="btn-divine text-xs">Generate First Report</Link>
               </div>
             )}
@@ -498,8 +492,8 @@ export default function DashboardPage() {
         {/* Notifications - 6 cols */}
         <div className="md:col-span-6">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--indigo-deep)]/50" style={{ fontFamily: "'Sora', sans-serif" }}>
-              Notifications {unreadCount > 0 && <span className="ml-1.5 bg-[var(--terracotta)] text-white text-[9px] px-1.5 py-0.5 rounded-full">{unreadCount}</span>}
+            <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--text-muted)]" style={{ fontFamily: "var(--font-label)" }}>
+              Notifications {unreadCount > 0 && <span className="ml-1.5 bg-[var(--terracotta)] text-white text-[12px] px-1.5 py-0.5 rounded-full">{unreadCount}</span>}
             </h2>
           </div>
           <div className="space-y-2.5">
@@ -510,12 +504,12 @@ export default function DashboardPage() {
                 className={`bento-card p-4 cursor-pointer transition-all ${!n.is_read ? 'border-l-2 border-l-[var(--terracotta)] bg-[var(--warm-sand)]/30' : ''}`}
               >
                 <p className="text-sm font-semibold text-[var(--indigo-deep)]">{n.title}</p>
-                <p className="text-xs text-[var(--indigo-deep)]/50 mt-0.5 line-clamp-2">{n.body}</p>
+                <p className="text-xs text-[var(--text-muted)] mt-0.5 line-clamp-2">{n.body}</p>
               </div>
             )) : (
               <div className="bento-card p-6 text-center">
-                <span className="material-symbols-outlined text-[var(--outline-variant)] text-[40px] mb-2 block">notifications_none</span>
-                <p className="text-sm text-[var(--indigo-deep)]/50">All caught up - no new notifications</p>
+                <Icon name="notifications_none" size={40} className="text-[var(--outline-variant)] mb-2 block" />
+                <p className="text-sm text-[var(--text-muted)]">All caught up - no new notifications</p>
               </div>
             )}
           </div>
@@ -526,10 +520,10 @@ export default function DashboardPage() {
           <div className="md:col-span-6">
             <div className="rounded-xl p-6 bg-gradient-to-br from-[var(--indigo-deep)] to-[var(--plum)] text-white relative overflow-hidden">
               <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -mr-10 -mt-10 pointer-events-none" />
-              <p className="text-[10px] uppercase tracking-widest text-white/50 mb-2 font-semibold relative z-10" style={{ fontFamily: "'Sora', sans-serif" }}>Unlock Full Access</p>
-              <h3 className="text-xl text-white mb-1 relative z-10" style={{ fontFamily: "'Playfair Display', serif" }}>Full Tathastu Bundle</h3>
-              <p className="text-white/60 text-sm mb-5 relative z-10">All 14 reports + lifetime access for your entire family</p>
-              <Link href="/shop" className="relative z-10 inline-flex items-center gap-2 bg-[var(--terracotta)] text-white text-xs px-5 py-2.5 rounded-full font-semibold hover:bg-[var(--terracotta-vivid)] transition-colors shadow-lg" style={{ fontFamily: "'Sora', sans-serif" }}>
+              <p className="text-[12px] uppercase tracking-widest text-[var(--text-on-dark-secondary)] mb-2 font-semibold relative z-10" style={{ fontFamily: "var(--font-label)" }}>Unlock Full Access</p>
+              <h3 className="text-xl text-white mb-1 relative z-10" style={{ fontFamily: "var(--font-display)" }}>Full Tathastu Bundle</h3>
+              <p className="text-[var(--text-on-dark-secondary)] text-sm mb-5 relative z-10">All 14 reports + lifetime access for your entire family</p>
+              <Link href="/shop" className="relative z-10 inline-flex items-center gap-2 bg-[var(--terracotta)] text-white text-xs px-5 py-2.5 rounded-full font-semibold hover:bg-[var(--terracotta-vivid)] transition-colors shadow-lg" style={{ fontFamily: "var(--font-label)" }}>
                 Upgrade - ₹{(bundleSalePrice ?? bundlePrice ?? 2999).toLocaleString('en-IN')}
               </Link>
             </div>

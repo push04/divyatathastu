@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
+import Icon from '@/components/ui/Icon'
 interface Order {
   id: string
   order_number: string
@@ -31,7 +32,7 @@ const STATUS_COLORS: Record<string, string> = {
   delivered: 'bg-violet-100 text-violet-700',
   completed: 'bg-teal-100 text-teal-700',
   refunded: 'bg-orange-100 text-orange-700',
-  cancelled: 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60',
+  cancelled: 'bg-[var(--warm-sand)] text-[var(--text-secondary)]',
 }
 
 export default function AdminOrdersPage() {
@@ -111,16 +112,16 @@ export default function AdminOrdersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-bold text-[var(--indigo-deep)] flex items-center gap-2">
-            <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>receipt_long</span>
-            Orders <span className="text-[var(--warm-charcoal)]/40 font-normal">({orders.length})</span>
+            <Icon name="receipt_long" size={20} />
+            Orders <span className="text-[var(--text-muted)] font-normal">({orders.length})</span>
           </h1>
-          <p className="text-sm text-[var(--warm-charcoal)]/50 mt-0.5">
+          <p className="text-sm text-[var(--text-muted)] mt-0.5">
             Revenue: <span className="font-semibold text-emerald-600">₹{revenue.toLocaleString('en-IN')}</span>
           </p>
         </div>
         <div className="flex gap-2">
           <div className="relative w-48">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[14px] text-[var(--warm-charcoal)]/40">search</span>
+            <Icon name="search" size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
@@ -135,7 +136,7 @@ export default function AdminOrdersPage() {
       <div className="flex gap-2 overflow-x-auto pb-1 flex-shrink-0">
         {['all', ...STATUSES].map(s => (
           <button key={s} onClick={() => setFilter(s)}
-            className={`px-3 py-1 rounded-full text-xs font-medium capitalize whitespace-nowrap flex-shrink-0 transition-all ${filter === s ? 'bg-[var(--indigo-deep)] text-white' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 hover:text-[var(--indigo-deep)]'}`}>
+            className={`px-3 py-1 rounded-full text-xs font-medium capitalize whitespace-nowrap flex-shrink-0 transition-all ${filter === s ? 'bg-[var(--indigo-deep)] text-white' : 'bg-[var(--warm-sand)] text-[var(--text-secondary)] hover:text-[var(--indigo-deep)]'}`}>
             {s} ({s === 'all' ? orders.length : orders.filter(o => o.status === s).length})
           </button>
         ))}
@@ -146,12 +147,12 @@ export default function AdminOrdersPage() {
           <table className="w-full text-sm min-w-[640px]">
             <thead className="bg-[var(--warm-sand)]/40 border-b border-[var(--warm-sand)]">
               <tr>
-                <th className="text-left px-4 py-3 font-semibold text-[var(--warm-charcoal)]/60 text-xs uppercase tracking-wide">Order</th>
-                <th className="text-left px-4 py-3 font-semibold text-[var(--warm-charcoal)]/60 text-xs uppercase tracking-wide">Customer</th>
-                <th className="text-left px-4 py-3 font-semibold text-[var(--warm-charcoal)]/60 text-xs uppercase tracking-wide">Amount</th>
-                <th className="text-left px-4 py-3 font-semibold text-[var(--warm-charcoal)]/60 text-xs uppercase tracking-wide">Status</th>
-                <th className="text-left px-4 py-3 font-semibold text-[var(--warm-charcoal)]/60 text-xs uppercase tracking-wide">Date</th>
-                <th className="text-left px-4 py-3 font-semibold text-[var(--warm-charcoal)]/60 text-xs uppercase tracking-wide">Actions</th>
+                <th className="text-left px-4 py-3 font-semibold text-[var(--text-secondary)] text-xs uppercase tracking-wide">Order</th>
+                <th className="text-left px-4 py-3 font-semibold text-[var(--text-secondary)] text-xs uppercase tracking-wide">Customer</th>
+                <th className="text-left px-4 py-3 font-semibold text-[var(--text-secondary)] text-xs uppercase tracking-wide">Amount</th>
+                <th className="text-left px-4 py-3 font-semibold text-[var(--text-secondary)] text-xs uppercase tracking-wide">Status</th>
+                <th className="text-left px-4 py-3 font-semibold text-[var(--text-secondary)] text-xs uppercase tracking-wide">Date</th>
+                <th className="text-left px-4 py-3 font-semibold text-[var(--text-secondary)] text-xs uppercase tracking-wide">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--warm-sand)]/60">
@@ -160,7 +161,7 @@ export default function AdminOrdersPage() {
                   <tr className={`hover:bg-[var(--warm-sand)]/20 transition-colors ${expanded === o.id ? 'bg-amber-50/40' : ''}`}>
                     <td className="px-4 py-3">
                       <button onClick={() => toggleExpand(o.id, o)} className="flex items-center gap-1 font-mono font-medium text-[var(--indigo-deep)] text-xs hover:underline">
-                        <span className="material-symbols-outlined text-[14px]">{expanded === o.id ? 'expand_less' : 'expand_more'}</span>
+                        <Icon name={expanded === o.id ? 'expand_less' : 'expand_more'} size={14} />
                         {o.order_number}
                       </button>
                       {o.tracking_number && (
@@ -169,13 +170,13 @@ export default function AdminOrdersPage() {
                     </td>
                     <td className="px-4 py-3">
                       <p className="font-medium text-[var(--warm-charcoal)]">{(o.profiles as any)?.full_name || '-'}</p>
-                      <p className="text-xs text-[var(--warm-charcoal)]/40">{(o.profiles as any)?.phone || ''}</p>
+                      <p className="text-xs text-[var(--text-muted)]">{(o.profiles as any)?.phone || ''}</p>
                     </td>
                     <td className="px-4 py-3 font-bold text-[var(--indigo-deep)]">₹{o.total?.toLocaleString('en-IN')}</td>
                     <td className="px-4 py-3">
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${STATUS_COLORS[o.status] || 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>{o.status}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${STATUS_COLORS[o.status] || 'bg-[var(--warm-sand)] text-[var(--text-secondary)]'}`}>{o.status}</span>
                     </td>
-                    <td className="px-4 py-3 text-[var(--warm-charcoal)]/40 text-xs">{new Date(o.created_at).toLocaleDateString('en-IN')}</td>
+                    <td className="px-4 py-3 text-[var(--text-muted)] text-xs">{new Date(o.created_at).toLocaleDateString('en-IN')}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <select value={o.status} onChange={e => updateStatus(o.id, e.target.value)}
@@ -183,7 +184,7 @@ export default function AdminOrdersPage() {
                           {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                         <button onClick={() => deleteOrder(o.id)} className="text-red-400 hover:text-red-600 transition-colors">
-                          <span className="material-symbols-outlined text-[16px]">delete</span>
+                          <Icon name="delete" size={16} />
                         </button>
                       </div>
                     </td>
@@ -195,7 +196,7 @@ export default function AdminOrdersPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                           {/* Items */}
                           <div>
-                            <p className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-wide mb-2">Order Items</p>
+                            <p className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-2">Order Items</p>
                             {o.items?.length ? (
                               <div className="space-y-1.5">
                                 {o.items.map((item: any, i: number) => (
@@ -205,21 +206,21 @@ export default function AdminOrdersPage() {
                                   </div>
                                 ))}
                                 <div className="border-t border-[var(--warm-sand)] pt-2 space-y-1 text-xs">
-                                  {o.subtotal != null && <div className="flex justify-between text-[var(--warm-charcoal)]/60"><span>Subtotal</span><span>₹{o.subtotal.toLocaleString('en-IN')}</span></div>}
+                                  {o.subtotal != null && <div className="flex justify-between text-[var(--text-secondary)]"><span>Subtotal</span><span>₹{o.subtotal.toLocaleString('en-IN')}</span></div>}
                                   {o.discount > 0 && <div className="flex justify-between text-emerald-600"><span>Discount</span><span>−₹{o.discount.toLocaleString('en-IN')}</span></div>}
                                   <div className="flex justify-between font-bold text-[var(--indigo-deep)]"><span>Total</span><span>₹{o.total.toLocaleString('en-IN')}</span></div>
                                 </div>
                               </div>
                             ) : (
-                              <p className="text-xs text-[var(--warm-charcoal)]/40">No item details available</p>
+                              <p className="text-xs text-[var(--text-muted)]">No item details available</p>
                             )}
-                            <p className="text-xs text-[var(--warm-charcoal)]/40 mt-2">Payment: {o.payment_method || 'N/A'}</p>
+                            <p className="text-xs text-[var(--text-muted)] mt-2">Payment: {o.payment_method || 'N/A'}</p>
                           </div>
 
                           {/* Tracking & Notes */}
                           <div className="space-y-3">
                             <div>
-                              <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-wide mb-1">Tracking Number</label>
+                              <label className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-1">Tracking Number</label>
                               <input
                                 type="text"
                                 value={editing.tracking}
@@ -229,7 +230,7 @@ export default function AdminOrdersPage() {
                               />
                             </div>
                             <div>
-                              <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-wide mb-1">Admin Notes</label>
+                              <label className="block text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wide mb-1">Admin Notes</label>
                               <textarea
                                 value={editing.notes}
                                 onChange={e => setEditing(ed => ed ? { ...ed, notes: e.target.value } : ed)}
@@ -243,7 +244,7 @@ export default function AdminOrdersPage() {
                               disabled={saving}
                               className="btn-divine px-4 py-1.5 text-xs inline-flex items-center gap-1 disabled:opacity-50"
                             >
-                              <span className="material-symbols-outlined text-[14px]">{saving ? 'hourglass_empty' : 'save'}</span>
+                              <Icon name={saving ? 'hourglass_empty' : 'save'} size={14} />
                               {saving ? 'Saving...' : 'Save Details'}
                             </button>
                           </div>
@@ -257,8 +258,8 @@ export default function AdminOrdersPage() {
           </table>
           {filtered.length === 0 && (
             <div className="text-center py-12">
-              <span className="material-symbols-outlined text-[40px] text-[var(--warm-charcoal)]/20 block mb-2" style={{ fontVariationSettings: "'FILL' 1" }}>receipt_long</span>
-              <p className="text-[var(--warm-charcoal)]/40 text-sm">No orders found</p>
+              <Icon name="receipt_long" size={40} className="text-[var(--warm-charcoal)]/20 block mb-2" />
+              <p className="text-[var(--text-muted)] text-sm">No orders found</p>
             </div>
           )}
         </div>

@@ -30,8 +30,8 @@ function BundleSVG() {
     <svg width="420" height="420" viewBox="0 0 420 420" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <defs>
         <radialGradient id="cg" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#D4A043" stopOpacity="0.08" />
-          <stop offset="100%" stopColor="#D4A043" stopOpacity="0" />
+          <stop offset="0%" stopColor="#C9992E" stopOpacity="0.08" />
+          <stop offset="100%" stopColor="#C9992E" stopOpacity="0" />
         </radialGradient>
       </defs>
 
@@ -50,15 +50,15 @@ function BundleSVG() {
       </g>
 
       {/* Center orbit ring - counter-rotating */}
-      <circle cx={cx} cy={cy} r={R} stroke="#D4A043" strokeOpacity="0.4" strokeWidth="1.5" fill="none"
+      <circle cx={cx} cy={cy} r={R} stroke="#C9992E" strokeOpacity="0.4" strokeWidth="1.5" fill="none"
         style={{ transformOrigin: `${cx}px ${cy}px`, animation: 'orbit-ccw 20s linear infinite' }} />
       <circle cx={cx} cy={cy} r={R - 12} stroke="white" strokeOpacity="0.05" strokeWidth="0.5" fill="none" />
 
       {/* Center text - static */}
       <text x={cx} y={cy + 2} textAnchor="middle" dominantBaseline="middle"
-        fill="#D4A043" fontSize="48" fontFamily="'Playfair Display', serif" fontWeight="700">14</text>
+        fill="#C9992E" fontSize="48" fontFamily="var(--font-display)" fontWeight="700">14</text>
       <text x={cx} y={cy + 36} textAnchor="middle" dominantBaseline="middle"
-        fill="white" fillOpacity="0.5" fontSize="10" fontFamily="'Sora', sans-serif" letterSpacing="2">REPORTS</text>
+        fill="white" fillOpacity="0.5" fontSize="10" fontFamily="var(--font-label)" letterSpacing="2">REPORTS</text>
 
       {/* Pulsing nodes */}
       {NODES.map((n, i) => {
@@ -69,12 +69,12 @@ function BundleSVG() {
         return (
           <g key={i}>
             {/* outer ping ring */}
-            <circle cx={nx} cy={ny} r={nodeR + 4} stroke="#C67D53" strokeOpacity="0.2" strokeWidth="0.5" fill="none"
+            <circle cx={nx} cy={ny} r={nodeR + 4} stroke="#B4231F" strokeOpacity="0.2" strokeWidth="0.5" fill="none"
               style={{ animation: `divine-pulse 3s ease-in-out infinite`, animationDelay: delay }} />
-            <circle cx={nx} cy={ny} r={nodeR} stroke="#C67D53" strokeOpacity="0.5" strokeWidth="1" fill="#1C1E4A"
+            <circle cx={nx} cy={ny} r={nodeR} stroke="#B4231F" strokeOpacity="0.5" strokeWidth="1" fill="#1B1233"
               style={{ animation: `node-pulse 3s ease-in-out infinite`, animationDelay: delay }} />
             <text x={nx} y={ny} textAnchor="middle" dominantBaseline="middle"
-              fill="white" fillOpacity="0.7" fontSize="9" fontFamily="'JetBrains Mono', monospace">{n.abbr}</text>
+              fill="white" fillOpacity="0.7" fontSize="9" fontFamily="var(--font-mono)">{n.abbr}</text>
           </g>
         )
       })}
@@ -104,18 +104,18 @@ export default function TathastuCTA() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <p className="text-[10px] uppercase tracking-widest mb-6" style={{ fontFamily: "'Sora', sans-serif", color: 'var(--saffron)' }}>
+            <p className="text-[12px] uppercase tracking-widest mb-6" style={{ fontFamily: "var(--font-label)", color: 'var(--saffron)' }}>
               Signature Bundle · One-Time Purchase
             </p>
 
             <h2
               className="text-white leading-tight mb-5"
-              style={{ fontFamily: "'Playfair Display', serif", fontWeight: 700, fontSize: 'clamp(40px, 5vw, 56px)' }}
+              style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 'clamp(40px, 5vw, 56px)' }}
             >
               All 14 Reports for<br />Your Entire Family
             </h2>
 
-            <p className="mb-8 leading-relaxed" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '15px', color: 'rgba(255,255,255,0.6)' }}>
+            <p className="mb-8 leading-relaxed" style={{ fontFamily: "var(--font-body)", fontSize: '15px', color: 'var(--text-on-dark-secondary)' }}>
               One-time purchase covering every family member. 60–100 page comprehensive PDF per report. Expert consultation session included.
             </p>
 
@@ -123,12 +123,12 @@ export default function TathastuCTA() {
             <div className="mb-6">
               <div className="flex items-baseline gap-3 mb-1">
                 {originalPrice != null && (
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: '15px', color: 'rgba(255,255,255,0.35)', textDecoration: 'line-through' }}>₹{originalPrice.toLocaleString('en-IN')}</span>
+                  <span style={{ fontFamily: "var(--font-body)", fontSize: '15px', color: 'var(--text-on-dark-muted)', textDecoration: 'line-through' }}>₹{originalPrice.toLocaleString('en-IN')}</span>
                 )}
-                <span style={{ fontFamily: "'Playfair Display', serif", fontSize: '40px', fontWeight: 700, color: 'var(--saffron)' }}>₹{displayPrice.toLocaleString('en-IN')}</span>
+                <span style={{ fontFamily: "var(--font-display)", fontSize: '40px', fontWeight: 700, color: 'var(--saffron)' }}>₹{displayPrice.toLocaleString('en-IN')}</span>
               </div>
               {originalPrice != null && (
-                <p className="text-[10px] uppercase tracking-widest" style={{ fontFamily: "'Sora', sans-serif", color: 'rgba(255,255,255,0.4)' }}>
+                <p className="text-[12px] uppercase tracking-widest" style={{ fontFamily: "var(--font-label)", color: 'var(--text-on-dark-muted)' }}>
                   Limited time offer
                 </p>
               )}
@@ -139,7 +139,7 @@ export default function TathastuCTA() {
               href="/register"
               className="inline-flex items-center justify-center font-semibold transition-opacity hover:opacity-90 mb-6"
               style={{
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "var(--font-body)",
                 background: 'var(--terracotta)',
                 color: 'white',
                 borderRadius: '9999px',
@@ -152,7 +152,7 @@ export default function TathastuCTA() {
             </Link>
 
             {/* Micro trust */}
-            <p className="text-[11px]" style={{ fontFamily: "'Sora', sans-serif", color: 'rgba(255,255,255,0.4)' }}>
+            <p className="text-[13px]" style={{ fontFamily: "var(--font-label)", color: 'var(--text-on-dark-muted)' }}>
               60–100 page PDF · Expert session included · Instant delivery
             </p>
           </motion.div>
@@ -170,9 +170,9 @@ export default function TathastuCTA() {
             </div>
             <div className="block lg:hidden">
               <svg width="280" height="280" viewBox="0 0 420 420" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx={cx} cy={cy} r={R} stroke="#D4A043" strokeOpacity="0.4" strokeWidth="1.5" fill="none" />
-                <text x={cx} y={cy + 2} textAnchor="middle" dominantBaseline="middle" fill="#D4A043" fontSize="48" fontFamily="'Playfair Display', serif" fontWeight="700">14</text>
-                <text x={cx} y={cy + 36} textAnchor="middle" dominantBaseline="middle" fill="white" fillOpacity="0.5" fontSize="10" fontFamily="'Sora', sans-serif" letterSpacing="2">REPORTS</text>
+                <circle cx={cx} cy={cy} r={R} stroke="#C9992E" strokeOpacity="0.4" strokeWidth="1.5" fill="none" />
+                <text x={cx} y={cy + 2} textAnchor="middle" dominantBaseline="middle" fill="#C9992E" fontSize="48" fontFamily="var(--font-display)" fontWeight="700">14</text>
+                <text x={cx} y={cy + 36} textAnchor="middle" dominantBaseline="middle" fill="white" fillOpacity="0.5" fontSize="10" fontFamily="var(--font-label)" letterSpacing="2">REPORTS</text>
               </svg>
             </div>
 
@@ -181,10 +181,10 @@ export default function TathastuCTA() {
               className="absolute bottom-4 right-4 lg:bottom-8 lg:right-0 rounded-xl p-4 backdrop-blur-sm animate-float"
               style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', minWidth: '180px', animationDelay: '1s' }}
             >
-              <p className="text-[10px] uppercase tracking-widest mb-1" style={{ fontFamily: "'Sora', sans-serif", color: 'var(--saffron)' }}>
+              <p className="text-[12px] uppercase tracking-widest mb-1" style={{ fontFamily: "var(--font-label)", color: 'var(--saffron)' }}>
                 Family Account
               </p>
-              <p className="text-[11px] leading-relaxed" style={{ fontFamily: "'Sora', sans-serif", color: 'rgba(255,255,255,0.6)' }}>
+              <p className="text-[13px] leading-relaxed" style={{ fontFamily: "var(--font-label)", color: 'var(--text-on-dark-secondary)' }}>
                 All members. All reports.<br />One price.
               </p>
             </div>

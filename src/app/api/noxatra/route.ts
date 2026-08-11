@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Payment gate: the UI only calls this after checkout, but nothing stops calling
-    // this API directly — verify server-side that each requested report type is either
+    // this API directly - verify server-side that each requested report type is either
     // priced free (per the same authoritative pricing payment/create uses) or covered
     // by one of this user's own paid orders, before generating any (costly) content.
     const { data: pricingSetting } = await (supabase as any)
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Family member not found' }, { status: 404 })
     }
 
-    // Create report records immediately — return IDs without blocking on generation
+    // Create report records immediately - return IDs without blocking on generation
     const results = []
     for (const reportType of report_types) {
       const { data: report, error: reportError } = await supabase

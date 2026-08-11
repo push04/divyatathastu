@@ -7,16 +7,19 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils/cn'
 import { createClient } from '@/lib/supabase/client'
 import SudarshanLoader from '@/components/SudarshanLoader'
+import LanguageSelector from '@/components/i18n/LanguageSelector'
+import { useLanguage } from '@/components/i18n/LanguageProvider'
+import type { DictKey } from '@/lib/i18n/dictionaries'
 
-const navLinks = [
-  { href: '/services', label: 'Services' },
-  { href: '/events', label: 'Events' },
-  { href: '/shop', label: 'Shop' },
-  { href: '/ebooks', label: 'Ebooks' },
-  { href: '/panchang', label: 'Panchang' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/crystal-calculator', label: 'Crystals 💎', featured: true },
-  { href: '/ardra-jalam', label: 'Ardra Jalam', featured: true },
+const navLinks: { href: string; key: DictKey; featured?: boolean }[] = [
+  { href: '/services', key: 'nav.services' },
+  { href: '/events', key: 'nav.events' },
+  { href: '/shop', key: 'nav.shop' },
+  { href: '/ebooks', key: 'nav.ebooks' },
+  { href: '/panchang', key: 'nav.panchang' },
+  { href: '/blog', key: 'nav.blog' },
+  { href: '/crystal-calculator', key: 'nav.crystals', featured: true },
+  { href: '/ardra-jalam', key: 'nav.ardraJalam', featured: true },
 ]
 
 export default function Navbar() {
@@ -26,6 +29,7 @@ export default function Navbar() {
   const [userName, setUserName] = useState<string | null>(null)
   const pathname = usePathname()
   const supabase = createClient()
+  const { t } = useLanguage()
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 30)
@@ -92,7 +96,7 @@ export default function Navbar() {
             </div>
             <span
               className="text-[var(--indigo-deep)] font-bold text-lg leading-none tracking-tight"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              style={{ fontFamily: "var(--font-display)" }}
             >
               MahaTathastu
             </span>
@@ -100,7 +104,7 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-1">
-            {navLinks.map(({ href, label, featured }) => (
+            {navLinks.map(({ href, key, featured }) => (
               featured ? (
                 <Link
                   key={href}
@@ -111,9 +115,9 @@ export default function Navbar() {
                       ? 'bg-[var(--saffron)]/20 border-[var(--saffron)]/60'
                       : 'bg-[var(--saffron)]/10 border-[var(--saffron)]/30 hover:bg-[var(--saffron)]/20 hover:border-[var(--saffron)]/50'
                   )}
-                  style={{ fontFamily: "'Sora', sans-serif" }}
+                  style={{ fontFamily: "var(--font-label)" }}
                 >
-                  <span className="shimmer-text">{label}</span>
+                  <span className="shimmer-text">{t(key)}</span>
                 </Link>
               ) : (
                 <Link
@@ -123,11 +127,11 @@ export default function Navbar() {
                     'px-3.5 py-2 rounded-lg text-xs font-semibold tracking-widest uppercase transition-all duration-200 font-label',
                     pathname === href || pathname.startsWith(href + '/')
                       ? 'text-[var(--terracotta)] bg-[var(--warm-sand)]'
-                      : 'text-[var(--indigo-deep)]/60 hover:text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/60'
+                      : 'text-[var(--text-secondary)] hover:text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/60'
                   )}
-                  style={{ fontFamily: "'Sora', sans-serif" }}
+                  style={{ fontFamily: "var(--font-label)" }}
                 >
-                  {label}
+                  {t(key)}
                 </Link>
               )
             ))}
@@ -135,6 +139,7 @@ export default function Navbar() {
 
           {/* CTA + Mobile Toggle */}
           <div className="flex items-center gap-3">
+            <LanguageSelector className="hidden sm:block" />
             <div className="hidden lg:flex items-center gap-2">
               {user ? (
                 // Logged-in state: "Hi [Name]" + dashboard link
@@ -145,12 +150,12 @@ export default function Navbar() {
                     <div className="w-7 h-7 rounded-full gradient-saffron flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
                       {userName ? userName[0].toUpperCase() : 'U'}
                     </div>
-                    <span className="text-sm font-semibold" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-                      Hi, {userName || 'Friend'}
+                    <span className="text-sm font-semibold" style={{ fontFamily: "var(--font-body)" }}>
+                      {t('nav.greeting')}, {userName || 'Friend'}
                     </span>
                   </Link>
                   <Link href="/dashboard" className="btn-divine text-xs px-4 py-2">
-                    Dashboard
+                    {t('nav.dashboard')}
                   </Link>
                 </div>
               ) : (
@@ -158,13 +163,13 @@ export default function Navbar() {
                 <>
                   <Link
                     href="/login"
-                    className="text-[var(--indigo-deep)]/60 hover:text-[var(--indigo-deep)] text-xs font-semibold tracking-widest uppercase transition-colors"
-                    style={{ fontFamily: "'Sora', sans-serif" }}
+                    className="text-[var(--text-secondary)] hover:text-[var(--indigo-deep)] text-xs font-semibold tracking-widest uppercase transition-colors"
+                    style={{ fontFamily: "var(--font-label)" }}
                   >
-                    Login
+                    {t('nav.login')}
                   </Link>
                   <Link href="/register" className="btn-divine text-xs px-5 py-2.5">
-                    Begin Journey
+                    {t('nav.register')}
                   </Link>
                 </>
               )}
@@ -174,7 +179,7 @@ export default function Navbar() {
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className="lg:hidden p-2 rounded-lg hover:bg-[var(--warm-sand)] transition-colors"
-              aria-label="Menu"
+              aria-label={t('nav.menu')}
             >
               <div className="w-5 h-3.5 flex flex-col justify-between">
                 <span className={cn('block h-0.5 bg-[var(--indigo-deep)] rounded-full transition-all duration-300', mobileOpen && 'rotate-45 translate-y-[7px]')} />
@@ -203,13 +208,13 @@ export default function Navbar() {
                     {userName[0].toUpperCase()}
                   </div>
                   <div>
-                    <p className="text-xs font-semibold" style={{ color: 'var(--indigo-deep)', fontFamily: "'DM Sans', sans-serif" }}>Hi, {userName}!</p>
-                    <p className="text-[10px]" style={{ color: 'rgba(61,52,80,0.5)' }}>Welcome back</p>
+                    <p className="text-xs font-semibold" style={{ color: 'var(--indigo-deep)', fontFamily: "var(--font-body)" }}>{t('nav.greeting')}, {userName}!</p>
+                    <p className="text-[12px]" style={{ color: 'rgba(61,52,80,0.5)' }}>{t('nav.welcomeBack')}</p>
                   </div>
                 </div>
               )}
 
-              {navLinks.map(({ href, label, featured }) => (
+              {navLinks.map(({ href, key, featured }) => (
                 featured ? (
                   <Link
                     key={href}
@@ -221,9 +226,9 @@ export default function Navbar() {
                         ? 'bg-[var(--saffron)]/20 border-[var(--saffron)]/60'
                         : 'bg-[var(--saffron)]/10 border-[var(--saffron)]/30'
                     )}
-                    style={{ fontFamily: "'Sora', sans-serif" }}
+                    style={{ fontFamily: "var(--font-label)" }}
                   >
-                    <span className="shimmer-text">{label}</span>
+                    <span className="shimmer-text">{t(key)}</span>
                   </Link>
                 ) : (
                   <Link
@@ -234,26 +239,29 @@ export default function Navbar() {
                       'block px-4 py-3 rounded-xl text-xs font-semibold tracking-widest uppercase transition-all',
                       pathname === href
                         ? 'text-[var(--terracotta)] bg-[var(--warm-sand)]'
-                        : 'text-[var(--indigo-deep)]/60 hover:text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/60'
+                        : 'text-[var(--text-secondary)] hover:text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/60'
                     )}
-                    style={{ fontFamily: "'Sora', sans-serif" }}
+                    style={{ fontFamily: "var(--font-label)" }}
                   >
-                    {label}
+                    {t(key)}
                   </Link>
                 )
               ))}
               <div className="pt-4 border-t border-[var(--outline-variant)]/30 flex flex-col gap-2.5">
+                <div className="sm:hidden flex justify-center pb-1">
+                  <LanguageSelector />
+                </div>
                 {user ? (
                   <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="btn-divine text-center">
-                    My Dashboard
+                    {t('nav.myDashboard')}
                   </Link>
                 ) : (
                   <>
                     <Link href="/login" onClick={() => setMobileOpen(false)} className="btn-outline-divine text-center">
-                      Login
+                      {t('nav.login')}
                     </Link>
                     <Link href="/register" onClick={() => setMobileOpen(false)} className="btn-divine text-center">
-                      Begin Journey
+                      {t('nav.register')}
                     </Link>
                   </>
                 )}

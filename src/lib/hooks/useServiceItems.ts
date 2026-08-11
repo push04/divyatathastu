@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 export type ServiceCategory =
   | 'gyanampeetham' | 'vastu_painting' | 'sadhana'
   | 'mahaganpati' | 'puja_ritual' | 'ardra_jalam'
+  | 'crystal_manifestation'
   | 'ayurveda' | 'course'
 
 export interface ServiceItem {

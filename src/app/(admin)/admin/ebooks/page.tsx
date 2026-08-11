@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
+import Icon from '@/components/ui/Icon'
 interface Ebook {
   id: string
   name: string
@@ -228,20 +229,20 @@ export default function AdminEbooksPage() {
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-xl font-bold text-[var(--indigo-deep)] flex items-center gap-2">
-        <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>menu_book</span>
-        Ebooks <span className="text-[var(--warm-charcoal)]/40 font-normal">({ebooks.length})</span>
+        <Icon name="menu_book" size={20} />
+        Ebooks <span className="text-[var(--text-muted)] font-normal">({ebooks.length})</span>
       </h1>
 
       {/* Create / Edit form */}
       <div className="card-divine p-5 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="font-bold text-[var(--indigo-deep)] flex items-center gap-2">
-            <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>{editingId ? 'edit' : 'add_circle'}</span>
+            <Icon name={editingId ? 'edit' : 'add_circle'} size={16} />
             {editingId ? 'Edit Ebook' : 'Add New Ebook'}
           </h2>
           {editingId && (
-            <button onClick={resetForm} className="text-xs text-[var(--warm-charcoal)]/50 hover:text-red-500 flex items-center gap-1 transition-colors">
-              <span className="material-symbols-outlined text-[14px]">close</span> Cancel
+            <button onClick={resetForm} className="text-xs text-[var(--text-muted)] hover:text-red-500 flex items-center gap-1 transition-colors">
+              <Icon name="close" size={14} /> Cancel
             </button>
           )}
         </div>
@@ -253,17 +254,17 @@ export default function AdminEbooksPage() {
               <img src={coverPreview} alt="cover" className="w-20 h-24 object-cover rounded-lg border border-[var(--warm-sand)] flex-shrink-0" />
             ) : (
               <div className="w-20 h-24 rounded-lg bg-gradient-to-br from-[var(--indigo-deep)] to-[var(--terracotta)] flex items-center justify-center flex-shrink-0">
-                <span className="material-symbols-outlined text-[28px] text-white/40" style={{ fontVariationSettings: "'FILL' 1" }}>menu_book</span>
+                <Icon name="menu_book" size={28} className="text-[var(--text-on-dark-muted)]" />
               </div>
             )}
             <div className="space-y-1.5">
               <label className="cursor-pointer px-3 py-1.5 rounded-lg border border-[var(--warm-sand)] text-xs font-medium text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/50 transition-colors flex items-center gap-1">
-                <span className="material-symbols-outlined text-[14px]">image</span>
+                <Icon name="image" size={14} />
                 Upload Cover
                 <input type="file" accept="image/*" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) { setCoverFile(f); setCoverPreview(URL.createObjectURL(f)) } }} />
               </label>
               <label className="cursor-pointer px-3 py-1.5 rounded-lg border border-[var(--warm-sand)] text-xs font-medium text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/50 transition-colors flex items-center gap-1">
-                <span className="material-symbols-outlined text-[14px]">upload_file</span>
+                <Icon name="upload_file" size={14} />
                 {pdfFile ? pdfFile.name.slice(0, 20) + '...' : 'Upload PDF'}
                 <input type="file" accept=".pdf,application/pdf" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) setPdfFile(f) }} />
               </label>
@@ -271,8 +272,8 @@ export default function AdminEbooksPage() {
           </div>
 
           <div className="col-span-2">
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">
-              Or — Paste External PDF URL
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">
+              Or - Paste External PDF URL
             </label>
             <input
               type="url"
@@ -281,35 +282,35 @@ export default function AdminEbooksPage() {
               className={inputCls}
               placeholder="https://drive.google.com/... or any direct PDF link"
             />
-            <p className="text-[10px] text-[var(--warm-charcoal)]/40 mt-1">Used only if no PDF file is uploaded above. Direct PDF links work best.</p>
+            <p className="text-[12px] text-[var(--text-muted)] mt-1">Used only if no PDF file is uploaded above. Direct PDF links work best.</p>
           </div>
 
           <div className="col-span-2">
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Ebook Name *</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Ebook Name *</label>
             <input type="text" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value, slug: generateSlug(e.target.value) }))} className={inputCls} placeholder="Vedic Astrology for Beginners" />
           </div>
           <div className="col-span-2">
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Author</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Author</label>
             <input type="text" value={form.author} onChange={e => setForm(f => ({ ...f, author: e.target.value }))} className={inputCls} placeholder="MahaTathastu" />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Price (₹) *</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Price (₹) *</label>
             <input type="number" value={form.price} onChange={e => setForm(f => ({ ...f, price: Number(e.target.value) }))} className={inputCls} min={0} />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Sale Price (₹)</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Sale Price (₹)</label>
             <input type="number" value={form.sale_price} onChange={e => setForm(f => ({ ...f, sale_price: e.target.value }))} className={inputCls} placeholder="Leave blank for no sale" min={0} />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Slug</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Slug</label>
             <input type="text" value={form.slug} onChange={e => setForm(f => ({ ...f, slug: e.target.value }))} className={inputCls} />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Download Limit</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Download Limit</label>
             <input type="number" value={form.ebook_download_limit} onChange={e => setForm(f => ({ ...f, ebook_download_limit: Number(e.target.value) }))} className={inputCls} min={1} max={100} />
           </div>
           <div className="col-span-2">
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Description</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Description</label>
             <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={2} className={`${inputCls} resize-none`} placeholder="Brief description of the ebook..." />
           </div>
         </div>
@@ -319,12 +320,12 @@ export default function AdminEbooksPage() {
             <div className="bg-[var(--warm-sand)] rounded-full h-1.5 overflow-hidden">
               <div className="h-full bg-[var(--terracotta)] transition-all duration-300 rounded-full" style={{ width: `${uploadProgress}%` }} />
             </div>
-            <p className="text-xs text-[var(--warm-charcoal)]/50">{uploadProgress < 50 ? 'Saving...' : uploadProgress < 90 ? 'Uploading files...' : 'Finalizing...'}</p>
+            <p className="text-xs text-[var(--text-muted)]">{uploadProgress < 50 ? 'Saving...' : uploadProgress < 90 ? 'Uploading files...' : 'Finalizing...'}</p>
           </div>
         )}
 
         <button onClick={saveEbook} disabled={saving} className="btn-divine px-6 py-2 text-sm disabled:opacity-50 inline-flex items-center gap-2">
-          <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>{saving ? 'hourglass_empty' : editingId ? 'save' : 'add'}</span>
+          <Icon name={saving ? 'hourglass_empty' : editingId ? 'save' : 'add'} size={16} />
           {saving ? 'Saving...' : editingId ? 'Save Changes' : 'Add Ebook'}
         </button>
       </div>
@@ -336,7 +337,7 @@ export default function AdminEbooksPage() {
             <thead className="bg-[var(--warm-sand)]/40 border-b border-[var(--warm-sand)]">
               <tr>
                 {['Ebook', 'Price', 'Downloads', 'Status', 'Actions'].map(h => (
-                  <th key={h} className="text-left px-4 py-3 font-semibold text-[var(--warm-charcoal)]/60 text-xs uppercase tracking-wide">{h}</th>
+                  <th key={h} className="text-left px-4 py-3 font-semibold text-[var(--text-secondary)] text-xs uppercase tracking-wide">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -349,24 +350,24 @@ export default function AdminEbooksPage() {
                         <img src={getFirstImage(eb.images)!} alt="" className="w-8 h-10 object-cover rounded flex-shrink-0" />
                       ) : (
                         <div className="w-8 h-10 rounded bg-gradient-to-br from-[var(--indigo-deep)] to-[var(--terracotta)] flex items-center justify-center flex-shrink-0">
-                          <span className="material-symbols-outlined text-[12px] text-white/60" style={{ fontVariationSettings: "'FILL' 1" }}>menu_book</span>
+                          <Icon name="menu_book" size={13} className="text-[var(--text-on-dark-secondary)]" />
                         </div>
                       )}
                       <div>
                         <p className="font-medium text-[var(--indigo-deep)]">{eb.name}</p>
-                        <p className="text-xs text-[var(--warm-charcoal)]/40 font-mono">{eb.slug}</p>
-                        {eb.ebook_file_url && <p className="text-xs text-emerald-600 flex items-center gap-0.5"><span className="material-symbols-outlined text-[10px]">check_circle</span> PDF uploaded</p>}
+                        <p className="text-xs text-[var(--text-muted)] font-mono">{eb.slug}</p>
+                        {eb.ebook_file_url && <p className="text-xs text-emerald-600 flex items-center gap-0.5"><Icon name="check_circle" size={12} /> PDF uploaded</p>}
                       </div>
                     </div>
                   </td>
                   <td className="px-4 py-3">
                     <p className="font-bold text-[var(--indigo-deep)]">₹{(eb.sale_price ?? eb.price).toLocaleString('en-IN')}</p>
-                    {eb.sale_price && <p className="text-xs text-[var(--warm-charcoal)]/40 line-through">₹{eb.price.toLocaleString('en-IN')}</p>}
+                    {eb.sale_price && <p className="text-xs text-[var(--text-muted)] line-through">₹{eb.price.toLocaleString('en-IN')}</p>}
                   </td>
-                  <td className="px-4 py-3 text-[var(--warm-charcoal)]/60 text-sm">{eb.ebook_download_limit ?? '-'} per order</td>
+                  <td className="px-4 py-3 text-[var(--text-secondary)] text-sm">{eb.ebook_download_limit ?? '-'} per order</td>
                   <td className="px-4 py-3">
                     <div className="flex flex-col gap-1">
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium w-fit ${eb.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/50'}`}>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium w-fit ${eb.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--warm-sand)] text-[var(--text-muted)]'}`}>
                         {eb.is_active ? 'Active' : 'Inactive'}
                       </span>
                       {eb.is_featured && <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-amber-100 text-amber-700 w-fit">Featured</span>}
@@ -386,8 +387,8 @@ export default function AdminEbooksPage() {
           </table>
           {ebooks.length === 0 && (
             <div className="text-center py-12">
-              <span className="material-symbols-outlined text-[40px] text-[var(--warm-charcoal)]/20 block mb-2" style={{ fontVariationSettings: "'FILL' 1" }}>menu_book</span>
-              <p className="text-[var(--warm-charcoal)]/40 text-sm">No ebooks yet</p>
+              <Icon name="menu_book" size={40} className="text-[var(--warm-charcoal)]/20 block mb-2" />
+              <p className="text-[var(--text-muted)] text-sm">No ebooks yet</p>
             </div>
           )}
         </div>

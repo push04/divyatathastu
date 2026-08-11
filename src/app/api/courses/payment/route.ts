@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import crypto from 'crypto'
-import { sendCourseEnrollmentEmail } from '@/lib/email'
+import { sendCourseEnrollmentEmail, notifyAdmin } from '@/lib/email'
 
 function getRazorpay() {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -28,7 +28,12 @@ export async function POST(req: NextRequest) {
       .eq('service_item_id', courseId)
       .maybeSingle()
 
-    if (!existing) {
+    if (existing) {
+      // Already enrolled - re-sending the welcome email and admin alert is noise.
+      return NextResponse.json({ success: true, already_enrolled: true })
+    }
+
+    {
       const { error } = await (supabase as any).from('service_bookings').insert({
         service_item_id: courseId,
         user_id: user.id,
@@ -45,6 +50,19 @@ export async function POST(req: NextRequest) {
     } catch (e: any) {
       console.warn('[courses/payment] Email failed:', e.message)
     }
+    notifyAdmin({
+      event: 'Course Enrollment (free)',
+      summary: `${courseTitle || 'Course'} - ${name}`,
+      details: {
+        'Course': courseTitle || courseId,
+        'Student': name,
+        'Email': user.email || user.id,
+        'Instructor': instructor || '',
+        'Amount': 'FREE',
+      },
+      adminPath: '/admin/courses',
+      accent: '#059669',
+    })
     return NextResponse.json({ success: true })
   }
 
@@ -53,7 +71,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Payment not configured on server' }, { status: 503 })
     }
 
-    // Fetch authoritative price — never trust a client-supplied amount
+    // Fetch authoritative price - never trust a client-supplied amount
     const { data: course, error: courseErr } = await (supabase as any)
       .from('service_items')
       .select('id, price, is_active')
@@ -72,7 +90,7 @@ export async function POST(req: NextRequest) {
       const order = await razorpay.orders.create({
         amount: amountPaise,
         currency: 'INR',
-        // Razorpay receipt limit is 40 chars — keep it short
+        // Razorpay receipt limit is 40 chars - keep it short
         receipt: `crs-${Date.now()}`,
         notes: { course_id: courseId, user_id: user.id },
       })
@@ -123,7 +141,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid payment signature' }, { status: 400 })
     }
 
-    // Ownership + order-id cross-check — the signature alone only proves the
+    // Ownership + order-id cross-check - the signature alone only proves the
     // order/payment pair is real, not that it belongs to this course enrollment.
     const { data: existing } = await (supabase as any)
       .from('service_bookings')
@@ -139,7 +157,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Order mismatch' }, { status: 400 })
     }
 
-    if (existing.payment_status !== 'paid') {
+    if (existing.payment_status === 'paid') {
+      // Already enrolled by an earlier verify call - do not re-send notifications.
+      return NextResponse.json({ success: true, already_enrolled: true })
+    }
+
+    {
       const { error } = await (supabase as any).from('service_bookings').update({
         status: 'confirmed',
         payment_status: 'paid',
@@ -157,6 +180,21 @@ export async function POST(req: NextRequest) {
     } catch (e: any) {
       console.warn('[courses/payment] Email failed:', e.message)
     }
+
+    notifyAdmin({
+      event: 'Course Enrollment (paid)',
+      summary: `${courseTitle || 'Course'} - ${name}`,
+      details: {
+        'Course': courseTitle || courseId,
+        'Student': name,
+        'Email': user.email || user.id,
+        'Instructor': instructor || '',
+        'Amount': `₹${(coursePrice ?? 0).toLocaleString('en-IN')}`,
+        'Payment ID': razorpay_payment_id,
+      },
+      adminPath: '/admin/courses',
+      accent: '#059669',
+    })
 
     return NextResponse.json({ success: true })
   }

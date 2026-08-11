@@ -16,13 +16,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'roomName and userName are required' }, { status: 400 })
   }
 
+  // Host status is derived from the caller's role on the server. The client
+  // sends `isHost` only so it knows what UI to render - it is never trusted
+  // as the basis for granting room-admin rights.
+  const { data: callerProfile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+  const isStaffUser = callerProfile?.role === 'admin' || callerProfile?.role === 'expert'
+
   // Verify the requesting user is authorized to join this room.
   // Consultation rooms are named `consult-{bookingId}`.
   if (roomName.startsWith('consult-')) {
     const bookingId = roomName.slice('consult-'.length)
-    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
-    const isStaff = profile?.role === 'admin' || profile?.role === 'expert'
-    if (!isStaff) {
+    if (!isStaffUser) {
       const { data: booking } = await (supabase as any)
         .from('consultation_bookings')
         .select('id')
@@ -32,6 +36,28 @@ export async function POST(req: NextRequest) {
         .maybeSingle()
       if (!booking) {
         return NextResponse.json({ error: 'Not authorized for this room' }, { status: 403 })
+      }
+    }
+  }
+
+  // HIGH-1: Webinar rooms are named `mt-{slug}-{rand}` — verify the user has a paid registration
+  if (roomName.startsWith('mt-')) {
+    if (!isStaffUser) {
+      const { data: webinar } = await (supabase as any)
+        .from('webinars')
+        .select('id')
+        .eq('livekit_room_name', roomName)
+        .maybeSingle()
+      if (webinar) {
+        const { data: reg } = await (supabase as any)
+          .from('webinar_registrations')
+          .select('payment_status')
+          .eq('webinar_id', webinar.id)
+          .eq('user_id', user.id)
+          .maybeSingle()
+        if (!reg || reg.payment_status !== 'paid') {
+          return NextResponse.json({ error: 'Not registered for this webinar' }, { status: 403 })
+        }
       }
     }
   }
@@ -84,6 +110,9 @@ export async function POST(req: NextRequest) {
     identity: user.id,
     name: userName,
     ttl: '2h',
+    // Surfaced to every participant, so clients can tell who is running the
+    // session rather than assuming the other party is the expert.
+    metadata: JSON.stringify({ role: isStaffUser ? 'host' : 'participant' }),
   })
 
   at.addGrant({
@@ -91,8 +120,13 @@ export async function POST(req: NextRequest) {
     room: roomName,
     canPublish: true,
     canSubscribe: true,
+    canPublishData: true,
+    // Hosts need to be able to create the room before anyone else arrives,
+    // and to moderate it (mute/remove) once the session is running.
+    roomAdmin: isStaffUser,
+    roomCreate: isStaffUser,
   })
 
   const token = await at.toJwt()
-  return NextResponse.json({ token, wsUrl, mode: 'production' })
+  return NextResponse.json({ token, wsUrl, mode: 'production', isHost: isStaffUser })
 }

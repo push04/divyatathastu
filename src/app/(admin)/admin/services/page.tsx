@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import type { ServiceItem, ServiceCategory } from '@/lib/hooks/useServiceItems'
 
+import Icon from '@/components/ui/Icon'
 const CATEGORIES: { value: ServiceCategory; label: string; emoji: string }[] = [
   { value: 'gyanampeetham', label: 'Gyanampeetham', emoji: '🕉️' },
   { value: 'vastu_painting', label: 'Vastu Paintings', emoji: '🖼️' },
@@ -134,15 +135,15 @@ export default function AdminServicesPage() {
       {/* Header */}
       <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>
+          <h1 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "var(--font-display)" }}>
             Divine Services
           </h1>
-          <p className="text-sm text-[var(--warm-charcoal)]/60 mt-0.5">
+          <p className="text-sm text-[var(--text-secondary)] mt-0.5">
             Manage all service items, bookings, and content across all 8 categories
           </p>
         </div>
         <button onClick={openNew} className="btn-divine px-5 py-2.5 text-sm inline-flex items-center gap-2">
-          <span className="material-symbols-outlined text-[18px]">add</span>
+          <Icon name="add" size={18} />
           Add New Item
         </button>
       </div>
@@ -157,10 +158,10 @@ export default function AdminServicesPage() {
         ].map(s => (
           <div key={s.label} className="bento-card p-4">
             <div className="flex items-center gap-2 mb-1">
-              <span className={`material-symbols-outlined text-[20px] ${s.color}`} style={{ fontVariationSettings: "'FILL' 1" }}>{s.icon}</span>
-              <span className="text-xs text-[var(--warm-charcoal)]/50 uppercase tracking-widest" style={{ fontFamily: "'Sora', sans-serif" }}>{s.label}</span>
+              <Icon name={s.icon} size={20} className={`${s.color}`} />
+              <span className="text-xs text-[var(--text-muted)] uppercase tracking-widest" style={{ fontFamily: "var(--font-label)" }}>{s.label}</span>
             </div>
-            <p className={`text-2xl font-bold ${s.color}`} style={{ fontFamily: "'JetBrains Mono', monospace" }}>{s.value}</p>
+            <p className={`text-2xl font-bold ${s.color}`} style={{ fontFamily: "var(--font-mono)" }}>{s.value}</p>
           </div>
         ))}
       </div>
@@ -169,7 +170,7 @@ export default function AdminServicesPage() {
       <div className="flex gap-2">
         {(['items', 'bookings'] as const).map(t => (
           <button key={t} onClick={() => setTab(t)}
-            className={`px-5 py-2 rounded-full text-sm font-medium capitalize transition-all ${tab === t ? 'bg-[var(--indigo-deep)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--warm-charcoal)]/60 hover:border-[var(--indigo-deep)]'}`}>
+            className={`px-5 py-2 rounded-full text-sm font-medium capitalize transition-all ${tab === t ? 'bg-[var(--indigo-deep)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--text-secondary)] hover:border-[var(--indigo-deep)]'}`}>
             {t === 'items' ? `Service Items (${items.length})` : `Bookings (${bookings.length})`}
           </button>
         ))}
@@ -182,16 +183,16 @@ export default function AdminServicesPage() {
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Search by title…"
+              placeholder="Search by title..."
               className="border border-[var(--warm-sand)] rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[var(--indigo-deep)] w-full sm:w-64"
             />
             <div className="flex gap-2 flex-wrap">
-              <button onClick={() => setCatFilter('all')} className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${catFilter === 'all' ? 'bg-[var(--indigo-deep)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>
+              <button onClick={() => setCatFilter('all')} className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${catFilter === 'all' ? 'bg-[var(--indigo-deep)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--text-secondary)]'}`}>
                 All ({items.length})
               </button>
               {CATEGORIES.map(c => (
                 <button key={c.value} onClick={() => setCatFilter(c.value)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${catFilter === c.value ? 'bg-[var(--indigo-deep)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${catFilter === c.value ? 'bg-[var(--indigo-deep)] text-white' : 'bg-white border border-[var(--warm-sand)] text-[var(--text-secondary)]'}`}>
                   {c.emoji} {c.label} ({items.filter(i => i.category === c.value).length})
                 </button>
               ))}
@@ -205,13 +206,13 @@ export default function AdminServicesPage() {
                 <thead>
                   <tr className="border-b border-[var(--outline-variant)]/20 bg-[var(--warm-sand)]/50">
                     {['Category', 'Title', 'Price', 'Status', 'Flags', 'Order', 'Actions'].map(h => (
-                      <th key={h} className="text-left px-4 py-3 text-[10px] uppercase tracking-widest text-[var(--warm-charcoal)]/50 font-semibold" style={{ fontFamily: "'Sora', sans-serif" }}>{h}</th>
+                      <th key={h} className="text-left px-4 py-3 text-[12px] uppercase tracking-widest text-[var(--text-muted)] font-semibold" style={{ fontFamily: "var(--font-label)" }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {filtered.length === 0 ? (
-                    <tr><td colSpan={7} className="text-center py-10 text-[var(--warm-charcoal)]/40">No items found</td></tr>
+                    <tr><td colSpan={7} className="text-center py-10 text-[var(--text-muted)]">No items found</td></tr>
                   ) : filtered.map(item => {
                     const cat = CATEGORIES.find(c => c.value === item.category)
                     return (
@@ -223,42 +224,42 @@ export default function AdminServicesPage() {
                         </td>
                         <td className="px-4 py-3 max-w-[220px]">
                           <p className="font-semibold text-[var(--indigo-deep)] truncate">{item.title}</p>
-                          {item.subtitle && <p className="text-[11px] text-[var(--warm-charcoal)]/50 truncate">{item.subtitle}</p>}
-                          {item.instructor_name && <p className="text-[11px] text-[var(--saffron)] truncate">👤 {item.instructor_name}</p>}
+                          {item.subtitle && <p className="text-[13px] text-[var(--text-muted)] truncate">{item.subtitle}</p>}
+                          {item.instructor_name && <p className="text-[13px] text-[var(--saffron)] truncate">👤 {item.instructor_name}</p>}
                         </td>
                         <td className="px-4 py-3 whitespace-nowrap">
                           {item.price ? (
                             <div>
                               <span className="font-bold text-[var(--terracotta)]">₹{item.price.toLocaleString('en-IN')}</span>
-                              {item.original_price && <span className="text-[11px] text-[var(--warm-charcoal)]/40 line-through ml-1">₹{item.original_price.toLocaleString('en-IN')}</span>}
+                              {item.original_price && <span className="text-[13px] text-[var(--text-muted)] line-through ml-1">₹{item.original_price.toLocaleString('en-IN')}</span>}
                             </div>
-                          ) : <span className="text-[var(--warm-charcoal)]/30 text-xs">Free</span>}
+                          ) : <span className="text-[var(--text-muted)] text-xs">Free</span>}
                         </td>
                         <td className="px-4 py-3">
                           <button onClick={() => toggleActive(item)}
-                            className={`text-[11px] px-2.5 py-0.5 rounded-full font-semibold transition-all ${item.is_active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-red-100 text-red-700 hover:bg-red-200'}`}>
+                            className={`text-[13px] px-2.5 py-0.5 rounded-full font-semibold transition-all ${item.is_active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-red-100 text-red-700 hover:bg-red-200'}`}>
                             {item.is_active ? '● Active' : '○ Off'}
                           </button>
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex gap-1 flex-wrap min-w-[80px]">
-                            {item.is_featured && <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded-full">⭐</span>}
-                            {item.is_bookable && <span className="text-[10px] px-1.5 py-0.5 bg-violet-100 text-violet-700 rounded-full">📅</span>}
-                            {item.is_live && <span className="text-[10px] px-1.5 py-0.5 bg-red-100 text-red-700 rounded-full">🔴</span>}
+                            {item.is_featured && <span className="text-[12px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded-full">⭐</span>}
+                            {item.is_bookable && <span className="text-[12px] px-1.5 py-0.5 bg-violet-100 text-violet-700 rounded-full">📅</span>}
+                            {item.is_live && <span className="text-[12px] px-1.5 py-0.5 bg-red-100 text-red-700 rounded-full">🔴</span>}
                           </div>
                         </td>
-                        <td className="px-4 py-3 text-xs text-[var(--warm-charcoal)]/50 font-mono">{item.display_order}</td>
+                        <td className="px-4 py-3 text-xs text-[var(--text-muted)] font-mono">{item.display_order}</td>
                         <td className="px-4 py-3">
                           <div className="flex gap-2">
                             <button onClick={() => openEdit(item)}
                               className="w-8 h-8 rounded-lg bg-[var(--indigo-deep)]/10 hover:bg-[var(--indigo-deep)] hover:text-white text-[var(--indigo-deep)] flex items-center justify-center transition-all"
                               title="Edit">
-                              <span className="material-symbols-outlined text-[16px]">edit</span>
+                              <Icon name="edit" size={16} />
                             </button>
                             <button onClick={() => deleteItem(item.id)} disabled={deleting === item.id}
                               className="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-500 hover:text-white text-red-500 flex items-center justify-center transition-all disabled:opacity-50"
                               title="Delete">
-                              <span className="material-symbols-outlined text-[16px]">{deleting === item.id ? 'hourglass_empty' : 'delete'}</span>
+                              <Icon name={deleting === item.id ? 'hourglass_empty' : 'delete'} size={16} />
                             </button>
                           </div>
                         </td>
@@ -279,31 +280,31 @@ export default function AdminServicesPage() {
               <thead>
                 <tr className="border-b border-[var(--outline-variant)]/20 bg-[var(--warm-sand)]/50">
                   {['User', 'Service', 'Date', 'Amount', 'Payment', 'Status', 'Notes', 'Actions'].map(h => (
-                    <th key={h} className="text-left px-4 py-3 text-[10px] uppercase tracking-widest text-[var(--warm-charcoal)]/50 font-semibold" style={{ fontFamily: "'Sora', sans-serif" }}>{h}</th>
+                    <th key={h} className="text-left px-4 py-3 text-[12px] uppercase tracking-widest text-[var(--text-muted)] font-semibold" style={{ fontFamily: "var(--font-label)" }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {bookings.length === 0 ? (
-                  <tr><td colSpan={8} className="text-center py-10 text-[var(--warm-charcoal)]/40">No bookings yet</td></tr>
+                  <tr><td colSpan={8} className="text-center py-10 text-[var(--text-muted)]">No bookings yet</td></tr>
                 ) : bookings.map((b: any) => (
                   <tr key={b.id} className="border-b border-[var(--outline-variant)]/10 hover:bg-[var(--warm-sand)]/20">
                     <td className="px-4 py-3">
                       <p className="font-semibold text-[var(--indigo-deep)] text-xs">{b.profiles?.full_name || 'Unknown'}</p>
-                      <p className="text-[11px] text-[var(--warm-charcoal)]/40">{b.profiles?.email}</p>
+                      <p className="text-[13px] text-[var(--text-muted)]">{b.profiles?.email}</p>
                     </td>
                     <td className="px-4 py-3 max-w-[160px]">
                       <p className="text-xs font-medium text-[var(--indigo-deep)] truncate">{b.service_items?.title || '-'}</p>
-                      <p className="text-[11px] text-[var(--warm-charcoal)]/40 capitalize">{(b.service_items?.category || '').replace(/_/g, ' ')}</p>
+                      <p className="text-[13px] text-[var(--text-muted)] capitalize">{(b.service_items?.category || '').replace(/_/g, ' ')}</p>
                     </td>
-                    <td className="px-4 py-3 text-xs text-[var(--warm-charcoal)]/60 whitespace-nowrap">
+                    <td className="px-4 py-3 text-xs text-[var(--text-secondary)] whitespace-nowrap">
                       {new Date(b.preferred_date || b.created_at).toLocaleDateString('en-IN')}
                     </td>
                     <td className="px-4 py-3 text-xs font-bold text-[var(--terracotta)] whitespace-nowrap">
                       {b.amount ? `₹${Number(b.amount).toLocaleString('en-IN')}` : '-'}
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`text-[11px] px-2 py-0.5 rounded-full font-medium ${b.payment_status === 'paid' ? 'bg-emerald-100 text-emerald-700' : b.payment_status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
+                      <span className={`text-[13px] px-2 py-0.5 rounded-full font-medium ${b.payment_status === 'paid' ? 'bg-emerald-100 text-emerald-700' : b.payment_status === 'failed' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
                         {b.payment_status}
                       </span>
                     </td>
@@ -316,13 +317,13 @@ export default function AdminServicesPage() {
                       </select>
                     </td>
                     <td className="px-4 py-3 max-w-[140px]">
-                      <p className="text-[11px] text-[var(--warm-charcoal)]/50 truncate">{b.notes || '-'}</p>
+                      <p className="text-[13px] text-[var(--text-muted)] truncate">{b.notes || '-'}</p>
                     </td>
                     <td className="px-4 py-3">
                       <button onClick={() => navigator.clipboard.writeText(b.id)}
-                        className="w-8 h-8 rounded-lg bg-[var(--warm-sand)] hover:bg-[var(--indigo-deep)] hover:text-white text-[var(--indigo-deep)]/50 flex items-center justify-center transition-all"
+                        className="w-8 h-8 rounded-lg bg-[var(--warm-sand)] hover:bg-[var(--indigo-deep)] hover:text-white text-[var(--text-muted)] flex items-center justify-center transition-all"
                         title="Copy booking ID">
-                        <span className="material-symbols-outlined text-[14px]">content_copy</span>
+                        <Icon name="content_copy" size={14} />
                       </button>
                     </td>
                   </tr>
@@ -339,17 +340,17 @@ export default function AdminServicesPage() {
           onClick={e => { if (e.target === e.currentTarget) setShowForm(false) }}>
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8" onClick={e => e.stopPropagation()}>
             <div className="sticky top-0 bg-white border-b border-[var(--outline-variant)]/20 px-6 py-4 flex items-center justify-between rounded-t-2xl z-10">
-              <h2 className="font-bold text-[var(--indigo-deep)] text-lg" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <h2 className="font-bold text-[var(--indigo-deep)] text-lg" style={{ fontFamily: "var(--font-display)" }}>
                 {editing ? 'Edit Service Item' : 'Add New Service Item'}
               </h2>
               <button onClick={() => setShowForm(false)} className="w-8 h-8 rounded-lg bg-[var(--warm-sand)] flex items-center justify-center hover:bg-[var(--warm-sand)]/70">
-                <span className="material-symbols-outlined text-[18px]">close</span>
+                <Icon name="close" size={18} />
               </button>
             </div>
             <div className="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
               {/* Category */}
               <div>
-                <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Category *</label>
+                <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5 block">Category *</label>
                 <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value as ServiceCategory }))}
                   className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)] bg-white">
                   {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.emoji} {c.label}</option>)}
@@ -359,12 +360,12 @@ export default function AdminServicesPage() {
               {/* Title & Subtitle */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Title *</label>
+                  <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5 block">Title *</label>
                   <input value={form.title || ''} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
                     className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" placeholder="Service title" />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Subtitle</label>
+                  <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5 block">Subtitle</label>
                   <input value={form.subtitle || ''} onChange={e => setForm(f => ({ ...f, subtitle: e.target.value }))}
                     className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" placeholder="Short tagline" />
                 </div>
@@ -372,32 +373,32 @@ export default function AdminServicesPage() {
 
               {/* Description */}
               <div>
-                <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Short Description</label>
+                <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5 block">Short Description</label>
                 <textarea value={form.description || ''} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={2}
                   className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)] resize-none" placeholder="Brief description shown on cards" />
               </div>
 
               {/* Long Description */}
               <div>
-                <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Full Description (Markdown supported)</label>
+                <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5 block">Full Description (Markdown supported)</label>
                 <textarea value={form.long_description || ''} onChange={e => setForm(f => ({ ...f, long_description: e.target.value }))} rows={6}
-                  className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)] resize-none font-mono" placeholder="Detailed description for the service page…" />
+                  className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)] resize-none font-mono" placeholder="Detailed description for the service page..." />
               </div>
 
               {/* Price row */}
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Price (₹)</label>
+                  <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5 block">Price (₹)</label>
                   <input type="number" value={form.price ?? ''} onChange={e => setForm(f => ({ ...f, price: e.target.value ? Number(e.target.value) : undefined }))}
                     className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" placeholder="2999" />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Original Price</label>
+                  <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5 block">Original Price</label>
                   <input type="number" value={form.original_price ?? ''} onChange={e => setForm(f => ({ ...f, original_price: e.target.value ? Number(e.target.value) : undefined }))}
                     className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" placeholder="4999" />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Duration</label>
+                  <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5 block">Duration</label>
                   <input value={form.duration || ''} onChange={e => setForm(f => ({ ...f, duration: e.target.value }))}
                     className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" placeholder="8 Weeks" />
                 </div>
@@ -406,7 +407,7 @@ export default function AdminServicesPage() {
               {/* Level & Instructor */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Level</label>
+                  <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5 block">Level</label>
                   <select value={form.level || ''} onChange={e => setForm(f => ({ ...f, level: e.target.value || undefined }))}
                     className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)] bg-white">
                     <option value="">- None -</option>
@@ -414,7 +415,7 @@ export default function AdminServicesPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Instructor Name</label>
+                  <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5 block">Instructor Name</label>
                   <input value={form.instructor_name || ''} onChange={e => setForm(f => ({ ...f, instructor_name: e.target.value }))}
                     className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" placeholder="Acharya Name" />
                 </div>
@@ -422,28 +423,28 @@ export default function AdminServicesPage() {
 
               {/* Instructor bio */}
               <div>
-                <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Instructor Bio</label>
+                <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5 block">Instructor Bio</label>
                 <textarea value={form.instructor_bio || ''} onChange={e => setForm(f => ({ ...f, instructor_bio: e.target.value }))} rows={2}
                   className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)] resize-none" placeholder="Brief instructor background" />
               </div>
 
               {/* Image & Video URL */}
               <div>
-                <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Image URL</label>
+                <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5 block">Image URL</label>
                 <input value={form.image_url || ''} onChange={e => setForm(f => ({ ...f, image_url: e.target.value }))}
-                  className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" placeholder="https://…" />
+                  className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" placeholder="https://..." />
               </div>
               <div>
-                <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">YouTube Unlisted Video URL</label>
+                <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5 block">YouTube Unlisted Video URL</label>
                 <input value={form.video_url || ''} onChange={e => setForm(f => ({ ...f, video_url: e.target.value }))}
-                  className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" placeholder="https://www.youtube.com/watch?v=… or https://youtu.be/…" />
-                <p className="text-[11px] text-[var(--warm-charcoal)]/40 mt-1.5">
+                  className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" placeholder="https://www.youtube.com/watch?v=... or https://youtu.be/..." />
+                <p className="text-[13px] text-[var(--text-muted)] mt-1.5">
                   Paste a YouTube unlisted link. Students can only watch this after enrolling in the course.
                 </p>
                 {form.video_url && (
-                  <p className="text-[11px] text-emerald-600 mt-1 flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[13px]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-                    Video URL saved — students will see a Watch button after enrollment.
+                  <p className="text-[13px] text-emerald-600 mt-1 flex items-center gap-1">
+                    <Icon name="check_circle" size={14} />
+                    Video URL saved - students will see a Watch button after enrollment.
                   </p>
                 )}
               </div>
@@ -451,17 +452,17 @@ export default function AdminServicesPage() {
               {/* Badge & Order */}
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Badge Text</label>
+                  <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5 block">Badge Text</label>
                   <input value={form.badge_text || ''} onChange={e => setForm(f => ({ ...f, badge_text: e.target.value }))}
                     className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" placeholder="New / Limited" />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Badge Color</label>
+                  <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5 block">Badge Color</label>
                   <input value={form.badge_color || ''} onChange={e => setForm(f => ({ ...f, badge_color: e.target.value }))}
                     className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" placeholder="#cc2200" />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Display Order</label>
+                  <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5 block">Display Order</label>
                   <input type="number" value={form.display_order ?? 0} onChange={e => setForm(f => ({ ...f, display_order: Number(e.target.value) }))}
                     className="w-full border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" />
                 </div>
@@ -469,7 +470,7 @@ export default function AdminServicesPage() {
 
               {/* Max participants */}
               <div>
-                <label className="text-xs font-semibold text-[var(--warm-charcoal)]/60 uppercase tracking-widest mb-1.5 block">Max Participants</label>
+                <label className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-widest mb-1.5 block">Max Participants</label>
                 <input type="number" min={1} value={form.max_participants ?? 1} onChange={e => setForm(f => ({ ...f, max_participants: Number(e.target.value) }))}
                   className="w-48 border border-[var(--warm-sand)] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" />
               </div>
@@ -484,8 +485,8 @@ export default function AdminServicesPage() {
                 ].map(t => (
                   <label key={t.key} className={`flex items-center gap-2 p-3 rounded-xl border-2 cursor-pointer transition-all ${(form as any)[t.key] ? 'border-[var(--indigo-deep)] bg-[var(--indigo-deep)]/5' : 'border-[var(--warm-sand)]'}`}>
                     <input type="checkbox" checked={!!(form as any)[t.key]} onChange={e => setForm(f => ({ ...f, [t.key]: e.target.checked }))} className="hidden" />
-                    <span className={`material-symbols-outlined text-[18px] ${(form as any)[t.key] ? 'text-[var(--indigo-deep)]' : 'text-[var(--warm-charcoal)]/30'}`} style={{ fontVariationSettings: "'FILL' 1" }}>{t.icon}</span>
-                    <span className="text-xs font-semibold text-[var(--warm-charcoal)]/60">{t.label}</span>
+                    <Icon name={t.icon} size={18} className={`${(form as any)[t.key] ? 'text-[var(--indigo-deep)]' : 'text-[var(--text-muted)]'}`} />
+                    <span className="text-xs font-semibold text-[var(--text-secondary)]">{t.label}</span>
                   </label>
                 ))}
               </div>
@@ -493,7 +494,7 @@ export default function AdminServicesPage() {
               {/* Save */}
               <div className="flex gap-3 pt-2">
                 <button onClick={saveItem} disabled={saving} className="btn-divine flex-1 py-3 font-semibold disabled:opacity-50 inline-flex items-center justify-center gap-2">
-                  {saving ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Saving…</> : editing ? 'Update Item' : 'Create Item'}
+                  {saving ? <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />Saving...</> : editing ? 'Update Item' : 'Create Item'}
                 </button>
                 <button onClick={() => setShowForm(false)} className="btn-outline-divine px-6 py-3">Cancel</button>
               </div>

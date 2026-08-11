@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import SudarshanLoader from '@/components/SudarshanLoader'
 import { usePaymentNotice } from '@/lib/hooks/usePaymentNotice'
 
+import Icon from '@/components/ui/Icon'
 export default function EventRegisterForm({ eventId, eventTitle, eventDate, price }: { eventId: string; eventTitle: string; eventDate?: string; price: number }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -28,7 +29,7 @@ export default function EventRegisterForm({ eventId, eventTitle, eventDate, pric
 
     try {
       if (price === 0) {
-        // Free event — register directly
+        // Free event - register directly
         const res = await fetch('/api/events/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -41,7 +42,7 @@ export default function EventRegisterForm({ eventId, eventTitle, eventDate, pric
           toast.error('Registration failed. Please try again.')
         }
       } else {
-        // Paid event — Razorpay checkout
+        // Paid event - Razorpay checkout
         const orderRes = await fetch('/api/events/payment', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -63,7 +64,7 @@ export default function EventRegisterForm({ eventId, eventTitle, eventDate, pric
           name: 'MahaTathastu',
           description: eventTitle,
           prefill: { name, email, contact: phone },
-          theme: { color: '#2F2A44' },
+          theme: { color: '#1B1233' },
           handler: async (response: any) => {
             await fetch('/api/events/payment', {
               method: 'POST',
@@ -86,9 +87,9 @@ export default function EventRegisterForm({ eventId, eventTitle, eventDate, pric
   if (done) {
     return (
       <div className="text-center py-4">
-        <span className="material-symbols-outlined text-[36px] text-emerald-500 mb-2 block" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+        <Icon name="check_circle" size={36} className="text-emerald-500 mb-2 block" />
         <p className="font-bold text-[var(--indigo-deep)]">You're registered!</p>
-        <p className="text-xs text-[var(--warm-charcoal)]/60 mt-1">Confirmation sent to {email}</p>
+        <p className="text-xs text-[var(--text-secondary)] mt-1">Confirmation sent to {email}</p>
       </div>
     )
   }
@@ -125,7 +126,7 @@ export default function EventRegisterForm({ eventId, eventTitle, eventDate, pric
         className="btn-divine w-full py-3 text-sm disabled:opacity-60 inline-flex items-center justify-center gap-2"
       >
         {loading
-          ? <><SudarshanLoader px={18} /><span>Processing…</span></>
+          ? <><SudarshanLoader px={18} /><span>Processing...</span></>
           : price === 0
             ? 'Register Free'
             : `Pay ₹${price.toLocaleString('en-IN')} & Register`}

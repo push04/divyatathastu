@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     if (profile?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     const prices = await req.json()
     const { error } = await (supabase as any).from('settings').upsert({ key: SETTINGS_KEY, value: prices, updated_at: new Date().toISOString() } as any)
-    if (error) throw new Error(error.message || 'DB upsert failed — ensure the settings table exists')
+    if (error) throw new Error(error.message || 'DB upsert failed - ensure the settings table exists')
 
     // Sync prices to products table. Map report-type keys to their product slugs.
     const PRODUCT_SLUG_MAP: Record<string, string> = {

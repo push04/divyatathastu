@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect, useCallback } from 'react'
 import { loadYouTubeApi } from '@/lib/youtubeApiLoader'
 
+import Icon from '@/components/ui/Icon'
 interface LecturePlayerProps {
   videoId: string
   watermarkText?: string
@@ -127,7 +128,7 @@ export default function LecturePlayer({
           fs: 0,             // No native fullscreen button (we build our own)
           iv_load_policy: 3, // No annotations/info cards
           modestbranding: 1,
-          playsinline: 1,    // Critical for iOS — prevents native fullscreen takeover
+          playsinline: 1,    // Critical for iOS - prevents native fullscreen takeover
           rel: 0,
           cc_load_policy: 0,
           origin: typeof window !== 'undefined' ? window.location.origin : '',
@@ -136,7 +137,7 @@ export default function LecturePlayer({
         events: {
           onReady: (e: any) => {
             if (!alive) return
-            // Force iframe to be non-interactive — click-catcher handles all events
+            // Force iframe to be non-interactive - click-catcher handles all events
             const iframe = e.target.getIframe?.()
             if (iframe) {
               iframe.style.pointerEvents = 'none'
@@ -183,7 +184,7 @@ export default function LecturePlayer({
     }
   }, [])
 
-  // Watermark drift — move every 25s
+  // Watermark drift - move every 25s
   useEffect(() => {
     const iv = setInterval(() => {
       setWmVisible(false)
@@ -344,10 +345,10 @@ export default function LecturePlayer({
       onMouseMove={showControlsTemporarily}
       onContextMenu={e => e.preventDefault()}
     >
-      {/* YT iframe target — YouTube API replaces this div with an iframe */}
+      {/* YT iframe target - YouTube API replaces this div with an iframe */}
       <div id={playerIdRef.current} className="absolute inset-0 z-[1] w-full h-full" />
 
-      {/* ── ALWAYS-ON click-catcher — no YouTube chrome ever receives a direct click ── */}
+      {/* ── ALWAYS-ON click-catcher - no YouTube chrome ever receives a direct click ── */}
       <div
         className="absolute inset-0 z-[2] cursor-pointer"
         onClick={pState === 'ended' || pState === 'error' ? undefined : togglePlayPause}
@@ -357,7 +358,7 @@ export default function LecturePlayer({
         onTouchEnd={pState !== 'ended' && pState !== 'error' ? handleTouchTap : undefined}
       />
 
-      {/* ── Pause / unstarted cover — completely hides YouTube UI when not playing ── */}
+      {/* ── Pause / unstarted cover - completely hides YouTube UI when not playing ── */}
       {showCover && (
         <div className="absolute inset-0 z-[3] flex items-center justify-center pointer-events-none"
           style={{ background: 'rgba(0,0,0,0.72)' }}>
@@ -365,12 +366,7 @@ export default function LecturePlayer({
             className="w-20 h-20 rounded-full flex items-center justify-center transition-transform"
             style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)' }}
           >
-            <span
-              className="material-symbols-outlined text-white ml-1"
-              style={{ fontSize: 40, fontVariationSettings: "'FILL' 1" }}
-            >
-              play_arrow
-            </span>
+            <Icon name="play_arrow" className="text-white ml-1" />
           </div>
         </div>
       )}
@@ -385,17 +381,17 @@ export default function LecturePlayer({
       {/* ── Error overlay ── */}
       {pState === 'error' && errorMsg && (
         <div className="absolute inset-0 z-[4] flex flex-col items-center justify-center gap-3 bg-black/95">
-          <span className="material-symbols-outlined text-[44px] text-red-400" style={{ fontVariationSettings: "'FILL' 1" }}>error</span>
-          <p className="text-white/70 text-sm text-center px-8 max-w-xs">{errorMsg}</p>
-          <p className="text-white/30 text-xs text-center px-4">Ensure "Allow embedding" is checked in YouTube Studio for this video.</p>
+          <Icon name="error" size={44} className="text-red-400" />
+          <p className="text-[var(--text-on-dark-secondary)] text-sm text-center px-8 max-w-xs">{errorMsg}</p>
+          <p className="text-[var(--text-on-dark-muted)] text-xs text-center px-4">Ensure "Allow embedding" is checked in YouTube Studio for this video.</p>
         </div>
       )}
 
-      {/* ── End card — replaces YouTube's related-video grid ── */}
+      {/* ── End card - replaces YouTube's related-video grid ── */}
       {pState === 'ended' && (
         <div className="absolute inset-0 z-[4] flex flex-col items-center justify-center gap-5 bg-black/90">
-          <span className="material-symbols-outlined text-[56px] text-emerald-400" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-          <p className="text-white/80 font-semibold">Lesson complete</p>
+          <Icon name="check_circle" size={56} className="text-emerald-400" />
+          <p className="text-[var(--text-on-dark)] font-semibold">Lesson complete</p>
           <div className="flex items-center gap-3 mt-1">
             <button
               onClick={() => { playerRef.current?.seekTo(0, true); playerRef.current?.playVideo(); updatePState('playing') }}
@@ -404,7 +400,7 @@ export default function LecturePlayer({
               onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.2)')}
               onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.12)')}
             >
-              <span className="material-symbols-outlined text-[18px]">replay</span>
+              <Icon name="replay" size={18} />
               Replay
             </button>
             {hasNextLesson && onNextLesson && (
@@ -414,26 +410,26 @@ export default function LecturePlayer({
                 style={{ background: 'var(--terracotta)' }}
               >
                 Next Lesson
-                <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                <Icon name="arrow_forward" size={18} />
               </button>
             )}
           </div>
         </div>
       )}
 
-      {/* ── Watermark — slowly drifts position every 25s ── */}
+      {/* ── Watermark - slowly drifts position every 25s ── */}
       {watermarkText && (
         <div
           className="absolute z-[5] pointer-events-none"
           style={{ top: wmPos.top, left: wmPos.left, opacity: wmVisible ? 0.28 : 0, transition: 'opacity 0.7s ease' }}
         >
-          <p className="text-white text-[11px] font-mono whitespace-nowrap" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
+          <p className="text-white text-[13px] font-mono whitespace-nowrap" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>
             {watermarkText}
           </p>
         </div>
       )}
 
-      {/* ── Custom controls — always on top ── */}
+      {/* ── Custom controls - always on top ── */}
       <div
         className="absolute bottom-0 left-0 right-0 z-[6]"
         style={{
@@ -465,13 +461,11 @@ export default function LecturePlayer({
         {/* Controls row */}
         <div className="flex items-center gap-1.5">
           <button onClick={togglePlayPause} className="w-9 h-9 flex items-center justify-center text-white hover:scale-110 transition-transform">
-            <span className="material-symbols-outlined text-[26px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-              {pState === 'playing' ? 'pause' : 'play_arrow'}
-            </span>
+            <Icon name={pState === 'playing' ? 'pause' : 'play_arrow'} size={26} />
           </button>
 
-          <button onClick={toggleMute} className="w-8 h-8 flex items-center justify-center text-white/70 hover:text-white transition-colors">
-            <span className="material-symbols-outlined text-[20px]">{volIcon}</span>
+          <button onClick={toggleMute} className="w-8 h-8 flex items-center justify-center text-[var(--text-on-dark-secondary)] hover:text-white transition-colors">
+            <Icon name={volIcon} size={20} />
           </button>
           <input
             type="range" min={0} max={100} value={muted ? 0 : volume}
@@ -480,7 +474,7 @@ export default function LecturePlayer({
             style={{ accentColor: 'var(--terracotta)' }}
           />
 
-          <span className="text-white/60 text-[11px] tabular-nums ml-1 whitespace-nowrap">
+          <span className="text-[var(--text-on-dark-secondary)] text-[13px] tabular-nums ml-1 whitespace-nowrap">
             {fmtTime(time)} / {fmtTime(duration)}
           </span>
 
@@ -490,7 +484,7 @@ export default function LecturePlayer({
           <div className="relative">
             <button
               onClick={() => setShowSettings(s => !s)}
-              className="h-8 px-2.5 flex items-center justify-center text-white/70 hover:text-white rounded-lg hover:bg-white/10 transition-all text-[12px] font-bold"
+              className="h-8 px-2.5 flex items-center justify-center text-[var(--text-on-dark-secondary)] hover:text-white rounded-lg hover:bg-white/10 transition-all text-[13px] font-bold"
             >
               {rate}x
             </button>
@@ -499,11 +493,11 @@ export default function LecturePlayer({
                 className="absolute bottom-10 right-0 z-50 rounded-xl overflow-hidden border"
                 style={{ background: 'rgba(10,9,24,0.97)', borderColor: 'rgba(255,255,255,0.1)', minWidth: 128 }}
               >
-                <div className="px-3 py-2 text-[10px] text-white/40 font-semibold tracking-widest uppercase border-b"
+                <div className="px-3 py-2 text-[12px] text-[var(--text-on-dark-muted)] font-semibold tracking-widest uppercase border-b"
                   style={{ borderColor: 'rgba(255,255,255,0.06)' }}>Speed</div>
                 {rates.map(r => (
                   <button key={r} onClick={() => setPlaybackRate(r)}
-                    className={`w-full text-left px-4 py-2 text-sm transition-colors ${rate === r ? 'text-white font-semibold' : 'text-white/55 hover:text-white hover:bg-white/5'}`}>
+                    className={`w-full text-left px-4 py-2 text-sm transition-colors ${rate === r ? 'text-white font-semibold' : 'text-[var(--text-on-dark-secondary)] hover:text-white hover:bg-white/5'}`}>
                     {r === 1 ? 'Normal' : `${r}x`}
                   </button>
                 ))}
@@ -511,8 +505,8 @@ export default function LecturePlayer({
             )}
           </div>
 
-          <button onClick={toggleFullscreen} className="w-8 h-8 flex items-center justify-center text-white/70 hover:text-white transition-colors">
-            <span className="material-symbols-outlined text-[20px]">{isFullscreen ? 'fullscreen_exit' : 'fullscreen'}</span>
+          <button onClick={toggleFullscreen} className="w-8 h-8 flex items-center justify-center text-[var(--text-on-dark-secondary)] hover:text-white transition-colors">
+            <Icon name={isFullscreen ? 'fullscreen_exit' : 'fullscreen'} size={20} />
           </button>
         </div>
       </div>

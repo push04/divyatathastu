@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// Pure-JS Vedic panchang — no external dependencies, works on Vercel serverless
+// Pure-JS Vedic panchang - no external dependencies, works on Vercel serverless
 // Sun/Moon positions: Meeus low-precision (~1° accuracy, sufficient for tithi/nakshatra)
 // Sunrise/sunset: NOAA algorithm, accurate to ~1 min for Indian latitudes
 
@@ -99,12 +99,12 @@ const RAHU_SEG_MAP = [7, 1, 6, 4, 5, 3, 2]
 function rahuKaalDynamic(srH: number, ssH: number, dow: number): string {
   const segment = (ssH - srH) / 8
   const start   = srH + RAHU_SEG_MAP[dow] * segment
-  return `${fmt(start)} – ${fmt(start + segment)}`
+  return `${fmt(start)} - ${fmt(start + segment)}`
 }
 
 function moonPhase(t: number): string {
-  if (t === 14) return 'Purnima — Full Moon'
-  if (t === 29) return 'Amavasya — New Moon'
+  if (t === 14) return 'Purnima - Full Moon'
+  if (t === 29) return 'Amavasya - New Moon'
   if (t < 14)  return `Shukla Paksha · ${TITHIS[t]}`
   return `Krishna Paksha · ${TITHIS[t % 15]}`
 }
@@ -201,8 +201,8 @@ function getChoghadiya(srH: number, ssH: number, dow: number) {
 const DAY_KALAS  = ['Pratah', 'Sangava', 'Madhyahna', 'Aparahna', 'Sayahna']
 const NIGHT_KALAS = ['Pradosh', 'Nishitha Mukha', 'Nishitha', 'Nishitha Anta', 'Usha']
 
-// Per drikpanchang: each of the 30 classical Do Ghati muhurat (Rudra, Ahi, Mitra…) has a
-// fixed presiding Nakshatra — the same 15+15 sequence every day, only the clock times shift
+// Per drikpanchang: each of the 30 classical Do Ghati muhurat (Rudra, Ahi, Mitra...) has a
+// fixed presiding Nakshatra - the same 15+15 sequence every day, only the clock times shift
 // with sunrise/sunset. This is distinct from the Moon's nakshatra for the day shown elsewhere.
 const DAY_GHATI_NAKSHATRAS = [
   'Ardra', 'Ashlesha', 'Anuradha', 'Magha', 'Dhanishtha', 'Purva Ashadha', 'Uttara Ashadha',
@@ -257,6 +257,121 @@ function getDoGhatiMuhurt(srH: number, ssH: number) {
   return windows
 }
 
+// ── Panchanga element spans ───────────────────────────────────────────
+// A tithi, nakshatra, yoga or karana does NOT last a whole day. The Moon
+// covers ~13°20' (one nakshatra) in roughly 24h 20m, so a nakshatra boundary
+// falls inside the day on most days — meaning a civil day very often carries
+// TWO nakshatras (and occasionally two tithis, or three karanas).
+//
+// Reporting only the value at one instant, as this route used to, is wrong
+// for the majority of days. These helpers walk the Vedic day
+// (sunrise → next sunrise) and return every element that is active during it,
+// with the exact clock time each one ends.
+
+/** Fractional-hour IST → Julian Day. `baseJD` is JD at 00:00 UT of the date. */
+function jdFromIST(baseJD: number, hIST: number): number {
+  return baseJD + (hIST - 5.5) / 24
+}
+
+const norm360 = (x: number) => ((x % 360) + 360) % 360
+
+/** Sidereal longitudes/angles that drive each element, all monotonic in time. */
+function angleFor(kind: 'nakshatra' | 'tithi' | 'yoga' | 'karana', J: number, ayan: number): number {
+  const s = norm360(sunLon(J) - ayan)
+  const mo = norm360(moonLon(J) - ayan)
+  switch (kind) {
+    case 'nakshatra': return mo
+    case 'yoga':      return norm360(s + mo)
+    // Tithi and karana both track the Moon's elongation from the Sun; they
+    // differ only in the size of one division (12° vs 6°).
+    default:          return norm360(mo - s)
+  }
+}
+
+interface Span { index: number; name: string; start: string; end: string; startH: number; endH: number; endsNextDay: boolean }
+
+/**
+ * Every division of `kind` active between `startH` and `endH` (IST hours,
+ * `endH` may exceed 24 for the next morning's sunrise).
+ *
+ * Scans at 4-minute resolution, then bisects each detected boundary down to
+ * ~1 second, which is well inside the accuracy of the underlying low-precision
+ * Sun/Moon series.
+ */
+function computeSpans(
+  kind: 'nakshatra' | 'tithi' | 'yoga' | 'karana',
+  baseJD: number,
+  ayan: number,
+  startH: number,
+  endH: number,
+  divisions: number,
+  nameOf: (index: number) => string,
+): Span[] {
+  const size = 360 / divisions
+  const idxAt = (h: number) => Math.floor(angleFor(kind, jdFromIST(baseJD, h), ayan) / size) % divisions
+
+  const STEP = 4 / 60 // 4 minutes
+  const spans: Span[] = []
+
+  let curIdx = idxAt(startH)
+  let curStart = startH
+
+  // Sample points, always including `endH` itself. Stepping with `h <= endH`
+  // alone can stop up to 4 minutes short, which would miss a hand-over falling
+  // in that last sliver and mislabel the tail of the day.
+  const samples: number[] = []
+  for (let h = startH + STEP; h < endH; h += STEP) samples.push(h)
+  samples.push(endH)
+
+  // The previous sample, which is where the index was still `curIdx`. Using
+  // `h - STEP` instead would be wrong for the final sample (the gap before
+  // `endH` is shorter than a step), and the bisection below relies on its
+  // lower bound genuinely still being inside the current division.
+  let prev = startH
+
+  for (const h of samples) {
+    const i = idxAt(h)
+    if (i === curIdx) { prev = h; continue }
+
+    // Boundary lies in (prev, h]. Bisect for the exact moment.
+    let lo = prev, hi = h
+    for (let k = 0; k < 26 && hi - lo > 1 / 3600; k++) {
+      const mid = (lo + hi) / 2
+      if (idxAt(mid) === curIdx) lo = mid; else hi = mid
+    }
+    const boundary = hi
+    prev = h
+
+    spans.push({
+      index: curIdx,
+      name: nameOf(curIdx),
+      start: fmt(curStart),
+      end: fmt(boundary),
+      startH: curStart,
+      endH: boundary,
+      endsNextDay: boundary >= 24,
+    })
+
+    curIdx = i
+    curStart = boundary
+
+    // Safety valve — no real day holds more than a handful of divisions.
+    if (spans.length >= 8) break
+  }
+
+  spans.push({
+    index: curIdx,
+    name: nameOf(curIdx),
+    start: fmt(curStart),
+    end: fmt(endH),
+    startH: curStart,
+    endH,
+    endsNextDay: endH >= 24,
+  })
+
+  return spans
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url)
   const lat  = parseFloat(searchParams.get('lat')  || '28.6139')
@@ -267,27 +382,44 @@ export async function GET(req: NextRequest) {
   const J = jd(y, m, d)
 
   const ayanamsa = 23.85 + (y - 2000) * 0.0139
-  const sLon = ((sunLon(J)  - ayanamsa + 360) % 360)
-  const mLon = ((moonLon(J) - ayanamsa + 360) % 360)
-
-  const elongation   = ((mLon - sLon) + 360) % 360
-  const tithiNum     = Math.floor(elongation / 12) % 30
-  const nakshatraNum = Math.floor(mLon / (360 / 27)) % 27
-  const yogaNum      = Math.floor(((sLon + mLon) % 360) / (360 / 27)) % 27
-  const karanaNum    = Math.floor(elongation / 6) % 11
 
   const srUTC = sunriseUTC(J, lat, lng, true)
   const ssUTC = sunriseUTC(J, lat, lng, false)
   const srIST = fmt(srUTC + 5.5)
   const ssIST = fmt(ssUTC + 5.5)
 
-  const srH    = parseH(srIST)
+  // Panchanga elements are read AT SUNRISE, not at 00:00 UT. Evaluating at
+  // 0h UT (05:30 IST) put the reading up to an hour off the correct instant
+  // and, near a boundary, named the wrong nakshatra outright.
+  const srHour  = parseH(srIST)
+  const Jsunrise = jdFromIST(J, srHour)
+
+  const sLon = norm360(sunLon(Jsunrise)  - ayanamsa)
+  const mLon = norm360(moonLon(Jsunrise) - ayanamsa)
+
+  const elongation   = norm360(mLon - sLon)
+  const tithiNum     = Math.floor(elongation / 12) % 30
+  const nakshatraNum = Math.floor(mLon / (360 / 27)) % 27
+  const yogaNum      = Math.floor(norm360(sLon + mLon) / (360 / 27)) % 27
+  const karanaNum    = Math.floor(elongation / 6) % 11
+
+  // Next sunrise closes the Vedic day. Expressed on the same IST scale, so it
+  // sits somewhere just past 24.
+  const nextJ    = jd(y, m, d + 1)
+  const nextSrH  = parseH(fmt(sunriseUTC(nextJ, lat, lng, true) + 5.5)) + 24
+
+  const nakshatraSpans = computeSpans('nakshatra', J, ayanamsa, srHour, nextSrH, 27, i => NAKSHATRAS[i])
+  const tithiSpans     = computeSpans('tithi',     J, ayanamsa, srHour, nextSrH, 30, i => TITHIS[i])
+  const yogaSpans      = computeSpans('yoga',      J, ayanamsa, srHour, nextSrH, 27, i => YOGAS[i])
+  const karanaSpans    = computeSpans('karana',    J, ayanamsa, srHour, nextSrH, 60, i => KARANAS[i % 11])
+
+  const srH    = srHour
   const ssH    = parseH(ssIST)
   const noon   = (srH + ssH) / 2
   const dayDur = ssH - srH
   const muhuraDur = dayDur / 30
-  const abhijit   = `${fmt(noon - muhuraDur)} – ${fmt(noon + muhuraDur)}`
-  const brahma    = `${fmt(srH - 1.6)} – ${fmt(srH - 0.8)}`
+  const abhijit   = `${fmt(noon - muhuraDur)} - ${fmt(noon + muhuraDur)}`
+  const brahma    = `${fmt(srH - 1.6)} - ${fmt(srH - 0.8)}`
 
   const dow = new Date(y, m - 1, d).getDay()
 
@@ -298,12 +430,23 @@ export async function GET(req: NextRequest) {
     success: true,
     data: {
       date,
+      // Values at sunrise — the traditional "the day's" tithi/nakshatra, and
+      // what every existing consumer of this route already reads.
       tithi:          TITHIS[tithiNum],
       tithiNum,
       nakshatra:      NAKSHATRAS[nakshatraNum],
       nakshatraNum,
       yoga:           YOGAS[yogaNum],
       karana:         KARANAS[karanaNum],
+
+      // Full picture: every element active during the Vedic day, with the
+      // clock time each one hands over to the next. Usually 2 nakshatras.
+      nakshatraSpans,
+      tithiSpans,
+      yogaSpans,
+      karanaSpans,
+      vedicDayEnd:    fmt(nextSrH),
+
       sunrise:        srIST,
       sunset:         ssIST,
       moonSign:       RASHIS[Math.floor(mLon / 30)],

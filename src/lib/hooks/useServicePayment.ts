@@ -39,7 +39,7 @@ export function useServicePayment() {
   const [pending, setPending] = useState<{ item: ServiceItem; opts?: PayOptions } | null>(null)
 
   const pay = (item: ServiceItem, opts?: PayOptions) => {
-    // Show non-refundable notice first — user must actively confirm
+    // Show non-refundable notice first - user must actively confirm
     setPending({ item, opts })
   }
 
@@ -88,7 +88,7 @@ export function useServicePayment() {
             name: user.user_metadata?.full_name || '',
             email: user.email || '',
           },
-          theme: { color: '#D4A017' },
+          theme: { color: '#C9992E' },
           handler: async (response: any) => {
             try {
               const vRes = await fetch('/api/service-payment?action=verify', {
@@ -131,7 +131,7 @@ export function useServicePayment() {
     }
   }
 
-  // Rendered by the page — shows the non-refundable notice and proceeds on confirm
+  // Rendered by the page - shows the non-refundable notice and proceeds on confirm
   const NoticeModal = pending
     ? createElement(PaymentNoticeModal, {
         serviceName: pending.item.title,

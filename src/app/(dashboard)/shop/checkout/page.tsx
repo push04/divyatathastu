@@ -8,6 +8,7 @@ import SudarshanLoader from '@/components/SudarshanLoader'
 import CheckoutNoticeModal from '@/components/CheckoutNoticeModal'
 import Link from 'next/link'
 
+import Icon from '@/components/ui/Icon'
 const DIGITAL_TYPES = new Set(['ebook', 'report'])
 
 interface CartItem {
@@ -39,7 +40,7 @@ function ItemIcon({ type }: { type: string | null }) {
   return (
     <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
       style={{ background: 'linear-gradient(135deg, var(--saffron), var(--terracotta))' }}>
-      <span className="material-symbols-outlined text-[22px] text-white" style={{ fontVariationSettings: "'FILL' 1" }}>{icon}</span>
+      <Icon name={icon} size={22} className="text-white" />
     </div>
   )
 }
@@ -64,7 +65,7 @@ export default function CheckoutPage() {
       if (!cartMap.length) { router.push('/shop'); return }
 
       const ids = cartMap.map(([id]) => id)
-      // Cart products and auth check are independent — run in parallel
+      // Cart products and auth check are independent - run in parallel
       const [{ data: products }, { data: { user } }] = await Promise.all([
         supabase.from('products').select('id,name,price,sale_price,product_type').in('id', ids),
         supabase.auth.getUser(),
@@ -90,14 +91,36 @@ export default function CheckoutPage() {
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0)
   const total = Math.max(0, subtotal - discount)
 
+  // Mirrors the server-side checks in /api/payment so the preview here cannot
+  // promise a discount the server will then refuse. RLS already hides other
+  // people's personal coupons, but expiry and use limits are checked too.
   async function applyCoupon() {
     if (!couponCode) return
     try {
-      const { data } = await supabase.from('coupons').select('*').eq('code', couponCode.toUpperCase()).eq('is_active', true).single()
+      const { data } = await (supabase as any)
+        .from('coupons')
+        .select('*')
+        .eq('code', couponCode.toUpperCase())
+        .eq('is_active', true)
+        .maybeSingle()
+
       if (!data) { toast.error('Invalid coupon code'); return }
-      if (subtotal < data.min_order_amount) { toast.error(`Min order ₹${data.min_order_amount} required`); return }
-      const d = data.discount_type === 'percentage' ? subtotal * data.discount_value / 100 : data.discount_value
-      setDiscount(Math.min(d, subtotal))
+
+      if (data.expires_at && new Date(data.expires_at).getTime() < Date.now()) {
+        toast.error('This coupon has expired'); return
+      }
+      if (data.max_uses !== null && data.max_uses !== undefined && (data.used_count ?? 0) >= data.max_uses) {
+        toast.error('This coupon has already been used'); return
+      }
+      if (subtotal < (data.min_order_amount ?? 0)) {
+        toast.error(`Min order ₹${data.min_order_amount} required`); return
+      }
+
+      const raw = data.discount_type === 'percentage'
+        ? subtotal * (data.discount_value ?? 0) / 100
+        : (data.discount_value ?? 0)
+      const d = Math.min(Math.max(0, raw), subtotal)
+      setDiscount(d)
       setCouponApplied(couponCode.toUpperCase())
       toast.success(`Coupon applied! ₹${Math.round(d)} off`)
     } catch {
@@ -153,7 +176,7 @@ export default function CheckoutPage() {
         description: `Order · ${items.length} item${items.length > 1 ? 's' : ''}`,
         image: '/icon.svg',
         prefill: { name: profile?.full_name, email: profile?.email, contact: profile?.phone },
-        theme: { color: '#2F2A44' },
+        theme: { color: '#1B1233' },
         handler: async (response: any) => {
           await fetch('/api/payment?action=verify', {
             method: 'POST',
@@ -201,8 +224,8 @@ export default function CheckoutPage() {
           {Array.from({ length: 8 }, (_, r) =>
             Array.from({ length: 12 }, (_, c) => (
               <g key={`${r}-${c}`} transform={`translate(${c * 160 + (r % 2) * 80}, ${r * 140})`}>
-                <polygon points="80,10 140,45 140,115 80,150 20,115 20,45" fill="none" stroke="#C67D53" strokeWidth="0.5" />
-                <circle cx="80" cy="80" r="25" fill="none" stroke="#D4A017" strokeWidth="0.4" />
+                <polygon points="80,10 140,45 140,115 80,150 20,115 20,45" fill="none" stroke="#B4231F" strokeWidth="0.5" />
+                <circle cx="80" cy="80" r="25" fill="none" stroke="#C9992E" strokeWidth="0.4" />
               </g>
             ))
           )}
@@ -217,16 +240,16 @@ export default function CheckoutPage() {
             onClick={() => router.back()}
             className="p-2 rounded-xl border border-[var(--warm-sand)] hover:bg-[var(--warm-sand)] transition-colors"
           >
-            <span className="material-symbols-outlined text-[20px] text-[var(--indigo-deep)]">arrow_back</span>
+            <Icon name="arrow_back" size={20} className="text-[var(--indigo-deep)]" />
           </button>
           <div className="flex items-center gap-3">
             <SudarshanLoader px={36} />
             <div>
               <h1 className="text-xl font-bold text-[var(--indigo-deep)] leading-tight"
-                style={{ fontFamily: "'Playfair Display', serif" }}>
+                style={{ fontFamily: "var(--font-display)" }}>
                 Secure Checkout
               </h1>
-              <p className="text-xs text-[var(--warm-charcoal)]/50">MahaTathastu · Divine Store</p>
+              <p className="text-xs text-[var(--text-muted)]">MahaTathastu · Divine Store</p>
             </div>
           </div>
         </div>
@@ -242,10 +265,10 @@ export default function CheckoutPage() {
                 style={{ background: 'linear-gradient(135deg, var(--indigo-deep) 0%, #3B2882 100%)' }}>
                 <div className="flex items-center justify-between">
                   <h2 className="text-sm font-bold text-white flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span>
+                    <Icon name="shopping_cart" size={16} />
                     Your Order ({items.length} item{items.length !== 1 ? 's' : ''})
                   </h2>
-                  <Link href="/shop" className="text-white/50 hover:text-white text-xs transition-colors">Edit cart</Link>
+                  <Link href="/shop" className="text-[var(--text-on-dark-secondary)] hover:text-white text-xs transition-colors">Edit cart</Link>
                 </div>
               </div>
 
@@ -255,7 +278,7 @@ export default function CheckoutPage() {
                     <ItemIcon type={item.product_type} />
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-[var(--indigo-deep)] text-sm leading-snug">{item.name}</p>
-                      <p className="text-xs text-[var(--warm-charcoal)]/50 mt-0.5 capitalize">{item.product_type?.replace('_', ' ') || 'Product'} · Qty {item.quantity}</p>
+                      <p className="text-xs text-[var(--text-muted)] mt-0.5 capitalize">{item.product_type?.replace('_', ' ') || 'Product'} · Qty {item.quantity}</p>
                     </div>
                     <p className="font-bold text-[var(--indigo-deep)] flex-shrink-0">
                       ₹{(item.price * item.quantity).toLocaleString('en-IN')}
@@ -268,14 +291,14 @@ export default function CheckoutPage() {
             {/* Coupon card */}
             <div className="rounded-2xl p-5" style={{ border: '1.5px solid var(--warm-sand)', background: 'white' }}>
               <h2 className="text-sm font-bold text-[var(--indigo-deep)] mb-3 flex items-center gap-2">
-                <span className="material-symbols-outlined text-[16px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>local_offer</span>
+                <Icon name="local_offer" size={16} className="text-[var(--saffron)]" />
                 Coupon / Promo Code
               </h2>
 
               {couponApplied ? (
                 <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
                   <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[18px] text-emerald-500" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                    <Icon name="check_circle" size={18} className="text-emerald-500" />
                     <div>
                       <p className="text-sm font-bold text-emerald-700">{couponApplied} applied</p>
                       <p className="text-xs text-emerald-600">−₹{discount.toLocaleString('en-IN')} discount</p>
@@ -315,9 +338,9 @@ export default function CheckoutPage() {
               ].map(b => (
                 <div key={b.icon} className="flex flex-col items-center p-3 rounded-xl text-center"
                   style={{ background: 'white', border: '1px solid var(--warm-sand)' }}>
-                  <span className="material-symbols-outlined text-[20px] text-[var(--saffron)] mb-1" style={{ fontVariationSettings: "'FILL' 1" }}>{b.icon}</span>
-                  <p className="text-[11px] font-bold text-[var(--indigo-deep)]">{b.label}</p>
-                  <p className="text-[10px] text-[var(--warm-charcoal)]/40">{b.sub}</p>
+                  <Icon name={b.icon} size={20} className="text-[var(--saffron)] mb-1" />
+                  <p className="text-[13px] font-bold text-[var(--indigo-deep)]">{b.label}</p>
+                  <p className="text-[12px] text-[var(--text-muted)]">{b.sub}</p>
                 </div>
               ))}
             </div>
@@ -332,12 +355,12 @@ export default function CheckoutPage() {
 
               {/* Card header - sacred saffron gradient */}
               <div className="px-5 py-5 text-center"
-                style={{ background: 'linear-gradient(160deg, #2F2A44 0%, var(--terracotta) 100%)' }}>
+                style={{ background: 'linear-gradient(160deg, #1B1233 0%, var(--terracotta) 100%)' }}>
                 <div className="flex justify-center mb-2">
                   <SudarshanLoader px={40} />
                 </div>
-                <p className="text-white/60 text-[10px] tracking-[0.2em] uppercase mt-1">Order Total</p>
-                <p className="text-4xl font-bold text-white mt-0.5" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <p className="text-[var(--text-on-dark-secondary)] text-[12px] tracking-[0.2em] uppercase mt-1">Order Total</p>
+                <p className="text-4xl font-bold text-white mt-0.5" style={{ fontFamily: "var(--font-display)" }}>
                   ₹{total.toLocaleString('en-IN')}
                 </p>
                 {discount > 0 && (
@@ -348,21 +371,21 @@ export default function CheckoutPage() {
               {/* Breakdown */}
               <div className="px-5 py-4 space-y-2.5 border-b border-[var(--warm-sand)]">
                 <div className="flex justify-between text-sm">
-                  <span className="text-[var(--warm-charcoal)]/60">Subtotal</span>
+                  <span className="text-[var(--text-secondary)]">Subtotal</span>
                   <span className="font-medium text-[var(--indigo-deep)]">₹{subtotal.toLocaleString('en-IN')}</span>
                 </div>
                 {discount > 0 && (
                   <div className="flex justify-between text-sm">
                     <span className="text-emerald-600 flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>local_offer</span>
+                      <Icon name="local_offer" size={14} />
                       Coupon ({couponApplied})
                     </span>
                     <span className="font-medium text-emerald-600">−₹{discount.toLocaleString('en-IN')}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-sm">
-                  <span className="text-[var(--warm-charcoal)]/60">GST / Taxes</span>
-                  <span className="text-[var(--warm-charcoal)]/60 text-xs">Included</span>
+                  <span className="text-[var(--text-secondary)]">GST / Taxes</span>
+                  <span className="text-[var(--text-secondary)] text-xs">Included</span>
                 </div>
                 <div className="flex justify-between font-bold text-base pt-1 border-t border-[var(--warm-sand)]">
                   <span className="text-[var(--indigo-deep)]">Amount to Pay</span>
@@ -373,7 +396,7 @@ export default function CheckoutPage() {
               {/* Profile info if available */}
               {profile?.full_name && (
                 <div className="px-5 py-3 border-b border-[var(--warm-sand)]">
-                  <p className="text-[10px] text-[var(--warm-charcoal)]/40 uppercase tracking-wider mb-1.5">Billing to</p>
+                  <p className="text-[12px] text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Billing to</p>
                   <div className="flex items-center gap-2">
                     <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
                       style={{ background: 'var(--indigo-deep)' }}>
@@ -381,7 +404,7 @@ export default function CheckoutPage() {
                     </div>
                     <div>
                       <p className="text-sm font-semibold text-[var(--indigo-deep)] leading-none">{profile.full_name}</p>
-                      <p className="text-xs text-[var(--warm-charcoal)]/50 mt-0.5">{profile.email}</p>
+                      <p className="text-xs text-[var(--text-muted)] mt-0.5">{profile.email}</p>
                     </div>
                   </div>
                 </div>
@@ -394,15 +417,15 @@ export default function CheckoutPage() {
                   disabled={processing || items.length === 0}
                   className="w-full py-4 rounded-2xl text-base font-bold text-white transition-all disabled:opacity-50 inline-flex items-center justify-center gap-2.5"
                   style={{
-                    background: processing ? '#9ca3af' : 'linear-gradient(135deg, #2F2A44, var(--terracotta))',
+                    background: processing ? '#9ca3af' : 'linear-gradient(135deg, #1B1233, var(--terracotta))',
                     boxShadow: processing ? 'none' : '0 4px 20px rgba(198,125,83,0.35)',
                   }}
                 >
                   {processing ? (
-                    <><SudarshanLoader px={22} /><span>Processing…</span></>
+                    <><SudarshanLoader px={22} /><span>Processing...</span></>
                   ) : (
                     <>
-                      <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>payment</span>
+                      <Icon name="payment" size={22} />
                       Pay ₹{total.toLocaleString('en-IN')} Securely
                     </>
                   )}
@@ -411,13 +434,13 @@ export default function CheckoutPage() {
                 {/* Payment methods row */}
                 <div className="flex items-center justify-center gap-3 mt-4">
                   {['UPI', 'Cards', 'Net Banking', 'Wallets'].map(m => (
-                    <span key={m} className="text-[9px] font-bold px-2 py-1 rounded bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/50 tracking-wide">{m}</span>
+                    <span key={m} className="text-[12px] font-bold px-2 py-1 rounded bg-[var(--warm-sand)] text-[var(--text-muted)] tracking-wide">{m}</span>
                   ))}
                 </div>
 
                 <div className="flex items-center justify-center gap-1.5 mt-3">
-                  <span className="material-symbols-outlined text-[14px] text-[var(--warm-charcoal)]/30" style={{ fontVariationSettings: "'FILL' 1" }}>lock</span>
-                  <p className="text-[10px] text-[var(--warm-charcoal)]/30 text-center">
+                  <Icon name="lock" size={14} className="text-[var(--text-muted)]" />
+                  <p className="text-[12px] text-[var(--text-muted)] text-center">
                     256-bit SSL · Razorpay PCI-DSS Level 1
                   </p>
                 </div>
@@ -427,10 +450,10 @@ export default function CheckoutPage() {
             {/* MahaTathastu commitment */}
             <div className="rounded-2xl p-4" style={{ border: '1.5px solid var(--warm-sand)', background: 'white' }}>
               <div className="flex items-start gap-3">
-                <span className="material-symbols-outlined text-[20px] text-[var(--saffron)] flex-shrink-0 mt-0.5" style={{ fontVariationSettings: "'FILL' 1" }}>favorite</span>
+                <Icon name="favorite" size={20} className="text-[var(--saffron)] flex-shrink-0 mt-0.5" />
                 <div>
                   <p className="text-xs font-bold text-[var(--indigo-deep)]">MahaTathastu Promise</p>
-                  <p className="text-[11px] text-[var(--warm-charcoal)]/60 mt-0.5 leading-relaxed">
+                  <p className="text-[13px] text-[var(--text-secondary)] mt-0.5 leading-relaxed">
                     Authentic Vedic knowledge, carefully sourced. Digital items are non-refundable once delivered; physical items can be returned within 7 days if damaged or not as described.
                   </p>
                 </div>

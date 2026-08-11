@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import crypto from 'crypto'
-import { sendEventRegistrationEmail } from '@/lib/email'
+import { sendEventRegistrationEmail, notifyAdmin } from '@/lib/email'
 
 function getRazorpay() {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     }
 
     // The signature alone only proves order_id+payment_id are a real, matched Razorpay
-    // pair — it says nothing about which event they were paid for. Fetch the order back
+    // pair - it says nothing about which event they were paid for. Fetch the order back
     // from Razorpay (its notes were set server-side at creation, so they can't be
     // tampered with) and confirm it was actually created for this eventId before
     // trusting the client-supplied eventId to register/fulfil against.
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Could not verify order' }, { status: 502 })
     }
 
-    // Idempotency guard — a client retry after a successful verify (e.g. flaky network
+    // Idempotency guard - a client retry after a successful verify (e.g. flaky network
     // right after Razorpay's handler fires) should not create a second paid registration.
     const { data: existingReg } = await (supabase as any)
       .from('event_registrations')
@@ -57,7 +57,13 @@ export async function POST(req: NextRequest) {
       .eq('order_id', razorpay_order_id)
       .maybeSingle()
 
-    if (!existingReg) {
+    if (existingReg) {
+      // Retry of an already-verified payment: fulfilment is done, and re-sending
+      // the attendee email or the admin alert would just be noise.
+      return NextResponse.json({ success: true, already_registered: true })
+    }
+
+    {
       const { error: regError } = await (supabase as any).from('event_registrations').insert({
         event_id: eventId,
         name,
@@ -80,10 +86,25 @@ export async function POST(req: NextRequest) {
       console.warn('[events/payment] Email failed:', e.message)
     }
 
+    notifyAdmin({
+      event: 'Event Registration (paid)',
+      summary: `${body.eventTitle || 'Event'} - ${name}`,
+      details: {
+        'Event': body.eventTitle || eventId,
+        'Event Date': body.eventDate || '',
+        'Attendee': name,
+        'Email': email,
+        'Phone': phone || '',
+        'Payment ID': razorpay_payment_id,
+      },
+      adminPath: '/admin/events',
+      accent: '#7C3AED',
+    })
+
     return NextResponse.json({ success: true })
   }
 
-  // Create Razorpay order — fetch authoritative event price from DB to prevent tampering
+  // Create Razorpay order - fetch authoritative event price from DB to prevent tampering
   if (!process.env.RAZORPAY_KEY_ID) {
     return NextResponse.json({ error: 'Payment not configured' }, { status: 503 })
   }

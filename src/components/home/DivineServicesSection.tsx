@@ -1,152 +1,79 @@
-﻿'use client'
+'use client'
 
-import { motion } from 'framer-motion'
 import Link from 'next/link'
+import Icon from '@/components/ui/Icon'
+import { YantraWatermark } from '@/components/ui/Yantra'
 
-const fadeUp = {
-  hidden: { opacity: 0, y: 18 },
-  visible: (i: number) => ({ opacity: 1, y: 0, transition: { duration: 0.5, delay: i * 0.06 } }),
-}
+/* ═══════════════════════════════════════════════════════════════════════════
+   DIVINE SERVICES - temple card treatment.
+
+   Was: the same white rounded rectangle as the reports grid, with each icon
+   in its own differently-tinted square (purple, pink, green, blue, amber,
+   emerald, orange, blue again) at a filled weight that matched nothing else
+   on the page. Eight accent hues on one row, none of them brand colours.
+
+   Now: .card-temple - a squared upper edge with a gilded shrine arch, on a
+   sand ground, yantra line-work surfacing on hover. One accent (temple gold),
+   one icon frame, one stroke weight. The section reads as a different room
+   from the reports grid without inventing a new palette.
+   ═══════════════════════════════════════════════════════════════════════════ */
 
 const SERVICES = [
-  {
-    href: '/sadhana',
-    label: 'Saadhana',
-    desc: 'Guided Vedic spiritual practices, 21-day programs and mantra sadhana for inner transformation.',
-    icon: 'self_improvement',
-    tag: 'Practice',
-    accent: '#6b21a8',
-    bg: '#f3e8ff',
-  },
-  {
-    href: '/mahaganpati',
-    label: 'Mahaganpati Puja',
-    desc: 'Sacred Ganesh puja, Chaturthi rituals and divine blessings for new beginnings and obstacle removal.',
-    icon: 'brightness_5',
-    tag: 'Puja',
-    accent: '#9d174d',
-    bg: '#fce7f3',
-  },
-  {
-    href: '/ayurveda',
-    label: 'Ayurveda & Medical Astrology',
-    desc: 'Dosha analysis, planetary health mapping and Vedic remedies for body-mind-spirit equilibrium.',
-    icon: 'spa',
-    tag: 'Healing',
-    accent: '#166534',
-    bg: '#f0fdf4',
-  },
-  {
-    href: '/courses',
-    label: 'Learning Courses',
-    desc: 'Live and recorded lectures on Vedic astrology, numerology, Vastu, mantra and Ayurveda.',
-    icon: 'menu_book',
-    tag: 'Learn',
-    accent: '#1e3a8a',
-    bg: '#eff6ff',
-  },
-  {
-    href: '/gyanampeetham',
-    label: 'Gyanampeetham',
-    desc: 'Immersive programs to discover the divine within - ancient wisdom decoded for modern seekers.',
-    icon: 'school',
-    tag: 'Wisdom',
-    accent: '#92400e',
-    bg: '#fef3c7',
-  },
-  {
-    href: '/ardra-jalam',
-    label: 'Ardra Jalam',
-    desc: 'Sacred healing water consecrated during Ardra Nakshatra - rare, potent and spiritually charged.',
-    icon: 'water_drop',
-    tag: 'Special',
-    accent: '#065f46',
-    bg: '#ecfdf5',
-  },
-  {
-    href: '/puja',
-    label: 'Pooja & Rituals',
-    desc: 'Authentic Vedic ceremonies - havan, yagna, navagraha puja and personalised anushthaan rituals.',
-    icon: 'local_fire_department',
-    tag: 'Ceremony',
-    accent: '#9a3412',
-    bg: '#fff7ed',
-  },
-  {
-    href: '/shop?category=vastu-paintings',
-    label: 'Vastu Paintings',
-    desc: 'Hand-crafted sacred art energised with Vedic yantras to harmonise your home and workspace.',
-    icon: 'palette',
-    tag: 'Art',
-    accent: '#1e40af',
-    bg: '#dbeafe',
-  },
+  { href: '/sadhana',                        label: 'Saadhana',                     tag: 'Practice', icon: 'lotus',                 desc: 'Guided Vedic spiritual practice, 21-day programmes and mantra sadhana for inner transformation.' },
+  { href: '/mahaganpati',                    label: 'Mahaganpati Puja',             tag: 'Puja',     icon: 'diya',                  desc: 'Sacred Ganesh puja, Chaturthi rituals and blessings for new beginnings and the removal of obstacles.' },
+  { href: '/ayurveda',                       label: 'Ayurveda & Medical Astrology', tag: 'Healing',  icon: 'dosha',                 desc: 'Dosha analysis, planetary health mapping and Vedic remedies for body-mind-spirit equilibrium.' },
+  { href: '/courses',                        label: 'Learning Courses',             tag: 'Learn',    icon: 'menu_book',             desc: 'Live and recorded lectures on Vedic astrology, numerology, Vastu, mantra and Ayurveda.' },
+  { href: '/gyanampeetham',                  label: 'Gyanampeetham',                tag: 'Wisdom',   icon: 'school',                desc: 'Immersive programmes to discover the divine within - ancient wisdom decoded for modern seekers.' },
+  { href: '/ardra-jalam',                    label: 'Ardra Jalam',                  tag: 'Special',  icon: 'kalash',                desc: 'Sacred healing water consecrated during Ardra Nakshatra - rare, potent and spiritually charged.' },
+  { href: '/puja',                           label: 'Pooja & Rituals',              tag: 'Ceremony', icon: 'local_fire_department', desc: 'Authentic Vedic ceremony - havan, yagna, navagraha puja and personalised anushthaan rituals.' },
+  { href: '/shop?category=vastu-paintings',  label: 'Vastu Paintings',              tag: 'Art',      icon: 'yantra',                desc: 'Hand-crafted sacred art energised with Vedic yantras to harmonise your home and workspace.' },
 ]
 
 export default function DivineServicesSection() {
   return (
-    <section className="section-padding" style={{ background: 'var(--kutch-white)' }}>
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+    <section className="section-padding relative overflow-hidden" style={{ background: 'var(--surface-light-sunken)' }}>
+      <YantraWatermark size={400} className="-top-20 -left-24" />
 
-        {/* Header */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end mb-14">
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={0}>
+      <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10">
+
+        {/* ── Header ── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end mb-14 reveal">
+          <div>
             <div className="flex items-center gap-3 mb-5">
-              <span className="inline-block w-6 border-t border-[var(--terracotta)]/30" />
-              <span className="text-[11px] uppercase tracking-widest text-[var(--terracotta)]" style={{ fontFamily: "'Sora', sans-serif" }}>
-                Anushthaan India · Gyanampeetham
-              </span>
+              <span className="inline-block w-6 border-t border-[var(--gold-700)]/50" />
+              <span className="t-eyebrow t-eyebrow-gold">Anushthaan India · Gyanampeetham</span>
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl text-[var(--indigo-deep)] leading-tight" style={{ fontFamily: "'Playfair Display', serif", fontWeight: 600 }}>
-              Divine Services
-            </h2>
-          </motion.div>
-          <motion.p
-            initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={1}
-            className="text-[var(--indigo-deep)]/55 text-sm leading-relaxed md:text-right"
-            style={{ fontFamily: "'DM Sans', sans-serif" }}
-          >
-            Beyond reports - sacred practices, pujas, healing and learning programs rooted in Vedic tradition.
-          </motion.p>
+            <h2 className="t-display-2 text-[var(--text-primary)]">Divine Services</h2>
+          </div>
+          <p className="t-body text-[var(--text-secondary)] md:text-right">
+            Beyond reports - sacred practice, puja, healing and learning programmes rooted in Vedic tradition.
+          </p>
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {SERVICES.map((s, i) => (
-            <motion.div key={s.href} initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeUp} custom={i}>
-              <Link
-                href={s.href}
-                className="group bg-white border border-[var(--outline-variant)]/40 rounded-xl p-5 flex flex-col h-full min-h-[180px] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(198,125,83,0.12)] block relative overflow-hidden"
-              >
-                {/* Icon */}
-                <div
-                  className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 flex-shrink-0 transition-transform duration-200 group-hover:scale-110"
-                  style={{ background: s.bg }}
-                >
-                  <span className="material-symbols-outlined text-[22px]" style={{ color: s.accent, fontVariationSettings: "'FILL' 1" }}>{s.icon}</span>
-                </div>
+        {/* ── Grid ── */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 reveal-stagger">
+          {SERVICES.map(s => (
+            <Link key={s.href} href={s.href} className="card-temple group h-full min-h-[236px]">
+              <span className="icon-frame icon-frame-gold mb-5">
+                <Icon name={s.icon} size={22} />
+              </span>
 
-                {/* Tag */}
-                <span
-                  className="text-[9px] uppercase tracking-widest font-semibold mb-2"
-                  style={{ fontFamily: "'Sora', sans-serif", color: `${s.accent}99` }}
-                >
-                  {s.tag}
-                </span>
+              <span className="t-eyebrow t-eyebrow-gold mb-2">{s.tag}</span>
 
-                {/* Label + desc */}
-                <h3 className="font-semibold text-[var(--indigo-deep)] text-sm mb-1.5 leading-snug" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  {s.label}
-                </h3>
-                <p className="text-xs text-[var(--indigo-deep)]/50 leading-relaxed flex-1">{s.desc}</p>
+              <h3 className="t-h4 text-[var(--text-primary)] mb-2 leading-snug">{s.label}</h3>
+              <p className="t-body-sm text-[var(--text-muted)] flex-1">{s.desc}</p>
 
-                {/* Arrow */}
-                <div className="flex items-center gap-1 mt-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="text-[11px] font-semibold" style={{ color: s.accent, fontFamily: "'Sora', sans-serif" }}>Explore</span>
-                  <span className="material-symbols-outlined text-[14px]" style={{ color: s.accent }}>arrow_forward</span>
-                </div>
-              </Link>
-            </motion.div>
+              {/* Affordance is always present - it used to be opacity-0 until
+                  hover, which hid it entirely from touch users. */}
+              <span className="t-eyebrow t-eyebrow-gold flex items-center gap-1.5 mt-5">
+                Explore
+                <Icon
+                  name="arrow_forward"
+                  size={14}
+                  className="transition-transform duration-300 group-hover:translate-x-1"
+                />
+              </span>
+            </Link>
           ))}
         </div>
 

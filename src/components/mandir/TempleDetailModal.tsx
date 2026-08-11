@@ -52,7 +52,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 }
 
 /**
- * TempleDetailModal — uses always-mounted motion.div pattern instead of AnimatePresence.
+ * TempleDetailModal - uses always-mounted motion.div pattern instead of AnimatePresence.
  *
  * WHY: dynamic() imports and AnimatePresence don't mix well. When a dynamic chunk
  * loads asynchronously, it causes a brief unmount→remount cycle. AnimatePresence
@@ -93,7 +93,7 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
   }, [isOpen])
 
   return (
-    // Outer wrapper — always in DOM, pointer-events gated by isOpen
+    // Outer wrapper - always in DOM, pointer-events gated by isOpen
     <motion.div
       animate={{ opacity: isOpen ? 1 : 0 }}
       transition={{ duration: 0.22, ease: 'easeInOut' }}
@@ -138,7 +138,7 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
                   {(displayTemple.categories || []).map(cat => (
                     <span
                       key={cat}
-                      className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${
+                      className={`text-[12px] px-2 py-0.5 rounded-full font-medium border ${
                         CATEGORY_COLORS[cat] || 'bg-gray-50 text-gray-600 border-gray-200'
                       }`}
                     >
@@ -146,7 +146,7 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
                     </span>
                   ))}
                   {displayTemple.architecture_style && (
-                    <span className="text-[10px] px-2 py-0.5 rounded-full font-medium border border-orange-100 bg-orange-50/40 text-[var(--terracotta)]">
+                    <span className="text-[12px] px-2 py-0.5 rounded-full font-medium border border-orange-100 bg-orange-50/40 text-[var(--terracotta)]">
                       {displayTemple.architecture_style}
                     </span>
                   )}
@@ -155,7 +155,7 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
 
               <button
                 onClick={onClose}
-                className="p-1.5 rounded-full hover:bg-[var(--warm-sand)]/40 text-[var(--warm-charcoal)]/50 hover:text-[var(--warm-charcoal)] transition-colors flex-shrink-0"
+                className="p-1.5 rounded-full hover:bg-[var(--warm-sand)]/40 text-[var(--text-muted)] hover:text-[var(--warm-charcoal)] transition-colors flex-shrink-0"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -170,14 +170,14 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
                   <div className="flex items-start gap-2.5">
                     <Landmark className="w-4 h-4 text-[var(--terracotta)] mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-[10px] text-[var(--warm-charcoal)]/50 uppercase tracking-wider font-semibold">Presiding Deity</p>
+                      <p className="text-[12px] text-[var(--text-muted)] uppercase tracking-wider font-semibold">Presiding Deity</p>
                       <p className="text-sm font-medium text-[var(--indigo-deep)]">{displayTemple.deity}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-2.5">
                     <Clock className="w-4 h-4 text-[var(--terracotta)] mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-[10px] text-[var(--warm-charcoal)]/50 uppercase tracking-wider font-semibold">Darshan Timings</p>
+                      <p className="text-[12px] text-[var(--text-muted)] uppercase tracking-wider font-semibold">Darshan Timings</p>
                       <p className="text-sm font-medium text-[var(--indigo-deep)]">{displayTemple.darshan_timings}</p>
                     </div>
                   </div>
@@ -187,7 +187,7 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
                   <div className="flex items-start gap-2.5">
                     <MapPin className="w-4 h-4 text-[var(--terracotta)] mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-[10px] text-[var(--warm-charcoal)]/50 uppercase tracking-wider font-semibold">Location</p>
+                      <p className="text-[12px] text-[var(--text-muted)] uppercase tracking-wider font-semibold">Location</p>
                       <p className="text-sm font-medium text-[var(--indigo-deep)]">
                         {displayTemple.city}{displayTemple.district ? `, ${displayTemple.district}` : ''}, {displayTemple.state}
                       </p>
@@ -196,7 +196,7 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
                   <div className="flex items-start gap-2.5">
                     <Calendar className="w-4 h-4 text-[var(--terracotta)] mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="text-[10px] text-[var(--warm-charcoal)]/50 uppercase tracking-wider font-semibold">Best Time to Visit</p>
+                      <p className="text-[12px] text-[var(--text-muted)] uppercase tracking-wider font-semibold">Best Time to Visit</p>
                       <p className="text-sm font-medium text-[var(--indigo-deep)]">{displayTemple.best_time_to_visit}</p>
                     </div>
                   </div>
@@ -210,7 +210,7 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
                     <span className="w-1.5 h-3 bg-[var(--terracotta)] rounded-sm" />
                     Deity &amp; Iconography
                   </h3>
-                  <p className="text-sm text-[var(--warm-charcoal)]/80 leading-relaxed">{displayTemple.deity_description}</p>
+                  <p className="text-sm text-[var(--text-primary)] leading-relaxed">{displayTemple.deity_description}</p>
                 </div>
               )}
 
@@ -220,9 +220,9 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
                   <span className="w-1.5 h-3 bg-[var(--terracotta)] rounded-sm" />
                   Significance &amp; History
                 </h3>
-                <p className="text-sm text-[var(--warm-charcoal)]/80 leading-relaxed">{displayTemple.significance}</p>
+                <p className="text-sm text-[var(--text-primary)] leading-relaxed">{displayTemple.significance}</p>
                 {displayTemple.history_and_legend && (
-                  <p className="text-sm text-[var(--warm-charcoal)]/80 leading-relaxed mt-2">{displayTemple.history_and_legend}</p>
+                  <p className="text-sm text-[var(--text-primary)] leading-relaxed mt-2">{displayTemple.history_and_legend}</p>
                 )}
               </div>
 
@@ -254,8 +254,8 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
                     <div className="flex items-start gap-2.5 p-3 rounded-lg border border-[var(--warm-sand)]/50 bg-gray-50/30">
                       <Plane className="w-4 h-4 text-sky-600 mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="text-[10px] text-[var(--warm-charcoal)]/50 font-bold uppercase">Nearest Airport</p>
-                        <p className="text-xs text-[var(--warm-charcoal)]/80 mt-0.5 leading-snug">{displayTemple.nearest_airport}</p>
+                        <p className="text-[12px] text-[var(--text-muted)] font-bold uppercase">Nearest Airport</p>
+                        <p className="text-xs text-[var(--text-primary)] mt-0.5 leading-snug">{displayTemple.nearest_airport}</p>
                       </div>
                     </div>
                   )}
@@ -263,8 +263,8 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
                     <div className="flex items-start gap-2.5 p-3 rounded-lg border border-[var(--warm-sand)]/50 bg-gray-50/30">
                       <Train className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="text-[10px] text-[var(--warm-charcoal)]/50 font-bold uppercase">Nearest Railway</p>
-                        <p className="text-xs text-[var(--warm-charcoal)]/80 mt-0.5 leading-snug">{displayTemple.nearest_railway}</p>
+                        <p className="text-[12px] text-[var(--text-muted)] font-bold uppercase">Nearest Railway</p>
+                        <p className="text-xs text-[var(--text-primary)] mt-0.5 leading-snug">{displayTemple.nearest_railway}</p>
                       </div>
                     </div>
                   )}
@@ -278,7 +278,7 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
                     <ShieldAlert className="w-4 h-4" />
                     Important Visitor Guidelines
                   </h4>
-                  <ul className="space-y-2 text-xs text-[var(--warm-charcoal)]/80 leading-relaxed">
+                  <ul className="space-y-2 text-xs text-[var(--text-primary)] leading-relaxed">
                     {displayTemple.travel_tips.map((tip, idx) => (
                       <li key={idx} className="flex items-start gap-2">
                         <Footprints className="w-3.5 h-3.5 text-[var(--saffron)] flex-shrink-0 mt-0.5" />
@@ -294,7 +294,7 @@ export default function TempleDetailModal({ temple, isOpen, onClose }: TempleDet
             <div className="px-5 py-4 border-t border-[var(--warm-sand)] bg-amber-50/5 flex justify-end gap-3 sm:rounded-b-2xl">
               <button
                 onClick={onClose}
-                className="px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--warm-sand)] text-[var(--warm-charcoal)]/70 hover:bg-[var(--warm-sand)]/20 transition-all active:scale-[0.98]"
+                className="px-4 py-2 text-xs font-semibold rounded-lg border border-[var(--warm-sand)] text-[var(--text-secondary)] hover:bg-[var(--warm-sand)]/20 transition-all active:scale-[0.98]"
               >
                 Close Details
               </button>

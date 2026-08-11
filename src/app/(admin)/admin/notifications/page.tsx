@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
+import Icon from '@/components/ui/Icon'
 interface Notif {
   id: string; title: string; body: string | null; type: string; created_at: string; is_read: boolean; user_id: string | null
 }
@@ -12,7 +13,7 @@ const TYPES = [
   { value: 'promotional', label: 'Promotional', color: 'bg-violet-100 text-violet-700' },
   { value: 'feature', label: 'New Feature', color: 'bg-blue-100 text-blue-700' },
   { value: 'spiritual', label: 'Spiritual Reminder', color: 'bg-amber-100 text-amber-700' },
-  { value: 'transactional', label: 'Transactional', color: 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60' },
+  { value: 'transactional', label: 'Transactional', color: 'bg-[var(--warm-sand)] text-[var(--text-secondary)]' },
 ]
 
 const inputCls = 'w-full px-3 py-2 rounded-lg border border-[var(--warm-sand)] text-sm focus:outline-none focus:border-[var(--saffron)] bg-white text-[var(--warm-charcoal)]'
@@ -73,26 +74,26 @@ export default function AdminNotificationsPage() {
     <div className="p-6 max-w-4xl space-y-6">
       <div>
         <h1 className="text-xl font-bold text-[var(--indigo-deep)] flex items-center gap-2">
-          <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>campaign</span>
+          <Icon name="campaign" size={20} />
           Broadcast Notifications
         </h1>
-        <p className="text-sm text-[var(--warm-charcoal)]/50 mt-0.5">Send in-app notifications to all users</p>
+        <p className="text-sm text-[var(--text-muted)] mt-0.5">Send in-app notifications to all users</p>
       </div>
 
       <div className="card-divine p-5 space-y-4">
         <h2 className="font-bold text-[var(--indigo-deep)] flex items-center gap-2">
-          <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>edit</span>Compose
+          <Icon name="edit" size={16} />Compose
         </h2>
         <div>
-          <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Title * ({form.title.length}/60)</label>
+          <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Title * ({form.title.length}/60)</label>
           <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} maxLength={60} placeholder="e.g. Diwali Special Offer" className={inputCls} />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Message * ({form.message.length}/200)</label>
+          <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Message * ({form.message.length}/200)</label>
           <textarea value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))} maxLength={200} rows={3} placeholder="Write your notification..." className={`${inputCls} resize-none`} />
         </div>
         <div className="w-48">
-          <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Type</label>
+          <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Type</label>
           <select value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))} className={inputCls}>
             {TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
           </select>
@@ -100,12 +101,12 @@ export default function AdminNotificationsPage() {
 
         {form.title && (
           <div className="border border-[var(--warm-sand)] rounded-xl p-4 bg-[var(--warm-sand)]/20">
-            <p className="text-xs text-[var(--warm-charcoal)]/50 mb-2 uppercase tracking-wide font-semibold">Preview</p>
+            <p className="text-xs text-[var(--text-muted)] mb-2 uppercase tracking-wide font-semibold">Preview</p>
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full icon-divine flex items-center justify-center flex-shrink-0"><span className="material-symbols-outlined text-white text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>notifications</span></div>
+              <div className="w-8 h-8 rounded-full icon-divine flex items-center justify-center flex-shrink-0"><Icon name="notifications" size={14} className="text-white" /></div>
               <div>
                 <p className="text-[var(--indigo-deep)] text-sm font-semibold">{form.title}</p>
-                <p className="text-[var(--warm-charcoal)]/60 text-xs mt-0.5">{form.message}</p>
+                <p className="text-[var(--text-secondary)] text-xs mt-0.5">{form.message}</p>
               </div>
             </div>
           </div>
@@ -113,15 +114,15 @@ export default function AdminNotificationsPage() {
 
         <button onClick={sendBroadcast} disabled={sending || !form.title || !form.message}
           className="btn-divine w-full py-3 font-medium disabled:opacity-50 inline-flex items-center justify-center gap-2">
-          <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>{sending ? 'wifi_tethering' : 'campaign'}</span>
+          <Icon name={sending ? 'wifi_tethering' : 'campaign'} size={20} />
           {sending ? 'Sending...' : 'Send to All Users'}
         </button>
       </div>
 
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="font-bold text-[var(--indigo-deep)]">Notification History <span className="text-[var(--warm-charcoal)]/40 font-normal text-sm">({history.length})</span></h2>
-          {loading && <div className="text-xs text-[var(--warm-charcoal)]/40">Loading...</div>}
+          <h2 className="font-bold text-[var(--indigo-deep)]">Notification History <span className="text-[var(--text-muted)] font-normal text-sm">({history.length})</span></h2>
+          {loading && <div className="text-xs text-[var(--text-muted)]">Loading...</div>}
         </div>
         {history.map(n => {
           const typeInfo = TYPES.find(t => t.value === n.type)
@@ -130,15 +131,15 @@ export default function AdminNotificationsPage() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${typeInfo?.color || 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>{typeInfo?.label || n.type}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${typeInfo?.color || 'bg-[var(--warm-sand)] text-[var(--text-secondary)]'}`}>{typeInfo?.label || n.type}</span>
                     {n.user_id === null && <span className="text-xs bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full font-medium">Broadcast</span>}
-                    <span className="text-xs text-[var(--warm-charcoal)]/40">{new Date(n.created_at).toLocaleString('en-IN')}</span>
+                    <span className="text-xs text-[var(--text-muted)]">{new Date(n.created_at).toLocaleString('en-IN')}</span>
                   </div>
                   <p className="text-[var(--indigo-deep)] font-semibold text-sm">{n.title}</p>
-                  {n.body && <p className="text-[var(--warm-charcoal)]/60 text-xs mt-0.5 line-clamp-2">{n.body}</p>}
+                  {n.body && <p className="text-[var(--text-secondary)] text-xs mt-0.5 line-clamp-2">{n.body}</p>}
                 </div>
                 <button onClick={() => deleteNotif(n.id)} className="flex-shrink-0 text-red-400 hover:text-red-600 transition-colors">
-                  <span className="material-symbols-outlined text-[16px]">delete</span>
+                  <Icon name="delete" size={16} />
                 </button>
               </div>
             </div>
@@ -146,8 +147,8 @@ export default function AdminNotificationsPage() {
         })}
         {history.length === 0 && !loading && (
           <div className="text-center py-12">
-            <span className="material-symbols-outlined text-[40px] text-[var(--warm-charcoal)]/20 block mb-2" style={{ fontVariationSettings: "'FILL' 1" }}>notifications_none</span>
-            <p className="text-[var(--warm-charcoal)]/40 text-sm">No notifications sent yet</p>
+            <Icon name="notifications_none" size={40} className="text-[var(--warm-charcoal)]/20 block mb-2" />
+            <p className="text-[var(--text-muted)] text-sm">No notifications sent yet</p>
           </div>
         )}
       </div>

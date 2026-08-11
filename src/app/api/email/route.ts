@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { sendEmail, sendWelcomeEmail, sendOrderConfirmation, sendSpiritualDigest } from '@/lib/email'
+import { sendEmail, sendWelcomeEmail, sendOrderConfirmation, sendSpiritualDigest, notifyAdmin } from '@/lib/email'
 import type { OrderDetails, DigestContent } from '@/lib/email'
 
 export async function POST(req: NextRequest) {
@@ -19,6 +19,13 @@ export async function POST(req: NextRequest) {
       case 'welcome': {
         const name: string = body.name || to.split('@')[0]
         await sendWelcomeEmail(to, name)
+        notifyAdmin({
+          event: 'New User Registered',
+          summary: `${name} (${to})`,
+          details: { 'Name': name, 'Email': to, 'User ID': user.id },
+          adminPath: '/admin/users',
+          accent: '#D9741A',
+        })
         break
       }
       case 'order': {
@@ -37,7 +44,7 @@ export async function POST(req: NextRequest) {
         break
       }
       default: {
-        // Generic email — restricted to admin to prevent open relay abuse
+        // Generic email - restricted to admin to prevent open relay abuse
         const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
         if (profile?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
         if (!subject || !html) return NextResponse.json({ error: 'Missing subject or html' }, { status: 400 })

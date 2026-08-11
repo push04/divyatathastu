@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     }
 
     const mandirList = mandirs.map((m: any) =>
-      `${m.name} (${m.city}, ${m.state}) — Deity: ${m.deity}, Timing: ${m.timing}`
+      `${m.name} (${m.city}, ${m.state}) - Deity: ${m.deity}, Timing: ${m.timing}`
     ).join('\n')
 
     const prompt = `Create a ${days}-day pilgrimage itinerary starting from ${startCity}.

@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
+import Icon from '@/components/ui/Icon'
 interface FamilyMember {
   id: string
   full_name: string
@@ -118,24 +119,24 @@ export default function HandwrittenReportPage() {
       <div>
         <div className="flex items-center gap-3 mb-1">
           <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white shadow-sm" style={{ background: 'var(--indigo-deep)' }}>
-            <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>draw</span>
+            <Icon name="draw" size={18} />
           </div>
-          <h1 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Handwritten Report</h1>
+          <h1 className="text-2xl font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "var(--font-display)" }}>Handwritten Report</h1>
         </div>
-        <p className="text-sm text-[var(--warm-charcoal)]/50 ml-12">
+        <p className="text-sm text-[var(--text-muted)] ml-12">
           Our expert astrologers will prepare a personalised handwritten analysis for you or your family members.
         </p>
       </div>
 
       {/* Request form */}
       <div className="card-divine p-5 space-y-4">
-        <h2 className="text-lg font-bold text-[var(--indigo-deep)] flex items-center gap-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-          <span className="material-symbols-outlined text-[16px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>add_circle</span>
+        <h2 className="text-lg font-bold text-[var(--indigo-deep)] flex items-center gap-2" style={{ fontFamily: "var(--font-display)" }}>
+          <Icon name="add_circle" size={16} className="text-[var(--terracotta)]" />
           Request a New Report
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">For Whom</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">For Whom</label>
             <select
               value={form.family_member_id}
               onChange={e => setForm(f => ({ ...f, family_member_id: e.target.value }))}
@@ -147,7 +148,7 @@ export default function HandwrittenReportPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Report Type *</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Report Type *</label>
             <select
               value={form.report_type}
               onChange={e => setForm(f => ({ ...f, report_type: e.target.value }))}
@@ -159,7 +160,7 @@ export default function HandwrittenReportPage() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Additional Details</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Additional Details</label>
             <textarea
               value={form.description}
               onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
@@ -174,15 +175,13 @@ export default function HandwrittenReportPage() {
             disabled={submitting}
             className="btn-divine w-full py-3 text-sm font-semibold disabled:opacity-50 inline-flex items-center justify-center gap-2"
           >
-            <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-              {submitting ? 'hourglass_empty' : 'send'}
-            </span>
+            <Icon name={submitting ? 'hourglass_empty' : 'send'} size={16} />
             {submitting ? 'Submitting...' : 'Submit Request'}
           </button>
         </form>
 
-        <div className="rounded-xl p-3 text-xs text-[var(--warm-charcoal)]/50 flex items-start gap-2" style={{ background: 'var(--warm-sand)' }}>
-          <span className="material-symbols-outlined text-[14px] text-[var(--saffron)] flex-shrink-0 mt-0.5" style={{ fontVariationSettings: "'FILL' 1" }}>info</span>
+        <div className="rounded-xl p-3 text-xs text-[var(--text-muted)] flex items-start gap-2" style={{ background: 'var(--warm-sand)' }}>
+          <Icon name="info" size={14} className="text-[var(--saffron)] flex-shrink-0 mt-0.5" />
           <span>Our astrologers typically prepare handwritten reports within 3–5 business days. You'll be notified here and by email once it's ready.</span>
         </div>
       </div>
@@ -190,24 +189,24 @@ export default function HandwrittenReportPage() {
       {/* Previous requests */}
       {requests.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-lg font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "'Playfair Display', serif" }}>Your Requests</h2>
+          <h2 className="text-lg font-bold text-[var(--indigo-deep)]" style={{ fontFamily: "var(--font-display)" }}>Your Requests</h2>
           {requests.map(r => (
             <div key={r.id} className="card-divine p-4 flex items-start gap-3">
               <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'var(--warm-sand)' }}>
-                <span className="material-symbols-outlined text-[18px] text-[var(--terracotta)]" style={{ fontVariationSettings: "'FILL' 1" }}>description</span>
+                <Icon name="description" size={18} className="text-[var(--terracotta)]" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between flex-wrap gap-2">
                   <p className="font-medium text-[var(--indigo-deep)] text-sm">
                     {REPORT_TYPES.find(t => t.value === r.report_type)?.label || r.report_type}
-                    {r.family_members?.full_name && <span className="text-[var(--warm-charcoal)]/50 font-normal"> · {r.family_members.full_name}</span>}
+                    {r.family_members?.full_name && <span className="text-[var(--text-muted)] font-normal"> · {r.family_members.full_name}</span>}
                   </p>
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_STYLE[r.status] || 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_STYLE[r.status] || 'bg-[var(--warm-sand)] text-[var(--text-secondary)]'}`}>
                     {STATUS_LABEL[r.status] || r.status}
                   </span>
                 </div>
-                {r.description && <p className="text-xs text-[var(--warm-charcoal)]/50 mt-1 line-clamp-2">{r.description}</p>}
-                <p className="text-xs text-[var(--warm-charcoal)]/30 mt-1">{new Date(r.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                {r.description && <p className="text-xs text-[var(--text-muted)] mt-1 line-clamp-2">{r.description}</p>}
+                <p className="text-xs text-[var(--text-muted)] mt-1">{new Date(r.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
                 {r.file_url && (
                   <a
                     href={r.file_url}
@@ -215,7 +214,7 @@ export default function HandwrittenReportPage() {
                     rel="noopener noreferrer"
                     className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-[var(--terracotta)] hover:underline"
                   >
-                    <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>download</span>
+                    <Icon name="download" size={14} />
                     Download Report {r.file_name ? `(${r.file_name})` : ''}
                   </a>
                 )}

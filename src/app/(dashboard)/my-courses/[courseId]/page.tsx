@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import SudarshanLoader from '@/components/SudarshanLoader'
 import LecturePlayer from '@/components/LecturePlayer'
 
+import Icon from '@/components/ui/Icon'
 interface Lesson {
   id: string
   module_id: string
@@ -156,13 +157,13 @@ export default function CourseViewerPage() {
   if (loading) return (
     <div className="flex flex-col items-center justify-center h-screen gap-5">
       <SudarshanLoader size="md" />
-      <p className="text-[var(--warm-charcoal)]/40 text-sm">Loading course…</p>
+      <p className="text-[var(--text-muted)] text-sm">Loading course...</p>
     </div>
   )
 
   if (error) return (
     <div className="flex flex-col items-center justify-center h-screen gap-4">
-      <span className="material-symbols-outlined text-[48px] text-red-400" style={{ fontVariationSettings: "'FILL' 1" }}>block</span>
+      <Icon name="block" size={48} className="text-red-400" />
       <p className="font-semibold text-gray-700">{error}</p>
       <button onClick={() => router.back()} className="px-6 py-2 rounded-xl text-sm text-white" style={{ background: 'var(--terracotta)' }}>Go Back</button>
     </div>
@@ -184,12 +185,12 @@ export default function CourseViewerPage() {
           >
             {/* Course header */}
             <div className="px-4 py-4 border-b border-white/5 flex-shrink-0">
-              <button onClick={() => router.back()} className="flex items-center gap-1.5 text-white/40 hover:text-white/70 text-xs mb-3 transition-colors">
-                <span className="material-symbols-outlined text-[14px]">arrow_back</span>My Courses
+              <button onClick={() => router.back()} className="flex items-center gap-1.5 text-[var(--text-on-dark-muted)] hover:text-[var(--text-on-dark-secondary)] text-xs mb-3 transition-colors">
+                <Icon name="arrow_back" size={14} />My Courses
               </button>
-              <h2 className="text-white/85 font-bold text-sm leading-snug" style={{ fontFamily: "'Playfair Display', serif" }}>{courseName}</h2>
+              <h2 className="text-[var(--text-on-dark)] font-bold text-sm leading-snug" style={{ fontFamily: "var(--font-display)" }}>{courseName}</h2>
               <div className="mt-3">
-                <div className="flex justify-between text-[10px] text-white/30 mb-1">
+                <div className="flex justify-between text-[12px] text-[var(--text-on-dark-muted)] mb-1">
                   <span>{completedCount}/{totalLessons} lessons</span>
                   <span>{progressPct}%</span>
                 </div>
@@ -208,9 +209,9 @@ export default function CourseViewerPage() {
                     <button
                       onClick={() => setExpandedModules(prev => { const n = new Set(prev); if (n.has(mod.id)) n.delete(mod.id); else n.add(mod.id); return n })}
                       className="w-full flex items-center gap-2.5 px-4 py-2.5 text-left hover:bg-white/5 transition-colors">
-                      <span className="text-[10px] text-white/30 font-mono w-4 flex-shrink-0">{mi + 1}</span>
-                      <p className="text-xs text-white/60 font-semibold flex-1 truncate">{mod.title}</p>
-                      <span className="material-symbols-outlined text-[14px] text-white/25 transition-transform" style={{ transform: isExpanded ? 'rotate(180deg)' : '' }}>expand_more</span>
+                      <span className="text-[12px] text-[var(--text-on-dark-muted)] font-mono w-4 flex-shrink-0">{mi + 1}</span>
+                      <p className="text-xs text-[var(--text-on-dark-secondary)] font-semibold flex-1 truncate">{mod.title}</p>
+                      <Icon name="expand_more" size={14} className="text-white/25 transition-transform" style={{ transform: isExpanded ? 'rotate(180deg)' : ''  }} />
                     </button>
                     {isExpanded && mod.lessons.map((lesson, li) => {
                       const isActive = activeLesson?.id === lesson.id
@@ -219,12 +220,12 @@ export default function CourseViewerPage() {
                         <button key={lesson.id} onClick={() => setActiveLesson(lesson)}
                           className={`w-full flex items-center gap-2.5 pl-9 pr-4 py-2 text-left transition-colors ${isActive ? 'bg-white/12' : 'hover:bg-white/5'}`}>
                           {isDone
-                            ? <span className="material-symbols-outlined text-[14px] text-emerald-400 flex-shrink-0" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-                            : <span className="material-symbols-outlined text-[14px] flex-shrink-0" style={{ color: TYPE_COLOR[lesson.lesson_type], fontVariationSettings: "'FILL' 1" }}>{TYPE_ICON[lesson.lesson_type]}</span>
+                            ? <Icon name="check_circle" size={14} className="text-emerald-400 flex-shrink-0" />
+                            : <Icon name={TYPE_ICON[lesson.lesson_type]} size={14} className="flex-shrink-0" style={{ color: TYPE_COLOR[lesson.lesson_type] }} />
                           }
-                          <span className={`text-xs flex-1 truncate ${isActive ? 'text-white font-semibold' : 'text-white/50'}`}>{lesson.title}</span>
+                          <span className={`text-xs flex-1 truncate ${isActive ? 'text-white font-semibold' : 'text-[var(--text-on-dark-secondary)]'}`}>{lesson.title}</span>
                           {lesson.duration_minutes && (
-                            <span className="text-[10px] text-white/20 flex-shrink-0">{fmtMin(lesson.duration_minutes)}</span>
+                            <span className="text-[12px] text-white/20 flex-shrink-0">{fmtMin(lesson.duration_minutes)}</span>
                           )}
                         </button>
                       )
@@ -242,19 +243,17 @@ export default function CourseViewerPage() {
         {/* Top bar */}
         <div className="flex items-center gap-3 px-4 py-3 border-b border-white/5 bg-[#0E0C1E] flex-shrink-0 z-10">
           <button onClick={() => setSidebarOpen(s => !s)}
-            className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white/60 hover:text-white hover:bg-white/15 transition-all">
-            <span className="material-symbols-outlined text-[18px]">{sidebarOpen ? 'menu_open' : 'menu'}</span>
+            className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[var(--text-on-dark-secondary)] hover:text-white hover:bg-white/15 transition-all">
+            <Icon name={sidebarOpen ? 'menu_open' : 'menu'} size={18} />
           </button>
 
           {activeLesson && (
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[14px]" style={{ color: TYPE_COLOR[activeLesson.lesson_type], fontVariationSettings: "'FILL' 1" }}>
-                  {TYPE_ICON[activeLesson.lesson_type]}
-                </span>
-                <p className="text-white/80 text-sm font-semibold truncate">{activeLesson.title}</p>
+                <Icon name={TYPE_ICON[activeLesson.lesson_type]} size={14} style={{ color: TYPE_COLOR[activeLesson.lesson_type] }} />
+                <p className="text-[var(--text-on-dark)] text-sm font-semibold truncate">{activeLesson.title}</p>
                 {activeLesson.is_free_preview && (
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold flex-shrink-0">FREE</span>
+                  <span className="text-[12px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold flex-shrink-0">FREE</span>
                 )}
               </div>
             </div>
@@ -262,21 +261,19 @@ export default function CourseViewerPage() {
 
           <div className="flex items-center gap-2 flex-shrink-0">
             <button onClick={goPrev} disabled={activeIdx <= 0}
-              className="w-8 h-8 rounded-lg bg-white/8 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/15 disabled:opacity-30 transition-all">
-              <span className="material-symbols-outlined text-[18px]">skip_previous</span>
+              className="w-8 h-8 rounded-lg bg-white/8 flex items-center justify-center text-[var(--text-on-dark-secondary)] hover:text-white hover:bg-white/15 disabled:opacity-30 transition-all">
+              <Icon name="skip_previous" size={18} />
             </button>
             {activeLesson && (
               <button onClick={() => { markComplete(activeLesson.id); if (activeIdx < allLessons.length - 1) goNext() }}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${completed.has(activeLesson.id) ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/10 text-white/60 hover:bg-emerald-500/20 hover:text-emerald-400'}`}>
-                <span className="material-symbols-outlined text-[14px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                  {completed.has(activeLesson.id) ? 'check_circle' : 'radio_button_unchecked'}
-                </span>
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${completed.has(activeLesson.id) ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/10 text-[var(--text-on-dark-secondary)] hover:bg-emerald-500/20 hover:text-emerald-400'}`}>
+                <Icon name={completed.has(activeLesson.id) ? 'check_circle' : 'radio_button_unchecked'} size={14} />
                 <span className="hidden sm:inline">{completed.has(activeLesson.id) ? 'Completed' : 'Mark Complete'}</span>
               </button>
             )}
             <button onClick={goNext} disabled={activeIdx >= allLessons.length - 1}
-              className="w-8 h-8 rounded-lg bg-white/8 flex items-center justify-center text-white/50 hover:text-white hover:bg-white/15 disabled:opacity-30 transition-all">
-              <span className="material-symbols-outlined text-[18px]">skip_next</span>
+              className="w-8 h-8 rounded-lg bg-white/8 flex items-center justify-center text-[var(--text-on-dark-secondary)] hover:text-white hover:bg-white/15 disabled:opacity-30 transition-all">
+              <Icon name="skip_next" size={18} />
             </button>
           </div>
         </div>
@@ -284,17 +281,17 @@ export default function CourseViewerPage() {
         {/* ── YouTube Live banner (shown when course is live) ── */}
         {isLive && liveUrl && (
           <div className="bg-red-950/40 border-b border-red-500/30 px-4 py-2 flex items-center gap-3 flex-shrink-0">
-            <span className="flex items-center gap-1.5 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded animate-pulse">
+            <span className="flex items-center gap-1.5 bg-red-600 text-white text-[12px] font-bold px-2 py-0.5 rounded animate-pulse">
               ● LIVE
             </span>
-            <span className="text-white/70 text-xs flex-1">This course is currently streaming live</span>
+            <span className="text-[var(--text-on-dark-secondary)] text-xs flex-1">This course is currently streaming live</span>
             <a
               href={liveUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-500 transition-colors font-semibold flex items-center gap-1.5"
             >
-              <span className="material-symbols-outlined text-[14px]">live_tv</span>
+              <Icon name="live_tv" size={14} />
               Watch Live on YouTube
             </a>
           </div>
@@ -315,8 +312,8 @@ export default function CourseViewerPage() {
         {/* Content area */}
         <div className="flex-1 overflow-y-auto bg-gray-950">
           {!activeLesson ? (
-            <div className="flex flex-col items-center justify-center h-full gap-4 text-white/30">
-              <span className="material-symbols-outlined text-[52px]" style={{ fontVariationSettings: "'FILL' 0" }}>play_lesson</span>
+            <div className="flex flex-col items-center justify-center h-full gap-4 text-[var(--text-on-dark-muted)]">
+              <Icon name="play_lesson" size={52} />
               <p>Select a lesson to begin</p>
             </div>
           ) : activeLesson.lesson_type === 'youtube' ? (
@@ -332,13 +329,13 @@ export default function CourseViewerPage() {
                   hasNextLesson={activeIdx < allLessons.length - 1}
                 />
               ) : (
-                <div className="w-full flex items-center justify-center text-white/30 text-sm bg-black" style={{ aspectRatio: '16/9' }}>
+                <div className="w-full flex items-center justify-center text-[var(--text-on-dark-muted)] text-sm bg-black" style={{ aspectRatio: '16/9' }}>
                   Invalid YouTube URL
                 </div>
               )}
               {activeLesson.description && (
                 <div className="p-6 max-w-3xl">
-                  <p className="text-white/50 text-sm leading-relaxed">{activeLesson.description}</p>
+                  <p className="text-[var(--text-on-dark-secondary)] text-sm leading-relaxed">{activeLesson.description}</p>
                 </div>
               )}
             </div>
@@ -357,12 +354,12 @@ export default function CourseViewerPage() {
                     onEnded={() => markComplete(activeLesson.id)}
                   />
                 ) : (
-                  <div className="absolute inset-0 flex items-center justify-center text-white/30 text-sm">Video not available</div>
+                  <div className="absolute inset-0 flex items-center justify-center text-[var(--text-on-dark-muted)] text-sm">Video not available</div>
                 )}
               </div>
               {activeLesson.description && (
                 <div className="p-6 max-w-3xl">
-                  <p className="text-white/50 text-sm leading-relaxed">{activeLesson.description}</p>
+                  <p className="text-[var(--text-on-dark-secondary)] text-sm leading-relaxed">{activeLesson.description}</p>
                 </div>
               )}
             </div>
@@ -373,11 +370,11 @@ export default function CourseViewerPage() {
               {pdfLoading ? (
                 <div className="flex flex-col items-center gap-4 py-20">
                   <SudarshanLoader size="md" />
-                  <p className="text-white/40 text-sm">Loading PDF…</p>
+                  <p className="text-[var(--text-on-dark-muted)] text-sm">Loading PDF...</p>
                 </div>
               ) : pdfPages.length === 0 ? (
-                <div className="flex flex-col items-center gap-4 py-20 text-white/30">
-                  <span className="material-symbols-outlined text-[48px]">picture_as_pdf</span>
+                <div className="flex flex-col items-center gap-4 py-20 text-[var(--text-on-dark-muted)]">
+                  <Icon name="picture_as_pdf" size={48} />
                   <p className="text-sm">PDF not available</p>
                 </div>
               ) : (
@@ -385,13 +382,13 @@ export default function CourseViewerPage() {
                   <div className="flex items-center gap-3 sticky top-0 z-10 py-2 px-4 rounded-xl"
                     style={{ background: 'rgba(14,12,30,0.95)', backdropFilter: 'blur(10px)' }}>
                     <button onClick={() => setPdfPage(p => Math.max(0, p - 1))} disabled={pdfPage === 0}
-                      className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white/60 hover:text-white disabled:opacity-30 transition-all">
-                      <span className="material-symbols-outlined text-[18px]">navigate_before</span>
+                      className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[var(--text-on-dark-secondary)] hover:text-white disabled:opacity-30 transition-all">
+                      <Icon name="navigate_before" size={18} />
                     </button>
-                    <span className="text-white/50 text-xs">{pdfPage + 1} / {pdfPages.length}</span>
+                    <span className="text-[var(--text-on-dark-secondary)] text-xs">{pdfPage + 1} / {pdfPages.length}</span>
                     <button onClick={() => setPdfPage(p => Math.min(pdfPages.length - 1, p + 1))} disabled={pdfPage === pdfPages.length - 1}
-                      className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-white/60 hover:text-white disabled:opacity-30 transition-all">
-                      <span className="material-symbols-outlined text-[18px]">navigate_next</span>
+                      className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[var(--text-on-dark-secondary)] hover:text-white disabled:opacity-30 transition-all">
+                      <Icon name="navigate_next" size={18} />
                     </button>
                   </div>
                   <img src={pdfPages[pdfPage]} alt={`Page ${pdfPage + 1}`}
@@ -404,15 +401,15 @@ export default function CourseViewerPage() {
           ) : (
             /* ── Text ── */
             <div className="max-w-3xl mx-auto p-6 sm:p-10">
-              <h2 className="text-2xl font-bold text-white/85 mb-6" style={{ fontFamily: "'Playfair Display', serif" }}>{activeLesson.title}</h2>
+              <h2 className="text-2xl font-bold text-[var(--text-on-dark)] mb-6" style={{ fontFamily: "var(--font-display)" }}>{activeLesson.title}</h2>
               {activeLesson.content_text ? (
-                <div className="text-white/65 leading-relaxed text-[15px] space-y-4">
+                <div className="text-[var(--text-on-dark-secondary)] leading-relaxed text-[15px] space-y-4">
                   {activeLesson.content_text.split('\n\n').map((para, i) => (
                     <p key={i}>{para}</p>
                   ))}
                 </div>
               ) : (
-                <p className="text-white/30 text-sm">No content available for this lesson.</p>
+                <p className="text-[var(--text-on-dark-muted)] text-sm">No content available for this lesson.</p>
               )}
             </div>
           )}

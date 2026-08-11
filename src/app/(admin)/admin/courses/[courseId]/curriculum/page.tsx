@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 import SudarshanLoader from '@/components/SudarshanLoader'
 
+import Icon from '@/components/ui/Icon'
 interface Module {
   id: string
   title: string
@@ -232,7 +233,7 @@ export default function CurriculumPage() {
             <div className="flex items-center justify-between px-6 py-4 border-b sticky top-0 bg-white z-10">
               <h2 className="font-bold text-gray-800">{editingLesson ? 'Edit Lesson' : 'Add Lesson'}</h2>
               <button onClick={() => setShowLessonForm(false)} className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center">
-                <span className="material-symbols-outlined text-[18px] text-gray-500">close</span>
+                <Icon name="close" size={18} className="text-gray-500" />
               </button>
             </div>
 
@@ -244,7 +245,7 @@ export default function CurriculumPage() {
                   {LESSON_TYPES.map(lt => (
                     <button key={lt.value} onClick={() => sf('lesson_type', lt.value)}
                       className={`flex items-center gap-2.5 p-3 rounded-xl border-2 transition-all text-left ${lessonForm.lesson_type === lt.value ? 'border-[var(--indigo-deep)] bg-[var(--indigo-deep)]/5' : 'border-gray-200'}`}>
-                      <span className="material-symbols-outlined text-[20px]" style={{ color: lt.color, fontVariationSettings: "'FILL' 1" }}>{lt.icon}</span>
+                      <Icon name={lt.icon} size={20} style={{ color: lt.color }} />
                       <span className="text-xs font-semibold text-gray-700">{lt.label}</span>
                     </button>
                   ))}
@@ -274,8 +275,8 @@ export default function CurriculumPage() {
                     placeholder="https://youtube.com/watch?v=..."
                     className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)]" />
                   {lessonForm.content_url && lessonForm.content_url.includes('youtube') && (
-                    <p className="text-[11px] text-emerald-600 mt-1 flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[13px]" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
+                    <p className="text-[13px] text-emerald-600 mt-1 flex items-center gap-1">
+                      <Icon name="check_circle" size={14} />
                       YouTube URL detected
                     </p>
                   )}
@@ -284,10 +285,10 @@ export default function CurriculumPage() {
 
               {lessonForm.lesson_type === 'video' && (
                 <div>
-                  <label className="text-xs font-semibold text-gray-600 mb-1 block">Video File (MP4, WebM — max 500 MB)</label>
+                  <label className="text-xs font-semibold text-gray-600 mb-1 block">Video File (MP4, WebM - max 500 MB)</label>
                   {editingLesson?.content_url && !videoFile && (
-                    <p className="text-[11px] text-blue-600 mb-2 flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[13px]" style={{ fontVariationSettings: "'FILL' 1" }}>videocam</span>
+                    <p className="text-[13px] text-blue-600 mb-2 flex items-center gap-1">
+                      <Icon name="videocam" size={14} />
                       Video already uploaded. Choose a new file to replace it.
                     </p>
                   )}
@@ -295,14 +296,14 @@ export default function CurriculumPage() {
                     onChange={e => setVideoFile(e.target.files?.[0] || null)}
                     className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm" />
                   {videoFile && (
-                    <p className="text-[11px] text-gray-500 mt-1">{videoFile.name} · {(videoFile.size / 1024 / 1024).toFixed(1)} MB</p>
+                    <p className="text-[13px] text-gray-500 mt-1">{videoFile.name} · {(videoFile.size / 1024 / 1024).toFixed(1)} MB</p>
                   )}
                   {uploadingFile && (
                     <div className="mt-2">
                       <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                         <div className="h-full bg-[var(--indigo-deep)] rounded-full transition-all" style={{ width: `${uploadProgress}%` }} />
                       </div>
-                      <p className="text-[11px] text-gray-400 mt-1">Uploading… {uploadProgress}%</p>
+                      <p className="text-[13px] text-gray-400 mt-1">Uploading... {uploadProgress}%</p>
                     </div>
                   )}
                 </div>
@@ -312,8 +313,8 @@ export default function CurriculumPage() {
                 <div>
                   <label className="text-xs font-semibold text-gray-600 mb-1 block">PDF File (max 100 MB)</label>
                   {editingLesson?.content_url && !pdfFile && (
-                    <p className="text-[11px] text-orange-600 mb-2 flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[13px]" style={{ fontVariationSettings: "'FILL' 1" }}>picture_as_pdf</span>
+                    <p className="text-[13px] text-orange-600 mb-2 flex items-center gap-1">
+                      <Icon name="picture_as_pdf" size={14} />
                       PDF already uploaded. Choose a new file to replace it.
                     </p>
                   )}
@@ -321,14 +322,14 @@ export default function CurriculumPage() {
                     onChange={e => setPdfFile(e.target.files?.[0] || null)}
                     className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm" />
                   {pdfFile && (
-                    <p className="text-[11px] text-gray-500 mt-1">{pdfFile.name} · {(pdfFile.size / 1024 / 1024).toFixed(1)} MB</p>
+                    <p className="text-[13px] text-gray-500 mt-1">{pdfFile.name} · {(pdfFile.size / 1024 / 1024).toFixed(1)} MB</p>
                   )}
                   {uploadingFile && (
                     <div className="mt-2">
                       <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                         <div className="h-full bg-orange-500 rounded-full transition-all" style={{ width: `${uploadProgress}%` }} />
                       </div>
-                      <p className="text-[11px] text-gray-400 mt-1">Uploading… {uploadProgress}%</p>
+                      <p className="text-[13px] text-gray-400 mt-1">Uploading... {uploadProgress}%</p>
                     </div>
                   )}
                 </div>
@@ -338,9 +339,9 @@ export default function CurriculumPage() {
                 <div>
                   <label className="text-xs font-semibold text-gray-600 mb-1 block">Text Content</label>
                   <textarea value={lessonForm.content_text || ''} onChange={e => sf('content_text', e.target.value)}
-                    rows={10} placeholder="Write your lesson content here. Supports plain text — use blank lines for paragraphs."
+                    rows={10} placeholder="Write your lesson content here. Supports plain text - use blank lines for paragraphs."
                     className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[var(--indigo-deep)] resize-y font-mono" />
-                  <p className="text-[11px] text-gray-400 mt-1">{lessonForm.content_text?.length || 0} characters</p>
+                  <p className="text-[13px] text-gray-400 mt-1">{lessonForm.content_text?.length || 0} characters</p>
                 </div>
               )}
 
@@ -361,12 +362,10 @@ export default function CurriculumPage() {
 
               <button onClick={() => sf('is_free_preview', !lessonForm.is_free_preview)}
                 className={`flex items-center gap-2.5 w-full p-3 rounded-xl border-2 transition-all ${lessonForm.is_free_preview ? 'border-emerald-400 bg-emerald-50' : 'border-gray-200'}`}>
-                <span className="material-symbols-outlined text-[20px]" style={{ color: lessonForm.is_free_preview ? '#059669' : '#9ca3af', fontVariationSettings: "'FILL' 1" }}>
-                  {lessonForm.is_free_preview ? 'lock_open' : 'lock'}
-                </span>
+                <Icon name={lessonForm.is_free_preview ? 'lock_open' : 'lock'} size={20} style={{ color: lessonForm.is_free_preview ? '#059669' : '#9ca3af' }} />
                 <div className="text-left">
                   <p className="text-xs font-bold text-gray-700">Free Preview</p>
-                  <p className="text-[11px] text-gray-400">{lessonForm.is_free_preview ? 'Visible to all users without enrollment' : 'Only visible to enrolled students'}</p>
+                  <p className="text-[13px] text-gray-400">{lessonForm.is_free_preview ? 'Visible to all users without enrollment' : 'Only visible to enrolled students'}</p>
                 </div>
               </button>
             </div>
@@ -414,7 +413,7 @@ export default function CurriculumPage() {
               <button onClick={saveModule} disabled={savingModule}
                 className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white disabled:opacity-60"
                 style={{ background: 'linear-gradient(135deg, var(--indigo-deep), #4338ca)' }}>
-                {savingModule ? '…' : editingModule ? 'Save' : 'Add Module'}
+                {savingModule ? '...' : editingModule ? 'Save' : 'Add Module'}
               </button>
             </div>
           </div>
@@ -426,17 +425,17 @@ export default function CurriculumPage() {
         <div className="px-6 py-4 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Link href="/admin/courses" className="text-gray-400 hover:text-gray-700 transition-colors">
-              <span className="material-symbols-outlined text-[20px]">arrow_back</span>
+              <Icon name="arrow_back" size={20} />
             </Link>
             <div>
-              <p className="text-[11px] text-gray-400">Admin › Courses › Curriculum</p>
-              <h1 className="font-bold text-gray-800 text-sm truncate max-w-[280px]">{courseName || 'Loading…'}</h1>
+              <p className="text-[13px] text-gray-400">Admin › Courses › Curriculum</p>
+              <h1 className="font-bold text-gray-800 text-sm truncate max-w-[280px]">{courseName || 'Loading...'}</h1>
             </div>
           </div>
           <button onClick={openNewModule}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold text-white"
             style={{ background: 'linear-gradient(135deg, var(--indigo-deep), #4338ca)' }}>
-            <span className="material-symbols-outlined text-[16px]">add</span>
+            <Icon name="add" size={16} />
             Add Module
           </button>
         </div>
@@ -453,7 +452,7 @@ export default function CurriculumPage() {
           ].map(s => (
             <div key={s.l} className="flex items-baseline gap-1">
               <span className="font-black text-[var(--indigo-deep)]">{s.n}</span>
-              <span className="text-[11px] text-gray-400">{s.l}</span>
+              <span className="text-[13px] text-gray-400">{s.l}</span>
             </div>
           ))}
         </div>
@@ -463,7 +462,7 @@ export default function CurriculumPage() {
       <div className="max-w-3xl mx-auto p-6 space-y-4">
         {modules.length === 0 ? (
           <div className="text-center py-20 text-gray-400">
-            <span className="material-symbols-outlined text-[52px] mb-3 block text-gray-200" style={{ fontVariationSettings: "'FILL' 0" }}>view_module</span>
+            <Icon name="view_module" size={52} className="mb-3 block text-gray-200" />
             <p className="font-semibold mb-1">No modules yet</p>
             <p className="text-sm mb-5">Add a module (chapter) to organize your course content.</p>
             <button onClick={openNewModule} className="px-6 py-2.5 rounded-xl text-sm font-semibold text-white"
@@ -491,20 +490,18 @@ export default function CurriculumPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-gray-800 text-sm truncate">{mod.title}</h3>
-                  <p className="text-[11px] text-gray-400 mt-0.5">{modLessons.length} lessons · {modLessons.reduce((s, l) => s + (l.duration_minutes || 0), 0)} min</p>
+                  <p className="text-[13px] text-gray-400 mt-0.5">{modLessons.length} lessons · {modLessons.reduce((s, l) => s + (l.duration_minutes || 0), 0)} min</p>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <button onClick={e => { e.stopPropagation(); openEditModule(mod) }}
                     className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors">
-                    <span className="material-symbols-outlined text-[14px] text-gray-500">edit</span>
+                    <Icon name="edit" size={14} className="text-gray-500" />
                   </button>
                   <button onClick={e => { e.stopPropagation(); deleteModule(mod.id) }}
                     className="w-7 h-7 rounded-lg bg-red-50 hover:bg-red-100 flex items-center justify-center transition-colors">
-                    <span className="material-symbols-outlined text-[14px] text-red-400">delete</span>
+                    <Icon name="delete" size={14} className="text-red-400" />
                   </button>
-                  <span className={`material-symbols-outlined text-[20px] text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
-                    expand_more
-                  </span>
+                  <Icon name="expand_more" className={`text-[20px] text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                 </div>
               </div>
 
@@ -515,34 +512,32 @@ export default function CurriculumPage() {
                     const tc = typeConfig(l.lesson_type)
                     return (
                       <div key={l.id} className={`flex items-center gap-3 px-5 py-3.5 border-b border-gray-50 hover:bg-gray-50/50 transition-colors ${!l.is_active ? 'opacity-50' : ''}`}>
-                        <span className="text-[11px] text-gray-400 w-5 text-right font-mono flex-shrink-0">{li + 1}</span>
+                        <span className="text-[13px] text-gray-400 w-5 text-right font-mono flex-shrink-0">{li + 1}</span>
                         <div className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
                           style={{ background: `${tc.color}15` }}>
-                          <span className="material-symbols-outlined text-[14px]" style={{ color: tc.color, fontVariationSettings: "'FILL' 1" }}>{tc.icon}</span>
+                          <Icon name={tc.icon} size={14} style={{ color: tc.color }} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             <p className="text-sm text-gray-700 font-medium truncate">{l.title}</p>
                             {l.is_free_preview && (
-                              <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-600 font-bold uppercase tracking-wide flex-shrink-0">Free</span>
+                              <span className="text-[12px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-600 font-bold uppercase tracking-wide flex-shrink-0">Free</span>
                             )}
                           </div>
-                          <p className="text-[11px] text-gray-400">{tc.label}{l.duration_minutes ? ` · ${l.duration_minutes} min` : ''}</p>
+                          <p className="text-[13px] text-gray-400">{tc.label}{l.duration_minutes ? ` · ${l.duration_minutes} min` : ''}</p>
                         </div>
                         <div className="flex items-center gap-1.5">
                           <button onClick={() => openEditLesson(l)}
                             className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-[var(--indigo-deep)]/10 flex items-center justify-center transition-colors">
-                            <span className="material-symbols-outlined text-[14px] text-gray-500">edit</span>
+                            <Icon name="edit" size={14} className="text-gray-500" />
                           </button>
                           <button onClick={() => toggleLessonActive(l)}
                             className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${l.is_active ? 'bg-emerald-50 hover:bg-emerald-100' : 'bg-gray-100 hover:bg-gray-200'}`}>
-                            <span className="material-symbols-outlined text-[14px]" style={{ color: l.is_active ? '#059669' : '#9ca3af', fontVariationSettings: "'FILL' 1" }}>
-                              {l.is_active ? 'visibility' : 'visibility_off'}
-                            </span>
+                            <Icon name={l.is_active ? 'visibility' : 'visibility_off'} size={14} style={{ color: l.is_active ? '#059669' : '#9ca3af' }} />
                           </button>
                           <button onClick={() => deleteLesson(l.id)}
                             className="w-7 h-7 rounded-lg bg-red-50 hover:bg-red-100 flex items-center justify-center transition-colors">
-                            <span className="material-symbols-outlined text-[14px] text-red-400">delete</span>
+                            <Icon name="delete" size={14} className="text-red-400" />
                           </button>
                         </div>
                       </div>
@@ -551,7 +546,7 @@ export default function CurriculumPage() {
                   <div className="px-5 py-3">
                     <button onClick={() => openNewLesson(mod.id)}
                       className="w-full py-2 rounded-xl border-2 border-dashed border-gray-200 hover:border-[var(--indigo-deep)] text-sm text-gray-400 hover:text-[var(--indigo-deep)] flex items-center justify-center gap-2 transition-all">
-                      <span className="material-symbols-outlined text-[16px]">add</span>
+                      <Icon name="add" size={16} />
                       Add Lesson
                     </button>
                   </div>
@@ -564,7 +559,7 @@ export default function CurriculumPage() {
         {modules.length > 0 && (
           <button onClick={openNewModule}
             className="w-full py-3 rounded-xl border-2 border-dashed border-gray-200 hover:border-[var(--indigo-deep)] text-sm text-gray-400 hover:text-[var(--indigo-deep)] flex items-center justify-center gap-2 transition-all">
-            <span className="material-symbols-outlined text-[16px]">add</span>
+            <Icon name="add" size={16} />
             Add Another Module
           </button>
         )}

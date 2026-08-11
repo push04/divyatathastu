@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
+import Icon from '@/components/ui/Icon'
 interface Post {
   id: string
   title: string
@@ -76,10 +77,10 @@ export default function AdminBlogPage() {
           const stripped = data.content.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 200)
           setForm(f => ({ ...f, content: data.content, excerpt: stripped + '...' }))
         }
-        toast.success('AI content generated!')
+        toast.success('Draft generated!')
       }
     } catch {
-      toast.error('AI generation failed')
+      toast.error('Draft generation failed')
     }
     setAiLoading(false)
   }
@@ -173,20 +174,20 @@ export default function AdminBlogPage() {
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-xl font-bold text-[var(--indigo-deep)] flex items-center gap-2">
-        <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>edit_note</span>
-        Blog Posts <span className="text-[var(--warm-charcoal)]/40 font-normal">({posts.length})</span>
+        <Icon name="edit_note" size={20} />
+        Blog Posts <span className="text-[var(--text-muted)] font-normal">({posts.length})</span>
       </h1>
 
       {/* Create / Edit form */}
       <div className="card-divine p-5 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="font-bold text-[var(--indigo-deep)] flex items-center gap-2">
-            <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>{editingId ? 'edit' : 'add_circle'}</span>
+            <Icon name={editingId ? 'edit' : 'add_circle'} size={16} />
             {editingId ? 'Edit Post' : 'New Post'}
           </h2>
           {editingId && (
-            <button onClick={resetForm} className="text-xs text-[var(--warm-charcoal)]/50 hover:text-red-500 flex items-center gap-1 transition-colors">
-              <span className="material-symbols-outlined text-[14px]">close</span>
+            <button onClick={resetForm} className="text-xs text-[var(--text-muted)] hover:text-red-500 flex items-center gap-1 transition-colors">
+              <Icon name="close" size={14} />
               Cancel Edit
             </button>
           )}
@@ -195,13 +196,13 @@ export default function AdminBlogPage() {
         <div className="grid grid-cols-2 gap-4">
           {/* Cover image */}
           <div className="col-span-2">
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Cover Image</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Cover Image</label>
             <div className="flex items-center gap-3">
               {coverPreview ? (
                 <img src={coverPreview} alt="cover" className="w-32 h-20 object-cover rounded-lg border border-[var(--warm-sand)]" />
               ) : (
                 <div className="w-32 h-20 rounded-lg bg-[var(--warm-sand)] flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[24px] text-[var(--warm-charcoal)]/30">image</span>
+                  <Icon name="image" size={24} className="text-[var(--text-muted)]" />
                 </div>
               )}
               <label className="cursor-pointer px-3 py-2 rounded-lg border border-[var(--warm-sand)] text-xs font-medium text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/50 transition-colors">
@@ -212,33 +213,33 @@ export default function AdminBlogPage() {
           </div>
 
           <div className="col-span-2">
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Title *</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Title *</label>
             <input type="text" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value, slug: generateSlug(e.target.value) }))} className={inputCls} placeholder="Enter post title..." />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Slug</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Slug</label>
             <input type="text" value={form.slug} onChange={e => setForm(f => ({ ...f, slug: e.target.value }))} className={inputCls} />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Category</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Category</label>
             <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} className={inputCls}>
               {CATEGORIES.map(c => <option key={c}>{c}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Read Time (min)</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Read Time (min)</label>
             <input type="number" value={form.read_time} onChange={e => setForm(f => ({ ...f, read_time: Number(e.target.value) }))} className={inputCls} min={1} max={60} />
           </div>
           <div className="col-span-2 sm:col-span-1">
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Excerpt</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Excerpt</label>
             <textarea value={form.excerpt} onChange={e => setForm(f => ({ ...f, excerpt: e.target.value }))} rows={2} className={`${inputCls} resize-none`} placeholder="Short description for previews..." />
           </div>
 
-          {/* AI writing section */}
+          {/* Draft assist section */}
           <div className="col-span-2 rounded-xl border border-[var(--saffron)]/30 bg-amber-50/40 p-4 space-y-3">
             <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px] text-[var(--saffron)]" style={{ fontVariationSettings: "'FILL' 1" }}>auto_awesome</span>
-              <span className="text-sm font-semibold text-[var(--indigo-deep)]">Write with AI</span>
+              <Icon name="brightness_7" size={18} className="text-[var(--saffron)]" />
+              <span className="text-sm font-semibold text-[var(--indigo-deep)]">Draft Assist</span>
             </div>
             <textarea
               value={aiPrompt}
@@ -252,18 +253,18 @@ export default function AdminBlogPage() {
               disabled={aiLoading}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--saffron)] text-white text-sm font-semibold disabled:opacity-50 hover:opacity-90 transition-opacity"
             >
-              <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>{aiLoading ? 'hourglass_empty' : 'auto_awesome'}</span>
+              <Icon name={aiLoading ? 'hourglass_empty' : 'brightness_7'} size={16} />
               {aiLoading ? 'Generating...' : 'Generate Content'}
             </button>
           </div>
 
           <div className="col-span-2">
-            <label className="block text-xs font-semibold text-[var(--warm-charcoal)]/60 mb-1 uppercase tracking-wide">Content (HTML) *</label>
+            <label className="block text-xs font-semibold text-[var(--text-secondary)] mb-1 uppercase tracking-wide">Content (HTML) *</label>
             <textarea value={form.content} onChange={e => setForm(f => ({ ...f, content: e.target.value }))} rows={10} className={`${inputCls} font-mono resize-y`} placeholder="<h2>Section</h2><p>Content...</p>" />
           </div>
         </div>
         <button onClick={savePost} disabled={creating} className="btn-divine px-6 py-2 text-sm disabled:opacity-50 inline-flex items-center gap-2">
-          <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>{creating ? 'hourglass_empty' : editingId ? 'save' : 'publish'}</span>
+          <Icon name={creating ? 'hourglass_empty' : editingId ? 'save' : 'publish'} size={16} />
           {creating ? (editingId ? 'Saving...' : 'Creating...') : editingId ? 'Save Changes' : 'Create Post (Draft)'}
         </button>
       </div>
@@ -274,11 +275,11 @@ export default function AdminBlogPage() {
           <table className="w-full text-sm min-w-[600px]">
             <thead className="bg-[var(--warm-sand)]/40 border-b border-[var(--warm-sand)]">
               <tr>
-                <th className="text-left px-4 py-3 font-semibold text-[var(--warm-charcoal)]/60 text-xs uppercase tracking-wide">Title</th>
-                <th className="text-left px-4 py-3 font-semibold text-[var(--warm-charcoal)]/60 text-xs uppercase tracking-wide">Category</th>
-                <th className="text-left px-4 py-3 font-semibold text-[var(--warm-charcoal)]/60 text-xs uppercase tracking-wide">Date</th>
-                <th className="text-left px-4 py-3 font-semibold text-[var(--warm-charcoal)]/60 text-xs uppercase tracking-wide">Status</th>
-                <th className="text-left px-4 py-3 font-semibold text-[var(--warm-charcoal)]/60 text-xs uppercase tracking-wide">Actions</th>
+                <th className="text-left px-4 py-3 font-semibold text-[var(--text-secondary)] text-xs uppercase tracking-wide">Title</th>
+                <th className="text-left px-4 py-3 font-semibold text-[var(--text-secondary)] text-xs uppercase tracking-wide">Category</th>
+                <th className="text-left px-4 py-3 font-semibold text-[var(--text-secondary)] text-xs uppercase tracking-wide">Date</th>
+                <th className="text-left px-4 py-3 font-semibold text-[var(--text-secondary)] text-xs uppercase tracking-wide">Status</th>
+                <th className="text-left px-4 py-3 font-semibold text-[var(--text-secondary)] text-xs uppercase tracking-wide">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--warm-sand)]/60">
@@ -289,16 +290,16 @@ export default function AdminBlogPage() {
                       {p.cover_image_url && <img src={p.cover_image_url} alt="" className="w-8 h-6 object-cover rounded flex-shrink-0" />}
                       <div>
                         <p className="font-medium text-[var(--indigo-deep)]">{p.title}</p>
-                        <p className="text-xs text-[var(--warm-charcoal)]/40 font-mono">/blog/{p.slug}</p>
+                        <p className="text-xs text-[var(--text-muted)] font-mono">/blog/{p.slug}</p>
                       </div>
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${CAT_COLORS[p.category] || 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/60'}`}>{p.category}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${CAT_COLORS[p.category] || 'bg-[var(--warm-sand)] text-[var(--text-secondary)]'}`}>{p.category}</span>
                   </td>
-                  <td className="px-4 py-3 text-[var(--warm-charcoal)]/40 text-xs">{new Date(p.created_at).toLocaleDateString('en-IN')}</td>
+                  <td className="px-4 py-3 text-[var(--text-muted)] text-xs">{new Date(p.created_at).toLocaleDateString('en-IN')}</td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${p.is_published ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--warm-sand)] text-[var(--warm-charcoal)]/50'}`}>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${p.is_published ? 'bg-emerald-100 text-emerald-700' : 'bg-[var(--warm-sand)] text-[var(--text-muted)]'}`}>
                       {p.is_published ? 'Published' : 'Draft'}
                     </span>
                   </td>
@@ -317,8 +318,8 @@ export default function AdminBlogPage() {
           </table>
           {posts.length === 0 && (
             <div className="text-center py-12">
-              <span className="material-symbols-outlined text-[40px] text-[var(--warm-charcoal)]/20 block mb-2" style={{ fontVariationSettings: "'FILL' 1" }}>edit_note</span>
-              <p className="text-[var(--warm-charcoal)]/40 text-sm">No posts yet</p>
+              <Icon name="edit_note" size={40} className="text-[var(--warm-charcoal)]/20 block mb-2" />
+              <p className="text-[var(--text-muted)] text-sm">No posts yet</p>
             </div>
           )}
         </div>

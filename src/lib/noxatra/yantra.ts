@@ -1,4 +1,4 @@
-// Yantra & Colour Therapy — Planet → Yantra → Colour Mapping
+// Yantra & Colour Therapy - Planet → Yantra → Colour Mapping
 
 const RASHI_RULING_PLANET: Record<string, string> = {
   'Aries': 'Mars', 'Taurus': 'Venus', 'Gemini': 'Mercury', 'Cancer': 'Moon',

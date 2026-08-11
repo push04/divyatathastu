@@ -1,4 +1,4 @@
-// Mantra Science — Planet → Deity → Mantra mapping
+// Mantra Science - Planet → Deity → Mantra mapping
 
 const PLANET_MANTRA_DATA: Record<string, {
   beejMantra: string; planetMantra: string; deity: string; deityMantra: string;
@@ -285,7 +285,7 @@ export function calculateMantraGuidance(
   const namaAkshara = padaSyllables ? padaSyllables[padaIdx] : null
 
   return {
-    namaAkshara,        // Personal birth syllable — used as start of Nama Japa
+    namaAkshara,        // Personal birth syllable - used as start of Nama Japa
     nakshatra,
     nakshatraPada: nakshatraPada || 1,
     chanting: {
@@ -336,23 +336,23 @@ export function calculateMantraGuidance(
 
 // ─── Ganpati / Ganesha Mantras ───────────────────────────────────────────────
 // These are Mangalacharana (auspicious opening) mantras recited before any
-// spiritual work, sadhana, or report consultation. They are UNIVERSAL — all
+// spiritual work, sadhana, or report consultation. They are UNIVERSAL - all
 // seekers are encouraged to chant these regardless of their personal chart.
 
 export const GANPATI_MANTRAS = {
-  title: 'श्री गणपति मंत्र — Mangalacharana',
-  subtitle: 'Auspicious Invocation — Chant before beginning any sadhana or reading this report',
+  title: 'श्री गणपति मंत्र - Mangalacharana',
+  subtitle: 'Auspicious Invocation - Chant before beginning any sadhana or reading this report',
   mantras: [
     {
       name: 'Vakratunda Shloka (Before Any Auspicious Work)',
       sanskrit: 'वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ ।\nनिर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा ॥',
       transliteration: 'Vakratuṇḍa Mahākāya Sūryakoṭi Samaprabha |\nNirvighnaṃ Kuru Me Deva Sarvakāryeṣu Sarvadā ||',
-      meaning: 'O Lord Ganesha of curved trunk, mighty-bodied, with the brilliance of a million suns — please make all my works obstacle-free, always.',
+      meaning: 'O Lord Ganesha of curved trunk, mighty-bodied, with the brilliance of a million suns - please make all my works obstacle-free, always.',
       count: 11,
-      bestTime: 'Any time — especially before starting this report',
+      bestTime: 'Any time - especially before starting this report',
     },
     {
-      name: 'Beej Mantra (Seed Mantra — Most Powerful)',
+      name: 'Beej Mantra (Seed Mantra - Most Powerful)',
       sanskrit: 'ॐ गं गणपतये नमः',
       transliteration: 'Om Gaṃ Gaṇapataye Namaḥ',
       meaning: 'I bow to Lord Ganesha, the remover of all obstacles, the lord of all beginnings.',
@@ -379,7 +379,7 @@ export const GANPATI_MANTRAS = {
       name: 'Dvadasha Nama (12 Sacred Names of Ganesha)',
       sanskrit: 'सुमुख श्चैकदन्तश्च कपिलो गजकर्णकः ।\nलम्बोदरश्च विकटो विघ्ननाशो गणाधिपः ।।\nधूमकेतुर्गणाध्यक्षः फालचन्द्रो गजाननः ।\nद्वादशैतानि नामानि यः पठेच्छृणुयादपि ।।',
       transliteration: 'Sumukhaścaikadantaśca Kapilo Gajakarṇakaḥ |\nLambodaṛaśca Vikaṭo Vighnanāśo Gaṇādhipaḥ ||\nDhūmaketurgaṇādhyakṣaḥ Phālacandro Gajānanaḥ |\nDvādaśaitāni Nāmāni Yaḥ Paṭhecchr̥ṇuyādapi ||',
-      meaning: 'Sumukha (pleasant-faced), Ekadanta (one-tusked), Kapila (tawny), Gajakarnaka (elephant-eared), Lambodara (pot-bellied), Vikata (huge-bodied), Vighnashana (obstacle-destroyer), Ganadhipa (lord of ganas), Dhumaketu (smoke-bannered), Ganadhyaksha (chief of ganas), Phalachandra (moon-crested), Gajanana (elephant-faced) — these twelve names, when read or heard, bestow supreme auspiciousness.',
+      meaning: 'Sumukha (pleasant-faced), Ekadanta (one-tusked), Kapila (tawny), Gajakarnaka (elephant-eared), Lambodara (pot-bellied), Vikata (huge-bodied), Vighnashana (obstacle-destroyer), Ganadhipa (lord of ganas), Dhumaketu (smoke-bannered), Ganadhyaksha (chief of ganas), Phalachandra (moon-crested), Gajanana (elephant-faced) - these twelve names, when read or heard, bestow supreme auspiciousness.',
       count: 1,
       bestTime: 'Morning prayers, before exams, interviews, or any new beginning',
     },
@@ -395,14 +395,14 @@ export const GANPATI_MANTRAS = {
       name: 'Ashtavinayak Vandana (Eight Forms of Ganesha)',
       sanskrit: 'मयूरेश्वर मोरेश्वर सिद्धिविनायक ।\nमहागणपति विघ्नेश्वर लेण्याद्री गिरिजात्मज ।।\nओझर सुप्रसिद्ध गिरिजापुत्र नमोस्तुते ।\nरांजणगाव महागणपति रक्ष माम् सर्वदा ।।',
       transliteration: 'Mayūreśvara Moreśvara Siddhivināyaka |\nMahāgaṇapati Vighneśvara Leṇyādrī Girijātmaja ||\nOjhara Suprasiddha Girijāputra Namostute |\nRāṃjaṇagāva Mahāgaṇapati Rakṣa Mām Sarvadā ||',
-      meaning: 'Salutations to the eight forms of Ganesha — Mayureshwar, Siddhivinayak, Mahaganapati, Vighnahar, Girijatmaj, Vighneshwar, Ozhar, and Ranjangaon Mahaganapati. O son of Goddess Girija, protect me always.',
+      meaning: 'Salutations to the eight forms of Ganesha - Mayureshwar, Siddhivinayak, Mahaganapati, Vighnahar, Girijatmaj, Vighneshwar, Ozhar, and Ranjangaon Mahaganapati. O son of Goddess Girija, protect me always.',
       count: 8,
       bestTime: 'Ashtavinayak Yatra pilgrimage days, Ganesh Chaturthi',
     },
   ],
   dvAtrIMSad: {
-    title: 'द्वात्रिंशद् गणपति — 32 Divine Forms',
-    subtitle: 'Dvātriṃśad Gaṇapati from Mudgala Purāṇa — invoke all 32 aspects of Lord Ganesha',
+    title: 'द्वात्रिंशद् गणपति - 32 Divine Forms',
+    subtitle: 'Dvātriṃśad Gaṇapati from Mudgala Purāṇa - invoke all 32 aspects of Lord Ganesha',
     forms: [
       { no: 1,  name: 'Bala Ganapati',           nameSanskrit: 'बाल गणपति',           mantra: 'ॐ बालाय गणपतये नमः',            quality: 'Innocence · New Beginnings' },
       { no: 2,  name: 'Taruna Ganapati',          nameSanskrit: 'तरुण गणपति',          mantra: 'ॐ तरुणाय गणपतये नमः',           quality: 'Youth · Vitality' },
@@ -453,7 +453,7 @@ export const GANPATI_MANTRAS = {
       'Light a ghee lamp and offer modak (sweet) or durva grass',
       'Sit facing East on a yellow mat or cloth',
       'Use red ink pen on yellow paper (or a dedicated notebook)',
-      'Write "ॐ गं गणपतये नमः" exactly 108 times — one line at a time, mindfully',
+      'Write "ॐ गं गणपतये नमः" exactly 108 times - one line at a time, mindfully',
       'After writing, sit silently for 5 minutes in gratitude',
       'Keep the written pages and offer at a Ganesha temple after 21 days',
     ],

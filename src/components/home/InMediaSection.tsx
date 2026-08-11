@@ -33,13 +33,13 @@ export default function InMediaSection() {
           >
             <h2
               className="text-[var(--indigo-deep)] mb-4 leading-tight"
-              style={{ fontFamily: "'Playfair Display', serif", fontSize: '32px', fontWeight: 600 }}
+              style={{ fontFamily: "var(--font-display)", fontSize: '32px', fontWeight: 600 }}
             >
               Trusted by families across India
             </h2>
             <p
               className="text-sm leading-relaxed mb-8"
-              style={{ fontFamily: "'DM Sans', sans-serif", color: 'var(--indigo-deep)', opacity: 0.6 }}
+              style={{ fontFamily: "var(--font-body)", color: 'var(--text-secondary)' }}
             >
               MahaTathastu is independently expert-validated, privacy-first, and built on genuine Vedic scholarship.
             </p>
@@ -53,7 +53,7 @@ export default function InMediaSection() {
               style={{
                 background: '#25D366',
                 borderRadius: '8px',
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "var(--font-body)",
               }}
             >
               <WhatsAppIcon />
@@ -61,8 +61,8 @@ export default function InMediaSection() {
             </a>
 
             <p
-              className="mt-3 text-[13px]"
-              style={{ fontFamily: "'DM Sans', sans-serif", color: 'var(--indigo-deep)', opacity: 0.4 }}
+              className="mt-3 text-[14px]"
+              style={{ fontFamily: "var(--font-body)", color: 'var(--text-muted)' }}
             >
               +91 9858784784 · support@mahatathastu.com
             </p>
@@ -85,8 +85,8 @@ export default function InMediaSection() {
                   <Icon size={28} color="var(--terracotta)" strokeWidth={1.5} />
                 </div>
                 <div className="pt-1">
-                  <p className="font-semibold text-sm text-[var(--indigo-deep)]" style={{ fontFamily: "'DM Sans', sans-serif" }}>{label}</p>
-                  <p className="text-xs text-[var(--indigo-deep)]/50 mt-0.5" style={{ fontFamily: "'DM Sans', sans-serif" }}>{sub}</p>
+                  <p className="font-semibold text-sm text-[var(--indigo-deep)]" style={{ fontFamily: "var(--font-body)" }}>{label}</p>
+                  <p className="text-xs text-[var(--text-muted)] mt-0.5" style={{ fontFamily: "var(--font-body)" }}>{sub}</p>
                 </div>
               </div>
             ))}
