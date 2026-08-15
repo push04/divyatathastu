@@ -1176,8 +1176,14 @@ function PrakritiPages({ data, number }: { data: any; number: string }) {
   const p = data.prakriti || data
   if (!p?.dominant) return null
 
-  const dietItems      = toFlatArr(p.diet, 7)
-  const lifestyleItems = toFlatArr(p.lifestyle, 7)
+  // `diet` is {favor, reduce, spices}. Flattening it into one list printed the
+  // *reduce* items - fried food, red meat - as dietary recommendations, so the
+  // two are now kept apart. `lifestyle` was never a key the engine returned;
+  // the daily regimen lives on `dailyRoutine`.
+  const dietFavour = Array.isArray(p.diet) ? toFlatArr(p.diet, 7) : toFlatArr(p.diet?.favor, 7)
+  const dietReduce = Array.isArray(p.diet) ? [] : toFlatArr(p.diet?.reduce, 6)
+  const dietSpices = Array.isArray(p.diet) ? [] : toFlatArr(p.diet?.spices, 6)
+  const lifestyleItems = toFlatArr(p.dailyRoutine ?? p.lifestyle, 7)
 
   return (
     <Page size="A4" style={styles.page} wrap>
@@ -1207,14 +1213,33 @@ function PrakritiPages({ data, number }: { data: any; number: string }) {
           </View>
         ))}
 
-      {p.summary ? <HighlightBox label="Prakriti Summary" text={p.summary} accent={C.saffron} /> : null}
+      {(p.summary || p.description) ? <HighlightBox label="Prakriti Summary" text={p.summary || p.description} accent={C.saffron} /> : null}
       {p.mentalConstitution ? <HighlightBox label="Mental Constitution (Manas Prakriti)" text={p.mentalConstitution} accent={C.navyMid} /> : null}
+      {p.currentImbalance ? <HighlightBox label="Current Imbalance (Vikriti)" text={p.currentImbalance} accent={C.navyMid} /> : null}
 
       <TwoColInfo
-        left={{ label: 'Dietary Recommendations', items: dietItems }}
-        right={{ label: 'Lifestyle Practices', items: lifestyleItems }}
+        left={{ label: 'Foods to Favour', items: dietFavour }}
+        right={{ label: 'Daily Routine (Dinacharya)', items: lifestyleItems }}
       />
 
+      {dietReduce.length ? (
+        <View style={{ marginTop: 6 }}>
+          <Text style={[styles.label, { color: '#C2410C', marginBottom: 4 }]}>Foods to Reduce</Text>
+          <TagRow items={dietReduce} />
+        </View>
+      ) : null}
+      {dietSpices.length ? (
+        <View style={{ marginTop: 6 }}>
+          <Text style={[styles.label, { marginBottom: 4 }]}>Your Spices</Text>
+          <TagRow items={dietSpices} />
+        </View>
+      ) : null}
+      {p.yoga?.length ? (
+        <View style={{ marginTop: 6 }}>
+          <Text style={[styles.label, { marginBottom: 4 }]}>Yoga & Pranayama</Text>
+          <TagRow items={p.yoga.slice(0, 10)} />
+        </View>
+      ) : null}
       {p.herbs?.length ? (
         <View style={{ marginTop: 6 }}>
           <Text style={[styles.label, { marginBottom: 4 }]}>Beneficial Herbs & Spices</Text>
@@ -1223,12 +1248,19 @@ function PrakritiPages({ data, number }: { data: any; number: string }) {
       ) : null}
       {p.avoid?.length ? (
         <View style={{ marginTop: 6 }}>
-          <Text style={[styles.label, { color: '#dc2626', marginBottom: 4 }]}>Foods & Activities to Avoid</Text>
+          {/* Not only foods - the list covers habits, weather and workload */}
+          <Text style={[styles.label, { color: '#dc2626', marginBottom: 4 }]}>Things to Avoid</Text>
           <TagRow items={p.avoid.slice(0, 10)} />
         </View>
       ) : null}
       {p.exercise ? <HighlightBox label="Exercise Guidance" text={p.exercise} accent={C.emerald} /> : null}
-      {p.seasons ? <HighlightBox label="Seasonal Care" text={p.seasons} accent={C.gold} /> : null}
+      {(p.seasons || p.bestSeasons?.length) ? (
+        <HighlightBox
+          label="Seasonal Care"
+          text={p.seasons || `Your strongest seasons are ${p.bestSeasons.join(' and ')}.`}
+          accent={C.gold}
+        />
+      ) : null}
 
       <PageFooter />
     </Page>

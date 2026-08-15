@@ -1978,23 +1978,80 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
               <p className="font-bold text-[var(--indigo-deep)] text-lg">{d.prakriti?.dominant}</p>
               {d.prakriti?.secondary && <p className="text-sm text-[var(--text-secondary)]">Secondary: {d.prakriti.secondary}</p>}
             </div>
-            {d.prakriti?.diet?.length > 0 && (
+            {d.prakriti?.description && (
+              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{d.prakriti.description}</p>
+            )}
+            {d.prakriti?.currentImbalance && (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
+                <p className="text-xs font-bold text-amber-700 uppercase tracking-wider mb-1">Current Imbalance</p>
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{d.prakriti.currentImbalance}</p>
+              </div>
+            )}
+            {/* `diet` is an object of favour/reduce/spice lists, not an array. The
+                previous `diet?.length` test was always undefined, so this block
+                never rendered at all. */}
+            {d.prakriti?.diet && (
+              <div className="space-y-3">
+                {d.prakriti.diet.favor?.length > 0 && (
+                  <div>
+                    <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Foods to Favour</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {d.prakriti.diet.favor.map((f: string) => <span key={f} className="text-xs bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full border border-emerald-200">{f}</span>)}
+                    </div>
+                  </div>
+                )}
+                {d.prakriti.diet.reduce?.length > 0 && (
+                  <div>
+                    <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Foods to Reduce</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {d.prakriti.diet.reduce.map((f: string) => <span key={f} className="text-xs bg-orange-50 text-orange-700 px-2.5 py-1 rounded-full border border-orange-200">{f}</span>)}
+                    </div>
+                  </div>
+                )}
+                {d.prakriti.diet.spices?.length > 0 && (
+                  <div>
+                    <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Your Spices</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {d.prakriti.diet.spices.map((f: string) => <span key={f} className="text-xs bg-amber-50 text-amber-800 px-2.5 py-1 rounded-full border border-amber-200">{f}</span>)}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+            {d.prakriti?.herbs?.length > 0 && (
               <div>
-                <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Diet Recommendations</p>
+                <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Beneficial Herbs</p>
                 <div className="flex flex-wrap gap-1.5">
-                  {d.prakriti.diet.map((f: string) => <span key={f} className="text-xs bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full border border-emerald-200">{f}</span>)}
+                  {d.prakriti.herbs.map((h: string) => <span key={h} className="text-xs bg-lime-50 text-lime-800 px-2.5 py-1 rounded-full border border-lime-200">{h}</span>)}
                 </div>
               </div>
             )}
-            {d.prakriti?.lifestyle?.length > 0 && (
+            {d.prakriti?.yoga?.length > 0 && (
               <div>
-                <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Lifestyle Guidelines</p>
-                {d.prakriti.lifestyle.map((l: string) => <p key={l} className="text-sm text-[var(--text-secondary)] py-0.5">• {l}</p>)}
+                <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Yoga & Pranayama</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {d.prakriti.yoga.map((y: string) => <span key={y} className="text-xs bg-violet-50 text-violet-700 px-2.5 py-1 rounded-full border border-violet-200">{y}</span>)}
+                </div>
+              </div>
+            )}
+            {/* The engine returns `dailyRoutine`; the old key `lifestyle` never
+                existed, so the daily regimen was silently dropped. */}
+            {d.prakriti?.dailyRoutine?.length > 0 && (
+              <div>
+                <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Daily Routine (Dinacharya)</p>
+                {d.prakriti.dailyRoutine.map((l: string) => <p key={l} className="text-sm text-[var(--text-secondary)] py-0.5">• {l}</p>)}
+              </div>
+            )}
+            {d.prakriti?.bestSeasons?.length > 0 && (
+              <div>
+                <p className="text-base font-extrabold text-[var(--indigo-deep)] mb-2">Your Strongest Seasons</p>
+                <p className="text-sm text-[var(--text-secondary)]">{d.prakriti.bestSeasons.join(' · ')}</p>
               </div>
             )}
             {d.prakriti?.avoid?.length > 0 && (
               <div className="bg-red-50 rounded-xl p-3">
-                <p className="text-xs font-bold text-red-600 uppercase tracking-wider mb-1">Foods to Avoid</p>
+                {/* Not only foods - the list covers habits, weather and workload */}
+                <p className="text-xs font-bold text-red-600 uppercase tracking-wider mb-1">Things to Avoid</p>
                 <div className="flex flex-wrap gap-1.5">
                   {d.prakriti.avoid.map((f: string) => <span key={f} className="text-xs bg-red-100 text-red-700 px-2.5 py-1 rounded-full">{f}</span>)}
                 </div>
