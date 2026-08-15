@@ -978,8 +978,8 @@ function KundliPages({ data, canvasImg, number }: { data: any; canvasImg?: strin
           {analysis.monthlyPredictions.slice(0, 6).map((m: any, i: number) => (
             <View key={i} style={{ flexDirection: 'row', borderBottom: `0.5pt solid ${C.grayLight}`, paddingVertical: 5 }}>
               <View style={{ width: 3, backgroundColor: C.gold, marginRight: 9, borderRadius: 1 }} />
-              <Text style={[styles.value, { width: 80, flexShrink: 0, fontSize: 8, color: C.saffron }]}>{m.month || m.period}</Text>
-              <Text style={[styles.body, { flex: 1 }]}>{m.prediction || m.forecast}</Text>
+              <Text style={[styles.value, { width: 80, flexShrink: 0, fontSize: 8, color: C.saffron }]}>{m.period || m.month}</Text>
+              <Text style={[styles.body, { flex: 1 }]}>{m.guidance || m.prediction || m.forecast}</Text>
             </View>
           ))}
         </View>
@@ -1017,23 +1017,21 @@ function NumerologyPages({ data, canvasImg, number }: { data: any; canvasImg?: s
         { label: 'Personal Year', value: n.personalYearNumber },
         { label: 'Maturity', value: n.maturityNumber },
         { label: 'Chaldean Name', value: n.chaldeanNameNumber },
-        { label: 'Expression', value: n.expressionNumber },
-        { label: 'Personal Month', value: n.personalMonthNumber },
-        { label: 'Personal Day', value: n.personalDayNumber },
+        { label: 'Expression', value: n.expressionNumber ?? n.destinyNumber },
         { label: 'Hidden Passion', value: n.hiddenPassionNumber },
       ]} />
 
       {/* Missing & karmic */}
-      {(n.missingNumbers?.length || n.karmicDebt?.length) ? (
+      {((n.missingNumbers ?? n.karmaNumbers)?.length || (n.karmicDebt || []).length) ? (
         <View style={[styles.row, { marginBottom: 8 }]}>
-          {n.missingNumbers?.length ? (
+          {(n.missingNumbers ?? n.karmaNumbers)?.length ? (
             <View style={[styles.card, { flex: 1, borderTopColor: '#dc2626' }]}>
               <Text style={[styles.label, { color: '#dc2626' }]}>Missing Numbers</Text>
-              <Text style={styles.value}>{n.missingNumbers.join(', ')}</Text>
+              <Text style={styles.value}>{(n.missingNumbers ?? n.karmaNumbers).join(', ')}</Text>
               <Text style={styles.bodySmall}>These energies need conscious cultivation.</Text>
             </View>
           ) : null}
-          {n.karmicDebt?.length ? (
+          {(n.karmicDebt || []).length ? (
             <View style={[styles.card, { flex: 1, borderTopColor: C.saffron }]}>
               <Text style={[styles.label, { color: C.saffron }]}>Karmic Debt Numbers</Text>
               <Text style={styles.value}>{Array.isArray(n.karmicDebt) ? n.karmicDebt.join(', ') : n.karmicDebt}</Text>
@@ -1149,7 +1147,7 @@ function ChakraPages({ data, number }: { data: any; number: string }) {
             {c.affirmations?.length ? (
               <Text style={[styles.italic, { marginTop: 3 }]}>"{Array.isArray(c.affirmations) ? c.affirmations[0] : c.affirmations}"</Text>
             ) : null}
-            {c.remedy ? <Text style={[styles.bodySmall, { color: C.saffron, marginTop: 3, fontFamily: 'Helvetica-Bold' }]}>Remedy: {c.remedy}</Text> : null}
+            {(c.guidance || c.remedy) ? <Text style={[styles.bodySmall, { color: C.saffron, marginTop: 3 }]}>{c.guidance || c.remedy}</Text> : null}
           </View>
         )
       })}
@@ -1589,6 +1587,27 @@ function ColourTherapyPages({ data, number }: { data: any; number: string }) {
 
       {ct.colorMeditation ? <HighlightBox label="Colour Meditation Practice" text={ct.colorMeditation} accent="#8b5cf6" /> : null}
       {ct.wardrobe ? <HighlightBox label="Wardrobe & Colour Wearing Guidance" text={ct.wardrobe} accent={C.gold} /> : null}
+      {/* The engine emits `clothing`, not `wardrobe` - the weekday schedule and
+          the how-to-wear notes were being computed and never printed. */}
+      {ct.howToWear ? <HighlightBox label="How to Wear Your Colours" text={ct.howToWear} accent={C.gold} /> : null}
+      {ct.timingNote ? <HighlightBox label="Timing Your Colour Therapy" text={ct.timingNote} accent={C.purple} /> : null}
+      {ct.clothing?.weeklySchedule ? (
+        <View style={{ marginTop: 6 }}>
+          <SectionLabel>Colour to Wear, Day by Day</SectionLabel>
+          {Object.entries(ct.clothing.weeklySchedule as Record<string, string>).map(([day, colour]) => (
+            <View key={day} style={{ flexDirection: 'row', marginBottom: 2 }}>
+              <Text style={[styles.value, { width: 68, flexShrink: 0, fontSize: 8, color: C.gold }]}>{day}</Text>
+              <Text style={[styles.bodySmall, { flex: 1 }]}>{colour}</Text>
+            </View>
+          ))}
+          {ct.clothing.forImportantMeetings ? (
+            <Text style={[styles.bodySmall, { marginTop: 4 }]}>For important meetings: {ct.clothing.forImportantMeetings}</Text>
+          ) : null}
+          {ct.clothing.forHealingDays ? (
+            <Text style={styles.bodySmall}>On healing days: {ct.clothing.forHealingDays}</Text>
+          ) : null}
+        </View>
+      ) : null}
 
       <PageFooter />
     </Page>
@@ -1645,8 +1664,8 @@ function AnnualPredictionPages({ data, number }: { data: any; number: string }) 
           <SectionLabel>Monthly Overview</SectionLabel>
           {ap.monthlyPredictions.slice(0, 12).map((m: any, i: number) => (
             <View key={i} style={{ flexDirection: 'row', borderBottom: `0.5pt solid ${C.grayLight}`, paddingVertical: 4 }}>
-              <Text style={[styles.value, { width: 75, flexShrink: 0, fontSize: 8, color: C.gold }]}>{m.month}</Text>
-              <Text style={[styles.body, { flex: 1 }]}>{m.prediction || m.forecast}</Text>
+              <Text style={[styles.value, { width: 75, flexShrink: 0, fontSize: 8, color: C.gold }]}>{m.period || m.month}</Text>
+              <Text style={[styles.body, { flex: 1 }]}>{m.guidance || m.prediction || m.forecast}</Text>
             </View>
           ))}
         </View>
@@ -1728,7 +1747,25 @@ function RemediesPages({ data, number }: { data: any; number: string }) {
 // â”€â”€ VASTU SECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function VastuPages({ data, number }: { data: any; number: string }) {
   const v = data.vastu || data.vastuAnalysis || data
-  if (!v?.homeDirection && !v?.recommendations?.length) return null
+  // The old guard tested `homeDirection` and `recommendations`, neither of which
+  // the engine has ever emitted, so this entire chapter was silently dropped
+  // from every PDF - including standalone Astro Vastu reports.
+  if (!v?.entrance && !v?.remedies?.length) return null
+
+  const home = v.yourHome
+  const colourRows: Array<[string, string]> = v.colors && !Array.isArray(v.colors)
+    ? Object.entries(v.colors as Record<string, string>)
+    : []
+  const labelFor = (k: string) =>
+    k.replace(/([A-Z])/g, ' $1').replace(/^./, (m) => m.toUpperCase())
+
+  const rooms: Array<[string, string]> = [
+    ['Entrance', v.entrance],
+    ['Bedroom', v.bedroom],
+    ['Study / Work Zone', v.studyRoom],
+    ['Kitchen', v.kitchen],
+    ['Prayer Room', v.prayerRoom],
+  ].filter((r): r is [string, string] => !!r[1])
 
   return (
     <Page size="A4" style={styles.page} wrap>
@@ -1737,20 +1774,53 @@ function VastuPages({ data, number }: { data: any; number: string }) {
       <ChapterHeader number={number} title="Astro Vastu" sanskrit="Jyotisha Vastu â€” Vedic Architecture" />
 
       <InfoGrid cols={2} items={[
-        { label: 'Home / Office Direction', value: v.homeDirection },
-        { label: 'Favorable Direction', value: v.favorableDirection },
-        { label: 'Direction to Avoid', value: v.avoidDirection },
-        { label: 'Best Entry Direction', value: v.entryDirection },
-        { label: 'Bedroom Direction', value: v.bedroomDirection },
-        { label: 'Study / Work Zone', value: v.studyDirection },
+        { label: 'Current Dasha Lord', value: v.currentDashaLord },
+        { label: 'Your Power Directions', value: Array.isArray(v.powerDirections) ? v.powerDirections.join(', ') : v.powerDirections },
       ]} />
 
-      {v.summary ? <HighlightBox label="Vastu Analysis Summary" text={v.summary} /> : null}
+      {home ? (
+        <View style={{ marginTop: 6 }}>
+          <SectionLabel>Your Home, Assessed</SectionLabel>
+          {home.reportedHomeDirection ? (
+            <View style={[styles.card, { marginBottom: 5 }]}>
+              <Text style={styles.label}>You reported a {home.reportedHomeDirection}-facing home</Text>
+              {home.homeFacingVerdict ? <Text style={styles.bodySmall}>{home.homeFacingVerdict}</Text> : null}
+            </View>
+          ) : null}
+          {home.reportedSleepDirection ? (
+            <View style={[styles.card, { marginBottom: 5 }]}>
+              <Text style={styles.label}>You reported sleeping head-to-{home.reportedSleepDirection}</Text>
+              {home.sleepDirectionVerdict ? <Text style={styles.bodySmall}>{home.sleepDirectionVerdict}</Text> : null}
+            </View>
+          ) : null}
+          {home.favourableFacingsForYou?.length ? (
+            <Text style={styles.bodySmall}>
+              Favourable facings for your chart: {home.favourableFacingsForYou.join(', ')}
+            </Text>
+          ) : null}
+        </View>
+      ) : null}
 
-      <TwoColInfo
-        left={{ label: 'Vastu Recommendations', items: v.recommendations?.slice(0, 8) || [] }}
-        right={{ label: 'Vastu Remedies', items: v.remedies?.slice(0, 8) || [] }}
-      />
+      {rooms.length ? (
+        <View style={{ marginTop: 8 }}>
+          <SectionLabel>Room by Room</SectionLabel>
+          {rooms.map(([label, text]) => (
+            <View key={label} style={{ marginBottom: 5 }}>
+              <Text style={styles.label}>{label}</Text>
+              <Text style={styles.bodySmall}>{text}</Text>
+            </View>
+          ))}
+        </View>
+      ) : null}
+
+      {v.remedies?.length ? (
+        <View style={{ marginTop: 8 }}>
+          <SectionLabel>Vastu Remedies for Your Chart</SectionLabel>
+          {v.remedies.slice(0, 8).map((r: string, i: number) => (
+            <Text key={i} style={styles.bodySmall}>{'\u2022 '}{r}</Text>
+          ))}
+        </View>
+      ) : null}
 
       {v.plants?.length ? (
         <View style={{ marginTop: 6 }}>
@@ -1758,12 +1828,15 @@ function VastuPages({ data, number }: { data: any; number: string }) {
           <TagRow items={v.plants.slice(0, 8)} />
         </View>
       ) : null}
-      {v.colors?.length ? (
+
+      {colourRows.length ? (
         <View style={{ marginTop: 6 }}>
           <Text style={[styles.label, { marginBottom: 3 }]}>Vastu Colours for Your Home</Text>
-          <TagRow items={v.colors.slice(0, 8)} />
+          {colourRows.map(([room, colour]) => (
+            <Text key={room} style={styles.bodySmall}>{labelFor(room)}: {colour}</Text>
+          ))}
         </View>
-      ) : null }
+      ) : null}
 
       <PageFooter />
     </Page>
@@ -1863,7 +1936,7 @@ export default function ReportPDF({ report, canvases = {} }: ReportPDFProps) {
     { id: 'yantra_colour',   show: (rt === 'yantra_colour' || isFull) && !!(d.yantra?.primaryYantra || d.yantraColour?.primaryYantra), node: <YantraPages data={d} number="I" /> },
     { id: 'mantra_chanting', show: (['mantra_chanting','mantra_writing'].includes(rt) || isFull) && !!(d.mantras?.chanting || d.mantra?.chanting || d.mantraLekhnan), node: <MantraPages data={d} number="I" /> },
     { id: 'psychology',      show: (rt === 'psychology' || isFull) && !!(d.psychology?.moonPersonalityType), node: <PsychologyPages data={d} number="I" /> },
-    { id: 'astro_vastu',     show: (rt === 'astro_vastu' || isFull) && !!(d.vastu?.homeDirection || d.vastuAnalysis?.homeDirection), node: <VastuPages data={d} number="I" /> },
+    { id: 'astro_vastu',     show: (rt === 'astro_vastu' || isFull) && !!(d.vastu?.entrance || d.vastuAnalysis?.entrance || d.vastu?.remedies?.length || d.vastuAnalysis?.remedies?.length), node: <VastuPages data={d} number="I" /> },
     { id: 'dmit',            show: (rt === 'dmit' || isFull) && !!(d.dmit?.learningStyle), node: <DmitPages data={d} canvasImg={canvases.dmit} number="I" /> },
     { id: 'colour_therapy',  show: (rt === 'colour_therapy' || isFull) && !!(d.colourTherapy?.healingColors || d.colourTherapy?.chromotherapy), node: <ColourTherapyPages data={d} number="I" /> },
     { id: 'annual_prediction', show: isFull && !!d.annualPrediction, node: <AnnualPredictionPages data={d} number="I" /> },

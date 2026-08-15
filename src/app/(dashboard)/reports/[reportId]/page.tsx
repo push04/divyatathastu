@@ -1001,6 +1001,35 @@ function VastuSection({ data }: { data: any }) {
           )}
         </div>
 
+        {/* The seeker's own submitted home and sleeping directions, graded
+            against their chart. This is the most personal part of the section
+            and was being computed but never shown. */}
+        {data.yourHome && (
+          <div className="space-y-2">
+            {data.yourHome.homeFacingVerdict && (
+              <div className="bg-[var(--warm-sand)] rounded-xl p-3">
+                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
+                  Your {data.yourHome.reportedHomeDirection}-facing home
+                </p>
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{data.yourHome.homeFacingVerdict}</p>
+              </div>
+            )}
+            {data.yourHome.sleepDirectionVerdict && (
+              <div className="bg-[var(--warm-sand)] rounded-xl p-3">
+                <p className="text-xs font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">
+                  Sleeping head-to-{data.yourHome.reportedSleepDirection}
+                </p>
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">{data.yourHome.sleepDirectionVerdict}</p>
+              </div>
+            )}
+            {data.yourHome.favourableFacingsForYou?.length > 0 && (
+              <p className="text-sm text-[var(--text-muted)]">
+                Favourable facings for your chart: {data.yourHome.favourableFacingsForYou.join(', ')}
+              </p>
+            )}
+          </div>
+        )}
+
         <div className="space-y-2">
           {[
             { label: 'Entrance', icon: 'door_front', value: data.entrance },
@@ -2141,7 +2170,12 @@ const [lang, setLang] = useState<'en' | 'hi'>('en')
       id: 'astro_vastu', number: 'VIII', title: 'Astro Vastu', sanskrit: 'ज्योतिष वास्तु',
       leftPanel: <VastuCompassPanel size={165} />,
       content: <VastuSection data={d.vastu || d.vastuAnalysis} />,
-      show: (report.report_type === 'astro_vastu' || isFull) && !!(d.vastu?.homeDirection || d.vastuAnalysis?.homeDirection),
+      // `homeDirection` has never been a key the engine emits, so this guard was
+      // always false and the whole Astro Vastu chapter never rendered - on the
+      // standalone report as well as the full one.
+      show: (report.report_type === 'astro_vastu' || isFull)
+        && !!(d.vastu?.entrance || d.vastuAnalysis?.entrance
+          || d.vastu?.remedies?.length || d.vastuAnalysis?.remedies?.length),
     },
     {
       id: 'dmit', number: 'IX', title: 'DMIT Intelligence', sanskrit: 'बुद्धिमत्ता प्रोफाइल',

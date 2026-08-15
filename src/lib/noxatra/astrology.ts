@@ -78,6 +78,10 @@ export interface PlanetPosition {
   nakshatraNum: number
   pada: number
   retrograde: boolean
+  /** exalted | debilitated | own | friend | neutral - classical graha dignity */
+  dignity: string
+  /** true when within the traditional astanga orb of the Sun */
+  combust: boolean
   house: number
 }
 
@@ -96,6 +100,10 @@ export interface KundliData {
   birthLat: number
   birthLng: number
   birthDate: string
+  /** Lahiri ayanamsa in degrees used to cast this chart */
+  ayanamsa: number
+  /** Vimshottari lord of the janma nakshatra */
+  nakshatraLord: string
 }
 
 const RASHIS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces']
@@ -112,6 +120,46 @@ const NAKSHATRA_LORDS = ['Ketu','Venus','Sun','Moon','Mars','Rahu','Jupiter','Sa
 
 const DASHA_YEARS: Record<string, number> = {
   Ketu: 7, Venus: 20, Sun: 6, Moon: 10, Mars: 7, Rahu: 18, Jupiter: 16, Saturn: 19, Mercury: 17
+}
+
+// Classical exaltation degrees (sidereal). Debilitation is the opposite sign.
+const EXALTATION: Record<string, { sign: number; deg: number }> = {
+  Sun: { sign: 0, deg: 10 },      // Aries 10
+  Moon: { sign: 1, deg: 3 },      // Taurus 3
+  Mars: { sign: 9, deg: 28 },     // Capricorn 28
+  Mercury: { sign: 5, deg: 15 },  // Virgo 15
+  Jupiter: { sign: 3, deg: 5 },   // Cancer 5
+  Venus: { sign: 11, deg: 27 },   // Pisces 27
+  Saturn: { sign: 6, deg: 20 },   // Libra 20
+  Rahu: { sign: 1, deg: 20 },     // Taurus - per the more common reckoning
+  Ketu: { sign: 7, deg: 20 },     // Scorpio
+}
+
+const OWN_SIGNS: Record<string, number[]> = {
+  Sun: [4], Moon: [3], Mars: [0, 7], Mercury: [2, 5],
+  Jupiter: [8, 11], Venus: [1, 6], Saturn: [9, 10],
+  Rahu: [10], Ketu: [7],
+}
+
+// Astanga (combustion) orbs in degrees from the Sun, per Bṛhat Parāśara.
+const COMBUST_ORB: Record<string, number> = {
+  Moon: 12, Mars: 17, Mercury: 14, Jupiter: 11, Venus: 10, Saturn: 15,
+}
+
+function getDignity(name: string, rashiNum: number): string {
+  const ex = EXALTATION[name]
+  if (ex) {
+    if (rashiNum === ex.sign) return 'exalted'
+    if (rashiNum === (ex.sign + 6) % 12) return 'debilitated'
+  }
+  if (OWN_SIGNS[name]?.includes(rashiNum)) return 'own'
+  return 'neutral'
+}
+
+/** Angular separation from the Sun, normalised to 0-180. */
+function sepFromSun(lon: number, sunLon: number): number {
+  const d = Math.abs(((lon - sunLon) % 360 + 360) % 360)
+  return d > 180 ? 360 - d : d
 }
 
 /** Rahu Kaal for each weekday at a specific place, from that place's real
@@ -222,11 +270,30 @@ export function calculateKundli(birth: BirthData): KundliData {
         nakshatraNum,
         pada,
         retrograde: isRetrograde(body, astroDate, observer),
+        dignity: getDignity(body.toString().replace('Body.', ''), rashiNum),
+        combust: false,   // filled in below, once the Sun's longitude is known
+        absLon: lon,      // scratch, deleted before return
         house: 0, // set after ascendant calc
-      })
+      } as PlanetPosition & { absLon: number })
     } catch {
       // body calc failed, skip
     }
+  }
+
+  // Combustion: a graha too close to the Sun is "burnt" and loses its power to
+  // give results. Mercury and Venus take a tighter orb when retrograde.
+  {
+    const sunEntry = planets.find(pl => pl.name === 'Sun') as (PlanetPosition & { absLon?: number }) | undefined
+    const sunLon = sunEntry?.absLon
+    if (typeof sunLon === 'number') {
+      for (const pl of planets as Array<PlanetPosition & { absLon?: number }>) {
+        const orb = COMBUST_ORB[pl.name]
+        if (!orb || typeof pl.absLon !== 'number') continue
+        const tightened = (pl.name === 'Mercury' || pl.name === 'Venus') && pl.retrograde ? orb - 2 : orb
+        pl.combust = sepFromSun(pl.absLon, sunLon) <= tightened
+      }
+    }
+    for (const pl of planets as Array<PlanetPosition & { absLon?: number }>) delete pl.absLon
   }
 
   // Ascendant (Lagna)
@@ -263,12 +330,14 @@ export function calculateKundli(birth: BirthData): KundliData {
       name: 'Rahu', rashi: RASHIS[rahuRashi], rashiNum: rahuRashi,
       degree: rahuLon % 30, nakshatra: NAKSHATRAS[Math.floor(rahuLon / (360/27))],
       nakshatraNum: Math.floor(rahuLon / (360/27)), pada: padaOf(rahuLon), retrograde: true,
+      dignity: getDignity('Rahu', rahuRashi), combust: false,
       house: ((rahuRashi - ascRashiNum + 12) % 12) + 1
     })
     planets.push({
       name: 'Ketu', rashi: RASHIS[ketuRashi], rashiNum: ketuRashi,
       degree: ketuLon % 30, nakshatra: NAKSHATRAS[Math.floor(ketuLon / (360/27))],
       nakshatraNum: Math.floor(ketuLon / (360/27)), pada: padaOf(ketuLon), retrograde: true,
+      dignity: getDignity('Ketu', ketuRashi), combust: false,
       house: ((ketuRashi - ascRashiNum + 12) % 12) + 1
     })
   }
@@ -299,6 +368,8 @@ export function calculateKundli(birth: BirthData): KundliData {
     birthLat: birth.lat,
     birthLng: birth.lng,
     birthDate: birth.date,
+    ayanamsa: Math.round(ayanamsa * 10000) / 10000,
+    nakshatraLord: dashaLord,
   }
 }
 

@@ -280,6 +280,25 @@ export async function generateReportDataSafe(
 
 // Pure date-math fallback - used when astronomy-engine fails (edge dates, memory constraints, etc.)
 // Positions are approximate (~1-2° accuracy), sufficient for all non-astronomy report types.
+// Mirrors the exaltation/own-sign table in astrology.ts. Kept local so the
+// fallback stays self-contained pure date-math with no ephemeris dependency.
+const FALLBACK_DIGNITY = (name: string, rashiNum: number): string => {
+  const EX: Record<string, number> = {
+    Sun: 0, Moon: 1, Mars: 9, Mercury: 5, Jupiter: 3, Venus: 11, Saturn: 6, Rahu: 1, Ketu: 7,
+  }
+  const OWN: Record<string, number[]> = {
+    Sun: [4], Moon: [3], Mars: [0, 7], Mercury: [2, 5],
+    Jupiter: [8, 11], Venus: [1, 6], Saturn: [9, 10], Rahu: [10], Ketu: [7],
+  }
+  const ex = EX[name]
+  if (ex !== undefined) {
+    if (rashiNum === ex) return 'exalted'
+    if (rashiNum === (ex + 6) % 12) return 'debilitated'
+  }
+  if (OWN[name]?.includes(rashiNum)) return 'own'
+  return 'neutral'
+}
+
 function getFallbackKundli(dob: string): ReturnType<typeof calculateKundli> {
   const RASHIS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces']
   const NAKSHATRAS = ['Ashwini','Bharani','Krittika','Rohini','Mrigashira','Ardra','Punarvasu','Pushya','Ashlesha',
@@ -344,6 +363,10 @@ function getFallbackKundli(dob: string): ReturnType<typeof calculateKundli> {
       nakshatra: NAKSHATRAS[nakNum], nakshatraNum: nakNum,
       pada: Math.floor((lon % (360/27)) / (360/108)) + 1,
       retrograde: retro,
+      // The fallback has no reliable Sun-distance, so combustion is not claimed.
+      // Dignity is sign-based and is safe to derive here.
+      dignity: FALLBACK_DIGNITY(name, rashiNum),
+      combust: false,
       house: ((rashiNum - sunRashiNum + 12) % 12) + 1,
     }
   }
@@ -373,6 +396,8 @@ function getFallbackKundli(dob: string): ReturnType<typeof calculateKundli> {
     // fixed table instead of printing confident times for a place we never had.
     birthLat: NaN,
     birthLng: NaN,
+    ayanamsa: 0,
+    nakshatraLord: dashaLord,
     birthDate: dob,
   }
 }

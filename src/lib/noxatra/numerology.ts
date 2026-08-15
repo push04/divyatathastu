@@ -28,6 +28,12 @@ function nameValue(name: string, map: Record<string, number>): number {
 }
 
 // Component method per services.md - correctly preserves master numbers
+/** Unreduced sum of all digits in the date of birth - the karmic-debt test is
+ *  made against this total, before it is reduced to a single digit. */
+function calculateLifePathRaw(dob: string): number {
+  return dob.replace(/[^0-9]/g, '').split('').reduce((a, b) => a + parseInt(b, 10), 0)
+}
+
 function calculateLifePath(dob: string): number {
   const [year, month, day] = dob.split('-').map(Number)
   const dayReduced   = reduce(day, true)
@@ -78,11 +84,41 @@ export function calculateNumerology(fullName: string, dob: string) {
 
   const maturity = reduce(lifePathNumber + destiny)
 
+  // Karmic debt is a distinct concept from the karmic-lesson (missing number)
+  // list: it is the appearance of 13, 14, 16 or 19 as an *unreduced* core total.
+  // The PDF has had a slot for it since launch with nothing to fill it.
+  const rawTotals = [
+    calculateLifePathRaw(dob),
+    nameValue(nameUp, PYTHAGOREAN),
+    nameValue(nameUp.replace(CONSONANTS_RE, ''), PYTHAGOREAN),
+    nameValue(nameUp.replace(VOWELS_RE, ''), PYTHAGOREAN),
+    day,
+  ]
+  const DEBT = [13, 14, 16, 19]
+  const karmicDebt = [...new Set(rawTotals.filter(t => DEBT.includes(t)))].sort((a, b) => a - b)
+
+  // Hidden passion: the digit value occurring most often across the name.
+  const hiddenPassionNumber = (() => {
+    const freq = new Map<number, number>()
+    for (const ch of nameUp.replace(/[^A-Z]/g, '')) {
+      const v = PYTHAGOREAN[ch]
+      if (!v) continue
+      freq.set(v, (freq.get(v) || 0) + 1)
+    }
+    let best = 0, bestCount = -1
+    for (const [v, c] of [...freq.entries()].sort((a, b) => a[0] - b[0])) {
+      if (c > bestCount) { best = v; bestCount = c }
+    }
+    return best || null
+  })()
+
   const luckyNumbers = [...new Set(
     [lifePathNumber, destiny, soulUrge].map(n => [n, n + 9]).flat().filter(n => n <= 36)
   )].slice(0, 6)
 
   return {
+    karmicDebt,
+    hiddenPassionNumber,
     lifePathNumber,
     destinyNumber:     destiny,
     soulUrgeNumber:    soulUrge,
@@ -122,8 +158,10 @@ function getKarmaNumbers(fullName: string): number[] {
     const v = PYTHAGOREAN[ch]
     if (v) counts[v] = (counts[v] || 0) + 1
   })
-  const missing = [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(n => !counts[n])
-  return missing.slice(0, 3)
+  // Every absent number is a karmic lesson; the old slice(0, 3) silently dropped
+  // any beyond the third, so a name missing four numbers was under-reported.
+  // Renderers truncate for layout - the data layer should not.
+  return [1, 2, 3, 4, 5, 6, 7, 8, 9].filter(n => !counts[n])
 }
 
 function interpretPersonalYear(n: number): string {
