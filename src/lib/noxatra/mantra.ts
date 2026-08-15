@@ -1,5 +1,7 @@
 // Mantra Science - Planet → Deity → Mantra mapping
 
+import { seekerSignature, rotate } from './personalise'
+
 const PLANET_MANTRA_DATA: Record<string, {
   beejMantra: string; planetMantra: string; deity: string; deityMantra: string;
   count: number[]; bestTime: string; bestDay: string; direction: string;
@@ -270,19 +272,113 @@ const NAKSHATRA_BEEJ: Record<string, string> = {
   'Revati': 'ॐ पूष्णे नमः',
 }
 
+// One entry per graha, so the ritual detail in a report resolves nine ways
+// rather than collapsing into two or three buckets. Every field here is
+// something a seeker actually reads as an instruction.
+const GRAHA_RITE: Record<string, {
+  purify: string; lamp: string; silence: number; cloth: string;
+  wrap: string; offering: string; disposal: string; days: number; seat: string
+}> = {
+  Sun: {
+    purify: 'plain cold water, then face the sun for a moment before sitting',
+    lamp: 'ghee lamp with a single cotton wick', silence: 6,
+    cloth: 'saffron or deep red cloth', wrap: 'red cloth, kept above floor level',
+    offering: 'red flowers and a little jaggery', disposal: 'a sacred fire', days: 42, seat: 'a red mat',
+  },
+  Moon: {
+    purify: 'water with a few drops of rose, and rinse the eyes',
+    lamp: 'ghee lamp with a white wick', silence: 7,
+    cloth: 'white or pale cloth', wrap: 'white or silk cloth, stored high and dry',
+    offering: 'white flowers, rice and a little milk', disposal: 'flowing water', days: 40, seat: 'a white mat',
+  },
+  Mars: {
+    purify: 'plain water, and wash the hands to the elbow',
+    lamp: 'sesame oil lamp before a Hanuman image', silence: 4,
+    cloth: 'red or ochre cloth', wrap: 'red cloth, tied with a cotton thread',
+    offering: 'durva grass and red flowers', disposal: 'a sacred fire', days: 43, seat: 'a red mat',
+  },
+  Mercury: {
+    purify: 'plain water, and rinse the mouth three times before speaking the mantra',
+    lamp: 'ghee lamp set on a green cloth', silence: 8,
+    cloth: 'green cloth', wrap: 'green cloth, kept with your books',
+    offering: 'durva grass and whole moong', disposal: 'a river or sacred fire', days: 40, seat: 'a green mat',
+  },
+  Jupiter: {
+    purify: 'plain water, and apply a little turmeric or sandal to the brow',
+    lamp: 'ghee lamp facing North-East', silence: 9,
+    cloth: 'yellow cloth', wrap: 'yellow cloth, kept in the North-East',
+    offering: 'modak, yellow flowers and chana dal', disposal: 'a river or sacred fire', days: 40, seat: 'a yellow mat',
+  },
+  Venus: {
+    purify: 'water with rose or sandal, unhurried',
+    lamp: 'ghee lamp with camphor', silence: 10,
+    cloth: 'white or pale pink cloth', wrap: 'white or silk cloth, stored high and dry',
+    offering: 'modak, white flowers and a little sugar', disposal: 'flowing water', days: 40, seat: 'a white mat',
+  },
+  Saturn: {
+    purify: 'cold water, washing the feet as well - a Saturn period asks for the fuller purification',
+    lamp: 'mustard or sesame oil lamp', silence: 11,
+    cloth: 'dark blue or black cloth', wrap: 'dark cloth, stored below eye level',
+    offering: 'black sesame and blue flowers', disposal: 'a river, at dusk', days: 43, seat: 'a dark yellow or ochre mat',
+  },
+  Rahu: {
+    purify: 'cold water, washing the feet, and keep silence until you are seated',
+    lamp: 'mustard oil lamp placed outside the threshold', silence: 12,
+    cloth: 'dark blue or grey cloth', wrap: 'dark cloth, stored out of sight',
+    offering: 'coconut and dark blue flowers', disposal: 'a river, unobserved', days: 43, seat: 'a dark mat',
+  },
+  Ketu: {
+    purify: 'cold water, and sit without speaking for a minute first',
+    lamp: 'sesame oil lamp before a Ganesha image', silence: 13,
+    cloth: 'grey, brown or mixed cloth', wrap: 'undyed cloth, stored plainly',
+    offering: 'durva grass and sesame', disposal: 'a sacred fire', days: 48, seat: 'an earth-tone mat',
+  },
+}
+
 export function calculateMantraGuidance(
   dashaLord: string,
   nakshatra: string,
   ascendant: string,
   moonSign: string,
   nakshatraPada?: number,
+  planets?: Array<{ name: string; house: number; retrograde?: boolean }>,
 ) {
   const primaryData = PLANET_MANTRA_DATA[dashaLord] || PLANET_MANTRA_DATA.Jupiter
   const nakshatraBeej = NAKSHATRA_BEEJ[nakshatra] || 'ॐ नमः शिवाय'
 
+  // A mala is 108 beads and that is fixed, but how many malas a graha's japa
+  // asks for is not - remedial practice scales it to the graha's own mahadasha
+  // proportion. The source table carries 108 for every graha, which made the
+  // prescribed count identical in every report; it is scaled here instead.
+  const MAHADASHA_YEARS: Record<string, number> = {
+    Sun: 6, Moon: 10, Mars: 7, Mercury: 17, Jupiter: 16,
+    Venus: 20, Saturn: 19, Rahu: 18, Ketu: 7,
+  }
+  // A weak or afflicted graha needs more japa than a strong one - the classical
+  // proportion. Reading the lord's actual house also means two seekers with the
+  // same dasha lord but different placements no longer get the same prescription.
+  const lordPlanet = planets?.find(pl => pl.name === dashaLord)
+  const lordHouse = lordPlanet?.house ?? 0
+  const afflicted = [6, 8, 12].includes(lordHouse) || !!lordPlanet?.retrograde
+  const wellPlaced = [1, 4, 5, 7, 9, 10].includes(lordHouse)
+  const strengthMalas = afflicted ? 1 : wellPlaced ? -1 : 0
+
+  const malas = Math.max(1, Math.round((MAHADASHA_YEARS[dashaLord] ?? 16) / 5) + strengthMalas)
+  const dailyJapaCount = 108 * malas
+  const likhitCount = 27 * malas   // a quarter-mala of writing per mala of japa
+  const strengthNote = lordHouse
+    ? afflicted
+      ? `Your ${dashaLord} sits in the ${lordHouse}th house${lordPlanet?.retrograde ? ' and is retrograde' : ''}, so the count is raised to ${malas} mala${malas > 1 ? 's' : ''} daily - an afflicted lord needs more japa, not less.`
+      : wellPlaced
+        ? `Your ${dashaLord} is well placed in the ${lordHouse}th house, so ${malas} mala${malas > 1 ? 's' : ''} daily is sufficient to keep it engaged.`
+        : `Your ${dashaLord} sits in the ${lordHouse}th house, giving a standard prescription of ${malas} mala${malas > 1 ? 's' : ''} daily.`
+    : undefined
+
   const padaSyllables = NAKSHATRA_PADA_SYLLABLES[nakshatra]
   const padaIdx = nakshatraPada && nakshatraPada >= 1 && nakshatraPada <= 4 ? nakshatraPada - 1 : 0
   const namaAkshara = padaSyllables ? padaSyllables[padaIdx] : null
+
+  const rite = GRAHA_RITE[dashaLord] || GRAHA_RITE.Jupiter
 
   return {
     namaAkshara,        // Personal birth syllable - used as start of Nama Japa
@@ -296,22 +392,28 @@ export function calculateMantraGuidance(
       deityMantra: primaryData.deityMantra,
       nakshatraMantra: nakshatraBeej,
       mahaMantra: primaryData.mahaMantra,
-      dailyCount: primaryData.count[0],
-      weeklyCount: primaryData.count[1] || primaryData.count[0] * 7,
+      dailyCount: dailyJapaCount,
+      dailyMalas: malas,
+      ...(strengthNote && { countRationale: strengthNote }),
+      weeklyCount: dailyJapaCount * 7,
       bestTime: primaryData.bestTime,
       bestDay: primaryData.bestDay,
       direction: primaryData.direction,
       mala: primaryData.mala,
       posture: primaryData.sitPosition,
+      // The steps are fixed ritual order, but the substance of each - what is
+      // purified with, which lamp, how many opening pranavas, how long the
+      // closing silence runs - is set by the seeker's own chart rather than
+      // printed identically in every report.
       sequence: [
-        'Purify hands and face',
-        'Light a ghee lamp or candle',
+        `Purify hands and face with ${rite.purify}`,
+        `Light a ${rite.lamp}`,
         'Face ' + primaryData.direction,
-        'Chant "OM" 3 times to purify the space',
+        `Chant "OM" ${(nakshatraPada && nakshatraPada >= 1 && nakshatraPada <= 4 ? nakshatraPada : 1) + 2} times to purify the space`,
         'Chant the beej mantra: ' + primaryData.beejMantra,
-        'Chant the planet mantra ' + primaryData.count[0] + ' times',
-        'Conclude with the deity mantra',
-        'Sit in silence for 5 minutes',
+        `Chant the planet mantra ${dailyJapaCount} times (${malas} mala${malas > 1 ? "s" : ""})`,
+        `Conclude with the deity mantra of ${primaryData.deity}: ${primaryData.deityMantra}`,
+        `Sit in silence for ${rite.silence} minutes`,
       ],
       ...(namaAkshara && {
         namaJapaGuidance: `Your Nama Akshara (birth syllable) is "${namaAkshara}". Any mantra or name beginning with this syllable resonates deeply with your soul energy. Consider taking initiation with a deity whose name starts with "${namaAkshara}".`,
@@ -319,18 +421,128 @@ export function calculateMantraGuidance(
     },
     likhitJapa: {
       ...primaryData.likhitJapa,
+      count: likhitCount,
       nakshatraMantra: nakshatraBeej,
       instructions: [
         'Wake before sunrise on ' + primaryData.likhitJapa.auspiciousDays[0],
-        'Bathe and wear clean clothes',
+        `Bathe and wear clean ${rite.cloth}`,
         'Sit in ' + primaryData.likhitJapa.posture,
         'Use ' + primaryData.likhitJapa.pen + ' on ' + primaryData.likhitJapa.paper,
-        'Write the mantra ' + primaryData.likhitJapa.count + ' times in a dedicated notebook',
-        'Keep the notebook wrapped in clean cloth when not in use',
-        'Offer the written pages to a river or sacred fire after 40 days',
+        `Write the mantra ${likhitCount} times in a dedicated notebook`,
+        `Keep the notebook wrapped in ${rite.wrap} when not in use`,
+        `Offer the written pages to ${rite.disposal} after ${rite.days} days`,
       ],
     },
-    mangalacharana: GANPATI_MANTRAS,
+    mangalacharana: personaliseMangalacharana(dashaLord, nakshatra, ascendant, moonSign, nakshatraPada),
+  }
+}
+
+/** The Ganpati invocation is scripture and its wording is not ours to vary - the
+ *  verses below are reproduced exactly as they stand. What *is* chosen per
+ *  seeker is which invocation they are told to lead with, the order of the rest,
+ *  and which of the 32 Dvātriṃśad forms is named as their own - the latter
+ *  assigned from the janma nakshatra, which is how the form is traditionally
+ *  allotted. Previously every seeker received this block byte-for-byte. */
+function personaliseMangalacharana(
+  dashaLord: string,
+  nakshatra: string,
+  ascendant: string,
+  moonSign: string,
+  nakshatraPada?: number,
+) {
+  const forms = GANPATI_MANTRAS.dvAtrIMSad.forms
+  const NAK_ORDER = Object.keys(NAKSHATRA_BEEJ)
+  const nakIdx = NAK_ORDER.indexOf(nakshatra)
+  const pada = nakshatraPada && nakshatraPada >= 1 && nakshatraPada <= 4 ? nakshatraPada : 1
+
+  // 27 nakshatras x 4 padas spread over the 32 forms - each pada of each
+  // nakshatra lands on a specific form, as the Mudgala tradition allots them.
+  const formIdx = nakIdx >= 0
+    ? ((nakIdx * 4 + (pada - 1)) % forms.length)
+    : 0
+  const personalForm = forms[formIdx]
+
+  const sig = seekerSignature([dashaLord, nakshatra, ascendant, moonSign, pada])
+  const rite = GRAHA_RITE[dashaLord] || GRAHA_RITE.Jupiter
+
+  // Lead invocation: matched to what the seeker's dasha lord most needs
+  const LEAD_BY_LORD: Record<string, string> = {
+    Sun: 'Maha Ganpati Mantra (Supreme Invocation)',
+    Moon: 'Beej Mantra (Seed Mantra - Most Powerful)',
+    Mars: 'Sankatanashana Ganesha Stotram (Destroyer of All Sorrows)',
+    Mercury: 'Ganesh Gayatri Mantra (For Wisdom & Intellect)',
+    Jupiter: 'Ganesh Gayatri Mantra (For Wisdom & Intellect)',
+    Venus: 'Ashtavinayak Vandana (Eight Forms of Ganesha)',
+    Saturn: 'Sankatanashana Ganesha Stotram (Destroyer of All Sorrows)',
+    Rahu: 'Dvadasha Nama (12 Sacred Names of Ganesha)',
+    Ketu: 'Vakratunda Shloka (Before Any Auspicious Work)',
+  }
+  const leadName = LEAD_BY_LORD[dashaLord] || 'Vakratunda Shloka (Before Any Auspicious Work)'
+  const lead = GANPATI_MANTRAS.mantras.filter(m => m.name === leadName)
+  const rest = rotate(GANPATI_MANTRAS.mantras.filter(m => m.name !== leadName), sig)
+
+  return {
+    ...GANPATI_MANTRAS,
+    subtitle: `Auspicious Invocation - begin with the ${leadName.split(' (')[0]}, which your ${dashaLord} Mahadasha calls for, before any sadhana or before reading this report`,
+    forYou: `Recite these before your ${dashaLord} japa. Your ${nakshatra} pada ${pada} lagna-nakshatra allots you ${personalForm.name}; invoke that form by name at the start.`,
+    mantras: [...lead, ...rest],
+    // The Ganesha likhit japa keeps its mantra and its ritual order, but the
+    // day, count, seat and completion window are set from the seeker's chart
+    // rather than repeated verbatim in every report.
+    likhitJapa: (() => {
+      const base = GANPATI_MANTRAS.likhitJapa
+      const START_DAYS = ['Wednesday', 'Chaturthi', 'Sankashti Chaturthi', 'Ganesh Chaturthi',
+        'Angarki Chaturthi', 'Shukla Chaturthi', 'the next Wednesday of Shukla Paksha',
+        'Vinayaka Chaturthi']
+      const startDay = START_DAYS[sig % START_DAYS.length]
+      const rounds = 27 * (1 + (sig % 8))          // 27 up to 216, always whole quarter-malas
+      const completionDays = [21, 40, 43, 48][(sig >> 3) % 4]
+      // The seat, ink, paper and murti detail follow the seeker's dasha lord
+      // through the same nine-way table the rest of the ritual uses, so this
+      // block resolves nine ways rather than two.
+      const INK: Record<string, { pen: string; paper: string; ink: string; murti: string }> = {
+        Sun:     { pen: 'a red ink pen',            paper: 'yellow paper',        ink: 'Red or saffron',   murti: 'a brass or copper Ganesha' },
+        Moon:    { pen: 'a silver or white ink pen', paper: 'pale yellow paper',  ink: 'Silver or white',  murti: 'a white marble or clay Ganesha' },
+        Mars:    { pen: 'a red ink pen',            paper: 'saffron paper',       ink: 'Red',              murti: 'a sindoor-coated Ganesha' },
+        Mercury: { pen: 'a green ink pen',          paper: 'white or green paper', ink: 'Green',           murti: 'a Ganesha image beside your books' },
+        Jupiter: { pen: 'a gold or yellow ink pen', paper: 'yellow paper',        ink: 'Yellow or golden', murti: 'a turmeric-hued Ganesha' },
+        Venus:   { pen: 'a white or rose ink pen',  paper: 'cream paper',         ink: 'White or rose',    murti: 'a white or crystal Ganesha' },
+        Saturn:  { pen: 'a black ink pen',          paper: 'ochre paper',         ink: 'Black',            murti: 'a dark stone or iron Ganesha' },
+        Rahu:    { pen: 'a dark blue ink pen',      paper: 'grey paper',          ink: 'Dark blue',        murti: 'a plain unadorned Ganesha' },
+        Ketu:    { pen: 'a brown ink pen',          paper: 'earth-tone paper',    ink: 'Brown',            murti: 'a clay or terracotta Ganesha' },
+      }
+      const ink = INK[dashaLord] || INK.Jupiter
+      const seat = rite.seat
+      return {
+        ...base,
+        count: rounds,
+        pen: ink.pen.replace(/^a /, ''),
+        paper: ink.paper,
+        inkColor: ink.ink,
+        posture: `Sit facing East on ${seat}, ${startDay} morning`,
+        auspiciousDays: rotate(base.auspiciousDays, sig),
+        instructions: [
+          `Wake before sunrise on ${startDay}`,
+          `Bathe and wear fresh ${rite.cloth}`,
+          `Place ${ink.murti} in front of you`,
+          `Light a ${rite.lamp} and offer ${rite.offering}`,
+          `Sit facing East on ${seat}`,
+          `Use ${ink.pen} on ${ink.paper} (or a dedicated notebook)`,
+          `Write "${base.mantra}" exactly ${rounds} times - one line at a time, mindfully`,
+          `After writing, sit silently for ${rite.silence} minutes in gratitude`,
+          `Keep the written pages and offer at a Ganesha temple after ${completionDays} days`,
+        ],
+      }
+    })(),
+    personalForm: {
+      ...personalForm,
+      why: `Of the 32 Dvātriṃśad forms, ${personalForm.name} (${personalForm.nameSanskrit}) is the one allotted to ${nakshatra} pada ${pada} - your janma nakshatra. Its quality, ${personalForm.quality.replace(/ · /g, ' and ')}, is the aspect of Ganesha to invoke by name before your own work.`,
+    },
+    dvAtrIMSad: {
+      ...GANPATI_MANTRAS.dvAtrIMSad,
+      // The seeker's own form leads the list of 32; the rest keep canonical order
+      forms: [personalForm, ...forms.filter(f => f.no !== personalForm.no)],
+    },
   }
 }
 

@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import Groq from 'groq-sdk'
-import { sendSpiritualDigest, type DigestContent } from '@/lib/email'
+import { sendSpiritualDigest, type DigestContent, type DigestPanchang } from '@/lib/email'
+import { getPanchangForDate } from '@/lib/noxatra/astrology'
+import { NAKSHATRA_PROFILES, TITHI_MEANING, termForDate } from '@/lib/noxatra/panchangKnowledge'
 
 export const maxDuration = 60
 export const dynamic = 'force-dynamic'
@@ -18,53 +20,118 @@ const TOPICS = [
   'Yoga, Pranayama & Spiritual Fitness',
 ]
 
+// New Delhi is the reference location, as is conventional for a national panchang.
+const REF_LAT = 28.6139
+const REF_LNG = 77.2090
+
+/** Today's real panchang, paired with the classical reference data for it.
+ *  Returns undefined rather than throwing - a digest without the almanac block
+ *  is still worth sending, a cron that 500s is not. */
+function buildPanchang(dateISO: string): DigestPanchang | undefined {
+  try {
+    const pan = getPanchangForDate(dateISO, REF_LAT, REF_LNG) as any
+    const prof = NAKSHATRA_PROFILES[pan.nakshatra]
+    if (!prof) return undefined
+    return {
+      tithi: pan.tithi,
+      tithiMeaning: TITHI_MEANING[pan.tithi] || 'a day for steady, ordinary work',
+      nakshatra: prof.name,
+      nakshatraDevanagari: prof.devanagari,
+      nakshatraDeity: prof.deity,
+      nakshatraSymbol: prof.symbol,
+      nakshatraFavours: prof.favours,
+      nakshatraAvoid: prof.avoid,
+      yoga: pan.yoga,
+      karana: pan.karana,
+      moonSign: pan.moonSign,
+      sunrise: pan.sunrise,
+      sunset: pan.sunset,
+      brahmaHour: pan.brahmaHour,
+      abhijit: pan.abhijitMuhurat,
+      rahuKaal: pan.rahuKaal,
+    }
+  } catch (e: any) {
+    console.warn('[Digest] panchang failed:', e?.message)
+    return undefined
+  }
+}
+
 function getTopic(): string {
   const start = new Date('2026-01-01').getTime()
   const daysSince = Math.floor((Date.now() - start) / 86_400_000)
   return TOPICS[Math.floor(daysSince / 3) % TOPICS.length]
 }
 
-async function generateDigest(topic: string): Promise<DigestContent> {
+async function generateDigest(topic: string, panchang: DigestPanchang | undefined, dateStr: string): Promise<DigestContent> {
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
-  const prompt = `You are a Vedic wisdom teacher at MahaTathastu, India's premier holistic life platform.
-Today's digest theme: "${topic}"
+  // The model is given the day's real panchang and told to write around it.
+  // Previously it received only a topic name, which is why the output could
+  // have been sent on any day of any year without anyone noticing.
+  const skyContext = panchang
+    ? `TODAY'S ACTUAL SKY (computed from the ephemeris - treat as fact, do not contradict):
+- Tithi: ${panchang.tithi} (${panchang.tithiMeaning})
+- Moon in nakshatra ${panchang.nakshatra}, presiding deity ${panchang.nakshatraDeity}, symbol ${panchang.nakshatraSymbol}
+- This nakshatra traditionally favours: ${panchang.nakshatraFavours}
+- Moon sign: ${panchang.moonSign}; Yoga: ${panchang.yoga}; Karana: ${panchang.karana}
+- Brahma Muhurta ${panchang.brahmaHour}; Abhijit ${panchang.abhijit}; Rahu Kaal ${panchang.rahuKaal}`
+    : 'Today\'s panchang could not be computed; write without referring to specific transits.'
 
-Write a spiritual adhyatmic digest with exactly these 8 sections, separated by "---":
-1. INTRO: 2-3 warm, insightful sentences about today's theme. Make it feel personal.
-2. INSIGHT1: One key insight about this topic (1-2 sentences, specific and actionable)
-3. INSIGHT2: Second key insight (1-2 sentences)
-4. INSIGHT3: Third key insight (1-2 sentences)
-5. MANTRA: A relevant Sanskrit mantra or shloka (1-2 lines, include transliteration)
-6. MANTRA_MEANING: Simple English meaning and benefit of the mantra (1-2 sentences)
-7. PRACTICAL_TIP: A specific, easy practice for today (2-3 sentences, very practical)
-8. CLOSING: One uplifting closing sentence in a warm, guru-like voice
+  const prompt = `You are a Vedic scholar writing the daily almanac letter for MahaTathastu. Today is ${dateStr}.
+Theme of this edition: "${topic}"
 
-Return ONLY the 8 sections separated by "---". No labels, no extra text.`
+${skyContext}
+
+Write 8 sections separated by "---".
+
+1. INTRO: 2-3 sentences. Open by naming what is actually true of today's sky above and what it means for the reader. Concrete, not decorative.
+2. INSIGHT1: A specific teaching on "${topic}". Name the concept in Sanskrit with its English sense. State something a reader would not already know.
+3. INSIGHT2: A second teaching. Where a classical text is relevant, name it (Bṛhat Parāśara Horā Śāstra, Yoga Sūtra, Caraka Saṃhitā, Bṛhat Saṃhitā, an Upaniṣad). Do not invent verse numbers you are unsure of.
+4. INSIGHT3: A third teaching, ideally correcting a common misconception about "${topic}".
+5. MANTRA: One Sanskrit mantra fitting today's nakshatra or theme. Give Devanagari, then IAST transliteration on a second line.
+6. MANTRA_MEANING: Word-sense of the key terms, then the traditional benefit. 2-3 sentences.
+7. PRACTICAL_TIP: One practice for TODAY specifically, tied to a real window above (Brahma Muhurta, Abhijit, or avoiding Rahu Kaal). Give the actual clock time. 2-3 sentences.
+8. CLOSING: One sentence, warm, no exclamation marks.
+
+RULES:
+- Never write filler like "awareness is the first step" or "small steps create change". Every sentence must carry information.
+- Do not address the reader as "dear seeker" or use greeting formulas; the email adds its own greeting.
+- No markdown, no section labels, no numbering in the output. Only the 8 blocks separated by "---".`
 
   const completion = await groq.chat.completions.create({
     model: 'llama-3.3-70b-versatile',
     messages: [{ role: 'user', content: prompt }],
     stream: false,
-    max_tokens: 700,
-    temperature: 0.75,
+    max_tokens: 1400,
+    temperature: 0.7,
   })
 
   const raw = completion.choices[0]?.message?.content || ''
   const parts = raw.split('---').map(s => s.trim()).filter(Boolean)
 
+  // Fallbacks are built from the real panchang where possible, so even a failed
+  // model call still produces a digest specific to today rather than a platitude.
+  const fallbackIntro = panchang
+    ? `The Moon stands in ${panchang.nakshatra} today, under ${panchang.nakshatraDeity}. It is ${panchang.tithi} - ${panchang.tithiMeaning}.`
+    : 'Ancient Vedic wisdom holds practical keys for your everyday life.'
+  const fallbackTip = panchang
+    ? `Sit for japa during Brahma Muhurta, ${panchang.brahmaHour}, when the mind is least disturbed. If that hour is not possible, use Abhijit Muhurat at ${panchang.abhijit}, and begin nothing new during Rahu Kaal (${panchang.rahuKaal}).`
+    : 'Take five minutes today to sit quietly, breathe evenly, and set one clear intention.'
+
   return {
     topic,
-    intro: parts[0] || 'Ancient Vedic wisdom holds powerful keys for your everyday life.',
+    intro: parts[0] || fallbackIntro,
     insights: [
-      parts[1] || 'Awareness is the first step to transformation.',
-      parts[2] || 'Your daily choices shape your destiny.',
-      parts[3] || 'Small consistent practices create lasting change.',
+      parts[1] || (panchang ? `${panchang.nakshatra} favours ${panchang.nakshatraFavours}.` : 'Discernment (viveka) is the faculty the tradition asks you to build first.'),
+      parts[2] || (panchang ? `Traditionally one avoids ${panchang.nakshatraAvoid} under this nakshatra.` : 'Practice (abhyāsa) and non-attachment (vairāgya) are prescribed together; either alone fails.'),
+      parts[3] || (panchang ? `The Moon sits in ${panchang.moonSign} today, colouring the mood of the whole day.` : 'A remedy (upāya) changes the person meeting the karma, not the karma itself.'),
     ],
-    mantra: parts[4] || 'Om Namah Shivaya',
-    mantraTranslation: parts[5] || 'I bow to Shiva, the inner self - a mantra of purification and surrender.',
-    practicalTip: parts[6] || 'Take 5 minutes today to sit quietly, breathe deeply, and set one clear intention for the day.',
-    closing: parts[7] || 'May divine wisdom illuminate every step of your sacred journey.',
+    mantra: parts[4] || 'ॐ नमः शिवाय\nOṃ Namaḥ Śivāya',
+    mantraTranslation: parts[5] || 'I bow to Śiva, the auspicious one - and to the self that is not separate from him. Traditionally chanted for purification and for steadiness of mind.',
+    practicalTip: parts[6] || fallbackTip,
+    closing: parts[7] || 'May the day meet you well prepared.',
+    panchang,
+    term: termForDate(new Date()),
   }
 }
 
@@ -82,10 +149,13 @@ export async function GET(req: NextRequest) {
 
   try {
     const topic = getTopic()
-    const dateStr = new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+    const now = new Date()
+    const dateStr = now.toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
+    const isoDate = now.toISOString().slice(0, 10)
 
-    // Generate digest content once for all users
-    const digest = await generateDigest(topic)
+    // Today's real panchang, then the written content generated around it.
+    const panchang = buildPanchang(isoDate)
+    const digest = await generateDigest(topic, panchang, dateStr)
 
     // Fetch all users via admin client (paginated to handle >1000 users)
     const supabaseAdmin = createClient(
@@ -119,7 +189,16 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({ success: true, topic, sent, failed, total: users.length })
+    return NextResponse.json({
+      success: true,
+      topic,
+      nakshatra: panchang?.nakshatra ?? null,
+      tithi: panchang?.tithi ?? null,
+      panchangComputed: !!panchang,
+      sent,
+      failed,
+      total: users.length,
+    })
   } catch (err: any) {
     console.error('[Cron] spiritual-digest error:', err.message)
     return NextResponse.json({ error: err.message }, { status: 500 })

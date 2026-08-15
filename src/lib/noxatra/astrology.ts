@@ -93,6 +93,9 @@ export interface KundliData {
   dashaLord: string
   currentDasha: string
   currentAntardasha: string
+  birthLat: number
+  birthLng: number
+  birthDate: string
 }
 
 const RASHIS = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo','Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces']
@@ -109,6 +112,66 @@ const NAKSHATRA_LORDS = ['Ketu','Venus','Sun','Moon','Mars','Rahu','Jupiter','Sa
 
 const DASHA_YEARS: Record<string, number> = {
   Ketu: 7, Venus: 20, Sun: 6, Moon: 10, Mars: 7, Rahu: 18, Jupiter: 16, Saturn: 19, Mercury: 17
+}
+
+/** Rahu Kaal for each weekday at a specific place, from that place's real
+ *  sunrise and sunset. The muhurta guide previously printed one fixed table
+ *  built on a 6am-6pm assumption, which is wrong for any seeker away from that
+ *  daylength - and identical for all of them. Sampled around the given date so
+ *  the seasonal daylength at the seeker's own latitude is reflected. */
+export function rahuKaalChart(lat: number, lng: number, onDate?: string): Record<string, string> {
+  const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  const out: Record<string, string> = {}
+  const observer = new Astronomy.Observer(lat, lng, 0)
+  const base = onDate && !isNaN(Date.parse(onDate)) ? new Date(onDate) : new Date()
+
+  for (let d = 0; d < 7; d++) {
+    // Walk forward to the next occurrence of weekday d from the base date
+    const day = new Date(base)
+    day.setDate(day.getDate() + ((d - base.getDay() + 7) % 7))
+    let srH = 6, ssH = 18
+    try {
+      const t = new Astronomy.AstroTime(new Date(Date.UTC(
+        day.getFullYear(), day.getMonth(), day.getDate(), 0, 0, 0)))
+      const sr = Astronomy.SearchRiseSet(Astronomy.Body.Sun, observer, +1, t, 1)
+      const ss = Astronomy.SearchRiseSet(Astronomy.Body.Sun, observer, -1, t, 1)
+      if (sr && ss) {
+        // Local clock time at the birth longitude, which is what a seeker reads
+        const offset = lng / 15
+        srH = (sr.date.getUTCHours() + sr.date.getUTCMinutes() / 60 + offset + 24) % 24
+        ssH = (ss.date.getUTCHours() + ss.date.getUTCMinutes() / 60 + offset + 24) % 24
+      }
+    } catch {
+      // fall through to the 6am-6pm default for this weekday
+    }
+    if (!(ssH > srH)) { srH = 6; ssH = 18 }   // polar / failed search guard
+    const seg = (ssH - srH) / 8
+    const start = srH + RAHU_SEG_IDX[d] * seg
+    out[DAYS[d]] = `${fmtHours(start)} - ${fmtHours(start + seg)}`
+  }
+  return out
+}
+
+/** True apparent retrogression, by comparing geocentric ecliptic longitude
+ *  half a day either side of birth. The ayanamsa cancels out of a difference,
+ *  so it is left out here. Sun and Moon never retrograde. */
+function isRetrograde(
+  body: Astronomy.Body,
+  at: Astronomy.AstroTime,
+  observer: Astronomy.Observer,
+): boolean {
+  if (body === Astronomy.Body.Sun || body === Astronomy.Body.Moon) return false
+  try {
+    const lonAt = (t: Astronomy.AstroTime) =>
+      Astronomy.Ecliptic(Astronomy.Equator(body, t, observer, false, true).vec).elon
+    const before = lonAt(at.AddDays(-0.5))
+    const after = lonAt(at.AddDays(0.5))
+    // Normalise to (-180, 180] so a 0/360 wrap is not read as a huge jump
+    let delta = ((after - before) % 360 + 540) % 360 - 180
+    return delta < 0
+  } catch {
+    return false
+  }
 }
 
 export function calculateKundli(birth: BirthData): KundliData {
@@ -158,7 +221,7 @@ export function calculateKundli(birth: BirthData): KundliData {
         nakshatra: NAKSHATRAS[nakshatraNum],
         nakshatraNum,
         pada,
-        retrograde: false, // simplified - retrograde calc needs multi-day comparison
+        retrograde: isRetrograde(body, astroDate, observer),
         house: 0, // set after ascendant calc
       })
     } catch {
@@ -193,16 +256,19 @@ export function calculateKundli(birth: BirthData): KundliData {
   {
     const rahuRashi = Math.floor(rahuLon / 30)
     const ketuRashi = Math.floor(ketuLon / 30)
+    // Pada is computed the same way as for the seven grahas - it was previously
+    // pinned to 1, which put every chart's nodes in the first pada.
+    const padaOf = (lon: number) => Math.floor((lon % (360 / 27)) / (360 / 108)) + 1
     planets.push({
       name: 'Rahu', rashi: RASHIS[rahuRashi], rashiNum: rahuRashi,
       degree: rahuLon % 30, nakshatra: NAKSHATRAS[Math.floor(rahuLon / (360/27))],
-      nakshatraNum: Math.floor(rahuLon / (360/27)), pada: 1, retrograde: true,
+      nakshatraNum: Math.floor(rahuLon / (360/27)), pada: padaOf(rahuLon), retrograde: true,
       house: ((rahuRashi - ascRashiNum + 12) % 12) + 1
     })
     planets.push({
       name: 'Ketu', rashi: RASHIS[ketuRashi], rashiNum: ketuRashi,
       degree: ketuLon % 30, nakshatra: NAKSHATRAS[Math.floor(ketuLon / (360/27))],
-      nakshatraNum: Math.floor(ketuLon / (360/27)), pada: 1, retrograde: true,
+      nakshatraNum: Math.floor(ketuLon / (360/27)), pada: padaOf(ketuLon), retrograde: true,
       house: ((ketuRashi - ascRashiNum + 12) % 12) + 1
     })
   }
@@ -230,6 +296,9 @@ export function calculateKundli(birth: BirthData): KundliData {
     dashaLord,
     currentDasha,
     currentAntardasha,
+    birthLat: birth.lat,
+    birthLng: birth.lng,
+    birthDate: birth.date,
   }
 }
 

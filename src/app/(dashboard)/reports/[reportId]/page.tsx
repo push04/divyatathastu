@@ -174,8 +174,32 @@ function KundliSection({ data, birthDate }: { data: any; birthDate?: string }) {
   if (!data) return null
   const k = data.kundli || data
   const analysis = data.analysis
+  const dq = data.dataQuality
   return (
     <Section title="Kundli & Birth Chart" icon="brightness_7">
+      {/* The engine records when it had to estimate the birth place or time.
+          Those caveats were being computed and then never shown, so a chart
+          cast for Delhi read as though it were the seeker's own. */}
+      {dq && (dq.coordinatesEstimated || dq.timeEstimated || dq.approximateEphemeris) && (
+        <div className="mt-4 rounded-lg border border-amber-300/70 bg-amber-50/80 p-4">
+          <p className="flex items-center gap-1.5 text-sm font-bold text-amber-900">
+            <Icon name="info" size={16} />
+            About the accuracy of this chart
+          </p>
+          <ul className="mt-2 space-y-1.5 text-sm text-amber-900/90">
+            {dq.coordinatesNote && <li>{dq.coordinatesNote}</li>}
+            {dq.timeNote && <li>{dq.timeNote}</li>}
+            {dq.approximateEphemeris && (
+              <li>
+                Planetary positions for this chart were computed with the approximate
+                method (about 1–2° accuracy) rather than the full ephemeris. Sign and
+                nakshatra placements near a boundary may shift.
+              </li>
+            )}
+          </ul>
+        </div>
+      )}
+
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
         <InfoCard label="Ascendant (Lagna)" value={k.ascendant} />
         <InfoCard label="Moon Sign (Rashi)" value={k.moonSign} />

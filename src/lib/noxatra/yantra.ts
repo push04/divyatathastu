@@ -66,12 +66,43 @@ const PLANET_YANTRA: Record<string, {
   },
 }
 
+// Each nakshatra is ruled by one of the nine grahas in the Vimshottari order.
+const NAKSHATRA_LORD: Record<string, string> = {
+  Ashwini: 'Ketu', Bharani: 'Venus', Krittika: 'Sun', Rohini: 'Moon',
+  Mrigashira: 'Mars', Ardra: 'Rahu', Punarvasu: 'Jupiter', Pushya: 'Saturn',
+  Ashlesha: 'Mercury', Magha: 'Ketu', 'Purva Phalguni': 'Venus',
+  'Uttara Phalguni': 'Sun', Hasta: 'Moon', Chitra: 'Mars', Swati: 'Rahu',
+  Vishakha: 'Jupiter', Anuradha: 'Saturn', Jyeshtha: 'Mercury', Moola: 'Ketu',
+  'Purva Ashadha': 'Venus', 'Uttara Ashadha': 'Sun', Shravana: 'Moon',
+  Dhanishtha: 'Mars', Shatabhisha: 'Rahu', 'Purva Bhadrapada': 'Jupiter',
+  'Uttara Bhadrapada': 'Saturn', Revati: 'Mercury',
+}
+
+// Ratna shastra prescribes a different minimum weight per gemstone - a diamond
+// at three carats and a coral at three carats are not comparable prescriptions.
+const GEM_WEIGHT: Record<string, string> = {
+  Sun: 'Minimum 3 carats (Ruby is dense - do not exceed 6 carats)',
+  Moon: 'Minimum 4 carats, ideally 6-8 carats for a natural pearl',
+  Mars: 'Minimum 5 carats, 6-9 carats gives the fullest effect',
+  Mercury: 'Minimum 3 carats, 4-6 carats preferred for emerald',
+  Jupiter: 'Minimum 3 carats, traditionally 5+ carats for yellow sapphire',
+  Venus: 'Minimum 0.5 carat for diamond, or 3+ carats if using white sapphire',
+  Saturn: 'Minimum 3 carats - begin at the low end, as blue sapphire acts fast',
+  Rahu: 'Minimum 5 carats, 6-8 carats for hessonite',
+  Ketu: "Minimum 3 carats, 5-7 carats for cat's eye",
+}
+
 export function calculateYantraColour(moonSign: string, ascendant: string, nakshatra: string) {
   const rulingPlanet = RASHI_RULING_PLANET[moonSign] || 'Jupiter'
   const ascendantPlanet = RASHI_RULING_PLANET[ascendant] || 'Sun'
+  // The janma nakshatra lord is the third pillar alongside the Moon-sign and
+  // lagna lords, and is what makes two natives with the same Moon sign and
+  // ascendant receive different yantra and gemstone guidance.
+  const nakshatraPlanet = NAKSHATRA_LORD[nakshatra] || rulingPlanet
 
   const primaryYantra = PLANET_YANTRA[rulingPlanet]
   const secondaryYantra = PLANET_YANTRA[ascendantPlanet]
+  const nakshatraYantra = PLANET_YANTRA[nakshatraPlanet] || primaryYantra
 
   return {
     primaryPlanet: rulingPlanet,
@@ -83,6 +114,21 @@ export function calculateYantraColour(moonSign: string, ascendant: string, naksh
       usage: 'Place in your prayer room or on your desk. Energise on ' + primaryYantra.day + ' morning.',
     },
     secondaryPlanet: ascendantPlanet,
+    secondaryYantra: {
+      name: secondaryYantra.name,
+      deity: secondaryYantra.deity,
+      mantra: secondaryYantra.mantra,
+      direction: secondaryYantra.direction,
+      usage: `Your ${ascendant} Lagna lord is ${ascendantPlanet}. Keep the ${secondaryYantra.name} in the ${secondaryYantra.direction} of your workspace to support outward action and public life.`,
+    },
+    nakshatra,
+    nakshatraPlanet,
+    nakshatraYantra: {
+      name: nakshatraYantra.name,
+      deity: nakshatraYantra.deity,
+      mantra: nakshatraYantra.mantra,
+      usage: `Your janma nakshatra ${nakshatra} is ruled by ${nakshatraPlanet}. On your nakshatra day each month, chant "${nakshatraYantra.mantra}" 108 times before this yantra - this is the most personal of the three installations.`,
+    },
     colourTherapy: {
       power: primaryYantra.primaryColors,
       avoid: primaryYantra.avoidColors,
@@ -90,14 +136,29 @@ export function calculateYantraColour(moonSign: string, ascendant: string, naksh
       forWealth: getWealthColors(rulingPlanet),
       forRelationships: getRelationshipColors(rulingPlanet),
       forHome: getHomeColors(rulingPlanet),
-      clothingGuidance: `Wear ${primaryYantra.primaryColors[0]} on ${primaryYantra.day} for maximum energy amplification.`,
+      forSadhana: nakshatraYantra.primaryColors,
+      clothingGuidance: `Wear ${primaryYantra.primaryColors[0]} on ${primaryYantra.day} for maximum energy amplification${
+        nakshatraPlanet !== rulingPlanet
+          ? `, and ${nakshatraYantra.primaryColors[0].toLowerCase()} on ${nakshatraYantra.day} for your ${nakshatra} nakshatra lord ${nakshatraPlanet}`
+          : ` - your Moon-sign lord and nakshatra lord are both ${rulingPlanet}, so this colour is doubly strong for you`
+      }.`,
     },
     gemstone: {
       primary: primaryYantra.gemstone,
       finger: getGemFinger(rulingPlanet),
       metal: primaryYantra.metal,
-      weight: '3-5 carats recommended',
+      weight: GEM_WEIGHT[rulingPlanet] || '3-5 carats recommended',
       day: `Wear first on a ${primaryYantra.day} during ${primaryYantra.day === 'Sunday' ? 'morning' : 'sunrise'} hora`,
+      supporting: nakshatraPlanet !== rulingPlanet
+        ? {
+            stone: nakshatraYantra.gemstone,
+            reason: `Ruled by ${nakshatraPlanet}, the lord of your ${nakshatra} nakshatra`,
+            finger: getGemFinger(nakshatraPlanet),
+            metal: nakshatraYantra.metal,
+            weight: GEM_WEIGHT[nakshatraPlanet] || '3-5 carats recommended',
+            day: `Wear first on a ${nakshatraYantra.day} at sunrise, only after the primary stone has settled for 40 days`,
+          }
+        : null,
     },
   }
 }

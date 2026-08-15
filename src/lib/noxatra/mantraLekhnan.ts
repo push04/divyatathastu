@@ -623,15 +623,26 @@ export function getMantraLekhnan(nakshatra: string, pada: number): MantraLekhnan
   const shloka = VS_SHLOKAS.find(s => s.number === shlokaNum)
   if (!shloka) return null
   const ganpati = NAKSHATRA_GANPATI[nakshatra]
+
+  // The invocation and the Gayatri are scripture and are reproduced unchanged.
+  // The written counts and the framing around them are set from the seeker's own
+  // lagna nakshatra and pada - they used to be the same numbers and the same two
+  // sentences in every report.
+  const padaN = pada >= 1 && pada <= 4 ? pada : 1
+  const openTimes = 4 + padaN            // 5, 6, 7 or 8
+  const gayatriTimes = 3 + padaN         // 4, 5, 6 or 7
+  const ganpatiTimes = 8 - padaN         // 7, 6, 5 or 4
+  const shlokaTimes = 2 + padaN          // 3, 4, 5 or 6
+
   return {
     nakshatra,
     pada,
     openingInvocation: 'ॐ श्रीं ह्रीं क्लीं ग्लौं गं गणपतये वर वरद सर्वजनं मे वशमानय स्वाहा ॥ ॐ श्री मात्रे नमः',
-    purpose: 'अपनी कुंडली के लग्न के नक्षत्र को भगवान विष्णु के मंत्र से मजबूत करे, जिसे आपका भाग्य सही हो।',
-    instruction: 'आपको दिए हुवे मंत्र को काम से कम 3 बार या अधिकातम अपने खाली समय के हिसाब से ज्यादा से ज्यादा लिखे',
-    step1: { mantra: 'ॐ महागणपतये नमः', transliteration: 'Om Mahaganapataye Namah', meaning: 'महान गणपति', times: 5 },
-    step2: { mantra: 'ॐ भूर्भुवः स्वः तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि धियो यो नः प्रचोदयात् ॥', times: 5 },
-    step3: ganpati ? { ...ganpati, times: 5 } : null,
-    step4: { ...shloka, times: 3 },
+    purpose: `आपके लग्न का नक्षत्र ${nakshatra} (पाद ${padaN}) है। इस लेखन का उद्देश्य इसी नक्षत्र-पाद को भगवान विष्णु के मंत्र से बल देना है, जिससे आपका भाग्य सुदृढ़ हो।`,
+    instruction: `${nakshatra} पाद ${padaN} के लिए नीचे दिए गए मंत्रों को क्रमशः ${openTimes}, ${gayatriTimes}, ${ganpatiTimes} और ${shlokaTimes} बार लिखें। समय हो तो इससे अधिक भी लिख सकते हैं, परंतु इससे कम नहीं।`,
+    step1: { mantra: 'ॐ महागणपतये नमः', transliteration: 'Om Mahaganapataye Namah', meaning: 'महान गणपति', times: openTimes },
+    step2: { mantra: 'ॐ भूर्भुवः स्वः तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि धियो यो नः प्रचोदयात् ॥', times: gayatriTimes },
+    step3: ganpati ? { ...ganpati, times: ganpatiTimes } : null,
+    step4: { ...shloka, times: shlokaTimes },
   }
 }

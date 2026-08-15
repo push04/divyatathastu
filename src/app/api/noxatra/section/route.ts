@@ -6,6 +6,7 @@ import {
   generateMuhurtaGuide,
   generateRemediesSummary,
 } from '@/lib/noxatra/engine'
+import { calculateNumerology } from '@/lib/noxatra/numerology'
 import type { ReportType } from '@/types/database.types'
 import { sendReportReadyEmail, notifyAdmin, reportLabel } from '@/lib/email'
 
@@ -15,7 +16,7 @@ export const maxDuration = 60
 function extractForFullTathastu(sectionType: string, data: Record<string, unknown>): Record<string, unknown> {
   switch (sectionType) {
     case 'astrology':
-      return { kundli: data.kundli, analysis: data.analysis }
+      return { kundli: data.kundli, analysis: data.analysis, dataQuality: data.dataQuality }
     case 'numerology':
       return { numerology: data.numerology }
     case 'shakti_chakra':
@@ -113,10 +114,16 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: 'Kundli not yet generated - run astrology section first' }, { status: 400 })
       }
 
+      // If the numerology section has not run yet, compute it from the member's
+      // own name and date of birth. The previous fallback handed every affected
+      // seeker the same lucky numbers, days and personal year.
+      const resolvedNumerology = numerology
+        || calculateNumerology(member.full_name, member.date_of_birth)
+
       newData = {
         annualPrediction: generateAnnualPrediction(kundli),
-        muhurta: generateMuhurtaGuide(kundli, numerology || { luckyNumbers: [1, 3, 5], luckyDays: ['Monday', 'Thursday'], personalYearNumber: 5 }),
-        remediesSummary: generateRemediesSummary(kundli, numerology || { luckyNumbers: [1, 3, 5], luckyDays: ['Monday', 'Thursday'] }),
+        muhurta: generateMuhurtaGuide(kundli, resolvedNumerology),
+        remediesSummary: generateRemediesSummary(kundli, resolvedNumerology),
       }
     } else {
       // Generate this section using the calculation engine

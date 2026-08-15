@@ -329,6 +329,33 @@ export async function sendOrderConfirmation(to: string, name: string, order: Ord
 
 // ─── Spiritual Digest Email ───────────────────────────────────────────────────
 
+export interface DigestPanchang {
+  tithi: string
+  tithiMeaning: string
+  nakshatra: string
+  nakshatraDevanagari: string
+  nakshatraDeity: string
+  nakshatraSymbol: string
+  nakshatraFavours: string
+  nakshatraAvoid: string
+  yoga: string
+  karana: string
+  moonSign: string
+  sunrise: string
+  sunset: string
+  brahmaHour: string
+  abhijit: string
+  rahuKaal: string
+}
+
+export interface DigestTerm {
+  term: string
+  devanagari: string
+  literal: string
+  meaning: string
+  source: string
+}
+
 export interface DigestContent {
   topic: string
   intro: string
@@ -337,6 +364,10 @@ export interface DigestContent {
   mantraTranslation: string
   practicalTip: string
   closing: string
+  /** Real computed panchang for the day - omitted only if the calculation failed */
+  panchang?: DigestPanchang
+  /** Sanskrit term of the day, rotated deterministically */
+  term?: DigestTerm
 }
 
 export function spiritualDigestHtml(name: string, digest: DigestContent, dateStr: string): string {
@@ -353,6 +384,57 @@ export function spiritualDigestHtml(name: string, digest: DigestContent, dateStr
     </p>
   `).join('')
 
+  // Today's real panchang. This is computed from the ephemeris, not written by
+  // the model - it is the part of the digest that is actually true of today.
+  const p = digest.panchang
+  const row = (label: string, value: string) => `
+    <tr>
+      <td style="padding:7px 10px;font-size:13px;color:#8A7860;font-family:Arial,sans-serif;white-space:nowrap;border-bottom:1px solid #F0EAE0">${escHtml(label)}</td>
+      <td style="padding:7px 10px;font-size:14px;color:#2A2140;font-family:Georgia,serif;border-bottom:1px solid #F0EAE0">${value}</td>
+    </tr>`
+
+  const panchangBlock = p ? `
+    <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" style="margin:26px 0">
+      <tr>
+        <td style="background:#FAF7F2;border:1px solid #E6DCCC;border-radius:12px;padding:20px">
+          <div style="font-size:12px;color:#B08D3E;font-family:Arial,sans-serif;letter-spacing:.18em;text-transform:uppercase;margin-bottom:4px">Today&#39;s Panchang</div>
+          <div style="font-size:13px;color:#9A8A75;font-family:Arial,sans-serif;margin-bottom:14px">Calculated for sunrise at New Delhi</div>
+          <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
+            ${row('Tithi', `<b>${escHtml(p.tithi)}</b> &#8212; ${escHtml(p.tithiMeaning)}`)}
+            ${row('Nakshatra', `<b>${escHtml(p.nakshatra)}</b> ${escHtml(p.nakshatraDevanagari)} &#183; ruled by ${escHtml(p.nakshatraDeity)}`)}
+            ${row('Moon sign', escHtml(p.moonSign))}
+            ${row('Yoga &#183; Karana', `${escHtml(p.yoga)} &#183; ${escHtml(p.karana)}`)}
+            ${row('Brahma Muhurta', `${escHtml(p.brahmaHour)} &#8212; the best window of the day for japa`)}
+            ${row('Abhijit Muhurat', `${escHtml(p.abhijit)} &#8212; auspicious for anything important`)}
+            ${row('Rahu Kaal', `<span style="color:#A33">${escHtml(p.rahuKaal)}</span> &#8212; begin nothing new`)}
+            ${row('Sunrise &#183; Sunset', `${escHtml(p.sunrise)} &#183; ${escHtml(p.sunset)}`)}
+          </table>
+          <div style="margin-top:14px;padding-top:13px;border-top:1px solid #EDE4D6">
+            <div style="font-size:14px;color:#4A3F5C;font-family:Georgia,serif;line-height:1.75">
+              <b>${escHtml(p.nakshatra)}</b> (symbol: ${escHtml(p.nakshatraSymbol)}) favours ${escHtml(p.nakshatraFavours)}.
+              Traditionally one avoids ${escHtml(p.nakshatraAvoid)}.
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>` : ''
+
+  const t = digest.term
+  const termBlock = t ? `
+    <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" style="margin:26px 0">
+      <tr>
+        <td style="background:#F7F5FB;border-left:3px solid #7C3AED;border-radius:0 10px 10px 0;padding:19px 22px">
+          <div style="font-size:12px;color:#7C3AED;font-family:Arial,sans-serif;letter-spacing:.18em;text-transform:uppercase;margin-bottom:9px">Word of the Day</div>
+          <div style="font-size:21px;color:#1F1636;font-family:Georgia,serif;margin-bottom:3px">
+            ${escHtml(t.devanagari)} &#183; <i>${escHtml(t.term)}</i>
+          </div>
+          <div style="font-size:13px;color:#8579A0;font-family:Arial,sans-serif;margin-bottom:11px">literally: ${escHtml(t.literal)}</div>
+          <div style="font-size:15px;color:#4A4060;font-family:Georgia,serif;line-height:1.75">${escHtml(t.meaning)}</div>
+          <div style="font-size:12px;color:#9C90B4;font-family:Arial,sans-serif;margin-top:10px">&#8212; ${escHtml(t.source)}</div>
+        </td>
+      </tr>
+    </table>` : ''
+
   const body = `
     <div style="display:inline-block;background:#F5F0EA;border:1px solid #E0D5C8;border-radius:20px;padding:5px 15px;font-size:13px;color:#8A7860;font-family:Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;margin-bottom:22px">${escHtml(digest.topic)}</div>
 
@@ -365,6 +447,10 @@ export function spiritualDigestHtml(name: string, digest: DigestContent, dateStr
     </p>
 
     ${insightRows}
+
+    ${panchangBlock}
+
+    ${termBlock}
 
     <!-- Mantra -->
     <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" style="margin:28px 0 24px">
@@ -412,11 +498,13 @@ export async function sendSpiritualDigest(
   digest: DigestContent,
   dateStr: string,
 ): Promise<void> {
-  await sendEmail(
-    to,
-    `Your Adhyatmic Digest - ${digest.topic} | MahaTathastu`,
-    spiritualDigestHtml(name, digest, dateStr),
-  )
+  // A subject naming today's actual nakshatra reads as a real almanac rather
+  // than a recurring newsletter blast.
+  const subject = digest.panchang
+    ? `${digest.panchang.tithi} &middot; Moon in ${digest.panchang.nakshatra} - your Adhyatmic Digest`
+        .replace('&middot;', '·')
+    : `Your Adhyatmic Digest - ${digest.topic} | MahaTathastu`
+  await sendEmail(to, subject, spiritualDigestHtml(name, digest, dateStr))
 }
 
 // ─── Event Registration Email ─────────────────────────────────────────────────

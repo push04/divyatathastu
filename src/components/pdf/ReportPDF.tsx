@@ -835,6 +835,30 @@ function KundliPages({ data, canvasImg, number }: { data: any; canvasImg?: strin
         </View>
       ) : null}
 
+      {/* Accuracy caveats. The engine records when it had to estimate the birth
+          place or time; printing the chart without them would present an
+          estimated chart at the precision the rest of the PDF claims. */}
+      {data.dataQuality && (data.dataQuality.coordinatesEstimated || data.dataQuality.timeEstimated || data.dataQuality.approximateEphemeris) ? (
+        <View style={{ marginBottom: 8, padding: 7, borderWidth: 0.7, borderColor: '#C9992E', backgroundColor: '#FDF8EC', borderRadius: 3 }}>
+          <Text style={[styles.bodySmall, { fontWeight: 'bold', marginBottom: 2 }]}>
+            About the accuracy of this chart
+          </Text>
+          {data.dataQuality.coordinatesNote ? (
+            <Text style={styles.bodySmall}>{data.dataQuality.coordinatesNote}</Text>
+          ) : null}
+          {data.dataQuality.timeNote ? (
+            <Text style={styles.bodySmall}>{data.dataQuality.timeNote}</Text>
+          ) : null}
+          {data.dataQuality.approximateEphemeris ? (
+            <Text style={styles.bodySmall}>
+              Planetary positions were computed with the approximate method (about 1-2 degrees
+              accuracy) rather than the full ephemeris. Placements near a sign or nakshatra
+              boundary may shift.
+            </Text>
+          ) : null}
+        </View>
+      ) : null}
+
       {/* Core chart data */}
       <InfoGrid items={[
         { label: 'Ascendant (Lagna)', value: k.ascendant },
