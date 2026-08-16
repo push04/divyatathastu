@@ -22,6 +22,8 @@ const adminNav = [
   { href: '/admin/mailbox', label: 'Mailbox', icon: 'mail' },
   { href: '/admin/events', label: 'Events', icon: 'event_note' },
   { href: '/admin/blog', label: 'Blog', icon: 'article' },
+  { href: '/admin/gallery', label: 'Media & Gallery', icon: 'photo_library' },
+  { href: '/admin/media', label: 'Press & Media', icon: 'newspaper' },
   { href: '/admin/handwritten-reports', label: 'Handwritten Reports', icon: 'draw' },
   { href: '/admin/courses', label: 'Courses', icon: 'school' },
   { href: '/admin/services', label: 'Divine Services', icon: 'spa' },

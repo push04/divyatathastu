@@ -4,6 +4,7 @@ import ServicesGrid from '@/components/home/ServicesGrid'
 import HowItWorks from '@/components/home/HowItWorks'
 import Testimonials from '@/components/home/Testimonials'
 import InMediaSection from '@/components/home/InMediaSection'
+import GalleryCarousel from '@/components/home/GalleryCarousel'
 import MandirTeaser from '@/components/home/MandirTeaser'
 import TathastuCTA from '@/components/home/TathastuCTA'
 import FeaturedProducts from '@/components/home/FeaturedProducts'
@@ -57,6 +58,7 @@ export default function HomePage() {
       <FeaturedProducts />
       <MandirTeaser />
       <Testimonials />
+      <GalleryCarousel />
       <InMediaSection />
       <NewsletterStrip />
     </>

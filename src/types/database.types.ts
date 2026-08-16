@@ -876,6 +876,134 @@ export type Database = {
         }
         Relationships: []
       }
+      gallery_items: {
+        Row: {
+          id: string
+          title: string | null
+          caption: string | null
+          category: string
+          image_url: string
+          storage_path: string | null
+          alt_text: string | null
+          credit: string | null
+          taken_at: string | null
+          is_published: boolean
+          in_carousel: boolean
+          display_order: number
+          width: number | null
+          height: number | null
+          created_by: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          title?: string | null
+          caption?: string | null
+          category?: string
+          image_url: string
+          storage_path?: string | null
+          alt_text?: string | null
+          credit?: string | null
+          taken_at?: string | null
+          is_published?: boolean
+          in_carousel?: boolean
+          display_order?: number
+          width?: number | null
+          height?: number | null
+          created_by?: string | null
+        }
+        Update: {
+          title?: string | null
+          caption?: string | null
+          category?: string
+          image_url?: string
+          storage_path?: string | null
+          alt_text?: string | null
+          credit?: string | null
+          taken_at?: string | null
+          is_published?: boolean
+          in_carousel?: boolean
+          display_order?: number
+          width?: number | null
+          height?: number | null
+        }
+        Relationships: []
+      }
+      media_features: {
+        Row: {
+          id: string
+          outlet: string
+          logo_text: string | null
+          logo_url: string | null
+          logo_color: string
+          headline: string
+          excerpt: string | null
+          category: string
+          article_url: string | null
+          published_on: string | null
+          is_published: boolean
+          display_order: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          outlet: string
+          logo_text?: string | null
+          logo_url?: string | null
+          logo_color?: string
+          headline: string
+          excerpt?: string | null
+          category?: string
+          article_url?: string | null
+          published_on?: string | null
+          is_published?: boolean
+          display_order?: number
+        }
+        Update: {
+          outlet?: string
+          logo_text?: string | null
+          logo_url?: string | null
+          logo_color?: string
+          headline?: string
+          excerpt?: string | null
+          category?: string
+          article_url?: string | null
+          published_on?: string | null
+          is_published?: boolean
+          display_order?: number
+        }
+        Relationships: []
+      }
+      media_awards: {
+        Row: {
+          id: string
+          title: string
+          organisation: string | null
+          year: string | null
+          icon: string
+          is_published: boolean
+          display_order: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          title: string
+          organisation?: string | null
+          year?: string | null
+          icon?: string
+          is_published?: boolean
+          display_order?: number
+        }
+        Update: {
+          title?: string
+          organisation?: string | null
+          year?: string | null
+          icon?: string
+          is_published?: boolean
+          display_order?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

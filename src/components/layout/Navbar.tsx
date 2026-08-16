@@ -18,6 +18,7 @@ const navLinks: { href: string; key: DictKey; featured?: boolean }[] = [
   { href: '/ebooks', key: 'nav.ebooks' },
   { href: '/panchang', key: 'nav.panchang' },
   { href: '/blog', key: 'nav.blog' },
+  { href: '/gallery', key: 'nav.gallery' },
   { href: '/crystal-calculator', key: 'nav.crystals', featured: true },
   { href: '/ardra-jalam', key: 'nav.ardraJalam', featured: true },
 ]
