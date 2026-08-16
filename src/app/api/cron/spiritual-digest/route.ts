@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { verifyCronAuth, safeError } from '@/lib/security'
 import { createClient } from '@supabase/supabase-js'
 import Groq from 'groq-sdk'
 import { sendSpiritualDigest, type DigestContent, type DigestPanchang } from '@/lib/email'
@@ -136,12 +137,12 @@ RULES:
 }
 
 export async function GET(req: NextRequest) {
-  // Vercel cron authentication - always require the secret; fail-closed when not set
-  const authHeader = req.headers.get('authorization')
-  const cronSecret = process.env.CRON_SECRET
-  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
+  // Vercel cron authentication. Beyond matching the header, production also
+  // rejects a placeholder or short secret: the previous guard was logically
+  // correct but would happily accept `dev-local-skip` if that value ever
+  // reached production, leaving a mass-email endpoint effectively public.
+  const unauthorised = verifyCronAuth(req.headers.get('authorization'))
+  if (unauthorised) return unauthorised
 
   if (!process.env.GROQ_API_KEY) {
     return NextResponse.json({ error: 'GROQ_API_KEY not set' }, { status: 500 })
@@ -200,7 +201,6 @@ export async function GET(req: NextRequest) {
       total: users.length,
     })
   } catch (err: any) {
-    console.error('[Cron] spiritual-digest error:', err.message)
-    return NextResponse.json({ error: err.message }, { status: 500 })
+    return safeError('cron/spiritual-digest', err, 'Digest run failed.')
   }
 }

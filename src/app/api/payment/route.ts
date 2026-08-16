@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createAdminClient } from '@/lib/supabase/server'
 import crypto from 'crypto'
 import { sendOrderConfirmation, notifyAdmin } from '@/lib/email'
+import { requirePaymentGateway, mockPaymentsAllowed, safeError } from '@/lib/security'
 
 // Lazy import to avoid crash when credentials not set
 function getRazorpay() {
@@ -115,7 +116,14 @@ export async function POST(req: NextRequest) {
     const total = Math.max(0, subtotal - discount)
     const orderNumber = `DT-${Date.now()}`
 
-    if (!process.env.RAZORPAY_KEY_ID) {
+    // Mock mode records the order as paid without any money moving. That is
+    // only ever acceptable locally: on a deployed environment with an
+    // incomplete env - a misconfigured preview, say - it would hand out free
+    // products to anyone who found the URL. Refuse rather than fall through.
+    const gatewayMissing = requirePaymentGateway()
+    if (gatewayMissing) return gatewayMissing
+
+    if (mockPaymentsAllowed()) {
       // Mock mode - return dummy order for testing
       const mockOrderId = 'mock_' + Date.now()
       const { data: order } = await supabase.from('orders').insert({

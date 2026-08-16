@@ -21,6 +21,54 @@ const PROTECTED_PATHS = [
   '/meditation',
 ]
 
+/** Routes that must work without a session. Everything else under /api/ now
+ *  requires authentication at the middleware level. */
+const PUBLIC_API_PREFIXES = [
+  '/api/newsletter',      // public subscribe form
+  '/api/chat',            // public site chatbot (reads the session if present)
+  '/api/crystal-recommendation', // public crystal calculator
+  '/api/panchang',        // public almanac widget
+  '/api/mandir',          // public temple finder
+  '/api/reviews',         // public approved-review listing (POST re-checks auth)
+  '/api/report-pricing',  // public price list
+  '/api/product-price',   // public price lookup
+  '/api/cron',            // guarded by CRON_SECRET, not by a session
+]
+
+/**
+ * Only allow same-origin, path-only redirects.
+ *
+ * The previous `startsWith('/') && !startsWith('//')` test let several forms
+ * through: a backslash that some clients normalise to a slash, and percent
+ * encoded separators that only become meaningful after decoding. Resolving the
+ * candidate against a throwaway origin and confirming the host is unchanged
+ * settles all of them at once.
+ */
+function safeRedirect(candidate: string | null): string {
+  const FALLBACK = '/dashboard'
+  if (!candidate) return FALLBACK
+  if (!candidate.startsWith('/') || candidate.startsWith('//')) return FALLBACK
+  if (candidate.includes('\\')) return FALLBACK
+
+  let decoded = candidate
+  try {
+    decoded = decodeURIComponent(candidate)
+  } catch {
+    return FALLBACK
+  }
+  if (decoded.startsWith('//') || decoded.includes('\\') || /^\/+[a-z][a-z0-9+.-]*:/i.test(decoded)) {
+    return FALLBACK
+  }
+
+  try {
+    const probe = new URL(candidate, 'http://redirect-probe.invalid')
+    if (probe.host !== 'redirect-probe.invalid') return FALLBACK
+    return probe.pathname + probe.search + probe.hash
+  } catch {
+    return FALLBACK
+  }
+}
+
 export async function middleware(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
@@ -55,6 +103,16 @@ export async function middleware(request: NextRequest) {
     const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
     if (profile?.role !== 'admin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+  }
+
+  // Every other /api/* route enforced its own auth inline, so a single missing
+  // check in any handler was an unauthenticated endpoint with nothing behind
+  // it. Authentication is now required by default and the genuinely public
+  // routes are named explicitly - the safe direction for the list to fail in.
+  if (path.startsWith('/api/') && !PUBLIC_API_PREFIXES.some(p => path === p || path.startsWith(p + '/'))) {
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
   }
 
@@ -96,8 +154,7 @@ export async function middleware(request: NextRequest) {
     // It must be a relative in-app path - an absolute URL here would be an
     // open redirect straight off the site.
     const wanted = request.nextUrl.searchParams.get('redirect')
-    const safe = wanted && wanted.startsWith('/') && !wanted.startsWith('//') ? wanted : '/dashboard'
-    return NextResponse.redirect(new URL(safe, request.url))
+    return NextResponse.redirect(new URL(safeRedirect(wanted), request.url))
   }
 
   return supabaseResponse

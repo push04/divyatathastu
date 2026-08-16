@@ -12,6 +12,14 @@ export async function POST(req: NextRequest) {
 
   const { roomName, userName } = await req.json()
 
+  // Any room name that matched neither prefix previously fell straight through
+  // the checks below and was issued a publish-capable token. Constrain the
+  // shape first, then require one of the two known prefixes.
+  const VALID_ROOM = /^(consult-|mt-)[A-Za-z0-9_-]{1,64}$/
+  if (typeof roomName === 'string' && !VALID_ROOM.test(roomName)) {
+    return NextResponse.json({ error: 'Invalid room name' }, { status: 400 })
+  }
+
   if (!roomName || !userName) {
     return NextResponse.json({ error: 'roomName and userName are required' }, { status: 400 })
   }

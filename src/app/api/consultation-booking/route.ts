@@ -12,6 +12,7 @@ import {
   resolveSlotPrice,
   type ConsultationPricing,
 } from '@/lib/constants/consultation'
+import { requirePaymentGateway, mockPaymentsAllowed, safeError, sanitiseText } from '@/lib/security'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.mahatathastu.com'
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'info@mahatathastu.com'
@@ -69,7 +70,11 @@ export async function POST(req: NextRequest) {
   const admin = await createAdminClient()
 
   if (action === 'create') {
-    const { date, start_time, end_time, specialization, notes, expected_price } = await req.json()
+    const { date, start_time, end_time, specialization, expected_price, notes: rawNotes } = await req.json()
+    // Was stored verbatim with no cap and no tag stripping - a stored XSS
+    // vector the moment an admin panel renders it as HTML, and unbounded input
+    // into the database besides.
+    const notes = sanitiseText(rawNotes, 500)
     if (!date || !start_time || !end_time) {
       return NextResponse.json({ error: 'date, start_time, end_time required' }, { status: 400 })
     }
@@ -194,7 +199,14 @@ export async function POST(req: NextRequest) {
     }
 
     // Paid slot - initialize Razorpay
-    if (!process.env.RAZORPAY_KEY_ID) {
+    // Mock mode records the order as paid without any money moving. That is
+    // only ever acceptable locally: on a deployed environment with an
+    // incomplete env - a misconfigured preview, say - it would hand out free
+    // products to anyone who found the URL. Refuse rather than fall through.
+    const gatewayMissing = requirePaymentGateway()
+    if (gatewayMissing) return gatewayMissing
+
+    if (mockPaymentsAllowed()) {
       // Mock mode
       const { data: booking, error: bookErr } = await (admin as any).from('consultation_bookings').insert({
         user_id: user.id,
@@ -273,7 +285,12 @@ export async function POST(req: NextRequest) {
       // it was not being selected, so the flag was appended to `undefined`.
       .select('user_id, razorpay_order_id, slot_id, notes, consultation_slots(date, start_time, end_time, price)')
       .eq('id', booking_id)
-      .single()
+      // Filter by owner in the query itself. This uses the admin client, which
+      // bypasses RLS, so the post-fetch check was the only thing between a
+      // caller and someone else's booking - one refactor away from a full
+      // IDOR. The check below stays as a second line of defence.
+      .eq('user_id', user.id)
+      .maybeSingle()
 
     if (!booking || booking.user_id !== user.id) {
       return NextResponse.json({ error: 'Booking not found' }, { status: 404 })

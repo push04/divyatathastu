@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { rateLimit, tooManyRequests, clientIp, sanitiseText } from '@/lib/security'
 import { createClient } from '@supabase/supabase-js'
 import { createClient as createServerClient } from '@/lib/supabase/server'
 import { notifyAdmin } from '@/lib/email'
@@ -12,10 +13,31 @@ function getAdmin() {
   )
 }
 
-export async function POST(req: NextRequest) {
-  const { email, name, source = 'website' } = await req.json()
+/** `source` is written to the database and read back in the admin panel, so it
+ *  is an allowlist rather than free text. */
+const ALLOWED_SOURCES = new Set([
+  // The values the app actually sends today. Anything else is coerced to
+  // 'website' rather than stored, so a crafted `source` cannot reach the admin
+  // panel - but the real callers must be listed here or attribution is lost.
+  'newsletter-page',  // src/app/(public)/newsletter/page.tsx
+  'footer-strip',     // src/components/layout/NewsletterStrip.tsx
+  'website', 'landing', 'popup', 'checkout', 'blog',
+])
 
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+export async function POST(req: NextRequest) {
+  // Unauthenticated by design - but that also made it a free way to flood the
+  // subscriber table, so it is now rate limited per IP.
+  const ip = clientIp(req.headers)
+  const limit = rateLimit(`newsletter:${ip}`, 3, 10 * 60 * 1000)
+  if (!limit.ok) return tooManyRequests(limit.retryAfter)
+
+  const body = await req.json()
+  const { email } = body
+  const name = sanitiseText(body.name, 120)
+  const source = ALLOWED_SOURCES.has(body.source) ? body.source : 'website'
+
+  if (!email || typeof email !== 'string' || email.length > 254 ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: 'Invalid email address' }, { status: 400 })
   }
 

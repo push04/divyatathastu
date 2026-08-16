@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { sendEmail, sendWelcomeEmail, sendOrderConfirmation, sendSpiritualDigest, notifyAdmin } from '@/lib/email'
 import type { OrderDetails, DigestContent } from '@/lib/email'
+import { safeError, rateLimit, tooManyRequests } from '@/lib/security'
 
 export async function POST(req: NextRequest) {
   const supabase = await createClient()
@@ -13,6 +14,27 @@ export async function POST(req: NextRequest) {
 
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!to || !EMAIL_RE.test(to)) return NextResponse.json({ error: 'Invalid recipient email' }, { status: 400 })
+
+  // Open-relay fix.
+  //
+  // `welcome`, `order` and `digest` accepted an arbitrary recipient together
+  // with attacker-supplied order and digest content, so any logged-in user
+  // could send convincing "Order Confirmed" mail from the MahaTathastu domain
+  // to anyone. Non-admins may now only send to their own verified address, and
+  // the differing-address case returns the same 403 whether or not the target
+  // exists, so this cannot be used to enumerate accounts either.
+  const { data: profile } = await supabase
+    .from('profiles').select('role').eq('id', user.id).single()
+  const isAdmin = profile?.role === 'admin'
+
+  if (!isAdmin) {
+    if (!user.email || to.toLowerCase() !== user.email.toLowerCase()) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+    // Even to their own address, a user cannot become a mail pump.
+    const limit = rateLimit(`email:${user.id}`, 5, 60 * 60 * 1000)
+    if (!limit.ok) return tooManyRequests(limit.retryAfter)
+  }
 
   try {
     switch (type) {
@@ -44,16 +66,14 @@ export async function POST(req: NextRequest) {
         break
       }
       default: {
-        // Generic email - restricted to admin to prevent open relay abuse
-        const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
-        if (profile?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+        // Generic email - admin only; arbitrary subject and HTML.
+        if (!isAdmin) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
         if (!subject || !html) return NextResponse.json({ error: 'Missing subject or html' }, { status: 400 })
         await sendEmail(to, subject, html)
       }
     }
     return NextResponse.json({ success: true })
-  } catch (err: any) {
-    console.error('[/api/email] error:', err.message)
-    return NextResponse.json({ error: err.message || 'Email failed' }, { status: 500 })
+  } catch (err) {
+    return safeError('/api/email', err, 'Could not send the email. Please try again.')
   }
 }
