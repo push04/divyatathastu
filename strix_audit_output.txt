@@ -1,0 +1,12 @@
+﻿strix : usage: strix [-h] [-v] [--update] [-t TARGET] [--target-list PATH]
+At line:1 char:1
++ strix audit --path . --format json 2>&1 | Out-File -FilePath "strix_a ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (usage: strix [-...rget-list PATH]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+             [--instruction INSTRUCTION] [--instruction-file INSTRUCTION_FILE]
+             [-n] [-m {quick,standard,deep}] [--scope-mode {auto,diff,full}]
+             [--diff-base DIFF_BASE] [--config CONFIG] [--max-budget USD]
+             [--max-turns N] [--resume RUN_NAME]
+strix: error: unrecognized arguments: audit --path . --format json

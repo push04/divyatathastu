@@ -1,52 +1,31 @@
 import Link from 'next/link'
 import { YantraDivider } from '@/components/ui/Yantra'
 import { REVIEW_COUPON_PERCENT } from '@/lib/constants/rewards'
+import { createClient } from '@/lib/supabase/server'
 
 /* ═══════════════════════════════════════════════════════════════════════════
    TESTIMONIALS
 
-   Was: two infinite marquee rows built from the same six reviews - row 1 held
-   them twice, row 2 held them four times, so the same six names cycled past
-   endlessly. Reading the section made the social proof feel thinner, not
-   deeper, and the duplicates were also announced to screen readers.
+   Every card here is a real, admin-approved review pulled from the `reviews`
+   table. There is no hardcoded fallback: this section previously shipped six
+   invented testimonials (names, cities and quotes) that were appended after
+   any genuine reviews to pad the grid to nine, so a visitor could not tell a
+   real member from a fabricated one.
 
-   Fixed structurally: the loop is gone. Six real reviews, each rendered
-   exactly once, in a static editorial grid with a scroll-linked reveal.
-
-   NOTE FOR CONTENT: I deliberately did not pad this out with invented
-   reviews - fabricated testimonials are not mine to write. The grid is sized
-   to take 9 or 12 gracefully; drop additional genuine entries into REVIEWS
-   below and the layout absorbs them with no code change.
+   With no approved reviews the grid is omitted entirely and only the
+   invitation to write one is shown - an honest empty state rather than
+   manufactured social proof.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-const REVIEWS = [
-  {
-    name: 'Priya Sharma', location: 'Mumbai', initials: 'PS', report: 'Full Bundle',
-    text: 'The Full Tathastu bundle completely changed how I understand my family. The child development report for my son was spot-on - it identified his talent for music, which we had been ignoring.',
-  },
-  {
-    name: 'Rajesh Gupta', location: 'Delhi', initials: 'RG', report: 'Astro-Vastu',
-    text: 'The Astro-Vastu report helped us rearrange our office. Within a month business improved noticeably. The remedies were practical and specific, not generic advice.',
-  },
-  {
-    name: 'Anita Verma', location: 'Bangalore', initials: 'AV', report: 'Numerology',
-    text: 'My numerology and psychology reports gave me such clarity about my career change. I finally understood why certain paths had felt wrong. Best investment I have made this year.',
-  },
-  {
-    name: 'Suresh Patel', location: 'Ahmedabad', initials: 'SP', report: 'Shakti Chakra',
-    text: 'The Shakti Chakra report identified my root chakra blockage precisely. The healing mantras and crystal suggestions have made a real difference to my energy levels.',
-  },
-  {
-    name: 'Meera Krishnan', location: 'Chennai', initials: 'MK', report: 'Prakriti',
-    text: 'The Prakriti report revealed that I am primarily Vata-Pitta. The diet and yoga recommendations aligned closely with what actually works for me. Remarkably accurate.',
-  },
-  {
-    name: 'Arun Tiwari', location: 'Varanasi', initials: 'AT', report: 'Pilgrimage',
-    text: 'Our family pilgrimage to Char Dham was planned perfectly using the itinerary maker. The panchang timing for each temple made the experience spiritually powerful.',
-  },
-]
+interface Card {
+  name: string
+  location: string
+  initials: string
+  report: string
+  text: string
+}
 
-function ReviewCard({ r }: { r: typeof REVIEWS[0] }) {
+function ReviewCard({ r }: { r: Card }) {
   return (
     <figure
       className="relative flex flex-col h-full rounded-[var(--radius)] p-7 pt-9 overflow-hidden"
@@ -110,17 +89,33 @@ function initialsOf(name: string) {
   return name.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('') || 'MT'
 }
 
+/** Reads approved reviews straight from the database.
+ *
+ *  This used to self-fetch `${NEXT_PUBLIC_APP_URL}/api/reviews`, which returned
+ *  an empty list whenever that variable was unset - as it is in this project -
+ *  so no genuine review had ever reached the homepage. The hardcoded
+ *  testimonials that used to pad the grid hid the failure completely. Querying
+ *  Supabase directly removes both the env dependency and the extra hop. */
 async function fetchPublishedReviews(): Promise<PublishedReview[]> {
   try {
-    const base = process.env.NEXT_PUBLIC_APP_URL || ''
-    if (!base) return []
-    const res = await fetch(`${base.replace(/\/$/, '')}/api/reviews?limit=9`, {
-      next: { revalidate: 300 },
-    })
-    if (!res.ok) return []
-    const json = await res.json()
-    return Array.isArray(json?.reviews) ? json.reviews : []
+    const supabase = await createClient()
+    const { data, error } = await (supabase as any)
+      .from('reviews')
+      .select('id, subject_label, rating, title, body, profiles:user_id(full_name)')
+      .eq('status', 'approved')
+      .order('created_at', { ascending: false })
+      .limit(9)
+    if (error || !data) return []
+    return data.map((r: any) => ({
+      id: r.id,
+      subject_label: r.subject_label || 'Verified purchase',
+      rating: r.rating,
+      title: r.title,
+      body: r.body,
+      author: r.profiles?.full_name || 'Verified member',
+    }))
   } catch {
+    // A homepage section must never take the whole page down.
     return []
   }
 }
@@ -128,40 +123,43 @@ async function fetchPublishedReviews(): Promise<PublishedReview[]> {
 export default async function Testimonials() {
   const published = await fetchPublishedReviews()
 
-  const cards = [
-    ...published.map(r => ({
-      name: r.author,
-      location: 'Verified member',
-      initials: initialsOf(r.author),
-      report: r.subject_label,
-      text: r.body,
-    })),
-    ...REVIEWS,
-  ].slice(0, 9)
+  const cards: Card[] = published.slice(0, 9).map(r => ({
+    name: r.author,
+    location: 'Verified member',
+    initials: initialsOf(r.author),
+    report: r.subject_label,
+    text: r.body,
+  }))
 
   return (
     <section className="section-padding" style={{ background: 'var(--surface-light)' }}>
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
 
         <div className="text-center mb-4 reveal">
-          <h2 className="t-display-2 text-[var(--text-primary)]">What families are saying</h2>
+          <h2 className="t-display-2 text-[var(--text-primary)]">
+            {cards.length ? 'What families are saying' : 'Share your experience'}
+          </h2>
           <p className="t-body text-[var(--text-secondary)] mt-3">
-            Real stories from families across India
+            {cards.length
+              ? 'Real stories from families across India'
+              : 'Reviews from verified members appear here once approved'}
           </p>
         </div>
 
         <YantraDivider className="mb-12" />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 reveal-stagger">
-          {cards.map((r, i) => (
-            <ReviewCard key={`${r.name}-${i}`} r={r} />
-          ))}
-        </div>
+        {cards.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 reveal-stagger">
+            {cards.map((r, i) => (
+              <ReviewCard key={`${r.name}-${i}`} r={r} />
+            ))}
+          </div>
+        )}
 
         {/* Invite members to add their own - reviews are members-only, which
             is also what makes the thank-you discount safe to offer. */}
         <div
-          className="mt-12 rounded-[var(--radius)] px-6 py-7 text-center reveal"
+          className={`${cards.length ? 'mt-12' : ''} rounded-[var(--radius)] px-6 py-7 text-center reveal`}
           style={{ background: 'var(--surface-light-raised)', border: '1px solid var(--border-subtle)' }}
         >
           <h3 className="t-h4 text-[var(--text-primary)] mb-2">Used a Tathastu report or service?</h3>
