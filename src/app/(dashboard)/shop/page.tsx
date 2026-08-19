@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 import Icon from '@/components/ui/Icon'
+import { optimizeImage, imageSrcSet, IMG } from '@/lib/utils/image'
 interface Product {
   id: string
   name: string
@@ -351,7 +352,10 @@ export default function ShopPage() {
                     {/* Image */}
                     <div className="relative h-44 overflow-hidden cursor-pointer" onClick={() => setSelected(p)}>
                       {imgUrl ? (
-                        <img src={imgUrl} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <img src={optimizeImage(imgUrl, { width: IMG.card })!} srcSet={imageSrcSet(imgUrl, [320, 480, 768])}
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 300px"
+                          loading="lazy" decoding="async" alt={p.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                       ) : (
                         <div className={`w-full h-full bg-gradient-to-br ${TYPE_GRADIENT[typeKey] || TYPE_GRADIENT.report} flex items-center justify-center group-hover:scale-105 transition-transform duration-500`}>
                           <Icon name={TYPE_ICON[typeKey] || 'storefront'} size={52} className="text-[var(--text-on-dark)]" />
@@ -467,7 +471,8 @@ export default function ShopPage() {
                 return (
                   <div key={p.id} className="flex gap-3 p-3 rounded-xl" style={{ border: '1px solid var(--warm-sand)', background: 'var(--kutch-white)' }}>
                     {imgUrl ? (
-                      <img src={imgUrl} alt={p.name} className="w-14 h-14 rounded-lg object-cover flex-shrink-0" />
+                      <img src={optimizeImage(imgUrl, { width: IMG.thumb })!} loading="lazy" decoding="async" alt={p.name}
+                        className="w-14 h-14 rounded-lg object-cover flex-shrink-0" />
                     ) : (
                       <div className={`w-14 h-14 rounded-lg bg-gradient-to-br ${TYPE_GRADIENT[typeKey] || TYPE_GRADIENT.report} flex items-center justify-center flex-shrink-0`}>
                         <Icon name={TYPE_ICON[typeKey]} size={22} className="text-white" />
@@ -532,7 +537,8 @@ export default function ShopPage() {
             {/* Image */}
             <div className="relative h-56 flex-shrink-0">
               {getImageUrl(selected.images) ? (
-                <img src={getImageUrl(selected.images)!} alt={selected.name} className="w-full h-full object-cover" />
+                <img src={optimizeImage(getImageUrl(selected.images), { width: IMG.hero })!} decoding="async"
+                  alt={selected.name} className="w-full h-full object-cover" />
               ) : (
                 <div className={`w-full h-full bg-gradient-to-br ${TYPE_GRADIENT[selected.product_type || 'report'] || TYPE_GRADIENT.report} flex items-center justify-center`}>
                   <Icon name={TYPE_ICON[selected.product_type || 'report']} size={72} className="text-[var(--text-on-dark)]" />

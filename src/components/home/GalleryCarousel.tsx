@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { optimizeImage, imageSrcSet, IMG } from '@/lib/utils/image'
 
 import Icon from '@/components/ui/Icon'
 
@@ -132,7 +133,9 @@ export default function GalleryCarousel() {
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={s.image_url}
+                  src={optimizeImage(s.image_url, { width: IMG.full })!}
+                  srcSet={imageSrcSet(s.image_url, [640, 1024, 1600])}
+                  sizes="100vw"
                   alt={s.alt_text || s.title || ''}
                   width={s.width ?? undefined}
                   height={s.height ?? undefined}

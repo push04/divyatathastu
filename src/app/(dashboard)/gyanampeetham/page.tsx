@@ -6,6 +6,7 @@ import { useServiceItems } from '@/lib/hooks/useServiceItems'
 import { useServicePayment } from '@/lib/hooks/useServicePayment'
 
 import Icon from '@/components/ui/Icon'
+import { optimizeImage, imageSrcSet, IMG } from '@/lib/utils/image'
 const LEVEL_COLORS: Record<string, { bg: string; text: string }> = {
   'Beginner':     { bg: '#dcfce7', text: '#166534' },
   'Intermediate': { bg: '#dbeafe', text: '#1e40af' },
@@ -66,7 +67,8 @@ export default function GyanampeethamPage() {
                   <div key={item.id} className="bento-card p-5 flex flex-col hover:shadow-lg transition-all hover:-translate-y-0.5">
                     {item.image_url && (
                       <div className="w-full h-32 rounded-xl overflow-hidden mb-4">
-                        <img src={item.image_url} alt={item.title} className="w-full h-full object-cover" />
+                        <img src={optimizeImage(item.image_url, { width: IMG.card })!} loading="lazy" decoding="async"
+                          alt={item.title} className="w-full h-full object-cover" />
                       </div>
                     )}
                     <div className="flex items-start justify-between mb-3">

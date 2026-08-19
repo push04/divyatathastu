@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 
 import Icon from '@/components/ui/Icon'
+import { optimizeImage, imageSrcSet, IMG } from '@/lib/utils/image'
 export const metadata: Metadata = {
   title: 'Blog | MahaTathastu - Vedic Wisdom & Spiritual Guidance',
   description: 'Read articles on Vedic astrology, numerology, yoga, Ayurveda, and spiritual practices.',
@@ -74,7 +75,9 @@ export default async function BlogPage() {
                       style={{ background: 'linear-gradient(135deg, var(--indigo-deep), #2E0C28)' }}>
                       {posts[0].cover_image_url ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={posts[0].cover_image_url} alt={posts[0].title} className="w-full h-full object-cover" />
+                        <img src={optimizeImage(posts[0].cover_image_url, { width: IMG.hero })!} srcSet={imageSrcSet(posts[0].cover_image_url, [480, 768, 1024])}
+                             sizes="(max-width: 1024px) 100vw, 700px" decoding="async"
+                             alt={posts[0].title} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <Icon name="menu_book" size={48} className="text-[var(--text-on-dark-secondary)]" />
@@ -93,7 +96,8 @@ export default async function BlogPage() {
                       {post.cover_image_url && (
                         <div className="w-full h-36 rounded-lg overflow-hidden mb-4 flex-shrink-0">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={post.cover_image_url} alt={post.title} className="w-full h-full object-cover" />
+                          <img src={optimizeImage(post.cover_image_url, { width: IMG.card })!} loading="lazy" decoding="async"
+                               alt={post.title} className="w-full h-full object-cover" />
                         </div>
                       )}
                       <div className="flex-1">

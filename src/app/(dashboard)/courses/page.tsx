@@ -9,6 +9,7 @@ import SudarshanLoader from '@/components/SudarshanLoader'
 import { usePaymentNotice } from '@/lib/hooks/usePaymentNotice'
 
 import Icon from '@/components/ui/Icon'
+import { optimizeImage, imageSrcSet, IMG } from '@/lib/utils/image'
 const LEVEL_CONFIG: Record<string, { bg: string; text: string }> = {
   'Beginner':     { bg: '#dcfce7', text: '#166534' },
   'Intermediate': { bg: '#dbeafe', text: '#1e40af' },
@@ -200,7 +201,8 @@ export default function CoursesPage() {
               {/* Cover / header */}
               <div className="relative flex-shrink-0" style={{ minHeight: 180 }}>
                 {item.image_url ? (
-                  <img src={item.image_url} alt={item.title} className="w-full h-48 object-cover" />
+                  <img src={optimizeImage(item.image_url, { width: IMG.card })!} loading="lazy" decoding="async"
+                       alt={item.title} className="w-full h-48 object-cover" />
                 ) : (
                   <div className="w-full h-48 flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #312e81 0%, #4338ca 100%)' }}>
                     <Icon name="menu_book" size={72} className="text-white/15" />
@@ -630,7 +632,8 @@ export default function CoursesPage() {
                     {/* Banner */}
                     {item.image_url ? (
                       <div className="w-full h-44 overflow-hidden relative">
-                        <img src={item.image_url} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <img src={optimizeImage(item.image_url, { width: IMG.card })!} loading="lazy" decoding="async"
+                             alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(30,27,75,0.4) 0%, transparent 55%)' }} />
                         {item.is_live && <span className="absolute top-3 left-3 text-[12px] px-2.5 py-0.5 rounded-full bg-red-500 text-white font-bold shadow">LIVE</span>}
                       </div>

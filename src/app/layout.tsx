@@ -3,9 +3,7 @@ import { DM_Sans, Martel, Sora, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 import { Toaster } from 'sonner'
 import { LanguageProvider } from '@/components/i18n/LanguageProvider'
-import LanguagePrompt from '@/components/i18n/LanguagePrompt'
-import ChatWidget from '@/components/chat/ChatWidget'
-import AmbientOm from '@/components/AmbientOm'
+import DeferredChrome from '@/components/DeferredChrome'
 
 /* ── Type system ───────────────────────────────────────────────────────────
    All four families are self-hosted through next/font: no render-blocking
@@ -111,10 +109,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="antialiased min-h-screen flex flex-col">
         <LanguageProvider>
           {children}
-          <LanguagePrompt />
-          {/* Sits just above the chat launcher, bottom-right, on every page. */}
-          <AmbientOm />
-          <ChatWidget />
+          {/* Chat launcher, ambient-audio toggle and first-visit language
+              prompt - all lazily loaded so they do not block first paint. */}
+          <DeferredChrome />
         </LanguageProvider>
         <Toaster
           position="top-right"

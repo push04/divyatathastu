@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 import Icon from '@/components/ui/Icon'
+import { optimizeImage, imageSrcSet, IMG } from '@/lib/utils/image'
 
 interface Feature {
   id: string
@@ -77,7 +78,7 @@ export default function MediaClient() {
                   <div className="flex items-center gap-3">
                     {item.logo_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={item.logo_url} alt={item.outlet}
+                      <img src={optimizeImage(item.logo_url, { width: IMG.thumb })!} loading="lazy" decoding="async" alt={item.outlet}
                            className="w-10 h-10 rounded-lg object-contain bg-white border border-[var(--border-subtle)]" />
                     ) : (
                       <div className={`w-10 h-10 rounded-lg ${item.logo_color} flex items-center justify-center text-white font-bold text-xs`}>

@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 
 import Icon from '@/components/ui/Icon'
+import { optimizeImage, imageSrcSet, IMG } from '@/lib/utils/image'
 interface Product {
   id: string
   name: string
@@ -86,7 +87,9 @@ export default function FeaturedProducts() {
                 {/* Image / Placeholder */}
                 <div className="relative h-44 overflow-hidden">
                   {img ? (
-                    <img src={img} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <img src={optimizeImage(img, { width: IMG.card })!} srcSet={imageSrcSet(img, [320, 480, 768])}
+                         sizes="(max-width: 640px) 50vw, 300px" loading="lazy" decoding="async"
+                         alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   ) : (
                     <div className={`w-full h-full bg-gradient-to-br ${grad} flex items-center justify-center`}>
                       <Icon name={icon} size={48} className="text-[var(--text-on-dark-muted)]" />

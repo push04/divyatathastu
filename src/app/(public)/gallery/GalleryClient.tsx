@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { optimizeImage, imageSrcSet, IMG } from '@/lib/utils/image'
 
 import Icon from '@/components/ui/Icon'
 
@@ -142,7 +143,9 @@ export default function GalleryClient() {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={item.image_url}
+              src={optimizeImage(item.image_url, { width: IMG.card })!}
+              srcSet={imageSrcSet(item.image_url, [240, 480, 768])}
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 300px"
               alt={item.alt_text || item.title || ''}
               width={item.width ?? undefined}
               height={item.height ?? undefined}
@@ -199,7 +202,7 @@ export default function GalleryClient() {
           <figure className="max-w-5xl w-full" onClick={e => e.stopPropagation()}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={active.image_url}
+              src={optimizeImage(active.image_url, { width: IMG.full, quality: 80 })!}
               alt={active.alt_text || active.title || ''}
               className="w-full max-h-[75vh] object-contain rounded-lg"
             />

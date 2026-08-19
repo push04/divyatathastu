@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 
 import Icon from '@/components/ui/Icon'
+import { optimizeImage, imageSrcSet, IMG } from '@/lib/utils/image'
 export const revalidate = 3600
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -59,7 +60,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         {post.cover_image_url && (
           <div className="w-full rounded-xl overflow-hidden mb-8" style={{ maxHeight: '360px' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={post.cover_image_url} alt={post.title} className="w-full h-full object-cover" />
+            <img src={optimizeImage(post.cover_image_url, { width: IMG.full })!} srcSet={imageSrcSet(post.cover_image_url, [640, 1024, 1600])}
+              sizes="100vw" decoding="async" alt={post.title} className="w-full h-full object-cover" />
           </div>
         )}
 
