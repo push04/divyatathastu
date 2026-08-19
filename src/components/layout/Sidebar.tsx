@@ -59,16 +59,20 @@ function NavContent({ pathname, onClose, onSignOut }: { pathname: string; onClos
     <>
       {/* Logo */}
       <div className="px-6 py-5 border-b border-[var(--outline-variant)]/30 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2.5 group">
+        <Link href="/" className="flex items-center gap-2.5 group min-w-0">
           <div className="w-8 h-8 flex-shrink-0 group-hover:scale-110 transition-transform"><SudarshanLoader px={32} /></div>
-          <div>
-            <div className="text-[var(--indigo-deep)] font-bold text-sm leading-tight" style={{ fontFamily: "var(--font-display)" }}>MahaTathastu</div>
-            <div className="text-[var(--terracotta)] text-[12px] tracking-[0.15em] uppercase" style={{ fontFamily: "var(--font-label)" }}>{t('side.tagline')}</div>
+          {/* min-w-0 + truncate: without them a long translated tagline widens
+              this flex child past the panel instead of ellipsing. */}
+          <div className="min-w-0">
+            <div className="text-[var(--indigo-deep)] font-bold text-sm leading-tight truncate" style={{ fontFamily: "var(--font-display)" }}>MahaTathastu</div>
+            <div className="text-[var(--terracotta)] text-[12px] tracking-[0.15em] uppercase truncate" style={{ fontFamily: "var(--font-label)" }}>{t('side.tagline')}</div>
           </div>
         </Link>
         {/* Close button (mobile only) */}
-        <div className="flex items-center gap-1">
-          <LanguageSelector />
+        <div className="flex items-center gap-1 flex-shrink-0">
+          {/* Icon-only: the sidebar is a fixed narrow panel, so the full
+              language name would push into the logo. */}
+          <LanguageSelector compact />
           <button
             onClick={onClose}
             className="lg:hidden p-1.5 rounded-lg text-[var(--text-muted)] hover:bg-[var(--warm-sand)] transition-colors"

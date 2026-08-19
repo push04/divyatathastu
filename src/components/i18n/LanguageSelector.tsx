@@ -9,10 +9,15 @@ import Icon from '@/components/ui/Icon'
 interface Props {
   /** 'light' sits on the cream navbar, 'dark' sits on a dark surface. */
   tone?: 'light' | 'dark'
+  /** Icon-only trigger. The `hidden sm:inline` label below keys off the
+   *  viewport, not the container, so inside a fixed-width panel like the
+   *  dashboard sidebar the full language name always rendered and crowded the
+   *  logo out. Narrow containers should pass this. */
+  compact?: boolean
   className?: string
 }
 
-export default function LanguageSelector({ tone = 'light', className = '' }: Props) {
+export default function LanguageSelector({ tone = 'light', compact = false, className = '' }: Props) {
   const { lang, setLang, t } = useLanguage()
   const [open, setOpen] = useState(false)
   const wrapRef = useRef<HTMLDivElement>(null)
@@ -53,15 +58,20 @@ export default function LanguageSelector({ tone = 'light', className = '' }: Pro
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-label={t('lang.label')}
-        className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
+        title={`${current.native} · ${current.english}`}
+        className={`inline-flex items-center rounded-lg text-sm font-semibold transition-colors ${
+          compact ? 'gap-0.5 px-1.5 py-1.5' : 'gap-1.5 px-3 py-2'
+        } ${
           isDark
             ? 'text-[var(--text-on-dark)] hover:text-white hover:bg-white/10'
             : 'text-[var(--text-secondary)] hover:text-[var(--indigo-deep)] hover:bg-[var(--warm-sand)]/70'
         }`}
       >
         <Icon name="language" size={20} />
-        <span className="hidden sm:inline">{current.native}</span>
-        <Icon name="expand_more" size={18} className="transition-transform" style={{ transform: open ? 'rotate(180deg)' : 'none'  }} />
+        {!compact && (
+          <span className="hidden sm:inline max-w-[10ch] truncate">{current.native}</span>
+        )}
+        <Icon name="expand_more" size={compact ? 16 : 18} className="transition-transform" style={{ transform: open ? 'rotate(180deg)' : 'none'  }} />
       </button>
 
       {open && (

@@ -41,3 +41,5 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+strix_audit_output.txt
+strix_deep_audit.txt
