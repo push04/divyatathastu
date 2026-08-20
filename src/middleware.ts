@@ -69,11 +69,59 @@ function safeRedirect(candidate: string | null): string {
   }
 }
 
+
+/** The subset of routing decisions that need no session lookup, because the
+ *  request provably has no session. Returns a response to send, or null to let
+ *  the request continue. Kept in step with the authenticated branch below. */
+function handleUnauthenticated(request: NextRequest, path: string): NextResponse | null {
+  if (path.startsWith('/api/admin')) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  if (path.startsWith('/api/') && !PUBLIC_API_PREFIXES.some(p => path === p || path.startsWith(p + '/'))) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const isProtected = PROTECTED_PATHS.some(p => path === p || path.startsWith(p + '/'))
+  if (isProtected || path.startsWith('/admin')) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    url.searchParams.set('redirect', path)
+    return NextResponse.redirect(url)
+  }
+
+  return null
+}
+
 export async function middleware(request: NextRequest) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
   if (!supabaseUrl || !supabaseKey) {
+    return NextResponse.next({ request })
+  }
+
+  const path = request.nextUrl.pathname
+
+  // Fast path for signed-out visitors.
+  //
+  // `supabase.auth.getUser()` is a network round-trip to the Supabase Auth
+  // server, and it ran unconditionally on every request the matcher accepted -
+  // which is every page. On a warm lambda that is ~200ms; on a cold one it was
+  // the bulk of an 11-second TTFB, measured against production.
+  //
+  // When the request carries no Supabase auth cookie there is no session to
+  // validate: getUser() can only return null, so the round-trip buys nothing.
+  // Skipping it changes no security decision - a request with no cookie is
+  // still treated as unauthenticated, so protected paths still redirect and
+  // guarded APIs still 401. Anything that DOES present a cookie is validated
+  // exactly as before; a forged cookie fails in getUser(), not here.
+  const hasAuthCookie = request.cookies.getAll()
+    .some(c => c.name.startsWith('sb-') && c.name.includes('auth-token'))
+
+  if (!hasAuthCookie) {
+    const unauthed = handleUnauthenticated(request, path)
+    if (unauthed) return unauthed
     return NextResponse.next({ request })
   }
 
@@ -93,7 +141,6 @@ export async function middleware(request: NextRequest) {
   })
 
   const { data: { user } } = await supabase.auth.getUser()
-  const path = request.nextUrl.pathname
 
   // HIGH-4: Protect all /api/admin/* routes at the middleware level (defense-in-depth)
   if (path.startsWith('/api/admin')) {
